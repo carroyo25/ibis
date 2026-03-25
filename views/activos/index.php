@@ -40,7 +40,7 @@
                 <input type="hidden" name="codigo_interno" id="codigo_interno">
                 <input type="hidden" name="codigo_unidad" id="codigo_unidad">
                 <input type="hidden" name="codigo_usuario" id="codigo_usuario">
-                <input type="hidden" name="codigo_registro" id="codigo_registro">
+                <input type="text" name="codigo_registro" id="codigo_registro">
 
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
@@ -220,22 +220,65 @@
             </div>
         </div>
     </div>
-     <div class="modal" id="cargarCertificados">
+    <div class="modal" id="cargarCertificados">
         <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
-                <input type="hidden" name="certificadoAtach" id="certificadoAtach">
-                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
-                <div class="tituloArchivos">
-                    <h3>Adjuntar Archivos</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
-                </div>            
-                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-                </ul>
-                <div class="opcionesArchivos">
-                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
-                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+            <div class="container_certificados">
+                <div>
+                    <h3>📁 Adjuntar Certificados</h3>
                 </div>
-            </form>
+                <!-- Área de subida -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div>Arrastra y suelta archivos aquí</div>
+                    <div class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                        📂 Seleccionar archivos
+                    </div>
+                    <input type="file" id="fileCerts" multiple>
+                </div>
+
+                <!-- Lista de archivos a subir -->
+                <div id="pendingFiles" class="files-pending" style="display: none;">
+                    <h3>
+                        📋 Archivos para subir
+                        <span class="badge" id="fileCount">0</span>
+                    </h3>
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <!-- Resumen de subida -->
+                <div id="uploadSummary" class="upload-summary">
+                    <div class="summary-stats">
+                        <div class="summary-item">
+                            <div class="summary-number" id="totalFilesCount">0</div>
+                            <div class="summary-label">Total archivos</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number" id="completedFilesCount">0</div>
+                            <div class="summary-label">Completados</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number" id="successFilesCount">0</div>
+                            <div class="summary-label">Exitosos</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number" id="errorFilesCount">0</div>
+                            <div class="summary-label">Fallidos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón subir -->
+                <button id="uploadBtn" class="upload-btn" disabled>🚀 Subir archivos</button>
+
+                <!-- Mensajes -->
+                <div id="status" class="status"></div>
+
+                <!-- Archivos subidos -->
+                <div class="uploaded-files">
+                    <h3>✅ Archivos subidos exitosamente</h3>
+                    <div id="uploadedFiles" class="uploaded-grid"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal" id="vistaCertificados">
@@ -281,12 +324,12 @@
                     </select>
                 </div>
                 <div>
-                    <label for="descripcionSearch">Serie: </label>
+                    <label for="serieSearch">Serie: </label>
                     <input type="text" name="serieSearch" id="serieSearch">
                 </div>
                 <div>
-                    <label for="codigoBusqueda">Codigo : </label>
-                    <input type="text" name="codigoBusqueda" id="codigoBusqueda">
+                    <label for="descriptSearch">Descripcion : </label>
+                    <input type="text" name="descriptSearch" id="descriptSearch">
                 </div>
                 
                 <div>

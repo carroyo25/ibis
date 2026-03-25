@@ -102,71 +102,113 @@
 
         public function registrarActivos($items) {
             try {
-                $registrado = false;
-                $mensaje = "Error al registrar el equipo";
-                $clase = "mensaje_error"; 
+                // Validar datos requeridos
+                if (empty($items['codigo_interno'])) {
+                    return array(
+                        "registrado" => false,
+                        "mensaje" => "El código interno es obligatorio",
+                        "clase" => "mensaje_error",
+                        "ultimo_id" => null
+                    );
+                }
 
-                $sql = $this->db->connect()->prepare("INSERT INTO alm_activos
-                                                    SET alm_activos.idprod =:codigo,
-                                                        alm_activos.idcostos =:costos,
-                                                        alm_activos.iduser =:usuario,
-                                                        alm_activos.ncant =:cantidad,
-                                                        alm_activos.cestado =:estado,
-                                                        alm_activos.cserie =:serie,
-                                                        alm_activos.cmodelo =:modelo,
-                                                        alm_activos.cmarca =:marca,
-                                                        alm_activos.nfrecuencia =:frecuencia,
-                                                        alm_activos.ffcalibra =:calibra,
-                                                        alm_activos.ffvence =:vecimiento,
-                                                        alm_activos.cgrenvio =:guiaenvio,
-                                                        alm_activos.ffenvio =:fechaenvio,
-                                                        alm_activos.ffasignacion =:fechaasigna,
-                                                        alm_activos.cgrrecepcion =:guiarecepcion,
-                                                        alm_activos.ffrecepcion =:fecharecepcion,
-                                                        alm_activos.cobservaciones =:observaciones,
-                                                        alm_activos.ccontenedor =:contenedor,
-                                                        alm_activos.cestante =:estante,
-                                                        alm_activos.cletra =:letra,
-                                                        alm_activos.ccolumna =:columna,
-                                                        alm_activos.carea =:area,
-                                                        alm_activos.casigna =:asignado,
-                                                        alm_activos.cubica=:ubicacion");
-                $sql->execute([ "codigo"=>$items['codigo_interno'],
-                                "costos"=>$items['centro_costos'],
-                                "usuario"=>$items['codigo_usuario'],
-                                "cantidad"=>$items['cantidad'],
-                                "estado"=>$items['estado_actual'],
-                                "serie"=>$items['serie'],
-                                "modelo"=>$items['modelo'],
-                                "marca"=>$items['marca'],
-                                "frecuencia"=>$items['frecuencia'],
-                                "calibra"=>$items['fecha_calibra'],
-                                "vecimiento"=>$items['vence_calibra'],
-                                "guiaenvio"=>$items['guia_envio'],
-                                "fechaenvio"=>$items['fecha_envio'],
-                                "fechaasigna"=>$items['fecha_asigna'],
-                                "guiarecepcion"=>$items['guia_recepcion'],
-                                "fecharecepcion"=>$items['fecha_recepcion'],
-                                "observaciones"=>$items['observa_estado'],
-                                "contenedor"=>$items['contenedor'],
-                                "estante"=>$items['estante'],
-                                "letra"=>$items['letra'],
-                                "columna"=>$items['columna'],
-                                "area"=>$items['area'],
-                                "asignado"=>$items['dni'],
-                                "ubicacion"=>$items['ubicacion']]);
+                $conexion = $this->db->connect();
+                
+                $sql = $conexion->prepare("INSERT INTO alm_activos
+                                            SET alm_activos.idprod = :codigo,
+                                                alm_activos.idcostos = :costos,
+                                                alm_activos.iduser = :usuario,
+                                                alm_activos.ncant = :cantidad,
+                                                alm_activos.cestado = :estado,
+                                                alm_activos.cserie = :serie,
+                                                alm_activos.cmodelo = :modelo,
+                                                alm_activos.cmarca = :marca,
+                                                alm_activos.nfrecuencia = :frecuencia,
+                                                alm_activos.ffcalibra = :calibra,
+                                                alm_activos.ffvence = :vecimiento,
+                                                alm_activos.cgrenvio = :guiaenvio,
+                                                alm_activos.ffenvio = :fechaenvio,
+                                                alm_activos.ffasignacion = :fechaasigna,
+                                                alm_activos.cgrrecepcion = :guiarecepcion,
+                                                alm_activos.ffrecepcion = :fecharecepcion,
+                                                alm_activos.cobservaciones = :observaciones,
+                                                alm_activos.ccontenedor = :contenedor,
+                                                alm_activos.cestante = :estante,
+                                                alm_activos.cletra = :letra,
+                                                alm_activos.ccolumna = :columna,
+                                                alm_activos.carea = :area,
+                                                alm_activos.casigna = :asignado,
+                                                alm_activos.cubica = :ubicacion");
+                
+                $resultado = $sql->execute([ 
+                    "codigo" => $items['codigo_interno'] ?? null,
+                    "costos" => $items['centro_costos'] ?? null,
+                    "usuario" => $items['codigo_usuario'] ?? null,
+                    "cantidad" => $items['cantidad'] ?? 1,
+                    "estado" => $items['estado_actual'] ?? null,
+                    "serie" => $items['serie'] ?? null,
+                    "modelo" => $items['modelo'] ?? null,
+                    "marca" => $items['marca'] ?? null,
+                    "frecuencia" => $items['frecuencia'] ?? null,
+                    "calibra" => $items['fecha_calibra'] ?? null,
+                    "vecimiento" => $items['vence_calibra'] ?? null,
+                    "guiaenvio" => $items['guia_envio'] ?? null,
+                    "fechaenvio" => $items['fecha_envio'] ?? null,
+                    "fechaasigna" => $items['fecha_asigna'] ?? null,
+                    "guiarecepcion" => $items['guia_recepcion'] ?? null,
+                    "fecharecepcion" => $items['fecha_recepcion'] ?? null,
+                    "observaciones" => $items['observa_estado'] ?? null,
+                    "contenedor" => $items['contenedor'] ?? null,
+                    "estante" => $items['estante'] ?? null,
+                    "letra" => $items['letra'] ?? null,
+                    "columna" => $items['columna'] ?? null,
+                    "area" => $items['area'] ?? null,
+                    "asignado" => $items['dni'] ?? null,
+                    "ubicacion" => $items['ubicacion'] ?? null
+                ]);
 
-                if ($sql->rowCount() > 0){
-                    $registrado = true;
-                    $mensaje = "Registrado Correctamente";
-                    $clase = "mensaje_correcto";
-                };
-
-                return array("registrado"=>$registrado,"mensaje"=>$mensaje,"clase"=>$clase);
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
+                if ($resultado && $sql->rowCount() > 0) {
+                    // Método 1: lastInsertId() sin parámetros
+                    $ultimoId = $conexion->lastInsertId();
+                    
+                    // Si no funciona, intenta con el nombre de la secuencia
+                    if (empty($ultimoId)) {
+                        $ultimoId = $conexion->lastInsertId('id'); // Reemplaza 'id' con el nombre de tu columna auto_increment
+                    }
+                    
+                    // Método 2: Consultar el último ID insertado (alternativa)
+                    if (empty($ultimoId) || $ultimoId == 0) {
+                        $queryId = $conexion->query("SELECT LAST_INSERT_ID() as last_id");
+                        $ultimoId = $queryId->fetch(PDO::FETCH_ASSOC)['last_id'];
+                    }
+                    
+                    // Para debug - puedes registrar esto en un log
+                    error_log("ID insertado: " . $ultimoId);
+                    
+                    return array(
+                        "registrado" => true,
+                        "mensaje" => "Registrado Correctamente",
+                        "clase" => "mensaje_correcto",
+                        "ultimo_id" => $ultimoId
+                    );
+                } else {
+                    return array(
+                        "registrado" => false,
+                        "mensaje" => "No se pudo registrar el equipo",
+                        "clase" => "mensaje_error",
+                        "ultimo_id" => null
+                    );
+                }
+                
+            } catch (PDOException $e) {
+                error_log("Error al registrar activo: " . $e->getMessage());
+                
+                return array(
+                    "registrado" => false,
+                    "mensaje" => "Error en la base de datos: " . $e->getMessage(),
+                    "clase" => "mensaje_error",
+                    "ultimo_id" => null
+                );
             }
         }
 
@@ -381,7 +423,7 @@
                 $conexion = $this->db->connect();
 
                 $serie = $parametros['serie'] == '' ? '%' : '%'.$parametros['serie'].'%';
-                $codigo = $parametros['codigo'] == '' ? '%' : '%'.$parametros['codigo'].'%';
+                $descripcion = $parametros['descripcion'] == '' ? '%' : '%'.$parametros['descripcion'].'%';
             
                 // PASO 3: Verificar la consulta completa
                 $sql = $conexion->prepare("SELECT
@@ -422,15 +464,17 @@
                                                 LEFT JOIN tb_parametros e ON a.cestado = e.nidreg 
                                             WHERE
                                                 a.idcostos = :costos
-                                                AND p.ccodprod LIKE :codigo
+                                                AND p.cdesprod LIKE :descripcion
                                                 AND a.cserie LIKE :serie
                                             GROUP BY
                                                 a.idreg, a.idprod, p.ccodprod, p.cdesprod, u.cabrevia, a.cserie, 
                                                 a.cmodelo, a.cmarca, a.nfrecuencia, a.ffcalibra, a.ffvence, a.cgrenvio,
                                                 a.ffenvio, a.ffrecepcion, a.ffasignacion, a.cgrrecepcion, a.cobservaciones,
                                                 a.ccontenedor, a.cestante, a.cletra, a.ccolumna, a.carea, a.cubica,
-                                                a.cestado, a.casigna, f.cdescripcion, e.cdescripcion");
-                $sql->execute(["costos"=>$parametros['costos'],"codigo"=>$codigo,"serie"=>$serie]);
+                                                a.cestado, a.casigna, f.cdescripcion, e.cdescripcion
+                                            ORDER BY p.cdesprod");
+                                            
+                $sql->execute(["costos"=>$parametros['costos'],"descripcion"=>$descripcion,"serie"=>$serie]);
                 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;

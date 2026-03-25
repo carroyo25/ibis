@@ -21,7 +21,7 @@ $(function () {
   const btnAtach = document.getElementById("btnAtachDialogoActivos");
   const btnQr = document.getElementById("btQrDialogoActivos");
   const btnCancelQr = document.getElementById("btnCancelarQr");
-  const btnLoadAtach = document.getElementById("openArch");
+  //const btnLoadAtach = document.getElementById("openArch");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -30,7 +30,7 @@ $(function () {
   const inputEstado = document.getElementById("estado_actual");
   const inputUbicacion = document.getElementById("ubicacion");
   const inputImport = document.getElementById("fileInput");
-  const inputAtach = document.getElementById("uploadAtach");
+  //const inputAtach = document.getElementById("uploadAtach");
 
   const sltCostos = document.getElementById("centro_costos");
   const sltCostosLoad = document.getElementById("loadProyect");
@@ -42,6 +42,536 @@ $(function () {
   const lnkLoad = document.getElementById("lnkLoad");
 
   const canvas = document.getElementById("qrCodeModal");
+
+  /*** nueva carga de archivos */
+  let filesToUpload = [];
+  let existingFiles = [];
+  let uploadStats = {
+    total: 0,
+    completed: 0,
+    success: 0,
+    error: 0,
+    exists: 0,
+  };
+
+  // Elementos DOM
+  const uploadArea = document.getElementById("uploadArea");
+  const fileInput = document.getElementById("fileCerts");
+  const pendingFiles = document.getElementById("pendingFiles");
+  const fileList = document.getElementById("fileList");
+  const fileCount = document.getElementById("fileCount");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const statusDiv = document.getElementById("status");
+  const uploadedFiles = document.getElementById("uploadedFiles");
+  const uploadSummary = document.getElementById("uploadSummary");
+  const totalFilesCount = document.getElementById("totalFilesCount");
+  const completedFilesCount = document.getElementById("completedFilesCount");
+  const successFilesCount = document.getElementById("successFilesCount");
+  const errorFilesCount = document.getElementById("errorFilesCount");
+
+  uploadArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadArea.classList.add("drag-over");
+  });
+
+  uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("drag-over");
+  });
+
+  uploadArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove("drag-over");
+    const files = Array.from(e.dataTransfer.files);
+    addFiles(files);
+  });
+
+  // File input
+  fileInput.addEventListener("change", (e) => {
+    const files = Array.from(e.target.files);
+    addFiles(files);
+    fileInput.value = "";
+  });
+
+  // Upload button
+  uploadBtn.addEventListener("click", () => {
+    uploadAllFiles();
+  });
+
+  // Cargar archivos existentes en el servidor
+  async function loadExistingFiles() {
+    try {
+      const response = await fetch("upload.php?action=list");
+      existingFiles = await response.json();
+      console.log("Archivos existentes:", existingFiles);
+    } catch (error) {
+      console.error("Error al cargar archivos existentes:", error);
+      existingFiles = [];
+    }
+  }
+
+  // Verificar si un archivo ya existe en el servidor
+  function fileExistsOnServer(filename) {
+    return existingFiles.some((existingFile) => {
+      // Extraer el nombre original del archivo (sin timestamp y ID)
+      const existingName = existingFile.replace(/_\d+_[a-f0-9]+\./, ".");
+      const newName = filename;
+
+      // Comparar nombres
+      return existingName === newName || existingFile.includes(filename);
+    });
+  }
+
+  // Función para agregar archivos con verificación de existencia
+  function addFiles(newFiles) {
+    let added = 0;
+    let duplicates = 0;
+    let existsOnServer = 0;
+
+    newFiles.forEach((file) => {
+      // Verificar si ya existe en la lista actual
+      const existsInList = filesToUpload.some(
+        (f) => f.name === file.name && f.size === file.size,
+      );
+
+      // Verificar si ya existe en el servidor
+      const existsOnServerFlag = fileExistsOnServer(file.name);
+
+      if (!existsInList && !existsOnServerFlag) {
+        filesToUpload.push({
+          file: file,
+          exists: false,
+        });
+        added++;
+      } else if (existsInList) {
+        duplicates++;
+      } else if (existsOnServerFlag) {
+        existsOnServer++;
+        // Mostrar mensaje de archivo existente
+        showStatus(
+          `⚠️ El archivo "${file.name}" ya existe en el servidor`,
+          "warning",
+        );
+      }
+    });
+
+    if (added > 0) {
+      updateFileList();
+      showStatus(`✅ ${added} archivo(s) agregado(s)`, "success");
+    }
+
+    if (duplicates > 0) {
+      showStatus(
+        `⚠️ ${duplicates} archivo(s) ya estaban en la lista`,
+        "warning",
+      );
+    }
+
+    if (existsOnServer > 0) {
+      showStatus(
+        `⚠️ ${existsOnServer} archivo(s) ya existen en el servidor`,
+        "warning",
+      );
+    }
+  }
+
+  // Actualizar lista de archivos
+  function updateFileList() {
+    if (filesToUpload.length === 0) {
+      pendingFiles.style.display = "none";
+      uploadBtn.disabled = true;
+      uploadSummary.style.display = "none";
+      return;
+    }
+
+    pendingFiles.style.display = "block";
+    fileCount.textContent = filesToUpload.length;
+    uploadBtn.disabled = false;
+
+    fileList.innerHTML = "";
+
+    filesToUpload.forEach((item, index) => {
+      const fileItem = createFileItem(item.file, index, item.exists);
+      fileList.appendChild(fileItem);
+    });
+  }
+
+  // Crear elemento de archivo
+  function createFileItem(file, index, exists) {
+    const fileItem = document.createElement("div");
+    fileItem.className = "file-item";
+    if (exists) fileItem.classList.add("exists");
+    fileItem.id = `file_${index}`;
+
+    // Header con preview e info
+    const header = createFileHeader(file, index, exists);
+
+    // Barra de progreso (solo si no existe)
+    let progressContainer = null;
+    if (!exists) {
+      progressContainer = createProgressContainer(index);
+    } else {
+      progressContainer = createExistsContainer();
+    }
+
+    fileItem.appendChild(header);
+    fileItem.appendChild(progressContainer);
+
+    return fileItem;
+  }
+
+  // Crear header del archivo
+  function createFileHeader(file, index, exists) {
+    const header = document.createElement("div");
+    header.className = "file-header";
+
+    // Preview
+    const preview = createFilePreview(file);
+
+    // Info
+    const info = createFileInfo(file, exists);
+
+    // Botón eliminar
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "Eliminar";
+    removeBtn.onclick = () => removeFile(index);
+
+    header.appendChild(preview);
+    header.appendChild(info);
+    header.appendChild(removeBtn);
+
+    return header;
+  }
+
+  // Crear preview del archivo
+  function createFilePreview(file) {
+    const preview = document.createElement("div");
+    preview.className = "file-preview";
+
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      preview.appendChild(img);
+    } else {
+      preview.innerHTML = getFileIcon(file.name);
+    }
+
+    return preview;
+  }
+
+  // Crear información del archivo
+  function createFileInfo(file, exists) {
+    const info = document.createElement("div");
+    info.className = "file-info";
+
+    let existsBadge = "";
+    if (exists) {
+      existsBadge =
+        '<span class="exists-badge">⚠️ Ya existe en servidor</span>';
+    }
+
+    info.innerHTML = `
+        <div class="file-name">
+            ${file.name}
+            ${existsBadge}
+        </div>
+        <div class="file-meta">
+            <span class="file-size">${formatFileSize(file.size)}</span>
+            <span class="file-type">${getFileType(file.name)}</span>
+        </div>
+    `;
+    return info;
+  }
+
+  // Crear contenedor para archivo existente
+  function createExistsContainer() {
+    const container = document.createElement("div");
+    container.className = "file-progress-container";
+    container.innerHTML = `
+        <div class="progress-status">
+            <span class="status-exists">⚠️ Este archivo ya existe en el servidor, no se subirá</span>
+        </div>
+    `;
+    return container;
+  }
+
+  // Crear contenedor de progreso
+  function createProgressContainer(index) {
+    const progressContainer = document.createElement("div");
+    progressContainer.className = "file-progress-container";
+    progressContainer.id = `progress_${index}`;
+    progressContainer.innerHTML = `
+        <div class="progress-info">
+            <span class="progress-label">📊 Progreso de subida</span>
+            <span class="progress-percentage" id="percent_${index}">0%</span>
+        </div>
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar-fill" id="fill_${index}" style="width: 0%">0%</div>
+        </div>
+        <div class="progress-status" id="status_${index}">
+            <span class="status-waiting">⏳ Esperando subida...</span>
+        </div>
+    `;
+    return progressContainer;
+  }
+
+  // Obtener icono según tipo de archivo
+  function getFileIcon(filename) {
+    const ext = filename.split(".").pop().toLowerCase();
+    const icons = {
+      pdf: "📄",
+      doc: "📝",
+      docx: "📝",
+      xls: "📊",
+      xlsx: "📊",
+      txt: "📃",
+      zip: "🗜️",
+      rar: "🗜️",
+      mp3: "🎵",
+      mp4: "🎬",
+      jpg: "🖼️",
+      jpeg: "🖼️",
+      png: "🖼️",
+      gif: "🖼️",
+    };
+    return `<div style="font-size: 30px;">${icons[ext] || "📁"}</div>`;
+  }
+
+  // Obtener tipo de archivo
+  function getFileType(filename) {
+    const ext = filename.split(".").pop().toLowerCase();
+    const types = {
+      jpg: "Imagen",
+      jpeg: "Imagen",
+      png: "Imagen",
+      gif: "Imagen",
+      pdf: "PDF",
+      doc: "Documento",
+      docx: "Documento",
+      txt: "Texto",
+      zip: "Comprimido",
+      rar: "Comprimido",
+      mp3: "Audio",
+      mp4: "Video",
+    };
+    return types[ext] || "Archivo";
+  }
+
+  // Eliminar archivo
+  function removeFile(index) {
+    filesToUpload.splice(index, 1);
+    updateFileList();
+    showStatus("Archivo eliminado", "success");
+  }
+
+  // Actualizar progreso individual
+  function updateFileProgress(fileIndex, percent, status = "uploading") {
+    const percentSpan = document.getElementById(`percent_${fileIndex}`);
+    const fillDiv = document.getElementById(`fill_${fileIndex}`);
+    const statusSpan = document.getElementById(`status_${fileIndex}`);
+
+    if (percentSpan) {
+      percentSpan.textContent = `${Math.round(percent)}%`;
+    }
+
+    if (fillDiv) {
+      fillDiv.style.width = `${percent}%`;
+      fillDiv.textContent = `${Math.round(percent)}%`;
+
+      if (status === "complete") {
+        fillDiv.style.background = "linear-gradient(90deg, #4caf50, #8bc34a)";
+      } else if (status === "error") {
+        fillDiv.style.background = "#f44336";
+      }
+    }
+
+    if (statusSpan) {
+      if (status === "uploading") {
+        statusSpan.innerHTML =
+          '<span class="status-uploading">📤 Subiendo archivo... <span class="uploading-animation">⚡</span></span>';
+      } else if (status === "complete") {
+        statusSpan.innerHTML =
+          '<span class="status-complete">✅ Subida completada exitosamente</span>';
+      } else if (status === "error") {
+        statusSpan.innerHTML =
+          '<span class="status-error">❌ Error al subir el archivo</span>';
+      }
+    }
+  }
+
+  // Actualizar resumen
+  function updateSummary() {
+    totalFilesCount.textContent = uploadStats.total;
+    completedFilesCount.textContent = uploadStats.completed;
+    successFilesCount.textContent = uploadStats.success;
+    errorFilesCount.textContent = uploadStats.error;
+
+    if (uploadStats.total > 0) {
+      uploadSummary.style.display = "block";
+    }
+  }
+
+  // Subir todos los archivos
+  async function uploadAllFiles() {
+    // Filtrar solo archivos que no existen en el servidor
+    const filesToUploadFiltered = filesToUpload.filter((item) => !item.exists);
+
+    if (filesToUploadFiltered.length === 0) {
+      showStatus("⚠️ No hay archivos nuevos para subir", "warning");
+      return;
+    }
+
+    // Resetear estadísticas
+    uploadStats = {
+      total: filesToUploadFiltered.length,
+      completed: 0,
+      success: 0,
+      error: 0,
+      exists: filesToUpload.length - filesToUploadFiltered.length,
+    };
+
+    updateSummary();
+    uploadBtn.disabled = true;
+
+    // Subir archivos uno por uno
+    for (let i = 0; i < filesToUploadFiltered.length; i++) {
+      const item = filesToUploadFiltered[i];
+      const originalIndex = filesToUpload.findIndex(
+        (f) => f.file.name === item.file.name && f.file.size === item.file.size,
+      );
+
+      updateFileProgress(originalIndex, 0, "uploading");
+
+      const success = await uploadFile(item.file, originalIndex);
+
+      if (success) {
+        uploadStats.success++;
+        updateFileProgress(originalIndex, 100, "complete");
+      } else {
+        uploadStats.error++;
+        updateFileProgress(originalIndex, 0, "error");
+      }
+
+      uploadStats.completed++;
+      updateSummary();
+    }
+
+    // Limpiar lista de archivos pendientes (solo los que no existen)
+    filesToUpload = filesToUpload.filter((item) => item.exists);
+    updateFileList();
+
+    // Mostrar mensaje final
+    let message = `✅ Subida completada: ${uploadStats.success} exitosos, ${uploadStats.error} fallidos`;
+    if (uploadStats.exists > 0) {
+      message += `, ${uploadStats.exists} archivo(s) omitidos (ya existían)`;
+    }
+    showStatus(message, uploadStats.success > 0 ? "success" : "error");
+
+    // Recargar archivos existentes
+    await loadExistingFiles();
+    loadUploadedFiles();
+
+    // Resetear botón
+    uploadBtn.disabled = false;
+
+    // Ocultar resumen después de 5 segundos
+    setTimeout(() => {
+      if (filesToUpload.length === 0) {
+        uploadSummary.style.display = "none";
+      }
+    }, 5000);
+  }
+
+  // Subir archivo individual
+  function uploadFile(file, index) {
+    return new Promise((resolve) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percent = (e.loaded / e.total) * 100;
+          updateFileProgress(index, percent, "uploading");
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.success);
+          } catch (e) {
+            resolve(false);
+          }
+        } else {
+          resolve(false);
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        resolve(false);
+      });
+
+      xhr.open("POST", "upload.php");
+      xhr.send(formData);
+    });
+  }
+
+  // Cargar archivos subidos
+  async function loadUploadedFiles() {
+    try {
+      const response = await fetch("upload.php?action=list");
+      const files = await response.json();
+
+      if (!files || files.length === 0) {
+        uploadedFiles.innerHTML =
+          '<div class="empty-message">No hay archivos subidos</div>';
+        return;
+      }
+
+      uploadedFiles.innerHTML = "";
+      files.forEach((file) => {
+        const item = document.createElement("div");
+        item.className = "uploaded-item";
+        const link = document.createElement("a");
+        link.href = `uploads/${file}`;
+        link.textContent =
+          file.length > 30 ? file.substring(0, 27) + "..." : file;
+        link.target = "_blank";
+        item.appendChild(link);
+        uploadedFiles.appendChild(item);
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  // Mostrar mensaje de estado
+  function showStatus(message, type) {
+    statusDiv.textContent = message;
+    statusDiv.className = `status ${type}`;
+    statusDiv.style.display = "block";
+    setTimeout(() => {
+      statusDiv.style.display = "none";
+    }, 4000);
+  }
+
+  // Formatear tamaño de archivo
+  function formatFileSize(bytes) {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  }
+
+  /************************************ */
 
   btnRegister.addEventListener("click", (e) => {
     e.preventDefault();
@@ -61,6 +591,7 @@ $(function () {
     e.preventDefault();
 
     limpiarFormulario(true);
+    btnConsult.click();
     modal_registro.style.display = "none";
 
     return false;
@@ -187,9 +718,11 @@ $(function () {
     $("#esperar").css({ display: "block", opacity: "1" });
 
     const formData = new FormData(fmrActivos);
+    let accion = null;
 
     if (document.getElementById("codigo_registro").value == "") {
       consulta = RUTA + "activos/registro";
+      accion = true;
     } else {
       consulta = RUTA + "activos/modifica";
     }
@@ -201,6 +734,10 @@ $(function () {
       .then((response) => response.json())
       .then((data) => {
         limpiarFormulario(false);
+
+        if (accion) {
+          document.getElementById("codigo_registro").value = data.ultimo_id;
+        }
 
         mostrarMensaje(data.mensaje, data.clase);
 
@@ -331,11 +868,14 @@ $(function () {
     let formData = new FormData();
 
     formData.append("costos", sltCostosSearch.value);
-    formData.append("codigo",document.getElementById("codigoBusqueda").value);
-    formData.append("serie",document.getElementById("serieSearch").value);
+    formData.append(
+      "descripcion",
+      document.getElementById("descriptSearch").value,
+    );
+    formData.append("serie", document.getElementById("serieSearch").value);
 
-    if (sltCostosSearch.value == '-1'){
-      mostrarMensaje("Elija un centro de costos","mensaje_error");
+    if (sltCostosSearch.value == "-1") {
+      mostrarMensaje("Elija un centro de costos", "mensaje_error");
       return false;
     }
 
@@ -400,14 +940,6 @@ $(function () {
     return false;
   });
 
-  btnLoadAtach.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    inputAtach.click();
-
-    return false;
-  });
-
   btnQr.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -444,21 +976,21 @@ $(function () {
 
     // Codificar los parámetros
     const params = new URLSearchParams({
-        codigo: equipoData.codigo || '',
-        serie: equipoData.serie || '',
-        descripcion: (equipoData.descripcion || '').substring(0, 100),
-        marca: equipoData.marca || '',
-        modelo: equipoData.modelo || '',
-        fecha_vencimiento: equipoData.vence || '',
-        ubicacion: equipoData.ubicacion || '',
-        estado: equipoData.estado || '',
-        asignado: equipoData.asignado || '',
-        observaciones: equipoData.observaciones || ''
+      codigo: equipoData.codigo || "",
+      serie: equipoData.serie || "",
+      descripcion: (equipoData.descripcion || "").substring(0, 100),
+      marca: equipoData.marca || "",
+      modelo: equipoData.modelo || "",
+      fecha_vencimiento: equipoData.vence || "",
+      ubicacion: equipoData.ubicacion || "",
+      estado: equipoData.estado || "",
+      asignado: equipoData.asignado || "",
+      observaciones: equipoData.observaciones || "",
     });
 
-     // Generar hash de verificación
+    // Generar hash de verificación
     const hashInput = `${equipoData.idprod}_${equipoData.serie}`;
-    const hash = btoa(hashInput).substring(0, 10).replace(/=/g, '');
+    const hash = btoa(hashInput).substring(0, 10).replace(/=/g, "");
 
     // URL completa
     const urlCompleta = `${baseUrl}?${params.toString()}&v=${hash}`;
@@ -488,14 +1020,13 @@ $(function () {
     return false;
   });
 
-
-  btnCancelQr.addEventListener("click",(e)=>{
+  btnCancelQr.addEventListener("click", (e) => {
     e.preventDefault();
 
     modal_qr.style.display = "none";
 
     return false;
-  })
+  });
 
   $("#uploadAtach").on("change", function (e) {
     e.preventDefault();
@@ -517,52 +1048,6 @@ $(function () {
     }
 
     return false;
-  });
-
-  $("#btnConfirmAtach").on("click", function (e) {
-    e.preventDefault();
-
-    let formData = new FormData();
-
-    formData.append("codigo", $("#codigo_registro").val());
-
-    $.each($("#uploadAtach")[0].files, function (i, file) {
-      formData.append("file-" + i, file);
-    });
-
-    $.ajax({
-      type: "POST",
-      url: RUTA + "activos/certificados",
-      data: formData,
-      data: formData,
-      contentType: false,
-      processData: false,
-      dataType: "json",
-      success: function (response) {
-        $("#archivos").fadeOut();
-        $("#fileAtachs")[0].reset();
-        $(".listaArchivos").empty();
-
-        modal_cargar_certificados.style.display = "none";
-
-        mostrarMensaje(
-          "Archivos copiados : " + response.total_adjuntos,
-          "mensaje_correcto",
-        );
-      },
-    });
-
-    return false;
-  });
-
-  $("#btnCancelAtach").on("click", function (e) {
-    e.preventDefault();
-
-    modal_cargar_certificados.style.display = "none";
-
-    $("#archivos").fadeOut();
-    $("#fileAtachs")[0].reset();
-    $(".listaArchivos").empty();
   });
 
   $("#closeAtach").click(function (e) {
@@ -845,7 +1330,7 @@ function crearTablaDetalles(equipos) {
                         </td>
                         <td>${e.cmarca || "—"} ${e.cmodelo || ""}</td>
                         <td>
-                            ${formatearFecha(e.ffvence) }
+                            ${formatearFecha(e.ffvence)}
                             <br>
                             ${e.frecuencia}
                         </td>
@@ -928,8 +1413,6 @@ window.toggleDetalles = function (row) {
 
 //para llamar a los detalles del equipo
 function mostrarDetalleEquipo(id) {
-  document.getElementById("dialogo_registro").style.display = "block";
-
   let formData = new FormData();
   formData.append("codigo", id);
 
@@ -991,6 +1474,8 @@ function mostrarDetalleEquipo(id) {
       }
 
       calcularVencimiento();
+
+      document.getElementById("dialogo_registro").style.display = "block";
     });
 
   // Función para exportar a Excel
@@ -1189,3 +1674,5 @@ async function excelJson(datos) {
 
   $("#esperar").css({ display: "none", opacity: "0" });
 }
+
+/************* funciones para cargar archivos */
