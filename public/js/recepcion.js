@@ -1,112 +1,108 @@
-$(function(){
-    let accion = "",
-        co = 1,
-        fila = "",
-        idfila = "",
-        grabado = false,
-        tipoVista = null;
-       
-    $("#esperar").fadeOut();
+$(function () {
+  let accion = "",
+    co = 1,
+    fila = "",
+    idfila = "",
+    grabado = false,
+    tipoVista = null;
 
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
-        e.preventDefault();
+  $("#esperar").fadeOut();
 
-        $.post(RUTA+"recepcion/consultaId", {id:$(this).data("indice")},
-            function (data, textStatus, jqXHR) {
-                
-                let estado = "textoCentro w100por estado " + data.cabecera[0].estado;
-                
-                $("#codigo_costos").val(data.cabecera[0].ncodpry);
-                $("#codigo_area").val(data.cabecera[0].ncodarea);
-                $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
-                $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
-                $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
-                $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
-                $("#codigo_orden").val(data.cabecera[0].idref_abas);
-                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
-                $("#codigo_entidad").val(data.cabecera[0].id_centi);
-                $("#codigo_ingreso").val(data.cabecera[0].id_regalm);
-                $("#almacen").val(data.cabecera[0].almacen);
-                $("#fecha").val(data.cabecera[0].ffecdoc);
-                $("#numero").val(data.cabecera[0].nnronota);
-                $("#proyecto").val(data.cabecera[0].proyecto);
-                $("#area").val(data.cabecera[0].area);
-                $("#solicita").val(data.cabecera[0].nombres);
-                $("#orden").val(data.cabecera[0].orden);
-                $("#pedido").val(data.cabecera[0].pedido);
-                $("#ruc").val(data.cabecera[0].cnumdoc);
-                $("#guia").val(data.cabecera[0].cnumguia);
-                $("#razon").val(data.cabecera[0].crazonsoc);
-                $("#concepto").val(data.cabecera[0].concepto);
-                $("#detalle").val(data.cabecera[0].detalle);
-                $("#aprueba").val(data.cabecera[0].cnombres);
-                $("#tipo").val(data.cabecera[0].cdescripcion);
-                $("#estado").val(data.cabecera[0].estado);
-                $("#usuario_elabora").val(data.cabecera[0].userelabora);
-                $("#movimiento").val(1);
-                
-                let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true: false;
-                tipoVista = true;
-                accion = "u";
-                
-                $("#qaqc").prop("checked",swqaqc);
-                
-                $("#estado")
-                    .removeClass()
-                    .addClass(estado);
-                
-                $("#tablaDetalles tbody")
-                    .empty()
-                    .append(data.detalles);
-                
-                $("#tablaSeries tbody")
-                    .empty()
-                    .append(data.series);
+  $("#tablaPrincipal tbody").on("click", "tr", function (e) {
+    e.preventDefault();
 
-                $(".listaArchivos")
-                    .empty()
-                    .append(data.adjuntos);
+    $.post(
+      RUTA + "recepcion/consultaId",
+      { id: $(this).data("indice") },
+      function (data, textStatus, jqXHR) {
+        let estado = "textoCentro w100por estado " + data.cabecera[0].estado;
 
-                $(".primeraBarra").css("background","#0078D4");
-                $(".primeraBarra span").text("Datos Generales");
+        $("#codigo_costos").val(data.cabecera[0].ncodpry);
+        $("#codigo_area").val(data.cabecera[0].ncodarea);
+        $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
+        $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
+        $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
+        $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
+        $("#codigo_orden").val(data.cabecera[0].idref_abas);
+        $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+        $("#codigo_entidad").val(data.cabecera[0].id_centi);
+        $("#codigo_ingreso").val(data.cabecera[0].id_regalm);
+        $("#almacen").val(data.cabecera[0].almacen);
+        $("#fecha").val(data.cabecera[0].ffecdoc);
+        $("#numero").val(data.cabecera[0].nnronota);
+        $("#proyecto").val(data.cabecera[0].proyecto);
+        $("#area").val(data.cabecera[0].area);
+        $("#solicita").val(data.cabecera[0].nombres);
+        $("#orden").val(data.cabecera[0].orden);
+        $("#pedido").val(data.cabecera[0].pedido);
+        $("#ruc").val(data.cabecera[0].cnumdoc);
+        $("#guia").val(data.cabecera[0].cnumguia);
+        $("#razon").val(data.cabecera[0].crazonsoc);
+        $("#concepto").val(data.cabecera[0].concepto);
+        $("#detalle").val(data.cabecera[0].detalle);
+        $("#aprueba").val(data.cabecera[0].cnombres);
+        $("#tipo").val(data.cabecera[0].cdescripcion);
+        $("#estado").val(data.cabecera[0].estado);
+        $("#usuario_elabora").val(data.cabecera[0].userelabora);
+        $("#movimiento").val(1);
 
-                accion = "u";
-                grabado = true;
+        let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true : false;
+        tipoVista = true;
+        accion = "u";
 
-                $("#proceso").fadeIn();
+        $("#qaqc").prop("checked", swqaqc);
 
-            },
-            "json"
-        );
+        $("#estado").removeClass().addClass(estado);
 
-        return false;
-    });
+        $("#tablaDetalles tbody").empty().append(data.detalles);
 
-    $("#nuevoRegistro").click(function (e) { 
-        e.preventDefault();
+        $("#tablaSeries tbody").empty().append(data.series);
 
-        $("#estado")
-            .removeClass()
-            .addClass("textoCentro estado w100por procesando");
+        $(".listaArchivos").empty().append(data.adjuntos);
+
+        $(".primeraBarra").css("background", "#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
+
+        accion = "u";
+        grabado = true;
+
         $("#proceso").fadeIn();
-        
-        accion = 'n';
-        tipoVista = null;
-        grabado = false;
+      },
+      "json",
+    );
 
-        $(".primeraBarra").css("background","#0078D4");
-        $(".primeraBarra span").text('Datos Generales');
-        $("#tablaDetalles tbody").empty();
+    return false;
+  });
 
-        return false;
-    });
+  $("#nuevoRegistro").click(function (e) {
+    e.preventDefault();
 
-    $("#closeProcess").click(function (e) { 
-        e.preventDefault();
+    $("#estado")
+      .removeClass()
+      .addClass("textoCentro estado w100por procesando");
+    $("#proceso").fadeIn();
 
-        $("#proceso").fadeOut();
+    accion = "n";
+    tipoVista = null;
+    grabado = false;
 
-        /*$.post(RUTA+"recepcion/actualizaNotas",
+    $(".primeraBarra").css("background", "#0078D4");
+    $(".primeraBarra span").text("Datos Generales");
+    $("#tablaDetalles tbody").empty();
+
+    document.getElementById("btnAceptarGrabar").style.pointerEvents = "auto";
+
+    limpiarFormulario();
+
+    return false;
+  });
+
+  $("#closeProcess").click(function (e) {
+    e.preventDefault();
+
+    $("#proceso").fadeOut();
+
+    /*$.post(RUTA+"recepcion/actualizaNotas",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -122,67 +118,69 @@ $(function(){
             "text"
         );*/
 
-        return false;
-    });
+    return false;
+  });
 
-    $(".mostrarLista").focus(function (e) { 
-        e.preventDefault();
+  $(".mostrarLista").focus(function (e) {
+    e.preventDefault();
 
-        $(this).next().slideDown();
+    $(this).next().slideDown();
 
-        return false;
-    });
+    return false;
+  });
 
-    $(".cerrarLista").focus(function (e) { 
-        e.preventDefault();
-        
-        $(".lista").fadeOut();
+  $(".cerrarLista").focus(function (e) {
+    e.preventDefault();
 
-        return false;
-    });
+    $(".lista").fadeOut();
 
-    $(".lista").on("click",'a', function (e) {
-        e.preventDefault();
+    return false;
+  });
 
-        let control = $(this).parent().parent().parent();
-        let destino = $(this).parent().parent().parent().prev();
-        let contenedor_padre = $(this).parent().parent().parent().attr("id");
-        let id = "";
-        let codigo = $(this).attr("href");
-        
-        control.slideUp()
+  $(".lista").on("click", "a", function (e) {
+    e.preventDefault();
 
-        destino.val($(this).text());
-        id = destino.attr("id");
+    let control = $(this).parent().parent().parent();
+    let destino = $(this).parent().parent().parent().prev();
+    let contenedor_padre = $(this).parent().parent().parent().attr("id");
+    let id = "";
+    let codigo = $(this).attr("href");
 
-        if (contenedor_padre == "listaAlmacen"){
-            $("#codigo_almacen").val(codigo);
+    control.slideUp();
 
-            $.post(RUTA+"recepcion/numeroIngreso", {id:codigo},
-                function (data, textStatus, jqXHR) {
-                    $("#numero").val(data.numero);
-                    $("#movimiento").val(data.movimiento);
-                },
-                "json"
-            );
-        }else if(contenedor_padre == "listaAprueba"){
-            $("#codigo_aprueba").val(codigo);
-        }else if(contenedor_padre == "listaMovimiento"){
-            $("#codigo_movimiento").val(codigo);
-        }
+    destino.val($(this).text());
+    id = destino.attr("id");
 
-        return false;
-    });
+    if (contenedor_padre == "listaAlmacen") {
+      $("#codigo_almacen").val(codigo);
 
-    $("#importData").click(function (e) { 
-        e.preventDefault();
-        
-        try {
-            if (accion == "u") throw "No se puede añadir mas registros al ingreso";
+      $.post(
+        RUTA + "recepcion/numeroIngreso",
+        { id: codigo },
+        function (data, textStatus, jqXHR) {
+          $("#numero").val(data.numero);
+          $("#movimiento").val(data.movimiento);
+        },
+        "json",
+      );
+    } else if (contenedor_padre == "listaAprueba") {
+      $("#codigo_aprueba").val(codigo);
+    } else if (contenedor_padre == "listaMovimiento") {
+      $("#codigo_movimiento").val(codigo);
+    }
 
-            $("#busqueda").fadeIn();
+    return false;
+  });
 
-            /*$.post(RUTA+"recepcion/ordenes",
+  $("#importData").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if (accion == "u") throw "No se puede añadir mas registros al ingreso";
+
+      $("#busqueda").fadeIn();
+
+      /*$.post(RUTA+"recepcion/ordenes",
                 function (data, textStatus, jqXHR) {
                     $("#ordenes tbody")
                         .empty()
@@ -191,617 +189,642 @@ $(function(){
                 },
                 "text"
             );*/
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-        
-        return false;
-    });
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
 
-    $(".tituloVentana").on("click","a", function (e) {
-        e.preventDefault();
+    return false;
+  });
 
-        $(this).parent().parent().parent().parent().fadeOut();
+  $(".tituloVentana").on("click", "a", function (e) {
+    e.preventDefault();
 
-        return false;
-    });
+    $(this).parent().parent().parent().parent().fadeOut();
 
-    $("#ordenes tbody").on("click","tr", function (e) {
-        e.preventDefault();
+    return false;
+  });
 
-        $("#tipo").val("ORDEN DE COMPRA");
-        $("#codigo_movimiento").val(89);
+  $("#ordenes tbody").on("click", "tr", function (e) {
+    e.preventDefault();
 
-        $.post(RUTA+"recepcion/ordenId",{id:$(this).data("orden")},
-            function (data, textStatus, jqXHR) {
-                    suma = 0;
+    $("#tipo").val("ORDEN DE COMPRA");
+    $("#codigo_movimiento").val(89);
 
-                    $("#codigo_costos").val(data.cabecera[0].ncodcos);
-                    $("#codigo_area").val(data.cabecera[0].ncodarea);
-                    $("#codigo_orden").val(data.cabecera[0].id_regmov);
-                    $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
-                    $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
-                    $("#codigo_entidad").val(data.cabecera[0].id_centi);
-                    $("#proyecto").val(data.cabecera[0].costos);
-                    $("#area").val(data.cabecera[0].area);
-                    $("#solicita").val(data.cabecera[0].solicita);
-                    $("#orden").val(data.cabecera[0].cnumero);
-                    $("#pedido").val(data.cabecera[0].pedido);
-                    $("#ruc").val(data.cabecera[0].cnumdoc);
-                    $("#razon").val(data.cabecera[0].crazonsoc);
-                    $("#concepto").val(data.cabecera[0].concepto);
-                    $("#detalle").val(data.cabecera[0].detalle);
-                    $("#almacen").val(data.cabecera[0].cdesalm);
-                    $("#codigo_almacen").val(data.cabecera[0].ncodalm);
-                    $("#numero").val(data.numero.numero);
-                    $("#movimiento").val(data.numero.movimiento);
-                
-                    $("#tablaDetalles tbody")
-                        .empty()
-                        .append(data.detalles);
+    $.post(
+      RUTA + "recepcion/ordenId",
+      { id: $(this).data("orden") },
+      function (data, textStatus, jqXHR) {
+        suma = 0;
 
-                    $("#items").val($("#tablaDetalles tbody tr").length);
+        $("#codigo_costos").val(data.cabecera[0].ncodcos);
+        $("#codigo_area").val(data.cabecera[0].ncodarea);
+        $("#codigo_orden").val(data.cabecera[0].id_regmov);
+        $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
+        $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+        $("#codigo_entidad").val(data.cabecera[0].id_centi);
+        $("#proyecto").val(data.cabecera[0].costos);
+        $("#area").val(data.cabecera[0].area);
+        $("#solicita").val(data.cabecera[0].solicita);
+        $("#orden").val(data.cabecera[0].cnumero);
+        $("#pedido").val(data.cabecera[0].pedido);
+        $("#ruc").val(data.cabecera[0].cnumdoc);
+        $("#razon").val(data.cabecera[0].crazonsoc);
+        $("#concepto").val(data.cabecera[0].concepto);
+        $("#detalle").val(data.cabecera[0].detalle);
+        $("#almacen").val(data.cabecera[0].cdesalm);
+        $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+        $("#numero").val(data.numero.numero);
+        $("#movimiento").val(data.numero.movimiento);
 
-                $("#busqueda").fadeOut();
-            },
-            "json"
-        );
-        return false
-    });
+        $("#tablaDetalles tbody").empty().append(data.detalles);
 
-    $("#btnAceptItems").click(function (e) { 
-        e.preventDefault();
-        
-        if (co != 0) {
-            $.post(RUTA+"recepcion/cabeceraIngreso", {id:co},
-                function (data, textStatus, jqXHR) {
-                    $("#codigo_costos").val()
-                    $("#codigo_area").val()
-                    $("#codigo_orden").val()
-                    $("#codigo_estado").val()
-                    $("#codigo_entidad").val()
-                    $("#proyecto").val(data.cabecera[0].costos)
-                    $("#solicita").val()
-                    $("#orden").val()
-                    $("#pedido").val()
-                    $("#ruc").val()
-                    $("#razon").val()
-                    $("#concepto").val()
-                    $("#detalle").val()
-                },
-                "json"
-            );
-        }
+        $("#items").val($("#tablaDetalles tbody tr").length);
 
-        return false
-    });
+        $("#busqueda").fadeOut();
+      },
+      "json",
+    );
+    return false;
+  });
 
-    $("#atachDocs").click(function (e) { 
-        e.preventDefault();
-        
-        $("#archivos").fadeIn();
+  $("#btnAceptItems").click(function (e) {
+    e.preventDefault();
 
-        return false;
-    });
+    if (co != 0) {
+      $.post(
+        RUTA + "recepcion/cabeceraIngreso",
+        { id: co },
+        function (data, textStatus, jqXHR) {
+          $("#codigo_costos").val();
+          $("#codigo_area").val();
+          $("#codigo_orden").val();
+          $("#codigo_estado").val();
+          $("#codigo_entidad").val();
+          $("#proyecto").val(data.cabecera[0].costos);
+          $("#solicita").val();
+          $("#orden").val();
+          $("#pedido").val();
+          $("#ruc").val();
+          $("#razon").val();
+          $("#concepto").val();
+          $("#detalle").val();
+        },
+        "json",
+      );
+    }
 
-    $("#openArch").click(function (e) { 
-        e.preventDefault();
- 
-        if (accion == "n")
-            $("#uploadAtach").trigger("click");
- 
-        return false;
-    });
+    return false;
+  });
 
-    $("#uploadAtach").on("change", function (e) {
-        e.preventDefault();
- 
-        let fp = $(this);
-        let lg = fp[0].files.length;
-        let items = fp[0].files;
-        let fragment = "";
- 
-        if (lg > 0) {
-             for (var i = 0; i < lg; i++) {
-                 var fileName = items[i].name; // get file name
- 
-                 // append li to UL tag to display File info
-                 fragment +=`<li><p><i class="far fa-file"></i></p>
+  $("#atachDocs").click(function (e) {
+    e.preventDefault();
+
+    $("#archivos").fadeIn();
+
+    return false;
+  });
+
+  $("#openArch").click(function (e) {
+    e.preventDefault();
+
+    if (accion == "n") $("#uploadAtach").trigger("click");
+
+    return false;
+  });
+
+  $("#uploadAtach").on("change", function (e) {
+    e.preventDefault();
+
+    let fp = $(this);
+    let lg = fp[0].files.length;
+    let items = fp[0].files;
+    let fragment = "";
+
+    if (lg > 0) {
+      for (var i = 0; i < lg; i++) {
+        var fileName = items[i].name; // get file name
+
+        // append li to UL tag to display File info
+        fragment += `<li><p><i class="far fa-file"></i></p>
                                  <p>${fileName}</p></li>`;
-             }
- 
-             $(".listaArchivos").append(fragment);
-         }
- 
-        return false;
-    });
- 
-    $("#btnConfirmAtach").on("click", function (e) {
-         e.preventDefault();
- 
-         $("#archivos").fadeOut();
- 
-         return false;
-    });
- 
-    $("#btnCancelAtach").on("click", function (e) {
-         e.preventDefault();
- 
-         $("#archivos").fadeOut();
-         $("#fileAtachs")[0].reset();
-         $(".listaArchivos").empty();
- 
-    });
+      }
 
-    $("#btnCancelSeries").click(function (e) { 
-        e.preventDefault();
+      $(".listaArchivos").append(fragment);
+    }
 
-        $("#tablaSeries tbody").empty();
-        $("#series").fadeOut();
-        
-        return false;
-    });
+    return false;
+  });
 
-    $("#btnConfirmSeries").click(function (e) { 
-        e.preventDefault();
+  $("#btnConfirmAtach").on("click", function (e) {
+    e.preventDefault();
 
-        $("#series").fadeOut();
-        
-        return false;
-    });
+    $("#archivos").fadeOut();
 
-    $("#preview").click(function (e) { 
-        e.preventDefault();
-        
-        let result = {};
+    return false;
+  });
 
-        if ( $("#usuario_elabora").val() == "" ){
-            $("#usuario_elabora").val($("#user_log").val());
-        }
+  $("#btnCancelAtach").on("click", function (e) {
+    e.preventDefault();
 
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
+    $("#archivos").fadeOut();
+    $("#fileAtachs")[0].reset();
+    $(".listaArchivos").empty();
+  });
 
-        try {
-            //if ( tipoVista == "" ) throw "Debe grabar el documento...";
-            //if ( !grabado ) throw "Debe grabar el documento";
+  $("#btnCancelSeries").click(function (e) {
+    e.preventDefault();
 
-            $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
-                                                    detalles:JSON.stringify(detalles(tipoVista)),
-                                                    condicion:1},
-                function (data, textStatus, jqXHR) {
-                    $(".ventanaVistaPrevia iframe")
-                    .attr("src","")
-                    .attr("src",data);
+    $("#tablaSeries tbody").empty();
+    $("#series").fadeOut();
 
-                    $("#vistaprevia").fadeIn();
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
+    return false;
+  });
 
-        return preview;
+  $("#btnConfirmSeries").click(function (e) {
+    e.preventDefault();
+
+    $("#series").fadeOut();
+
+    return false;
+  });
+
+  $("#preview").click(function (e) {
+    e.preventDefault();
+
+    let result = {};
+
+    if ($("#usuario_elabora").val() == "") {
+      $("#usuario_elabora").val($("#user_log").val());
+    }
+
+    $.each($("#formProceso").serializeArray(), function () {
+      result[this.name] = this.value;
     });
 
-    $("#closePreview").click(function (e) { 
-        e.preventDefault();
+    try {
+      //if ( tipoVista == "" ) throw "Debe grabar el documento...";
+      //if ( !grabado ) throw "Debe grabar el documento";
 
-        $(".ventanaVistaPrevia iframe").attr("src","");
-        $("#vistaprevia").fadeOut();
+      $.post(
+        RUTA + "recepcion/documentopdf",
+        {
+          cabecera: result,
+          detalles: JSON.stringify(detalles(tipoVista)),
+          condicion: 1,
+        },
+        function (data, textStatus, jqXHR) {
+          $(".ventanaVistaPrevia iframe").attr("src", "").attr("src", data);
 
-        return false;
-    });
-  
-    $("#btnConsulta").on('click', function(e) {
-        e.preventDefault();
+          $("#vistaprevia").fadeIn();
+        },
+        "text",
+      );
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
 
-        let str = $("#formConsulta").serialize();
+    return preview;
+  });
 
-        $.post(RUTA+"recepcion/filtroRecepcion", str,
-            function (data, text, requestXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
-            },
-            "text"
+  $("#closePreview").click(function (e) {
+    e.preventDefault();
+
+    $(".ventanaVistaPrevia iframe").attr("src", "");
+    $("#vistaprevia").fadeOut();
+
+    return false;
+  });
+
+  $("#btnConsulta").on("click", function (e) {
+    e.preventDefault();
+
+    let str = $("#formConsulta").serialize();
+
+    $.post(
+      RUTA + "recepcion/filtroRecepcion",
+      str,
+      function (data, text, requestXHR) {
+        $("#tablaPrincipal tbody").empty().append(data);
+      },
+      "text",
+    );
+
+    return false;
+  });
+
+  $("#itemCostos").change(function (e) {
+    e.preventDefault(e);
+
+    $.post(
+      RUTA + "recepcion/ordenesPorCosto",
+      { costo: $(this).val() },
+      function (data, textStatus, jqXHR) {
+        $("#ordenes tbody").empty().append(data);
+      },
+      "text",
+    );
+
+    return false;
+  });
+
+  $("#ordenSearch").keyup(function (e) {
+    if (e.which == 13) {
+      $("#esperar").fadeIn();
+
+      $.post(
+        RUTA + "recepcion/filtraOrden",
+        { id: $(this).val() },
+        function (data, textStatus, jqXHR) {
+          $("#ordenes tbody").empty().append(data);
+          $("#esperar").fadeOut();
+        },
+        "text",
+      );
+    }
+  });
+
+  //aca modificamos para que confirme el ingreso --- revisar esta parte para lo detalles ingresos
+
+  $("#btnPendientes, #btnTotales").click(function (e) {
+    e.preventDefault();
+
+    tipoVista = this.id === "btnTotales";
+
+    const result = $("#formProceso")
+      .serializeArray()
+      .reduce((obj, item) => {
+        obj[item.name] = item.value;
+        return obj;
+      }, {});
+
+    try {
+      if (!result.codigo_almacen) throw "Elija el Almacen";
+      if (!result.codigo_aprueba) throw "Elija la persona que aprueba";
+      if (!result.guia) throw "Escriba el número de guia";
+      if (verificarCantidadesInput())
+        throw "Verifique las cantidades ingresadas";
+
+      const items = detalles(tipoVista);
+      if (!items.length) throw "No hay items que procesar";
+
+      $("#itemSeleccion").text(items.length);
+      $("#preguntaGraba").fadeIn();
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#btnAceptarGrabar").click(function (e) {
+    e.preventDefault();
+
+    $("#preguntaGraba").fadeOut();
+
+    grabarDetalles(tipoVista, accion);
+    grabado = true;
+
+    return false;
+  });
+
+  $("#btnCancelarGrabar").click(function (e) {
+    e.preventDefault();
+
+    $("#preguntaGraba").fadeOut();
+
+    return false;
+  });
+
+  //para no poner cantidades mayores en el formulario
+  $("#tablaDetalles tbody").on("blur", "input", function (e) {
+    try {
+      let ingreso = parseInt(
+        $(this).parent().parent().find("td").eq(7).children().val(),
+      );
+      let stock = parseInt($(this).parent().parent().find("td").eq(6).text());
+
+      if (ingreso > stock) {
+        mostrarMensaje(
+          "La cantidad ingresada, es mayor a la de la orden de compra",
+          "mensaje_error",
         );
-        
-        return false
-    });
-
-    $("#itemCostos").change(function (e) { 
-        e.preventDefault(e);
-
-        $.post(RUTA+"recepcion/ordenesPorCosto", {costo:$(this).val()},
-            function (data, textStatus, jqXHR) {
-                $("#ordenes tbody")
-                    .empty()
-                    .append(data);
-            },
-            "text"
-        );
-
-        return false        
-    });
-
-    $("#ordenSearch").keyup(function (e) { 
-        if(e.which == 13) {
-            $("#esperar").fadeIn();
-            
-            $.post(RUTA+"recepcion/filtraOrden", {id:$(this).val()},
-                function (data, textStatus, jqXHR) {
-                    $("#ordenes tbody")
-                        .empty()
-                        .append(data);
-                    $("#esperar").fadeOut();
-                },
-                "text"
-            );
-        }
-    });
-
-    //aca modificamos para que confirme el ingreso 
-    $("#btnPendientes, #btnTotales").click(function (e) { 
-        e.preventDefault();
-
-        tipoVista = "";
-
-        tipoVista = e.target.id == "btnTotales"?true:false;
-
-        let result = {};
-
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['guia'] == '') throw "Escriba el número de guia";
-
-            if (verificarCantidadesInput()) throw "Verifique las cantidades ingresadas";
-            if (detalles(tipoVista).length == 0) throw "No hay items que procesar";
-
-            $("#itemSeleccion").text( detalles(tipoVista).length );
-
-            $("#preguntaGraba").fadeIn();
-
-        } catch (error) {
-             mostrarMensaje(error,'mensaje_error');
-        }
-
         return false;
-    });
+      }
+    } catch (error) {}
+  });
 
-    $("#btnAceptarGrabar").click(function (e) { 
-        e.preventDefault();
+  $("#atachDocs").click(function (e) {
+    e.preventDefault();
 
-        $("#preguntaGraba").fadeOut();
-        
-        grabarDetalles(tipoVista,accion);
-        grabado = true;
+    try {
+      if ($("#codigo_orden").val() == "")
+        throw "Seleccione un orden, para ver los adjuntos";
 
-        return false;
-    });
+      $.post(
+        RUTA + "recepcion/verAdjuntos",
+        { id: $("#codigo_orden").val() },
+        function (data, textStatus, jqXHR) {
+          $("#listaAdjuntos").empty().append(data.adjuntos);
+          $("#vistaAdjuntos").fadeIn();
+        },
+        "json",
+      );
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
 
-    $("#btnCancelarGrabar").click(function (e) { 
-        e.preventDefault();
+    return false;
+  });
 
-        $("#preguntaGraba").fadeOut();
+  $("#closeAtach").click(function (e) {
+    e.preventDefault();
 
-        return false;
-    });
+    $("#vistaAdjuntos").fadeOut();
+    $(".ventanaAdjuntos iframe").attr("src", "");
 
-    //para no poner cantidades mayores en el formulario
-    $("#tablaDetalles tbody").on('blur','input', function (e) {
-        try {
-            let ingreso = parseInt($(this).parent().parent().find("td").eq(7).children().val());
-            let stock = parseInt($(this).parent().parent().find("td").eq(6).text());
+    return false;
+  });
 
-            if(ingreso > stock) {
-                mostrarMensaje('La cantidad ingresada, es mayor a la de la orden de compra','mensaje_error')
-                return false;
-            }
+  $("#vistaAdjuntos").on("click", "a", function (e) {
+    e.preventDefault();
 
-        } catch (error) {
-            
-        }
-    });
+    $(".ventanaAdjuntos iframe")
+      .attr("src", "")
+      .attr(
+        "src",
+        "public/documentos/ordenes/adjuntos/" + $(this).attr("href"),
+      );
 
-    $("#atachDocs").click(function (e) { 
-        e.preventDefault();
+    return false;
+  });
 
-        try {
-            if ($("#codigo_orden").val() == "") throw "Seleccione un orden, para ver los adjuntos";
+  $("#tablaDetalles tbody").on("click", "a", function (e) {
+    e.preventDefault();
 
-            $.post(RUTA+"recepcion/verAdjuntos", {id:$("#codigo_orden").val()},
-                function (data, textStatus, jqXHR) {
-                    $("#listaAdjuntos").empty().append(data.adjuntos);
-                    $("#vistaAdjuntos").fadeIn();
-                },
-                "json"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error')
-        }
-       
-        return false;
-    });
+    fila = $(this).parent().parent();
+    idfila = $(this).parent().parent().data("iddetped");
 
-    $("#closeAtach").click(function(e){
-        e.preventDefault();
+    if ($(this).data("accion") == "setSerial") {
+      let filas = parseInt(
+          $(this).parent().parent().find("td").eq(7).children().val(),
+        ),
+        orden = $(this).parent().parent().data("detorden"),
+        producto = $(this).parent().parent().data("idprod"),
+        almacen = $("#codigo_almacen").val(),
+        nombre = $(this).parent().parent().find("td").eq(3).text(),
+        item = $(this).parent().parent().data("iddetped");
 
-        $("#vistaAdjuntos").fadeOut();
-        $(".ventanaAdjuntos iframe").attr("src","");
-
-        return false;
-    });
-
-    $("#vistaAdjuntos").on("click","a", function (e) {
-        e.preventDefault();
-        
-        $(".ventanaAdjuntos iframe")
-            .attr("src","")
-            .attr("src","public/documentos/ordenes/adjuntos/"+$(this).attr("href"));
-        
-        return false;
-    });
-
-    $("#tablaDetalles tbody").on("click","a", function (e) {
-        e.preventDefault();
-
-        fila = $(this).parent().parent();
-        idfila = $(this).parent().parent().data('iddetped');
-
-        if ($(this).data("accion") == "setSerial") {
-            let filas   = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
-            orden       = $(this).parent().parent().data('detorden'),
-            producto    = $(this).parent().parent().data('idprod'),
-            almacen     = $("#codigo_almacen").val(),
-            nombre      = $(this).parent().parent().find("td").eq(3).text(),
-            item        = $(this).parent().parent().data('iddetped');
-
-            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}">
+      row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}">
                         <td>${nombre}</td>
                         <td><input type="text"></td>
-                    </tr>`
+                    </tr>`;
 
-            if (accion == 'n') {
-                $("#tablaSeries tbody").empty();
+      if (accion == "n") {
+        $("#tablaSeries tbody").empty();
 
-                for (let index = 0; index < filas; index++) {
-                    $("#tablaSeries").append(row);        
-                }
-            }
+        for (let index = 0; index < filas; index++) {
+          $("#tablaSeries").append(row);
+        }
+      }
 
-            $("#series").fadeIn();
-        }else {
-            $.post(RUTA+"recepcion/existeSalida", {id:$(this).parent().parent().data('iddetped')},
-                function (data, textStatus, jqXHR) {
-                    if (data == 1)
-                      mostrarMensaje("EL item ya tiene registro de salida","mensaje_error");
-                    else
-                        $("#pregunta").fadeIn();
-                },
-                "text"
+      $("#series").fadeIn();
+    } else {
+      $.post(
+        RUTA + "recepcion/existeSalida",
+        { id: $(this).parent().parent().data("iddetped") },
+        function (data, textStatus, jqXHR) {
+          if (data == 1)
+            mostrarMensaje(
+              "EL item ya tiene registro de salida",
+              "mensaje_error",
             );
-        }
-        
+          else $("#pregunta").fadeIn();
+        },
+        "text",
+      );
+    }
 
-        return false;
-    });
+    return false;
+  });
 
-    $("#btnAceptarPregunta").click(function (e) { 
-        e.preventDefault();
+  $("#btnAceptarPregunta").click(function (e) {
+    e.preventDefault();
 
-        $.post(RUTA+"recepcion/marcaItem", {id:idfila},
-            function (data, textStatus, jqXHR) {
-                fila.remove();
-                fillTables($("#tablaDetalles tbody > tr"),2);
+    $.post(
+      RUTA + "recepcion/marcaItem",
+      { id: idfila },
+      function (data, textStatus, jqXHR) {
+        fila.remove();
+        fillTables($("#tablaDetalles tbody > tr"), 2);
 
-                $("#pregunta").fadeOut();
-            },
-            "text"
-        );
-        
-        return false;
-    });
-
-    $("#btnCancelarPregunta").click(function (e) { 
-        e.preventDefault();
-        
         $("#pregunta").fadeOut();
+      },
+      "text",
+    );
 
-        return false;
-    });
+    return false;
+  });
 
-    $("#cancelRegister").click(function (e) { 
-        e.preventDefault();
+  $("#btnCancelarPregunta").click(function (e) {
+    e.preventDefault();
 
-        $("#preguntaAnula").fadeIn();
+    $("#pregunta").fadeOut();
 
-        return false;
-    });
+    return false;
+  });
 
-    $("#btnAceptarAnula").click(function(e){
-        e.preventDefault();
+  $("#cancelRegister").click(function (e) {
+    e.preventDefault();
 
-        //usuarios autorizados para anular
-        let users = ['628c5d20e3173','62145bbb5a092'],
-            usuario = $("#id_user").val();
-        try {
-            if(!users.includes(usuario)) throw Error("No puede realizar esta accion!");
+    $("#preguntaAnula").fadeIn();
 
-            formData = new FormData();
-            formData.append('id',$("#codigo_ingreso").val());
-            formData.append('orden',$("#orden").val());
+    return false;
+  });
 
-            $("#esperar").css("opacity","1").fadeIn();
+  $("#btnAceptarAnula").click(function (e) {
+    e.preventDefault();
 
-            fetch(RUTA+'recepcion/anular',{
-                method: 'POST',
-                body:formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                $("#preguntaAnula").fadeOut();
-                $("#esperar").css("opacity","0").fadeOut();
-                mostrarMensaje(data.mensaje,data.clase);
-                
-            })
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
+    //usuarios autorizados para anular
+    let users = ["628c5d20e3173", "62145bbb5a092"],
+      usuario = $("#id_user").val();
+    try {
+      if (!users.includes(usuario))
+        throw Error("No puede realizar esta accion!");
 
-        return false;
-    });
+      formData = new FormData();
+      formData.append("id", $("#codigo_ingreso").val());
+      formData.append("orden", $("#orden").val());
 
-    $("#btnCancelarAnula").click(function(e){
-        e.preventDefault();
+      $("#esperar").css("opacity", "1").fadeIn();
 
-        $("#preguntaAnula").fadeOut();
+      fetch(RUTA + "recepcion/anular", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          $("#preguntaAnula").fadeOut();
+          $("#esperar").css("opacity", "0").fadeOut();
+          mostrarMensaje(data.mensaje, data.clase);
+        });
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
 
-        return false;
-    });
-})
+    return false;
+  });
 
-detalles = (flag) =>{
-    DETALLES = [];
+  $("#btnCancelarAnula").click(function (e) {
+    e.preventDefault();
 
-    let TABLA = $("#tablaDetalles tbody >tr");
-    
-    TABLA.each(function(){
-        let  CHECKED  = $(this).find('td').eq(1).children().prop("checked");
+    $("#preguntaAnula").fadeOut();
 
-        if ( CHECKED === flag ) {
-            if ( $(this).find('td').eq(7).children().val() > 0) {
-                let item = {};
+    return false;
+  });
+});
 
-                item['item']        = $(this).find('td').eq(1).text();
-                item['iddetorden']  = $(this).data("detorden");
-                item['iddetped']    = $(this).data("iddetped");
-                item['idprod']      = $(this).data("idprod");
-                item['iddeting']    = $(this).data("iddetnota");
-                item['pedido']      = $("#codigo_pedido").val();
-                item['orden']       = $("#codigo_orden").val();
-                item['almacen']     = $("#codigo_almacen").val();
-                item['cantrec']     = $(this).find('td').eq(7).children().val();
-                item['cantsol']     = parseFloat($(this).find('td').eq(6).text());
-                item['cantsal']     = null;
-                item['obser']       = $(this).find('td').eq(8).children().val();
-                item['vence']       = null;
+detalles = (flag) => {
+  DETALLES = [];
 
-                item['codigo']     = $(this).find('td').eq(3).text();
-                item['descripcion']= $(this).find('td').eq(4).text();
-                item['unidad']     = $(this).find('td').eq(5).text();
-                item['nestado']    = null;
-                item['cestado']    = null;
-                item['ubicacion']  = null;
-                item['itemstat']   = CHECKED;
+  let TABLA = $("#tablaDetalles tbody >tr");
 
-                DETALLES.push(item);
-            }
-        }
-    })
+  TABLA.each(function () {
+    let CHECKED = $(this).find("td").eq(1).children().prop("checked");
 
-    return DETALLES; 
-}
+    if (CHECKED === flag) {
+      if ($(this).find("td").eq(7).children().val() > 0) {
+        let item = {};
+
+        item["item"] = $(this).find("td").eq(1).text();
+        item["iddetorden"] = $(this).data("detorden");
+        item["iddetped"] = $(this).data("iddetped");
+        item["idprod"] = $(this).data("idprod");
+        item["iddeting"] = $(this).data("iddetnota");
+        item["pedido"] = $("#codigo_pedido").val();
+        item["orden"] = $("#codigo_orden").val();
+        item["almacen"] = $("#codigo_almacen").val();
+        item["cantrec"] = $(this).find("td").eq(7).children().val();
+        item["cantsol"] = parseFloat($(this).find("td").eq(6).text());
+        item["cantsal"] = null;
+        item["obser"] = $(this).find("td").eq(8).children().val();
+        item["vence"] = null;
+
+        item["codigo"] = $(this).find("td").eq(3).text();
+        item["descripcion"] = $(this).find("td").eq(4).text();
+        item["unidad"] = $(this).find("td").eq(5).text();
+        item["nestado"] = null;
+        item["cestado"] = null;
+        item["ubicacion"] = null;
+        item["itemstat"] = CHECKED;
+
+        DETALLES.push(item);
+      }
+    }
+  });
+
+  return DETALLES;
+};
 
 series = () => {
-    SERIES = [];
+  SERIES = [];
 
-    let TABLA = $("#tablaSeries tbody >tr");
+  let TABLA = $("#tablaSeries tbody >tr");
 
-    TABLA.each(function(){
+  TABLA.each(function () {
+    let ORDEN = $(this).data("orden"),
+      ALMACEN = $("#codigo_almacen").val(),
+      PRODUCTO = $(this).data("producto"),
+      IDPED = $(this).data("itempedido");
+    SERIE = $(this).find("td").eq(1).children().val();
 
-        let ORDEN   = $(this).data('orden'),
-            ALMACEN = $("#codigo_almacen").val(),
-            PRODUCTO = $(this).data('producto'),
-            IDPED    = $(this).data('itempedido')
-            SERIE  = $(this).find('td').eq(1).children().val();
-    
-        item = {};
+    item = {};
 
-        if (SERIE != ""){
-            item['orden']       = ORDEN;
-            item['almacen']     = ALMACEN;
-            item['producto']    = PRODUCTO;
-            item['serie']       = SERIE;
-            item['idped']       = IDPED;
-        }
-        
-
-        SERIES.push(item);
-    })
-
-    return SERIES;
-}
-
-verificarCantidadesInput = () =>{
-    let TABLA = $("#tablaDetalles tbody >tr"),
-        errorCantidad = false;
-
-    TABLA.each(function(){
-        let cantidad    = parseInt($(this).find("td").eq(6).text()),// cantidad
-            cantdesp    = parseInt($(this).find('td').eq(7).children().val());
-
-        if( cantidad < cantdesp) {
-            errorCantidad = true
-        }       
-    })
-
-    return errorCantidad;
-}
-
-grabarDetalles = (tipoVista,accion) => {
-    try {
-
-        let result = {};
-
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        if (accion == "n") {
-            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                detalles:JSON.stringify(detalles(tipoVista)),
-                series:JSON.stringify(series()),
-                usuario:$("#id_user").val()},
-                    function (data, textStatus, jqXHR) {
-                        $("#codigo_ingreso").val(data.indice);
-                        mostrarMensaje("Nota Grabada","mensaje_correcto");
-                        $("#tablaPrincipal tbody")
-                            .empty()
-                            .append(data.listado);
-                        
-                        accion = "";
-                        grabado = true;
-                        tipoVista = "";
-                        $(".primeraBarra").css("background","#819830");
-                        $(".primeraBarra span").text('Datos Generales ... Grabado');
-                    },
-                    "json"
-                );
-        }else if(accion == "u"){
-                $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
-                    detalles:JSON.stringify(detalles(true))},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje("Nota Modificada","mensaje_correcto");
-                        
-                        accion = "";
-                        grabado = true;
-                        tipoVista = "";
-                    },
-                    "json"
-                );
-            }
-
-            accion = "";
-
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
+    if (SERIE != "") {
+      item["orden"] = ORDEN;
+      item["almacen"] = ALMACEN;
+      item["producto"] = PRODUCTO;
+      item["serie"] = SERIE;
+      item["idped"] = IDPED;
     }
-}
+
+    SERIES.push(item);
+  });
+
+  return SERIES;
+};
+
+verificarCantidadesInput = () => {
+  let TABLA = $("#tablaDetalles tbody >tr"),
+    errorCantidad = false;
+
+  TABLA.each(function () {
+    let cantidad = parseInt($(this).find("td").eq(6).text()), // cantidad
+      cantdesp = parseInt($(this).find("td").eq(7).children().val());
+
+    if (cantidad < cantdesp) {
+      errorCantidad = true;
+    }
+  });
+
+  return errorCantidad;
+};
+
+
+grabarDetalles = (tipoVista, accion) => {
+  try {
+    $("#esperar").fadeIn();
+
+    const result = $("#formProceso")
+      .serializeArray()
+      .reduce((obj, item) => ((obj[item.name] = item.value), obj), {});
+
+    const config = {
+      n: {
+        url: RUTA + "recepcion/nuevoIngreso",
+        data: {
+          cabecera: result,
+          detalles: JSON.stringify(detalles(tipoVista)),
+          series: JSON.stringify(series()),
+          usuario: $("#id_user").val(),
+        },
+        success: (data) => {
+          $("#codigo_ingreso").val(data.indice);
+          mostrarMensaje("Nota Grabada", "mensaje_correcto");
+          $("#tablaPrincipal tbody").empty().append(data.listado);
+          $(".primeraBarra")
+            .css("background", "#819830")
+            .find("span")
+            .text("Datos Generales ... Grabado");
+          document.getElementById("btnAceptarGrabar").style.pointerEvents =
+            "none";
+        },
+      },
+      u: {
+        url: RUTA + "recepcion/modificarRegistro",
+        data: {
+          cabecera: result,
+          detalles: JSON.stringify(detalles(true)),
+        },
+        success: () => mostrarMensaje("Nota Modificada", "mensaje_correcto"),
+      },
+    };
+
+    const { url, data, success } = config[accion];
+
+    $.post(
+      url,
+      data,
+      (dataResponse) => {
+        success(dataResponse);
+        accion = "";
+        grabado = true;
+        tipoVista = "";
+        $("#esperar").fadeOut();
+      },
+      "json",
+    );
+  } catch (error) {
+    mostrarMensaje(error, "mensaje_error");
+    $("#esperar").fadeOut();
+  }
+};

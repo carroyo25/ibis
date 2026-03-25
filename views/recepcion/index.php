@@ -174,7 +174,7 @@
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
                                         <th width="7%">Cantidad</br>Orden</th>
-                                        <th width="7%">Cantidad</br>Pendiente</th>
+                                        <th width="7%">Cantidad</br>Ingresar</th>
                                         <th class="">Observaciones</th>
                                         <th class="">N° Parte</th>
                                         <th width="5%">...</th>

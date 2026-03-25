@@ -939,5 +939,14 @@
                 return false;
             }
         }
+
+        private function existeGuia($guia,$proyecto,$pedido,$orden){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

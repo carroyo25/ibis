@@ -647,3 +647,67 @@ function iniciarPaginador() {
     createPageButtons();
     showPage(currentPage); // Mostrar la primera página
 }
+
+
+function limpiarFormulario() {
+    const formulario = document.getElementById("formProceso");
+    
+    // 1. Limpiar todos los inputs
+    formulario.querySelectorAll("input:not([type='button']):not([type='submit'])").forEach(input => {
+        if (input.type === "checkbox") {
+            input.checked = false;
+        } else {
+            input.value = "";
+        }
+    });
+    
+    // 2. Restaurar valores por defecto específicos
+    document.getElementById("codigo_ingreso").value = "1";
+    document.getElementById("estado").value = "EN PROCESO";
+    document.getElementById("estado").className = "textoCentro estado w100por procesando";
+    
+    // 3. Limpiar selects
+    formulario.querySelectorAll("select").forEach(select => {
+        select.selectedIndex = 0;
+    });
+    
+    // 4. Limpiar textareas
+    formulario.querySelectorAll("textarea").forEach(textarea => {
+        textarea.value = "";
+    });
+    
+    // 5. Limpiar tabla de detalles
+    const tbody = document.querySelector("#tablaDetalles tbody");
+    if (tbody) tbody.innerHTML = "";
+    
+    // 6. Resetear campos que deben estar vacíos pero con readonly
+    const camposReadonly = ["almacen", "proyecto", "area", "solicita", "orden", 
+                            "pedido", "ruc", "razon", "concepto", "aprueba", 
+                            "tipo", "movimiento"];
+    camposReadonly.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) campo.value = "";
+    });
+    
+    // 7. Limpiar campos hidden específicos
+    const hiddenCampos = ["codigo_costos", "codigo_area", "codigo_movimiento", 
+                          "codigo_aprueba", "codigo_almacen", "codigo_pedido", 
+                          "codigo_orden", "codigo_estado", "codigo_entidad", 
+                          "codigo_moneda", "correo_entidad", "codigo_verificacion", 
+                          "codigo_recepcion", "usuario_elabora", "detalle"];
+    hiddenCampos.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) campo.value = "";
+    });
+    
+    // 8. Resetear fecha al día actual (opcional)
+    const fechaInput = document.getElementById("fecha");
+    if (fechaInput) {
+        const hoy = new Date().toISOString().split('T')[0];
+        fechaInput.value = hoy;
+    }
+    
+    // 9. Limpiar campo de guía (no es readonly)
+    const guiaInput = document.getElementById("guia");
+    if (guiaInput) guiaInput.value = "";
+}
