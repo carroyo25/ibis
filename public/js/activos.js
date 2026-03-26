@@ -6,8 +6,7 @@ $(function () {
 
   const modal_registro = document.getElementById("dialogo_registro");
   const modal_carga = document.getElementById("cargarArchivo");
-  const modal_cargar_certificados =
-    document.getElementById("cargarCertificados");
+  const modal_cargar_certificados = document.getElementById("cargarCertificados");
   const modal_qr = document.getElementById("vistaQR");
 
   const btnRegister = document.getElementById("nuevoRegistro");
@@ -21,7 +20,6 @@ $(function () {
   const btnAtach = document.getElementById("btnAtachDialogoActivos");
   const btnQr = document.getElementById("btQrDialogoActivos");
   const btnCancelQr = document.getElementById("btnCancelarQr");
-  //const btnLoadAtach = document.getElementById("openArch");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -30,7 +28,6 @@ $(function () {
   const inputEstado = document.getElementById("estado_actual");
   const inputUbicacion = document.getElementById("ubicacion");
   const inputImport = document.getElementById("fileInput");
-  //const inputAtach = document.getElementById("uploadAtach");
 
   const sltCostos = document.getElementById("centro_costos");
   const sltCostosLoad = document.getElementById("loadProyect");
@@ -40,6 +37,7 @@ $(function () {
   const fmrActivos = document.getElementById("activos_form");
 
   const lnkLoad = document.getElementById("lnkLoad");
+  const lnkCloseAdj = document.getElementById("cerrarCertificados");
 
   const canvas = document.getElementById("qrCodeModal");
 
@@ -100,9 +98,9 @@ $(function () {
   // Cargar archivos existentes en el servidor
   async function loadExistingFiles() {
     try {
-      const response = await fetch("upload.php?action=list");
+      /*const response = await fetch("upload.php?action=list");
       existingFiles = await response.json();
-      console.log("Archivos existentes:", existingFiles);
+      console.log("Archivos existentes:", existingFiles);*/
     } catch (error) {
       console.error("Error al cargar archivos existentes:", error);
       existingFiles = [];
@@ -444,16 +442,16 @@ $(function () {
         (f) => f.file.name === item.file.name && f.file.size === item.file.size,
       );
 
-      updateFileProgress(originalIndex, 0, "uploading");
+     // updateFileProgress(originalIndex, 0, "uploading");
 
       const success = await uploadFile(item.file, originalIndex);
 
       if (success) {
         uploadStats.success++;
-        updateFileProgress(originalIndex, 100, "complete");
+        //updateFileProgress(originalIndex, 100, "complete");
       } else {
         uploadStats.error++;
-        updateFileProgress(originalIndex, 0, "error");
+        //updateFileProgress(originalIndex, 0, "error");
       }
 
       uploadStats.completed++;
@@ -465,25 +463,18 @@ $(function () {
     updateFileList();
 
     // Mostrar mensaje final
-    let message = `✅ Subida completada: ${uploadStats.success} exitosos, ${uploadStats.error} fallidos`;
-    if (uploadStats.exists > 0) {
+    let message = `Proceso completado: ${uploadStats.success} exitosos, ${uploadStats.error} fallidos`;
+    if ( uploadStats.exists > 0 ) {
       message += `, ${uploadStats.exists} archivo(s) omitidos (ya existían)`;
     }
     showStatus(message, uploadStats.success > 0 ? "success" : "error");
 
     // Recargar archivos existentes
     await loadExistingFiles();
-    loadUploadedFiles();
+    //loadUploadedFiles();
 
     // Resetear botón
     uploadBtn.disabled = false;
-
-    // Ocultar resumen después de 5 segundos
-    setTimeout(() => {
-      if (filesToUpload.length === 0) {
-        uploadSummary.style.display = "none";
-      }
-    }, 5000);
   }
 
   // Subir archivo individual
@@ -491,13 +482,14 @@ $(function () {
     return new Promise((resolve) => {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("codigo",document.getElementById("codigo_registro").value);
 
       const xhr = new XMLHttpRequest();
 
       xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
           const percent = (e.loaded / e.total) * 100;
-          updateFileProgress(index, percent, "uploading");
+          //updateFileProgress(index, percent, "uploading");
         }
       });
 
@@ -506,6 +498,7 @@ $(function () {
           try {
             const response = JSON.parse(xhr.responseText);
             resolve(response.success);
+            uploadedFiles.innerHTML = response.error;
           } catch (e) {
             resolve(false);
           }
@@ -518,38 +511,9 @@ $(function () {
         resolve(false);
       });
 
-      xhr.open("POST", "upload.php");
+      xhr.open("POST",RUTA+"activos/cargar");
       xhr.send(formData);
     });
-  }
-
-  // Cargar archivos subidos
-  async function loadUploadedFiles() {
-    try {
-      const response = await fetch("upload.php?action=list");
-      const files = await response.json();
-
-      if (!files || files.length === 0) {
-        uploadedFiles.innerHTML =
-          '<div class="empty-message">No hay archivos subidos</div>';
-        return;
-      }
-
-      uploadedFiles.innerHTML = "";
-      files.forEach((file) => {
-        const item = document.createElement("div");
-        item.className = "uploaded-item";
-        const link = document.createElement("a");
-        link.href = `uploads/${file}`;
-        link.textContent =
-          file.length > 30 ? file.substring(0, 27) + "..." : file;
-        link.target = "_blank";
-        item.appendChild(link);
-        uploadedFiles.appendChild(item);
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
   }
 
   // Mostrar mensaje de estado
@@ -557,9 +521,6 @@ $(function () {
     statusDiv.textContent = message;
     statusDiv.className = `status ${type}`;
     statusDiv.style.display = "block";
-    setTimeout(() => {
-      statusDiv.style.display = "none";
-    }, 4000);
   }
 
   // Formatear tamaño de archivo
@@ -577,8 +538,7 @@ $(function () {
     e.preventDefault();
 
     //llama el codigo del usuario que registra
-    document.getElementById("codigo_usuario").value =
-      document.getElementById("id_user").value;
+    document.getElementById("codigo_usuario").value = document.getElementById("id_user").value;
 
     limpiarFormulario(true);
 
@@ -1028,28 +988,6 @@ $(function () {
     return false;
   });
 
-  $("#uploadAtach").on("change", function (e) {
-    e.preventDefault();
-
-    let fp = $(this);
-    let lg = fp[0].files.length;
-    let items = fp[0].files;
-    let fragment = "";
-
-    if (lg > 0) {
-      for (let i = 0; i < lg; i++) {
-        let fileName = items[i].name; // get file name
-
-        // append li to UL tag to display File info
-        fragment += `<li><a class="icono_archivo"><i class="far fa-file"></i><p>${fileName}</p></a></li>`;
-      }
-
-      $(".listaArchivos").append(fragment);
-    }
-
-    return false;
-  });
-
   $("#closeAtach").click(function (e) {
     e.preventDefault();
 
@@ -1071,6 +1009,20 @@ $(function () {
 
     return false;
   });
+
+  lnkCloseAdj.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    modal_cargar_certificados.style.display = "none";
+    uploadedFiles.innerHTML="";
+    statusDiv.innerHTML = "";
+    fileList.innerHTML = "";
+    fileCount.innerHTML = "";
+    document.getElementById("filesCounter").innerHTML = "";
+    filesToUpload = [];
+
+    return false;
+  })
 });
 
 function actualizarEstado(fechaVenc) {
@@ -1132,6 +1084,7 @@ function limpiarFormulario(sw) {
     document.getElementById("centro_costos").value = "-1";
     document.getElementById("codigoSearch").value = "";
     document.getElementById("descripSearch").value = "";
+    document.getElementById("codigo_registro").value = "";
   }
 
   document.getElementById("unidad").value = "";

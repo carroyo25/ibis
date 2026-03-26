@@ -50,8 +50,9 @@
             echo json_encode($this->model->consultarIDEquipo($_POST));
         }
 
-        function certificados(){
-            echo json_encode($this->model->subirCertificados($_POST['codigo'],$_FILES));
+
+        function cargar(){
+            echo json_encode($this->model->cargarCertificados($_POST['codigo']));
         }
 
     }

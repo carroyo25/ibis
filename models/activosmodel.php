@@ -623,5 +623,57 @@
                 "mensaje" => count($errors) > 0 ? "Algunos archivos no se pudieron subir" : "Todos los archivos se subieron correctamente"
             ];
         }
+
+        public function cargarCertificados($codigo){
+            $uploadDir = 'public/documentos/certificados/activos/';
+            $maxFileSize = 10 * 1024 * 1024; // 10MB
+
+            $error = "";
+
+            if (!isset($_FILES['file'])) {
+                return (['success' => false, 'error' => '✖ No se recibió archivo']);
+            }
+
+            $file = $_FILES['file'];
+    
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                return (['success' => false, 'error' => '✖ Error al subir archivo']);
+            }
+
+            if ($file['size'] > $maxFileSize) {
+                return(['success' => false, 'error' => '✖ Archivo demasiado grande']);
+            }
+
+            // Verificar si el nombre del archivo ya existe en la base de datos
+            $checkSql = $this->db->connect()->prepare("SELECT COUNT(*) as total FROM lg_regdocumento WHERE cdocumento = :doc AND nflgactivo = 1");
+            $checkSql->execute(["doc"=>$file['name']]);
+            $result = $checkSql->fetch(PDO::FETCH_ASSOC);
+
+            if($result['total'] > 0){
+                // El nombre del archivo ya existe, no se sube
+                return (['success' => false, 'error' => " ✖ '{$file['name']}' ya existe en el sistema y no se puede subir."]);
+            }
+
+            // Generar nombre único
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $destination = $uploadDir . $filename;
+
+            if (move_uploaded_file($file['tmp_name'], $destination)) {
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod, cmodulo=:mod, cdocumento=:doc,
+                                                                        creferencia=:ref, nflgactivo=:est");
+                $sql->execute(["cod"=>$codigo,
+                                        "mod"=>"CER",
+                                        "ref"=>$filename,
+                                        "doc"=>$file['name'],
+                                        "est"=>1]);
+                return (['success' => true, 'error' => "✔ '{$file['name']}' correctamente registrado"]);
+            } else {
+                return(['success' => false, 'error' => '✖ Error al guardar archivo']);
+            }
+
+            return array("codigo"=>$codigo);
+        }
     }
 ?>

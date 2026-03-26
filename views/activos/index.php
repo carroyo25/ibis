@@ -40,7 +40,7 @@
                 <input type="hidden" name="codigo_interno" id="codigo_interno">
                 <input type="hidden" name="codigo_unidad" id="codigo_unidad">
                 <input type="hidden" name="codigo_usuario" id="codigo_usuario">
-                <input type="text" name="codigo_registro" id="codigo_registro">
+                <input type="hidden" name="codigo_registro" id="codigo_registro">
 
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
@@ -223,17 +223,18 @@
     <div class="modal" id="cargarCertificados">
         <div class="ventanaArchivos">
             <div class="container_certificados">
-                <div>
+                <div class="container_title">
                     <h3>📁 Adjuntar Certificados</h3>
+                    <a href="#" id="cerrarCertificados" class="closeDialogAtach">X</a>
                 </div>
                 <!-- Área de subida -->
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📤</div>
                     <div>Arrastra y suelta archivos aquí</div>
-                    <div class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                    <div class="browse-btn" onclick="document.getElementById('fileCerts').click()">
                         📂 Seleccionar archivos
                     </div>
-                    <input type="file" id="fileCerts" multiple>
+                    <input type="file" id="fileCerts">
                 </div>
 
                 <!-- Lista de archivos a subir -->
@@ -275,8 +276,8 @@
 
                 <!-- Archivos subidos -->
                 <div class="uploaded-files">
-                    <h3>✅ Archivos subidos exitosamente</h3>
-                    <div id="uploadedFiles" class="uploaded-grid"></div>
+                    <h3 id="filesCounter"></h3>
+                    <div id="uploadedFiles"></div>
                 </div>
             </div>
         </div>
