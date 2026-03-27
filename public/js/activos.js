@@ -18,8 +18,12 @@ $(function () {
   const btnCancelLoad = document.getElementById("btnCancelarCargar");
   const btnConsult = document.getElementById("btnConsulta");
   const btnAtach = document.getElementById("btnAtachDialogoActivos");
-  const btnQr = document.getElementById("btQrDialogoActivos");
+  const btnQr = document.getElementById("btnQrDialogoActivos");
   const btnCancelQr = document.getElementById("btnCancelarQr");
+
+  const btnAnulaAcepta = document.getElementById("btnAceptarAnula");
+  const btnAnulaCancel = document.getElementById("btnCancelarAnula");
+  const btnDeleteRegister = document.getElementById("btnDeleteRegister");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -988,6 +992,46 @@ $(function () {
     return false;
   });
 
+
+  btnDeleteRegister.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    document.getElementById("preguntaAnula").style.display = "block";
+
+    return false;
+  })
+
+  btnAnulaAcepta.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append('codigo',document.getElementById(codigo_registro).value);
+
+    fetch(RUTA+"activos/anula",{
+      method:'POST',
+      body:formData
+    })
+    .then(response => response.json())
+    .then(data=>{
+      console.log(data);
+
+      document.getElementById("preguntaAnula").style.display = "none";
+    })
+
+    return false;
+  })
+
+  
+  btnAnulaCancel.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    document.getElementById("preguntaAnula").style.display = "none";
+
+    return false;
+  })
+
+  
+
   $("#closeAtach").click(function (e) {
     e.preventDefault();
 
@@ -1043,7 +1087,7 @@ function actualizarEstado(fechaVenc) {
   const diffMs = vencimiento - hoy;
   const diffDias = Math.abs(Math.round(diffMs / (1000 * 60 * 60 * 24)));
 
-  if (hoy < vencimiento) {
+  if  (hoy < vencimiento ) {
     estadoSelect.value = "306";
     estadoSelect.style.color = "#2e7d32";
     estadoSelect.style.backgroundColor = "#e8f5e9";
@@ -1400,7 +1444,7 @@ function mostrarDetalleEquipo(id) {
       document.getElementById("fecha_calibra").value =
         data.datos[0]["ffcalibra"];
       document.getElementById("vence_calibra").value = data.datos[0]["ffvence"];
-      document.getElementById("estado_actual").value = data.datos[0]["cestado"];
+      document.getElementById("estado_actual").value = String(data.datos[0]["cestado"]).trim();
       document.getElementById("observa_estado").value =
         data.datos[0]["cobservaciones"];
       document.getElementById("guia_envio").value = data.datos[0]["cgrenvio"];
@@ -1426,7 +1470,7 @@ function mostrarDetalleEquipo(id) {
           data.personal[0]["cargo"].toUpperCase();
       }
 
-      calcularVencimiento();
+      //calcularVencimiento();
 
       document.getElementById("dialogo_registro").style.display = "block";
     });

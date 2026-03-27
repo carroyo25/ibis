@@ -55,5 +55,9 @@
             echo json_encode($this->model->cargarCertificados($_POST['codigo']));
         }
 
+        function anula(){
+            echo json_encode($this->model->anularRegistro($_POST));
+        }
+
     }
 ?>

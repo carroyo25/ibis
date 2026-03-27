@@ -42,6 +42,8 @@
                 <input type="hidden" name="codigo_usuario" id="codigo_usuario">
                 <input type="hidden" name="codigo_registro" id="codigo_registro">
 
+                <input type="text" name="codigo_estado" id="codigo_estado">
+
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
                     <div class="container_flex_column">
@@ -190,7 +192,8 @@
                 </fieldset>
 
                 <div class="opciones_dialogo botones_derecha">
-                    <button type="button" id="btQrDialogoActivos"><i class="fas fa-qrcode"></i> Crear QR</button>
+                    <button type="button" id="btnDeleteRegister" class="boton4"><i class="fas fa-ban"></i> Anular Registro</button>
+                    <button type="button" id="btnQrDialogoActivos"><i class="fas fa-qrcode"></i> Crear QR</button>
                     <button type="button" id="btnAtachDialogoActivos"><i class="far fa-images"></i> Adjuntar Certificados</button>
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
                     <button type="button" id="btnCancelarDialogoActivos"><i class="fas fa-window-close"></i> Cancelar</button>
@@ -303,6 +306,15 @@
             <div class="opciones__modifica__kardex">
                 <button type="button" id="btnImprimiQr" class="boton4">Imprimir</button>
                 <button type="button" id="btnCancelarQr" class="boton4">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaAnula">
+        <div class="ventanaPregunta">
+            <h3>¿ 🚧 Anular el registro ?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnula">Aceptar</button>
+                <button type="button" id="btnCancelarAnula">Cancelar</button>
             </div>
         </div>
     </div>

@@ -675,5 +675,26 @@
 
             return array("codigo"=>$codigo);
         }
+
+        public function anularRegistro($parametros){
+            try {
+                $mensaje = "Error al actualizar el registro";
+                $success = false;
+
+                $sql = $this->mdb->connect()->prepare("UPDATE alm_activos SET alm_activos.nflgactivo = 0 WHERE alm_activos.idreg = :codigo");
+                $sql->execute(["codigo"=>$parametros["codigo"]]);
+                
+                if ( $sql->rowCount() > 0){
+                    $mensaje = "Registro Eliminado";
+                    $success = true;
+                }
+
+                return array("mensaje"=>$mensaje,"success"=>$success);
+
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
