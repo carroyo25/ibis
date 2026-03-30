@@ -321,19 +321,17 @@
                 $lc = 0;
                 $rc = 0;
 
-                /*$qrsunat = "20504898173-09-T001-711.pdf";
+                /*$qrsunat = "20504898173-09-T001-711.pdf";*/
 
-                if ($_SESSION["iduser"] == '62145bbb5a092') {
+                /*if ($_SESSION["iduser"] == '62145bbb5a092') {
                     $pdf->Image('/public/documentos/img/diegoguias.jpg',165,210,35);
-                }
+                }*/
 
-                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                /*if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
                     $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
 
                     $pdf->Image($qrprint,165,210,35);
                 }*/
-
-                //aca podria sumar la orden
 
                 for($i=1;$i<=$nreg;$i++){
 

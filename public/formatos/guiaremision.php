@@ -170,7 +170,7 @@
 
                 $qrsunat = "20504898173-09-T001-".$this->nguia.".png";
 
-                if ($_SESSION["iduser"] == '628c5d20e3173') {
+                if ($_SESSION["iduser"] == '628c5d20e3173' || $_SESSION["iduser"] == '640b33534ec31') {
                     $this->Image('public/img/diegoguias.jpg',130,225,35);
                 }
 
