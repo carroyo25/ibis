@@ -35,6 +35,7 @@
                                                             tb_costusu.nflgactivo = 1 
                                                             AND alm_transfercab.nflgactivo = 1 
                                                             AND tb_costusu.id_cuser = :user
+                                                            
                                                         AND tb_pedidocab.nrodoc LIKE '%'
                                                         GROUP BY
                                                             idreg
@@ -102,7 +103,8 @@
                                                         LEFT JOIN tb_parametros AS movimientos ON alm_transfercab.movalma = movimientos.nidreg 
                                                     WHERE
                                                         alm_transfercab.idreg = :id 
-                                                        AND alm_transfercab.nflgactivo = 1");
+                                                        AND alm_transfercab.nflgactivo = 1
+                                                        AND YEAR(alm_transfercab.reg) = YEAR(NOW)");
                 
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
