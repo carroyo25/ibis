@@ -42,8 +42,6 @@
                 <input type="hidden" name="codigo_usuario" id="codigo_usuario">
                 <input type="hidden" name="codigo_registro" id="codigo_registro">
 
-                <input type="text" name="codigo_estado" id="codigo_estado">
-
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
                     <div class="container_flex_column">

@@ -1005,7 +1005,7 @@ $(function () {
     e.preventDefault();
 
     let formData = new FormData();
-    formData.append('codigo',document.getElementById(codigo_registro).value);
+    formData.append('codigo',document.getElementById("codigo_registro").value);
 
     fetch(RUTA+"activos/anula",{
       method:'POST',
@@ -1013,9 +1013,18 @@ $(function () {
     })
     .then(response => response.json())
     .then(data=>{
-      console.log(data);
-
       document.getElementById("preguntaAnula").style.display = "none";
+
+      if (data.success){
+        
+        limpiarFormulario(true);
+        btnConsult.click();
+        modal_registro.style.display = "none";
+
+        mostrarMensaje("registro eliminado","mensaje_correcto");
+      }else{
+        mostrarMensaje("error al eliminar el registro","mensaje_error");
+      }
     })
 
     return false;

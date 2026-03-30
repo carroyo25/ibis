@@ -466,6 +466,7 @@
                                                 a.idcostos = :costos
                                                 AND p.cdesprod LIKE :descripcion
                                                 AND a.cserie LIKE :serie
+                                                AND a.nflgactivo = 1
                                             GROUP BY
                                                 a.idreg, a.idprod, p.ccodprod, p.cdesprod, u.cabrevia, a.cserie, 
                                                 a.cmodelo, a.cmarca, a.nfrecuencia, a.ffcalibra, a.ffvence, a.cgrenvio,
@@ -681,7 +682,7 @@
                 $mensaje = "Error al actualizar el registro";
                 $success = false;
 
-                $sql = $this->mdb->connect()->prepare("UPDATE alm_activos SET alm_activos.nflgactivo = 0 WHERE alm_activos.idreg = :codigo");
+                $sql = $this->db->connect()->prepare("UPDATE alm_activos SET alm_activos.nflgactivo = 0 WHERE alm_activos.idreg = :codigo");
                 $sql->execute(["codigo"=>$parametros["codigo"]]);
                 
                 if ( $sql->rowCount() > 0){
