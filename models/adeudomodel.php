@@ -83,7 +83,7 @@
                                         <td class="textoCentro">'.$rs['fechadevolucion'].'</td>
                                         <td class="textoCentro">'.$rs['nhoja'].'</td>
                                         <td class="pl5px">'.$rs['cisometrico'].'</td>
-                                        <td class="pl5px">'.$rs['cobserdevuelto'].'</td>
+                                        <td class="pl5px">'.$rs['cobserentrega'].'</td>
                                         <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.' readonly></td>
                                         <td class="pl5px">'.$rs['cestado'].'</td>
@@ -110,7 +110,7 @@
                                         <td class="textoCentro"><input type="date" value="'.$fecha.'"></td>
                                         <td class="textoCentro">'.$rs['nhoja'].'</td>
                                         <td class="pl5px">'.$rs['cisometrico'].'</td>
-                                        <td class="pl5px"><input type="text" value="'.$rs['cobserdevuelto'].'"></td>
+                                        <td class="pl5px"><input type="text" value="'.$rs['cobserentrega'].'"></td>
                                         <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
                                         <td class="pl5px"><input type="text" value="'.$rs['cestado'].'"></td>
