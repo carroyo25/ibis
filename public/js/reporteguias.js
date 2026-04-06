@@ -22,9 +22,9 @@ document.addEventListener("click",(e)=>{
         const parentSunat = e.target.closest('.pointer').dataset.guiasunatnro;
 
         if ( parentSunat === "null" || parentSunat === null ){
-            document.getElementById("pdfPreview").setAttribute('src','http://sicalsepcon.net/ibis/public/documentos/guias_remision/' + parentPointer +'.pdf');
+            document.getElementById("pdfPreview").setAttribute('src','https://sicalsepcon.net/ibis/public/documentos/guias_remision/' + parentPointer +'.pdf');
         }else{
-            document.getElementById("pdfPreview").setAttribute('src','http://sicalsepcon.net/ibis/public/documentos/guias_remision/20504898173-09-T001-' + parentSunat +'.pdf');
+            document.getElementById("pdfPreview").setAttribute('src','https://sicalsepcon.net/ibis/public/documentos/guias_remision/20504898173-09-T001-' + parentSunat +'.pdf');
         }
 
         fadeIn(document.getElementById("vistaprevia"));

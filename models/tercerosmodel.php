@@ -8,7 +8,7 @@
 
         public function buscarDatosTerceros($doc,$cc) {
             $registrado = false;
-            //$url = "http://sicalsepcon.net/api/tercerosapi.php?doc=".$doc;
+            //$url = "https://sicalsepcon.net/api/tercerosapi.php?doc=".$doc;
             $url = "https://rrhhperu.sepcon.net/api/tercerosApi.php?doc=".$doc;
             
             $api = file_get_contents($url);

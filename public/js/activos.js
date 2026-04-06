@@ -936,7 +936,7 @@ $(function () {
     };
 
     // Crear la URL base de sepcon.net
-    const baseUrl = "http://sicalsepcon.net/ibis/public/activos/";
+    const baseUrl = "https://sicalsepcon.net/ibis/public/activos/";
 
     // Codificar los parámetros
     const params = new URLSearchParams({

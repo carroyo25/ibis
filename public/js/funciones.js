@@ -9,7 +9,7 @@ if (HOST ==  "localhost") {
 }else if (HOST ==  "200.41.86.58"){
     var RUTA = "http://200.41.86.58/ibis/";
 }else if (HOST ==  "sicalsepcon.net"){
-    var RUTA = "http://sicalsepcon.net/ibis/";
+    var RUTA = "https://sicalsepcon.net/ibis/";
 }else if (HOST ==  "200.115.23.164"){
     var RUTA = "http://200.115.23.164/ibis/";
 }else if (HOST ==  "127.0.0.1"){

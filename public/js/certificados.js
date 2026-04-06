@@ -79,7 +79,7 @@ $(function() {
 
         $(".ventanaAdjuntos iframe")
             .attr("src","")
-            .attr("src","http://sicalsepcon.net/ibis/public/documentos/notas_ingreso/adjuntos/"+$(this).attr("href"));
+            .attr("src","https://sicalsepcon.net/ibis/public/documentos/notas_ingreso/adjuntos/"+$(this).attr("href"));
         
         return false;
     });

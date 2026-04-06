@@ -236,7 +236,7 @@ $(()=>{
             data.adjuntos.forEach(element => {
                 let icono = getFileExtension1(element.cdocumento);
 
-                let adj = `<li class="icono_archivo"><a href="http://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/${element.creferencia}">${icono}<p>${element.cdocumento}</p></a></li>`;
+                let adj = `<li class="icono_archivo"><a href="https://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/${element.creferencia}">${icono}<p>${element.cdocumento}</p></a></li>`;
 
                 $("#listaAdjuntos").append(adj);
             });

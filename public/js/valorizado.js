@@ -184,11 +184,11 @@ $(function () {
 
           if (element.cmodulo == "ORD") {
             ruta =
-              "http://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/" +
+              "https://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/" +
               element.creferencia;
           } else {
             ruta =
-              "http://sicalsepcon.net/ibis/public/documentos/almacen/adjuntos/" +
+              "https://sicalsepcon.net/ibis/public/documentos/almacen/adjuntos/" +
               element.creferencia;
           }
 

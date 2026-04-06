@@ -142,7 +142,7 @@ function verAdjuntos(orden){
             data.datos.forEach(element => {
                 const li = document.createElement("li");
                 const a = document.createElement('a');
-                a.href = 'http://sicalsepcon.net/ibis/public/documentos/pedidos/adjuntos/'+element.creferencia;
+                a.href = 'https://sicalsepcon.net/ibis/public/documentos/pedidos/adjuntos/'+element.creferencia;
                 a.target = "pdfPreview";
                 a.classList.add('icono_archivo');
                 

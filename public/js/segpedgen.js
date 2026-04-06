@@ -299,7 +299,7 @@ $(function(){
 
         $(".ventanaVistaPrevia iframe")
             .attr("src","")
-            .attr("src","http://sicalsepcon.net/ibis/public/documentos/pedidos/adjuntos/"+archivo);
+            .attr("src","https://sicalsepcon.net/ibis/public/documentos/pedidos/adjuntos/"+archivo);
 
         $("#vistaprevia").fadeIn();
 

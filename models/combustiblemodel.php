@@ -114,7 +114,7 @@
         public function buscarDocumento($doc) {
             $registrado = false;
 
-            $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
+            $url = "https://sicalsepcon.net/api/activesapi.php?documento=".$doc;
             
             $api = file_get_contents($url);
 
