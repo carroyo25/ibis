@@ -16,6 +16,7 @@
                                                         oc.nEstadoDoc,
                                                         oc.ncodpago,
                                                         oc.nplazo,
+                                                        oc.ntipmov,
                                                         oc.cdocPDF,
                                                         FORMAT(oc.ntotal,2) ntotal,
                                                         oc.ncodmon,
@@ -238,6 +239,7 @@
                                                         lg_ordencab.cdocPDF,
                                                         lg_ordencab.ntotal,
                                                         lg_ordencab.ncodmon,
+                                                        lg_ordencab.ntipmov,
                                                         UPPER(lg_ordencab.cObservacion) AS concepto,
                                                         UPPER( tb_pedidocab.concepto ),
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
@@ -322,7 +324,8 @@
                                                         data-estado="'.$rs['nEstadoDoc'].'"
                                                         data-finanzas="'.$ffin.'"
                                                         data-logistica="'.$flog.'"
-                                                        data-operaciones="'.$fope.'">
+                                                        data-operaciones="'.$fope.'"
+                                                        data-tipo= "'.$rs['ntipmov'].'">
                                     <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                     <td class="pl20px">'.$rs['concepto'].'</td>
@@ -398,10 +401,11 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(20);
                 
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('A2:K2')
+                            ->getStyle('A2:L2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -420,6 +424,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('I2','Logística'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('J2','Operaciones'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('K2','Finanzas'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Tipo'); // esto cambia
+
 
                 $fila = 3;
                 $datos = json_decode($detalles);
@@ -430,6 +436,7 @@
                     $logistica      = $datos[$i]->logistica == 1 ? "X" : "";
                     $operaciones    = $datos[$i]->operaciones == 1 ? "X" : "";
                     $finanzas       = $datos[$i]->finanzas == 1 ? "X" : "";
+                    $tipo           = $datos[$i]->tipo == 37 ? "BIENES":"SERVICIOS";
 
                     $soles = explode(" ",$datos[$i]->soles);
                     $dolares = explode(" ",$datos[$i]->dolares);
@@ -450,6 +457,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$logistica);
                     $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$operaciones);
                     $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$finanzas);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$tipo);
 
                     $fila++;
                 }

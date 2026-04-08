@@ -269,6 +269,7 @@ exports = () => {
             PROVEEDOR   = $(this).find('td').eq(5).text(),
             SOLES       = $(this).find('td').eq(6).text(),
             DOLARES     = $(this).find('td').eq(7).text(),
+            TIPO        = $(this).data('tipo'),
             LOGISTICA   = $(this).data('logistica'),
             OPERACIONES = $(this).data('operaciones'),
             FINANZAS    = $(this).data('finanzas');  
@@ -286,6 +287,7 @@ exports = () => {
         item['logistica']    = LOGISTICA;
         item['operaciones']  = OPERACIONES;
         item['finanzas']     = FINANZAS;
+        item['tipo']         = TIPO;
         
         DATA.push(item);
     });
@@ -315,7 +317,8 @@ detalles = () => {
             CANTPED     = $(this).data('cant'),
             ITEMORDEN   = $(this).data('itord'),
             SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
-            DETALLES    = $(this).find('td').eq(10).children().val();
+            DETALLES    = $(this).find('td').eq(10).children().val(),
+            TIPO        = $(this).data('tipo');
 
         let item= {};
         
@@ -338,6 +341,7 @@ detalles = () => {
             item['itemorden']   = ITEMORDEN;
             item['saldo']       = SALDO;
             item['detalles']    = DETALLES;
+            item['tipo']        = TIPO;
 
             DATA.push(item);
         //}
@@ -385,6 +389,7 @@ listarOrdenes = async () => {
             tr.dataset.finanzas = e.nfirmaLog;
             tr.dataset.logistica = e.nfirmaOpe;
             tr.dataset.operaciones = e.nfirmaFin;
+            tr.dataset.tipo = e.ntipmov;
 
             tr.innerHTML = `<td class="textoCentro">${e.cnumero}</td>
                             <td class="textoCentro">${e.ffechadoc}</td>

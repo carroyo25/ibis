@@ -559,7 +559,7 @@
                 }
 
                 if ( $docData[0]['casigna'] !== null ){
-                    $url        = "http://179.49.67.42/api/activesapi.php?documento=".$docData[0]['casigna'];
+                    $url        = "https://179.49.67.42/api/activesapi.php?documento=".$docData[0]['casigna'];
                     $api        = file_get_contents($url);
                     $personal   =  json_decode($api,true);
                 }
