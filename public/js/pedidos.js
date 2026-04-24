@@ -525,7 +525,7 @@ $(function () {
         $("#fileAtachs")[0].reset();
         $("#listaArchivos").empty();
       },
-    });
+  });
 
     return false;
   });
