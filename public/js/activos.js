@@ -1039,7 +1039,6 @@ $(function () {
     return false;
   })
 
-  
 
   $("#closeAtach").click(function (e) {
     e.preventDefault();
