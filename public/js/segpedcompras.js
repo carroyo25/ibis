@@ -201,8 +201,6 @@ $(function(){
                         ancho = porcentaje+'%'
                         texto = "#fff";
                     }
-                    
-
 
                 let row = `<tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
                                 <td class="textoCentro">${element.nrodoc}</td>
