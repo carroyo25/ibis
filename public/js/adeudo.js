@@ -1,6 +1,14 @@
 $(function(){
    $("#esperar").fadeOut();
 
+    if ( ($("#id_user").val() == '62145bbb5a092') || ($("#id_user").val() == '65e8da9840aaa')){
+        $("#btnGrabarKardex").removeClass('oculto');
+        $("#btnFirmar").addClass('oculto');
+    }else{
+        $("#btnGrabarKardex").addClass('oculto');
+        $("#btnFirmar").removeClass('oculto');
+    }
+
     let row = ``;
     $("#docident").focus;
 
