@@ -23,6 +23,8 @@ $(() => {
 
       $("#cambio_serie").fadeIn();
     } else if (e.target.matches(".click_tr *")) {
+      const tr = e.target.closest(".click_tr");
+
       $("#serie").val(e.target.closest(".click_tr").dataset.serie);
       $("#idmmtto").val(e.target.closest(".click_tr").dataset.id);
       $("#descripcion").val(e.target.closest(".click_tr").cells[1].innerHTML);
@@ -30,13 +32,14 @@ $(() => {
         e.target.closest(".click_tr").cells[5].innerHTML,
       );
       $("#usuario").val(e.target.closest(".click_tr").cells[2].innerHTML);
-      $("#correo_usuario").val(e.target.closest(".click_tr").dataset.correo);
       $("#sendNotify").prop("href", e.target.closest(".click_tr").dataset.id);
 
-      $("#procesador").val(e.target.closest(".click_tr").dataset.procesador);
-      $("#ram").val(e.target.closest(".click_tr").dataset.ram);
-      $("#hdd").val(e.target.closest(".click_tr").dataset.hdd);
-      $("#otros").val(e.target.closest(".click_tr").dataset.otros);
+
+      $("#correo_usuario").val(tr.dataset.correo === "null" ? '' : tr.dataset.correo);
+      $("#procesador").val(tr.dataset.procesador === "null" ? '' : tr.dataset.procesador);
+      $("#ram").val(tr.dataset.ram === "null" ? '' : tr.dataset.ram);
+      $("#hdd").val(tr.dataset.hdd === "null" ? '' : tr.dataset.hdd);
+      $("#otros").val(tr.dataset.otros === "null" ? '' : tr.dataset.otros);
 
       idprod = $(this).data("idprod");
       cc = $(this).data("costos");
@@ -67,6 +70,8 @@ $(() => {
                                     <td class="textoCentro">${element.frelmtto}</td>
                                     <td class="pl20px">${element.cobserva}</td>
                                     <td class="pl20px">${element.tecnico}</td>
+                                    <td class="textoCentro"><a href="#" class="photo_details"><i class="fas fa-images"></i></a></td>
+                                    <td class="textoCentro"><a href="#" class="photo_details"><i class="fas fa-trash"></i></a></td></td>
                                 </tr>`;
 
             $("#tabla_detalles_mttos tbody").append(row);

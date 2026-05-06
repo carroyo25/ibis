@@ -26,87 +26,110 @@
         </div>
     </div>
     <div class="modal" id="dialogo_registro">
-        <div class="ventanaConsumo">
-            <input type="hidden" name="idmmtto" id="idmmtto">
-            <input type="hidden" name="idlastmmtto" id="idlastmmtto">
-            
-            <div class="titulo_dialogo">
-                <h3>Registrar Mantenimiento</h3>
-                <a href="#" id="sendNotify" title="Enviar Programación"><i class="far fa-envelope"></i><p>Notificar</p></a>
-            </div>
-            <div class="contenedor">
-                <div class="cabecera_dialogo">
-                    <label for="serie">Serie</label>
-                    <input type="text" name="serie" id="serie" readonly>
-                    <label for="descripcion">Descripcion</label>
-                    <input type="text" name="descripcion" id="descripcion" readonly>
-                </div>
-                <div class="tabla_dialogo">
-                    <table id="tabla_detalles_mttos" class="tabla">
-                        <thead class="stickytop">
-                            <tr>
-                                <th>Fecha<br>Mantenimiento</th>
-                                <th>Observaciones</th>
-                                <th>Técnico</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+    <div class="registroti">
+        <input type="hidden" name="idmmtto" id="idmmtto">
+        <input type="hidden" name="idlastmmtto" id="idlastmmtto">
 
-                        </tbody>
-                    </table>
+        <div class="titulo_dialogo">
+            <h3>🔧 Registrar Mantenimiento</h3>
+            <a href="#" id="sendNotify" title="Enviar notificación por correo">
+                <i>📧</i> <p>Notificar</p>
+            </a>
+        </div>
+
+        <div class="contenedor">
+            <!-- Datos fijos del equipo -->
+            <div class="cabecera_dialogo">
+                <label for="serie">🔢 Serie</label>
+                <input type="text" name="serie" id="serie" readonly placeholder="Ej: ABC-1234">
+
+                <label for="descripcion">📝 Descripción</label>
+                <input type="text" name="descripcion" id="descripcion" readonly placeholder="Ej: Laptop Dell Latitude">
+            </div>
+
+            <!-- Tabla de mantenimientos previos -->
+            <div class="tabla_dialogo">
+                <table id="tabla_detalles_mttos" class="tabla">
+                    <thead>
+                        <tr>
+                            <th>📅 Fecha Mantenimiento</th>
+                            <th>📋 Observaciones</th>
+                            <th>👨‍🔧 Técnico</th>
+                            <th>🗳 Eliminar</th>
+                            <th>🎞 Foto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" style="text-align:center;">Sin registros previos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Formulario principal -->
+            <div class="cuerpo_dialogo">
+                <div class="datos_cuerpo">
+                    <label for="fecha_sugerida">📅 Fecha Sugerida</label>
+                    <input type="text" name="fecha_sugerida" id="fecha_sugerida" readonly placeholder="Automático">
+
+                    <label for="fecha_mmto">🔧 Fecha Mantenimiento *</label>
+                    <input type="date" name="fecha_mmto" id="fecha_mmto" required>
+
+                    <label for="usuario">👤 Usuario *</label>
+                    <input type="text" name="usuario" id="usuario" placeholder="Nombre completo" required>
+
+                    <label for="correo_usuario">📧 Correo *</label>
+                    <input type="email" name="correo_usuario" id="correo_usuario" placeholder="usuario@ejemplo.com" required>
+
+                    <label for="tipo_mmtto">⚙️ Tipo Mantenimiento</label>
+                    <select name="tipo_mmtto" id="tipo_mmtto">
+                        <option value="1">📆 Mantenimiento Programado</option>
+                        <option value="2">🛡️ Mantenimiento Preventivo</option>
+                        <option value="3">⚠️ Mantenimiento Correctivo</option>
+                    </select>
                 </div>
-                <div class="cuerpo_dialogo">
-                    <div class="datos_cuerpo">
-                        <label for="fecha_sugerida">Fecha Sugerida</label>
-                        <input type="text" name="fecha_sugerida" id="fecha_sugerida" readonly>
-                        <label for="fecha_mmto">Fecha Mtto</label>
-                        <input type="date" name="fecha_mmto" id="fecha_mmto">
-                        <label for="usuario">Usuario</label>
-                        <input type="text" name="usuario" id="usuario">
-                        <label for="correo_usuario">Correo</label>
-                        <input type="mail" name="correo_usuario" id="correo_usuario">
-                        <label for="tipo_mmtto">Mantenimiento</label>
-                        <select name="tipo_mmtto" id="tipo_mmtto">
-                            <option value="1">Mantenimiento Programado</option>
-                            <option value="2">Mantenimiento Preventivo</option>
-                            <option value="3">Mantenimiento Correctivo</option>
-                        </select>
-                    </div>
-                    <div class="datos_cuerpo_observaciones">
-                        <label for="observaciones_dialogo">Observaciones</label>
-                        <textarea name="observaciones_dialogo" id="observaciones_dialogo"></textarea>
-                    </div>
-                    <br><br>
-                    <div class="datos_cuerpo">
-                        <label for="procesador">Procesador :</label>
-                        <input type="text" name="procesador" id="procesador">
-                        <label for="ram">Memoria RAM :</label>
-                        <input type="text" name="ram" id="ram">
-                        <label for="hdd">Disco Duro:</label>
-                        <input type="text" name="hdd" id="hdd">
-                        <label for="estado_equipo">Estado Equipo</label>
-                        <select name="estado_equipo" id="estado_equipo">
-                            <option value="1">Nuevo</option>
-                            <option value="2" selected>Usado Nivel 1</option>
-                            <option value="3">Usado Nivel 2</option>
-                            <option value="4">Usado Nivel 3</option>
-                            <option value="5">Inoperativo</option>
-                            <option value="6">Obsoleto </option>
-                            <option value="7">Inoperativo</option>
-                        </select>
-                    </div>
-                    <div class="datos_cuerpo_observaciones">
-                        <label for="otros">Especificaciones: </label>
-                        <textarea name="otros" id="otros"></textarea>
-                    </div>
+
+                <div class="datos_cuerpo_observaciones">
+                    <label for="observaciones_dialogo">📝 Observaciones del servicio</label>
+                    <textarea name="observaciones_dialogo" id="observaciones_dialogo" rows="2" placeholder="Describa las tareas realizadas..."></textarea>
                 </div>
-                <div class="opciones_dialogo">
-                    <button type="button" id="btnAceptarDialogo">Aceptar</button>
-                    <button type="button" id="btnCancelarDialogo">Cancelar</button>
+
+                <div class="datos_cuerpo">
+                    <label for="procesador">💻 Procesador</label>
+                    <input type="text" name="procesador" id="procesador" placeholder="Ej: Intel i5-11400">
+
+                    <label for="ram">🧠 Memoria RAM</label>
+                    <input type="text" name="ram" id="ram" placeholder="Ej: 16GB DDR4">
+
+                    <label for="hdd">💾 Disco Duro</label>
+                    <input type="text" name="hdd" id="hdd" placeholder="Ej: SSD 512GB">
+
+                    <label for="estado_equipo">🏷️ Estado Equipo</label>
+                    <select name="estado_equipo" id="estado_equipo">
+                        <option value="1">✨ Nuevo</option>
+                        <option value="2" selected>🟢 Usado Nivel 1</option>
+                        <option value="3">🟡 Usado Nivel 2</option>
+                        <option value="4">🟠 Usado Nivel 3</option>
+                        <option value="5">🔴 Inoperativo</option>
+                        <option value="6">⚫ Obsoleto</option>
+                    </select>
                 </div>
+
+                <div class="datos_cuerpo_observaciones">
+                    <label for="otros">🛠️ Especificaciones adicionales</label>
+                    <textarea name="otros" id="otros" rows="2" placeholder="Tarjeta gráfica, fuente de poder, observaciones técnicas..."></textarea>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="opciones_dialogo">
+                <button type="button" id="btnAceptarDialogo">✅ Aceptar</button>
+                <button type="button" id="btnCancelarDialogo">❌ Cancelar</button>
             </div>
         </div>
     </div>
+</div>
     <div class="modal" id="cambio_fecha">
         <div class="ventanaPregunta">
             <div>

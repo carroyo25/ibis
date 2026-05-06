@@ -1,0 +1,223 @@
+.registroti {
+  background: white;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .titulo_dialogo {
+    background: #2c3e66;
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .titulo_dialogo h3 {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .titulo_dialogo a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 40px;
+    transition: 0.2s;
+  }
+
+  .titulo_dialogo a:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Contenedor scroll */
+  .contenedor {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Cabecera (serie y desc) */
+  .cabecera_dialogo {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+    background: #f0f4fa;
+    padding: 1rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+  .cabecera_dialogo label {
+    font-weight: 600;
+    color: #1e2a3e;
+  }
+
+  .cabecera_dialogo input {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  /* Tabla */
+  .tabla_dialogo {
+    margin-bottom: 1.8rem;
+    overflow-x: auto;
+  }
+
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .tabla th,
+  .tabla td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .tabla th {
+    background: #e9ecef;
+    position: sticky;
+    top: 0;
+  }
+
+  /* Cuerpo formulario */
+  .cuerpo_dialogo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .datos_cuerpo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    background: #f9fafc;
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .datos_cuerpo label {
+    font-weight: 600;
+    color: #1e466e;
+  }
+
+  .datos_cuerpo input,
+  .datos_cuerpo select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    transition: 0.2s;
+  }
+
+  .datos_cuerpo input:focus,
+  .datos_cuerpo select:focus,
+  textarea:focus {
+    border-color: #2c3e66;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(44, 62, 102, 0.2);
+  }
+
+  .datos_cuerpo_observaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #f9fafc;
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .datos_cuerpo_observaciones label {
+    font-weight: 600;
+    color: #1e466e;
+  }
+
+  textarea {
+    resize: vertical;
+    border-radius: 12px;
+    border: 1px solid #bbb;
+    padding: 10px;
+    font-family: inherit;
+  }
+
+  /* Opciones botones */
+  .opciones_dialogo {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .opciones_dialogo button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  #btnAceptarDialogo {
+    background: #1f6e43;
+    color: white;
+  }
+
+  #btnAceptarDialogo:hover {
+    background: #0f5534;
+    transform: scale(1.02);
+  }
+
+  #btnCancelarDialogo {
+    background: #9e2d2f;
+    color: white;
+  }
+
+  #btnCancelarDialogo:hover {
+    background: #7a2325;
+  }
+
+  /* Scroll personalizado */
+  .contenedor::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .contenedor::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .contenedor::-webkit-scrollbar-thumb {
+    background: #c1c9d2;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 700px) {
+    .cabecera_dialogo {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .datos_cuerpo {
+      grid-template-columns: 1fr;
+    }
+  }
+}
