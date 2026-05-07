@@ -1,7 +1,27 @@
 $(() => {
   $("#esperar").css({ display: "none", opacity: "0" });
 
-  let id, cc, docidetuser, serie,fila;
+  const ventana = document.getElementById("registroti");
+  const header = document.getElementById("ventanaHeader");
+
+  if (!ventana || !header) return;
+
+  let isDragging = false;
+  let startX, startY;
+  let initialLeft, initialTop;
+
+  header.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", drag);
+  document.addEventListener("mouseup", stopDrag);
+
+  // Posición inicial centrada
+  ventana.style.position = "absolute";
+  ventana.style.left = "50%";
+  ventana.style.top = "50%";
+  ventana.style.transform = "translate(-50%, -50%)";
+  ventana.style.margin = "0";
+
+  let id, cc, docidetuser, serie, fila;
 
   const tabla_principal = document.getElementById("tablaPrincipal");
 
@@ -17,7 +37,7 @@ $(() => {
       serie = e.target.parentNode.getAttribute("href");
       docidetuser = e.target.parentNode.dataset.documento;
 
-      fila = e.target.closest('tr').getAttribute("data-id");
+      fila = e.target.closest("tr").getAttribute("data-id");
 
       $("#serie_nueva").val(serie);
 
@@ -34,12 +54,15 @@ $(() => {
       $("#usuario").val(e.target.closest(".click_tr").cells[2].innerHTML);
       $("#sendNotify").prop("href", e.target.closest(".click_tr").dataset.id);
 
-
-      $("#correo_usuario").val(tr.dataset.correo === "null" ? '' : tr.dataset.correo);
-      $("#procesador").val(tr.dataset.procesador === "null" ? '' : tr.dataset.procesador);
-      $("#ram").val(tr.dataset.ram === "null" ? '' : tr.dataset.ram);
-      $("#hdd").val(tr.dataset.hdd === "null" ? '' : tr.dataset.hdd);
-      $("#otros").val(tr.dataset.otros === "null" ? '' : tr.dataset.otros);
+      $("#correo_usuario").val(
+        tr.dataset.correo === "null" ? "" : tr.dataset.correo,
+      );
+      $("#procesador").val(
+        tr.dataset.procesador === "null" ? "" : tr.dataset.procesador,
+      );
+      $("#ram").val(tr.dataset.ram === "null" ? "" : tr.dataset.ram);
+      $("#hdd").val(tr.dataset.hdd === "null" ? "" : tr.dataset.hdd);
+      $("#otros").val(tr.dataset.otros === "null" ? "" : tr.dataset.otros);
 
       idprod = $(this).data("idprod");
       cc = $(this).data("costos");
@@ -229,16 +252,18 @@ $(() => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.respuesta){
-            //***con esto actualiza la fila sin necesidad de recargar la pagina */
+        if (data.respuesta) {
+          //***con esto actualiza la fila sin necesidad de recargar la pagina */
 
-            $('#'+fila).find('td').eq('3').text($("#serie_nueva").val());
+          $("#" + fila)
+            .find("td")
+            .eq("3")
+            .text($("#serie_nueva").val());
 
-            mostrarMensaje("👍 Serie actualizada","mensaje_correcto");
-            $(this).closest(".modal").fadeOut();
-
-        }else{
-            mostrarMensaje("😥 Error al actualixar","mensaje_error");
+          mostrarMensaje("👍 Serie actualizada", "mensaje_correcto");
+          $(this).closest(".modal").fadeOut();
+        } else {
+          mostrarMensaje("😥 Error al actualixar", "mensaje_error");
         }
       });
 
@@ -248,117 +273,30 @@ $(() => {
   $("#btnConsulta").click(function (e) {
     e.preventDefault();
 
-    $("#tablaPrincipal tbody").empty();
-
     let formData = new FormData();
-    formData.append("costos", $("#costosSearch").val());
-    formData.append("serie", $("#serieBusqueda").val());
 
-    fetch(RUTA + "timmtto/listaMmttos", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        let item = 1,
-          nombre,
-          correo;
+    const serie = document.getElementById("serieBusqueda");
+    const costos = document.getElementById("costosSearch");
+    const nombre = document.getElementById("usuarioBusqueda");
 
-        $("#tablaPrincipal tbody").empty();
+    formData.append("serie", serie.value);
+    formData.append("costos", costos.value);
+    formData.append("nombre", nombre.value);
 
-        data.datos.forEach((element) => {
-          data.usuarios.forEach((usuario) => {
-            if (usuario.dni === element.nrodoc) {
-              nombre = usuario.usuario;
-              correo = usuario.correo;
-            }
-          });
+    const grupos = {};
 
-          let estado1,
-            semaforo1,
-            estado2,
-            semaforo2,
-            estado3,
-            semaforo3,
-            estado4,
-            semaforo4 = null;
-
-          if (element.est1 == 1) {
-            estado1 = "Realizado";
-            semaforo1 = "semaforoVerde";
-          } else {
-            estado1 = element.periodo > 0 ? "Pendiente" : "Vencido";
-            semaforo1 =
-              element.periodo > 0 ? "semaforoNaranja" : "semaforoRojo";
-          }
-
-          if (element.est2 == 1) {
-            estado2 = "Realizado";
-            semaforo2 = "semaforoVerde";
-          } else {
-            estado2 = element.periodo2 > 0 ? "Pendiente" : "Vencido";
-            semaforo2 =
-              element.periodo2 > 0 ? "semaforoNaranja" : "semaforoRojo";
-          }
-
-          if (element.est3 == 1) {
-            estado3 = "Realizado";
-            semaforo3 = "semaforoVerde";
-          } else {
-            estado3 = element.periodo3 > 0 ? "Pendiente" : "Vencido";
-            semaforo3 =
-              element.periodo3 > 0 ? "semaforoNaranja" : "semaforoRojo";
-          }
-
-          if (element.est4 == 1) {
-            estado4 = "Realizado";
-            semaforo4 = "semaforoVerde";
-          } else {
-            estado4 = element.periodo4 > 0 ? "Pendiente" : "Vencido";
-            semaforo4 =
-              element.periodo4 > 0 ? "semaforoNaranja" : "semaforoRojo";
-          }
-
-          let fila = `<tr class="pointer click_tr"
-                                    id              ="${element.idreg}" 
-                                    data-id         ="${element.idreg}" 
-                                    data-correo     ="${correo}"
-                                    data-documento  ="${element.nrodoc}"
-                                    data-costos     ="${element.nidreg}"
-                                    data-serie      ="${element.cserie}"
-                                    data-procesador ="${element.cprocesador}"
-                                    data-ram        ="${element.cram}"
-                                    data-hdd        ="${element.chdd}"
-                                    data-otros      ="${element.totros}">
-                                <td class="pl20px">${item++}</td>
-                                <td class="pl20px">${element.cdesprod}</td>
-                                <td class="pl20px">${nombre}</td>
-                                <td class="pl20px">${element.cserie}</td>
-                                <td class="textoCentro">${element.fentrega}</td>
-                                <td class="textoCentro">${element.ccodproy}</td>
-                                <td class="textoCentro">${element.fmtto1}</td>
-                                <td class="textoCentro ${semaforo1}">${estado1}</td>
-                                <td class="textoCentro">${element.fmtto2}</td>
-                                <td class="textoCentro ${semaforo2}">${estado2}</td>
-                                <td class="textoCentro">${element.fmtto3}</td>
-                                <td class="textoCentro ${semaforo3}">${estado3}</td>
-                                <td class="textoCentro">${element.fmtto4}</td>
-                                <td class="textoCentro ${semaforo4}">${estado4}</td>
-                                <td class="textoCentro click_link_date">
-                                    <a href="${element.cserie}" data-fecha ="${element.entrega}" data-documento ="${element.nrodoc}">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </a>
-                                </td>
-                                 <td class="textoCentro click_link_serie">
-                                    <a href="${element.cserie}" data-documento ="${element.nrodoc}">
-                                        <i class="fas fa-exchange-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>`;
-
-          $("#tablaPrincipal tbody").append(fila);
+    try {
+      fetch(RUTA + "timmtto/listaMmttos", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          datosOriginales = agruparPorSerie(data.datos);
+          datosFiltrados = [...datosOriginales];
+          renderSeries(datosOriginales);
         });
-      });
+    } catch (error) {}
 
     return false;
   });
@@ -389,6 +327,62 @@ $(() => {
 
     return false;
   });
+
+  function startDrag(e) {
+    // No arrastrar si se hizo clic en el botón de notificar
+    if (e.target.closest("#sendNotify")) return;
+
+    isDragging = true;
+
+    // Obtener posición actual (sin transform)
+    const computedStyle = window.getComputedStyle(ventana);
+    const leftValue = computedStyle.left;
+    const topValue = computedStyle.top;
+
+    // Si está centrado con transform, calcular posición real
+    if (ventana.style.transform === "translate(-50%, -50%)") {
+      const rect = ventana.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      ventana.style.left = initialLeft + "px";
+      ventana.style.top = initialTop + "px";
+      ventana.style.transform = "none";
+    } else {
+      initialLeft = parseFloat(leftValue);
+      initialTop = parseFloat(topValue);
+    }
+
+    startX = e.clientX;
+    startY = e.clientY;
+
+    ventana.classList.add("dragging");
+    e.preventDefault();
+  }
+
+  function drag(e) {
+    if (!isDragging) return;
+
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+
+    let newLeft = initialLeft + deltaX;
+    let newTop = initialTop + deltaY;
+
+    // Limitar dentro de la ventana (opcional)
+    const maxX = window.innerWidth - ventana.offsetWidth;
+    const maxY = window.innerHeight - ventana.offsetHeight;
+
+    newLeft = Math.max(0, Math.min(newLeft, maxX));
+    newTop = Math.max(0, Math.min(newTop, maxY));
+
+    ventana.style.left = newLeft + "px";
+    ventana.style.top = newTop + "px";
+  }
+
+  function stopDrag() {
+    isDragging = false;
+    ventana.classList.remove("dragging");
+  }
 });
 
 detalles = () => {
@@ -418,3 +412,200 @@ detalles = () => {
 
   return DATA;
 };
+
+ function formatearFecha(fecha) {
+            if (!fecha) return '-';
+            const partes = fecha.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function formatearDias(dias, flgestado) {
+            if (flgestado === 1) {
+                return `<span class="dias-positivo">✅ Realizado</span>`;
+            } else if (dias < 0) {
+                return `<span class="dias-negativo">📉 ${Math.abs(dias)} días (vencido)</span>`;
+            } else if (dias === 0) {
+                return `<span class="dias-positivo">📅 Hoy</span>`;
+            } else {
+                return `<span class="dias-positivo">📈 +${dias} días</span>`;
+            }
+        }
+
+        function getEstadoBadge(dias, flgestado) {
+            if (flgestado === 1) {
+                return '<span class="badge-status badge-completado">✅ COMPLETADO</span>';
+            } else if (dias < 0) {
+                return '<span class="badge-status badge-vencido">⚠️ VENCIDO</span>';
+            } else if (dias === 0) {
+                return '<span class="badge-status badge-pendiente">📅 HOY</span>';
+            } else if (dias <= 30) {
+                return '<span class="badge-status badge-pendiente">🔄 PRÓXIMO</span>';
+            } else {
+                return '<span class="badge-status badge-normal">📆 NORMAL</span>';
+            }
+        }
+
+        function agruparPorSerie(data) {
+            const grupos = {};
+            
+            data.forEach(item => {
+                const serie = item.cserie;
+                if (!grupos[serie]) {
+                    grupos[serie] = {
+                        cserie: serie,
+                        documento: item.nrodoc,
+                        fentrega: item.fentrega,
+                        nombre: item.nombre,
+                        estado: item.ESTADO,
+                        flgactivo: item.flgactivo,
+                        cdesprod: item.cdesprod,
+                        mantenimientos: []
+                    };
+                }
+                grupos[serie].mantenimientos.push({
+                    fmtto: item.fmtto,
+                    cobserva: item.cobserva,
+                    idreg: item.idreg,
+                    dias_diferencia: item.dias_diferencia,
+                    idprod: item.idprod,
+                    flgestado: item.flgestado,
+                    ntipo: item.ntipo
+                });
+            });
+            
+            for (let serie in grupos) {
+                grupos[serie].mantenimientos.sort((a, b) => a.dias_diferencia - b.dias_diferencia);
+            }
+            
+            return Object.values(grupos);
+        }
+
+        function getClaseFila(mantto) {
+            if (mantto.flgestado === 1) return 'completado-row';
+            if (mantto.dias_diferencia < 0) return 'vencido-row';
+            return 'pendiente-row';
+        }
+
+        function getEstadoGeneralSerie(mantenimientos) {
+            const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
+            const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
+            
+            if (tieneVencido) return 'badge-vencido';
+            if (tienePendiente) return 'badge-pendiente';
+            return 'badge-normal';
+        }
+
+        function getTextoEstadoGeneral(mantenimientos) {
+            const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
+            const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
+            
+            if (tieneVencido) return '⚠️ Con vencidos';
+            if (tienePendiente) return '⏳ Pendientes';
+            return '✅ Todos completados';
+        }
+
+        function limpiarId(str) {
+            return str.replace(/[^a-zA-Z0-9]/g, '_');
+        }
+
+        function renderSeries(series) {
+            const tbody = document.getElementById("tableBody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+
+            let totalMant = 0;
+            let totalVencidos = 0;
+            let totalPendientes = 0;
+            let totalCompletados = 0;
+
+            series.forEach((serie) => {
+                totalMant += serie.mantenimientos.length;
+                totalVencidos += serie.mantenimientos.filter(
+                    (m) => m.flgestado === 0 && m.dias_diferencia < 0,
+                ).length;
+                totalPendientes += serie.mantenimientos.filter(
+                    (m) => m.flgestado === 0 && m.dias_diferencia >= 0,
+                ).length;
+                totalCompletados += serie.mantenimientos.filter(
+                    (m) => m.flgestado === 1,
+                ).length;
+
+                const estadoClase = getEstadoGeneralSerie(serie.mantenimientos);
+                const estadoTexto = getTextoEstadoGeneral(serie.mantenimientos);
+                const serieId = limpiarId(serie.cserie);
+
+                const row = tbody.insertRow();
+                row.classList.add('serie-principal');
+                row.setAttribute('data-serie-id', serieId);
+                row.setAttribute('onclick', `toggleSerie('${serieId}')`);
+                row.innerHTML = `
+                    <td class="serie-td">
+                        <span class="toggle-icon" id="icon-${serieId}">▶</span>
+                        <span class="serie-code">🔧 ${serie.cserie}</span>
+                    </td>
+                    <td class="serie-nombre">${serie.nombre}</td>
+                    <td class="serie-nombre">${serie.documento}</td>
+                    <td class="serie-producto">${serie.cdesprod}</td>
+                    <td>${formatearFecha(serie.fentrega)}</td>
+                    <td><span class="badge-status ${estadoClase}">${estadoTexto}</span></td>
+                    <td><a href="#" class="textoCentro actions"><i class="fas fa-cogs"></i></a></td>
+                `;
+
+                const detailRow = tbody.insertRow();
+                detailRow.classList.add('detail-row', 'hidden');
+                detailRow.setAttribute('data-serie-id', serieId);
+                detailRow.innerHTML = `
+                    <td colspan="7" style="padding: 0;">
+                        <table class="sub-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Registro</th>
+                                    <th>Fecha Mantenimiento</th>
+                                    <th>Estado</th>
+                                    <th>Días</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${serie.mantenimientos.map(m => `
+                                    <tr class="${getClaseFila(m)}">
+                                        <td>${m.idreg}</td>
+                                        <td>${formatearFecha(m.fmtto)}</td>
+                                        <td>${getEstadoBadge(m.dias_diferencia, m.flgestado)}</td>
+                                        <td>${formatearDias(m.dias_diferencia, m.flgestado)}</td>
+                                        <td>${m.cobserva || '-'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </td>
+                `;
+            });
+        }
+
+        function toggleSerie(serieId) {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let detailRow = null;
+            let icon = null;
+            
+            rows.forEach(row => {
+                if (row.getAttribute('data-serie-id') === serieId) {
+                    if (row.classList.contains('detail-row')) {
+                        detailRow = row;
+                    } else if (row.classList.contains('serie-principal')) {
+                        icon = row.querySelector(`#icon-${serieId}`);
+                    }
+                }
+            });
+            
+            if (!detailRow || !icon) return;
+            
+            if (detailRow.classList.contains('hidden')) {
+                detailRow.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                detailRow.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }

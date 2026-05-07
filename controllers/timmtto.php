@@ -7,7 +7,6 @@
 
         function render(){
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            $this->view->listaMantenimientos = $this->model->listarMantenimientos(-1,"");
             $this->view->render('timmtto/index');
         }
 
@@ -41,7 +40,7 @@
         }
 
         function listaMmttos() {
-            echo json_encode($this->model->listarMantenimientos($_POST['costos'],$_POST['serie']));
+            echo json_encode($this->model->listarMantenimientos($_POST));
         }
 
         function archivoExcel() {

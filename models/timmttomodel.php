@@ -6,60 +6,51 @@
             parent::__construct();
         }
 
-        public function listarMantenimientos($costos,$serie){
+        public function listarMantenimientos($parametros){
 
-            $cc = $costos != -1 ? $costos : "%";
-            $serie = $serie != "" ? $serie : "%";
+            $cc = $parametros['costos']  != -1 ? $parametros['costos'] : "%";
+            $serie = $parametros['serie'] != "" ? $parametros['serie'] : "%";
+            $nombre = $parametros['nombre']  !="" ? '%'.$parametros['nombre'].'%' : "%";
 
             try {
                 $docData = [];
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.ti_mmttos.idreg,
-                                                        ibis.ti_mmttos.fentrega AS entrega,
-                                                        UPPER( ibis.cm_producto.cdesprod ) AS cdesprod,
-                                                        ibis.tb_proyectos.ccodproy,
-                                                        ibis.tb_proyectos.nidreg,
-                                                        UPPER( ibis.ti_mmttos.cserie ) AS cserie,
-                                                        ibis.ti_mmttos.nrodoc,
-                                                        DATEDIFF(ibis.ti_mmttos.fmtto,NOW()) AS periodo,
-                                                        DATE_FORMAT( ibis.ti_mmttos.fmtto, '%d/%m/%Y' ) AS fmtto1,
-                                                        DATE_FORMAT( ibis.ti_mmttos.fentrega, '%d/%m/%Y' ) AS fentrega,
-                                                        ibis.ti_mmttos.flgestado AS est1,
-                                                        DATE_FORMAT( m2.fmtto, '%d/%m/%Y' ) AS fmtto2,m2.flgestado AS est2,
-                                                        DATEDIFF(m2.fmtto,NOW()) AS periodo2,
-                                                        DATE_FORMAT( m3.fmtto, '%d/%m/%Y' ) AS fmtto3,
-                                                        m3.flgestado AS est3,
-                                                        DATEDIFF(m3.fmtto,NOW()) AS periodo3,
-                                                        DATE_FORMAT( m4.fmtto, '%d/%m/%Y' ) AS fmtto4,
-                                                        m4.flgestado AS est4,
-                                                        DATEDIFF(m4.fmtto,NOW()) AS periodo4,
-                                                        ibis.tb_tiespec.cprocesador,
-                                                        ibis.tb_tiespec.cram,
-                                                        ibis.tb_tiespec.chdd,
-                                                        ibis.tb_tiespec.totros
+                                                        m.nrodoc,
+                                                        m.fentrega,
+                                                        m.cserie,
+                                                        CONCAT( a.NOM_TRABAJADOR, ' ', a.APE_PATERNO, ' ', a.APE_MATERNO ) AS nombre,
+                                                        a.ESTADO,
+                                                        m.flgactivo,
+                                                        m.flgestado,
+                                                        m.fmtto,
+                                                        m.cobserva,
+                                                        m.ntipo,
+                                                        DATEDIFF(
+                                                            m.fmtto,
+                                                        CURDATE()) AS dias_diferencia,
+                                                        m.idprod,
+                                                        UPPER(p.cdesprod) cdesprod,
+                                                        m.idreg,
+                                                        m.nrodoc
                                                     FROM
-                                                        ibis.ti_mmttos
-                                                        LEFT JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 AND ti_mmttos.flgactivo = 1) AS m2 ON m2.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 AND ti_mmttos.flgactivo = 1) AS m3 ON m3.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 AND ti_mmttos.flgactivo = 1) AS m4 ON m4.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
+                                                        ti_mmttos m
+                                                        LEFT JOIN linked_data.vw_personal_ultimo_ingreso_aquarius a ON a.NUM_DOC_IDENTIDAD = m.nrodoc
+                                                        LEFT JOIN cm_producto p ON p.id_cprod = m.idprod	
                                                     WHERE
-                                                        ibis.ti_mmttos.flgactivo = 1 
-                                                        AND ibis.tb_proyectos.nidreg LIKE :costos
-                                                        AND ibis.tb_proyectos.nflgactivo = 1
-                                                        AND ibis.ti_mmttos.cserie LIKE :serie
-                                                        AND (cm_producto.ccodprod LIKE '%B05010002%' 
-                                                          OR cm_producto.ccodprod LIKE '%B05010006%'
-                                                          OR cm_producto.ccodprod LIKE '%B05010005%') 
-                                                    GROUP BY
-                                                        ibis.ti_mmttos.nrodoc,
-                                                        ibis.ti_mmttos.cserie");
+                                                        m.flgactivo = 1 
+                                                        AND a.ESTADO != 'CESADO' 
+                                                        AND m.idcostos LIKE :costos 
+                                                        AND CONCAT( a.NOM_TRABAJADOR, ' ', a.APE_PATERNO, ' ', a.APE_MATERNO ) LIKE :nombre
+                                                        AND m.cserie LIKE :serie
+                                                        AND m.ntipo != 0
+                                                        AND (p.ccodprod LIKE '%B05010002%' 
+                                                          OR p.ccodprod LIKE '%B05010006%'
+                                                          OR p.ccodprod LIKE '%B05010005%')
+                                                    ORDER BY
+                                                        dias_diferencia ASC");
                                                     
-                $sql->execute(["costos" =>$cc,
-                                "serie" =>$serie]);
+                $sql->execute(["costos" =>$cc,"serie" =>$serie,"nombre"=>$nombre]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount) {
@@ -71,7 +62,7 @@
                     }
                 }
 
-                return array("datos"=>$docData,"usuarios"=>$this->usuariosAquarius());
+                return array("datos"=>$docData);
 
                 
             } catch (PDOException $th) {
@@ -93,16 +84,16 @@
                     $respuesta = true;
                 }
 
-                if ($parametros['tipo_mmtto'] === "1"){
+                if ( $parametros['tipo_mmtto'] === "1" ){
 
                     $respuesta = "mantenimiento programado";
+
                     $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
                                                         SET ti_mmttos.frelmtto =:fecha,
                                                             ti_mmttos.flgestado =:estado,
                                                             ti_mmttos.iduser =:user,
                                                             ti_mmttos.cobserva =:observa 
-                                                        WHERE ti_mmttos.idreg =:id
-                                                            LIMIT 1");
+                                                        WHERE ti_mmttos.idreg =:id LIMIT 1");
                     $sql->execute(["fecha"      =>$parametros['fmmto'],
                                     "estado"    =>1,
                                     "user"      =>$parametros['user'],
@@ -111,7 +102,7 @@
                     if ( $sql->rowCount() > 0){
                         $respuesta = true;
 
-                       /* $this->envio_correo_mantenimiento($parametros['correo'],
+                    /* $this->envio_correo_mantenimiento($parametros['correo'],
                                                         $parametros['tecnico'],
                                                         $parametros['correo_tecnico'],
                                                         $parametros['observa'],
@@ -120,6 +111,7 @@
                     }
                 }else {
                     $respuesta = "otro mantenimiento";
+
                     $sql = $this->db->connect()->prepare("INSERT ti_mmttos 
                                                             SET ti_mmttos.nrodoc =:documento,
                                                                 ti_mmttos.idprod =:producto,

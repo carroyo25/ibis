@@ -26,110 +26,110 @@
         </div>
     </div>
     <div class="modal" id="dialogo_registro">
-    <div class="registroti">
-        <input type="hidden" name="idmmtto" id="idmmtto">
-        <input type="hidden" name="idlastmmtto" id="idlastmmtto">
+        <div class="registroti" id="registroti">
+            <input type="hidden" name="idmmtto" id="idmmtto">
+            <input type="hidden" name="idlastmmtto" id="idlastmmtto">
 
-        <div class="titulo_dialogo">
-            <h3>🔧 Registrar Mantenimiento</h3>
-            <a href="#" id="sendNotify" title="Enviar notificación por correo">
-                <i>📧</i> <p>Notificar</p>
-            </a>
-        </div>
-
-        <div class="contenedor">
-            <!-- Datos fijos del equipo -->
-            <div class="cabecera_dialogo">
-                <label for="serie">🔢 Serie</label>
-                <input type="text" name="serie" id="serie" readonly placeholder="Ej: ABC-1234">
-
-                <label for="descripcion">📝 Descripción</label>
-                <input type="text" name="descripcion" id="descripcion" readonly placeholder="Ej: Laptop Dell Latitude">
+            <div class="titulo_dialogo" id="ventanaHeader">
+                <h3>🔧 Registrar Mantenimiento</h3>
+                <a href="#" id="sendNotify" title="Enviar notificación por correo">
+                    <i>📧</i> <p>Notificar</p>
+                </a>
             </div>
 
-            <!-- Tabla de mantenimientos previos -->
-            <div class="tabla_dialogo">
-                <table id="tabla_detalles_mttos" class="tabla">
-                    <thead>
-                        <tr>
-                            <th>📅 Fecha Mantenimiento</th>
-                            <th>📋 Observaciones</th>
-                            <th>👨‍🔧 Técnico</th>
-                            <th>🗳 Eliminar</th>
-                            <th>🎞 Foto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align:center;">Sin registros previos</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <div class="contenedor">
+                <!-- Datos fijos del equipo -->
+                <div class="cabecera_dialogo">
+                    <label for="serie">🔢 Serie</label>
+                    <input type="text" name="serie" id="serie" readonly placeholder="Ej: ABC-1234">
 
-            <!-- Formulario principal -->
-            <div class="cuerpo_dialogo">
-                <div class="datos_cuerpo">
-                    <label for="fecha_sugerida">📅 Fecha Sugerida</label>
-                    <input type="text" name="fecha_sugerida" id="fecha_sugerida" readonly placeholder="Automático">
-
-                    <label for="fecha_mmto">🔧 Fecha Mantenimiento *</label>
-                    <input type="date" name="fecha_mmto" id="fecha_mmto" required>
-
-                    <label for="usuario">👤 Usuario *</label>
-                    <input type="text" name="usuario" id="usuario" placeholder="Nombre completo" required>
-
-                    <label for="correo_usuario">📧 Correo *</label>
-                    <input type="email" name="correo_usuario" id="correo_usuario" placeholder="usuario@ejemplo.com" required>
-
-                    <label for="tipo_mmtto">⚙️ Tipo Mantenimiento</label>
-                    <select name="tipo_mmtto" id="tipo_mmtto">
-                        <option value="1">📆 Mantenimiento Programado</option>
-                        <option value="2">🛡️ Mantenimiento Preventivo</option>
-                        <option value="3">⚠️ Mantenimiento Correctivo</option>
-                    </select>
+                    <label for="descripcion">📝 Descripción</label>
+                    <input type="text" name="descripcion" id="descripcion" readonly placeholder="Ej: Laptop Dell Latitude">
                 </div>
 
-                <div class="datos_cuerpo_observaciones">
-                    <label for="observaciones_dialogo">📝 Observaciones del servicio</label>
-                    <textarea name="observaciones_dialogo" id="observaciones_dialogo" rows="2" placeholder="Describa las tareas realizadas..."></textarea>
+                <!-- Tabla de mantenimientos previos -->
+                <div class="tabla_dialogo">
+                    <table id="tabla_detalles_mttos" class="tabla">
+                        <thead>
+                            <tr>
+                                <th>📅 Fecha Mantenimiento</th>
+                                <th>📋 Observaciones</th>
+                                <th>👨‍🔧 Técnico</th>
+                                <th>🗳 Eliminar</th>
+                                <th>🎞 Foto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" style="text-align:center;">Sin registros previos</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="datos_cuerpo">
-                    <label for="procesador">💻 Procesador</label>
-                    <input type="text" name="procesador" id="procesador" placeholder="Ej: Intel i5-11400">
+                <!-- Formulario principal -->
+                <div class="cuerpo_dialogo">
+                    <div class="datos_cuerpo">
+                        <label for="fecha_sugerida">📅 Fecha Sugerida</label>
+                        <input type="text" name="fecha_sugerida" id="fecha_sugerida" readonly placeholder="Automático">
 
-                    <label for="ram">🧠 Memoria RAM</label>
-                    <input type="text" name="ram" id="ram" placeholder="Ej: 16GB DDR4">
+                        <label for="fecha_mmto">🔧 Fecha Mantenimiento *</label>
+                        <input type="date" name="fecha_mmto" id="fecha_mmto" required>
 
-                    <label for="hdd">💾 Disco Duro</label>
-                    <input type="text" name="hdd" id="hdd" placeholder="Ej: SSD 512GB">
+                        <label for="usuario">👤 Usuario *</label>
+                        <input type="text" name="usuario" id="usuario" placeholder="Nombre completo" required>
 
-                    <label for="estado_equipo">🏷️ Estado Equipo</label>
-                    <select name="estado_equipo" id="estado_equipo">
-                        <option value="1">✨ Nuevo</option>
-                        <option value="2" selected>🟢 Usado Nivel 1</option>
-                        <option value="3">🟡 Usado Nivel 2</option>
-                        <option value="4">🟠 Usado Nivel 3</option>
-                        <option value="5">🔴 Inoperativo</option>
-                        <option value="6">⚫ Obsoleto</option>
-                    </select>
+                        <label for="correo_usuario">📧 Correo *</label>
+                        <input type="email" name="correo_usuario" id="correo_usuario" placeholder="usuario@ejemplo.com" required>
+
+                        <label for="tipo_mmtto">⚙️ Tipo Mantenimiento</label>
+                        <select name="tipo_mmtto" id="tipo_mmtto">
+                            <option value="1">📆 Mantenimiento Programado</option>
+                            <option value="2">🛡️ Mantenimiento Preventivo</option>
+                            <option value="3">⚠️ Mantenimiento Correctivo</option>
+                        </select>
+                    </div>
+
+                    <div class="datos_cuerpo_observaciones">
+                        <label for="observaciones_dialogo">📝 Observaciones del servicio</label>
+                        <textarea name="observaciones_dialogo" id="observaciones_dialogo" rows="2" placeholder="Describa las tareas realizadas..."></textarea>
+                    </div>
+
+                    <div class="datos_cuerpo">
+                        <label for="procesador">💻 Procesador</label>
+                        <input type="text" name="procesador" id="procesador" placeholder="Ej: Intel i5-11400">
+
+                        <label for="ram">🧠 Memoria RAM</label>
+                        <input type="text" name="ram" id="ram" placeholder="Ej: 16GB DDR4">
+
+                        <label for="hdd">💾 Disco Duro</label>
+                        <input type="text" name="hdd" id="hdd" placeholder="Ej: SSD 512GB">
+
+                        <label for="estado_equipo">🏷️ Estado Equipo</label>
+                        <select name="estado_equipo" id="estado_equipo">
+                            <option value="1">✨ Nuevo</option>
+                            <option value="2" selected>🟢 Usado Nivel 1</option>
+                            <option value="3">🟡 Usado Nivel 2</option>
+                            <option value="4">🟠 Usado Nivel 3</option>
+                            <option value="5">🔴 Inoperativo</option>
+                            <option value="6">⚫ Obsoleto</option>
+                        </select>
+                    </div>
+
+                    <div class="datos_cuerpo_observaciones">
+                        <label for="otros">🛠️ Especificaciones adicionales</label>
+                        <textarea name="otros" id="otros" rows="2" placeholder="Tarjeta gráfica, fuente de poder, observaciones técnicas..."></textarea>
+                    </div>
                 </div>
 
-                <div class="datos_cuerpo_observaciones">
-                    <label for="otros">🛠️ Especificaciones adicionales</label>
-                    <textarea name="otros" id="otros" rows="2" placeholder="Tarjeta gráfica, fuente de poder, observaciones técnicas..."></textarea>
+                <!-- Botones -->
+                <div class="opciones_dialogo">
+                    <button type="button" id="btnAceptarDialogo">✅ Aceptar</button>
+                    <button type="button" id="btnCancelarDialogo">❌ Cancelar</button>
                 </div>
-            </div>
-
-            <!-- Botones -->
-            <div class="opciones_dialogo">
-                <button type="button" id="btnAceptarDialogo">✅ Aceptar</button>
-                <button type="button" id="btnCancelarDialogo">❌ Cancelar</button>
             </div>
         </div>
     </div>
-</div>
     <div class="modal" id="cambio_fecha">
         <div class="ventanaPregunta">
             <div>
@@ -185,107 +185,25 @@
         </form>
     </div>
     <div class="itemsTabla">
-        <table id="tablaPrincipal">
+        <table id="tablaPrincipal" class="main-table">
             <thead class="stickytop">
                 <tr>
-                    <th>Item</th>
-                    <th>Descripcion</th>
-                    <th>Usuario</th>
-                    <th>Serie</th>
+                    <th>Nro. Serie</th>
+                    <th>Nombre</th>
+                    <th>Nro. Documento</th>
+                    <th>Equipo</th>
                     <th>Fecha Entrega</th>
-                    <th>Centro Costos</th>
-                    <th>1er MMTTO</th>
                     <th>Estado</th>
-                    <th>2do MMTTO</th>
-                    <th>Estado</th>
-                    <th>3er MMTTO</th>
-                    <th>Estado</th>
-                    <th>4to MMTTO</th>
-                    <th>Estado</th>
-                    <th>...</th>
                     <th>...</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php   //if ( count($this->listarMantenimientos['datos']) > 0 ) {
-                            $item = 1; 
-                            foreach($this->listaMantenimientos['datos'] as $registro) { 
-                                
-                                if ( $registro['est1'] == 1 ){
-                                    $estado1 = 'Realizado';
-                                    $semaforo1 = 'semaforoVerde';
-                                }      
-                                else if( $registro['est1'] == 0 ){
-                                    $semaforo1 = $registro['periodo'] > 0 ? 'semaforoNaranja':'semaforoRojo';
-                                    $estado1   = $registro['periodo'] > 0 ? 'Pendiente':'Vencido';
-                                }
-
-                                if ( $registro['est2'] == 1 ){
-                                    $estado2 = 'Realizado';
-                                    $semaforo2 = 'semaforoVerde';
-                                }      
-                                else if( $registro['est2'] == 0 ){
-                                    $semaforo2 = $registro['periodo2'] > 0 ? 'semaforoNaranja':'semaforoRojo';
-                                    $estado2   = $registro['periodo2'] > 0 ? 'Pendiente':'Vencido';
-                                }
-
-                                if ( $registro['est3'] == 1 ){
-                                    $estado3 = 'Realizado';
-                                    $semaforo3 = 'semaforoVerde';
-                                }      
-                                else if( $registro['est3'] == 0 ){
-                                    $semaforo3 = $registro['periodo3'] > 0 ? 'semaforoNaranja':'semaforoRojo';
-                                    $estado3   = $registro['periodo3'] > 0 ? 'Pendiente':'Vencido';
-                                }
-
-                                if ( $registro['est4'] == 1 ){
-                                    $estado4 = 'Realizado';
-                                    $semaforo4 = 'semaforoVerde';
-                                }      
-                                else if( $registro['est4'] == 0 ){
-                                    $semaforo4 = $registro['periodo4'] > 0 ? 'semaforoNaranja':'semaforoRojo';
-                                    $estado4   = $registro['periodo4'] > 0 ? 'Pendiente':'Vencido';
-                                }
-                ?> 
-
-                                <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>" id="<?php echo $registro['idreg']; ?>" 
-                                                    data-correo="<?php foreach($this->listaMantenimientos['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['nrodoc'] ){ echo $usuario['correo'];}}?>"
-                                                    data-documento="<?php echo $registro['nrodoc']; ?>"
-                                                    data-costos="<?php echo $registro['nidreg']; ?>"
-                                                    data-serie="<?php echo $registro['cserie']; ?>"
-                                                    data-procesador="<?php echo $registro['cprocesador']; ?>"
-                                                    data-ram="<?php echo $registro['cram']; ?>"
-                                                    data-hdd="<?php echo $registro['chdd']; ?>"
-                                                    data-otros ="<?php echo $registro['totros']; ?>">
-                                    <td class="pl20px"><?php echo $item++; ?></td>
-                                    <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
-                                    <td class="pl20px"><?php foreach($this->listaMantenimientos['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['nrodoc'] ){ echo $usuario['usuario'];}}?></td>
-                                    <td class="pl20px"><?php echo $registro['cserie']; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['fentrega']; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['fmtto1']; ?></td>
-                                    <td class="textoCentro <?php echo $semaforo1; ?>"><?php echo $estado1; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['fmtto2']; ?></td>
-                                    <td class="textoCentro <?php echo $semaforo2; ?>"><?php echo $estado2; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['fmtto3']; ?></td>
-                                    <td class="textoCentro <?php echo $semaforo3; ?>"><?php echo $estado3; ?></td>
-                                    <td class="textoCentro"><?php echo $registro['fmtto4']; ?></td>
-                                    <td class="textoCentro <?php echo $semaforo4; ?>"><?php echo $estado4; ?></td>
-                                    <td class="textoCentro click_link_date">
-                                        <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['nrodoc']; ?>" title="Cambiar Fecha de Registro">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </a>
-                                    </td>
-                                     <td class="textoCentro click_link_serie">
-                                        <a href="<?php echo $registro['cserie'];?>" data-documento ="<?php echo $registro['nrodoc'];?>" title="Cambiar Serie">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                <?php }//}; ?>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">
+                        ✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b>
+                    </td>
+                </tr>
             </tbody>
-
-            
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
