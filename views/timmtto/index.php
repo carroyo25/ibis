@@ -29,6 +29,10 @@
         <div class="registroti" id="registroti">
             <input type="hidden" name="idmmtto" id="idmmtto">
             <input type="hidden" name="idlastmmtto" id="idlastmmtto">
+            <input type="hidden" name="nro_documento" id="nro_documento">
+            <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
+            <input type="hidden" name="codigo_producto" id="codigo_producto">
+            <input type="hidden" name="proximos" id="proximos" value="0">
 
             <div class="titulo_dialogo" id="ventanaHeader">
                 <h3>🔧 Registrar Mantenimiento</h3>
@@ -55,13 +59,11 @@
                                 <th>📅 Fecha Mantenimiento</th>
                                 <th>📋 Observaciones</th>
                                 <th>👨‍🔧 Técnico</th>
-                                <th>🗳 Eliminar</th>
-                                <th>🎞 Foto</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="bodyDetalle">
                             <tr>
-                                <td colspan="3" style="text-align:center;">Sin registros previos</td>
+                                <td colspan="5" style="text-align:center;">Sin registros previos</td>
                             </tr>
                         </tbody>
                     </table>
@@ -70,9 +72,6 @@
                 <!-- Formulario principal -->
                 <div class="cuerpo_dialogo">
                     <div class="datos_cuerpo">
-                        <label for="fecha_sugerida">📅 Fecha Sugerida</label>
-                        <input type="text" name="fecha_sugerida" id="fecha_sugerida" readonly placeholder="Automático">
-
                         <label for="fecha_mmto">🔧 Fecha Mantenimiento *</label>
                         <input type="date" name="fecha_mmto" id="fecha_mmto" required>
 
@@ -199,7 +198,7 @@
             </thead>
             <tbody id="tableBody">
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">
+                    <td colspan="7" style="text-align: center; color: #94a3b8; padding: 30px;">
                         ✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b>
                     </td>
                 </tr>

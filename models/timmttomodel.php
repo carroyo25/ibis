@@ -19,12 +19,15 @@
                                                         m.nrodoc,
                                                         m.fentrega,
                                                         m.cserie,
+                                                        m.idcostos,
+                                                        m.idprod,
                                                         CONCAT( a.NOM_TRABAJADOR, ' ', a.APE_PATERNO, ' ', a.APE_MATERNO ) AS nombre,
+                                                        a.NUM_EMAIL as correo,
                                                         a.ESTADO,
                                                         m.flgactivo,
                                                         m.flgestado,
                                                         m.fmtto,
-                                                        m.cobserva,
+                                                        UPPER(m.cobserva) cobserva,
                                                         m.ntipo,
                                                         DATEDIFF(
                                                             m.fmtto,
@@ -32,11 +35,19 @@
                                                         m.idprod,
                                                         UPPER(p.cdesprod) cdesprod,
                                                         m.idreg,
-                                                        m.nrodoc
+                                                        m.nrodoc,
+                                                        e.chdd,
+                                                        e.cprocesador,
+                                                        e.cram,
+                                                        e.totros,
+                                                        e.nestado,
+                                                        UPPER(u.cnameuser) cnameuser
                                                     FROM
                                                         ti_mmttos m
                                                         LEFT JOIN linked_data.vw_personal_ultimo_ingreso_aquarius a ON a.NUM_DOC_IDENTIDAD = m.nrodoc
-                                                        LEFT JOIN cm_producto p ON p.id_cprod = m.idprod	
+                                                        LEFT JOIN cm_producto p ON p.id_cprod = m.idprod
+                                                        LEFT JOIN tb_tiespec e ON e.cserie = m.cserie COLLATE utf8_spanish2_ci
+                                                        LEFT JOIN tb_user u ON u.iduser = m.iduser COLLATE utf8_spanish2_ci
                                                     WHERE
                                                         m.flgactivo = 1 
                                                         AND a.ESTADO != 'CESADO' 
@@ -73,57 +84,100 @@
 
         public function registrarMmtto($parametros){
             try {
-                $docData = [];
-                $respuesta = false;
-                $mensaje = "el equipo ya esta registrado";
+                // Registrar equipo si no existe
+                if (!$this->existeSerie($parametros['serie_producto'])) {
+                    if (!$this->grabarEspecificaciones($parametros)) {
+                        return ["respuesta" => false, "mensaje" => "Error al registrar equipo"];
+                    }
+                }
+                
+                // Procesar según tipo de mantenimiento
+                $tipo = intval($parametros['tipo_mmtto']);
+                $lastMmtto = intval($parametros['lastMmtto']);
+                $proximos = intval($parametros['proximos']);
+                
+                if ( $tipo === 1 && $lastMmtto !== 0 ) {
+                    if ($this->modificarMantenimiento($parametros['lastMmtto'],
+                                                                $parametros['fmmto'],
+                                                                $parametros['user'],
+                                                                $parametros['observa'])) {
+                        $actualizacion = 0;
 
-                if ( !$this->existeSerie($parametros['serie_producto']) ) {
-                    $this->grabarEspecificaciones($parametros);
+                        if ( $proximos > 0 ){
+                            $actualizacion = $this->actualizarFechasMttos($parametros);
+                        }else{
+                            $this->crearNuevoMantenimiento($parametros);
+                        }
+                        
+                        return ["respuesta" => true, "mensaje" => "Mantenimiento modificado y nueva programación creada", "actualizadas"=>$actualizacion];
+                    }
 
-                    $mensaje = "Equipo registrado";
-                    $respuesta = true;
+                    return ["respuesta" => false, "mensaje" => "Error al modificar mantenimiento"];
+                }
+                
+                if ( $tipo === 1 && $lastMmtto === 0 ) {
+                    $mensaje = "Mantenimiento programado agregado";
+                    $this->registrartActualMantenimiento($parametros);
+                    $creado = $this->crearNuevoMantenimiento($parametros);
+                    return ["respuesta" => $creado, "mensaje" => $creado ? $mensaje : "Error al crear mantenimiento"];
                 }
 
-                if ( $parametros['tipo_mmtto'] === "1" ){
+                if ( $tipo === 2 )  {
+                    $mensaje = "Mantenimiento preventivo agregado";
+                    $this->registrartActualMantenimiento($parametros);
+                    return ["respuesta" => $creado, "mensaje" => $creado ? $mensaje : "Error al crear mantenimiento"];
+                }
+                
+                return ["respuesta" => false, "mensaje" => "Tipo de mantenimiento no válido"];
+                
+            } catch (PDOException $th) {
+                error_log($th->getMessage());
+                return ["respuesta" => false, "mensaje" => "Error en base de datos"];
+            }
+        }
 
-                    $respuesta = "mantenimiento programado";
+        private function modificarMantenimiento($id,$fecha,$user,$observa){
+            try {
+                $respuesta = false;
 
-                    $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
-                                                        SET ti_mmttos.frelmtto =:fecha,
+                $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
+                                                        SET ti_mmttos.fmtto =:fecha,
                                                             ti_mmttos.flgestado =:estado,
                                                             ti_mmttos.iduser =:user,
                                                             ti_mmttos.cobserva =:observa 
                                                         WHERE ti_mmttos.idreg =:id LIMIT 1");
-                    $sql->execute(["fecha"      =>$parametros['fmmto'],
-                                    "estado"    =>1,
-                                    "user"      =>$parametros['user'],
-                                    "observa"   =>$parametros['observa'],
-                                    "id"        =>$parametros['lastMmtto']]);
-                    if ( $sql->rowCount() > 0){
-                        $respuesta = true;
+                $sql->execute(["fecha"      =>$fecha,
+                                "estado"    =>1,
+                                "user"      =>$user,
+                                "observa"   =>$observa,
+                                "id"        =>$id]);
 
-                    /* $this->envio_correo_mantenimiento($parametros['correo'],
-                                                        $parametros['tecnico'],
-                                                        $parametros['correo_tecnico'],
-                                                        $parametros['observa'],
-                                                        $parametros['fmmto'],
-                                                        $parametros['asignado']);*/
-                    }
-                }else {
-                    $respuesta = "otro mantenimiento";
+                if ($sql->rowCount() > 0){
+                    $respuesta = true;
+                }
 
-                    $sql = $this->db->connect()->prepare("INSERT ti_mmttos 
-                                                            SET ti_mmttos.nrodoc =:documento,
-                                                                ti_mmttos.idprod =:producto,
-                                                                ti_mmttos.cserie  =:serie,
-                                                                ti_mmttos.cobserva =:observa,
-                                                                ti_mmttos.ntipo =:tipo,
-                                                                ti_mmttos.idcostos =:costos,
-                                                                ti_mmttos.iduser =:usuario,
-                                                                ti_mmttos.frelmtto =:fecha,
-                                                                ti_mmttos.flgestado =:estado");
+                return $respuesta;
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
 
-                    $sql->execute(["documento"  =>$parametros['documento_usuario'],
+        private function registrartActualMantenimiento($parametros){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
+                                                        SET nrodoc = :documento,
+                                                            idprod = :producto,
+                                                            cserie = :serie,
+                                                            cobserva = :observa,
+                                                            ntipo = :tipo,
+                                                            idcostos = :costos,
+                                                            iduser = :usuario,
+                                                            fmtto = :fecha,
+                                                            flgestado = :estado");
+
+                $sql->execute(["documento"  =>$parametros['documento_usuario'],
                                     "producto"  =>$parametros['codigo_producto'],
                                     "serie"     =>$parametros['serie_producto'],
                                     "observa"   =>$parametros['observa'],
@@ -132,21 +186,58 @@
                                     "usuario"   =>$parametros['user'],
                                     "fecha"     =>$parametros['fmmto'],
                                     "estado"    =>1]);
-
-                    if ( $sql->rowCount() > 0){
-                        $respuesta = true;
-
-                        /*$this->envio_correo_mantenimiento($parametros['correo'],
-                                            $parametros['tecnico'],
-                                            $parametros['correo_tecnico'],
-                                            $parametros['observa'],
-                                            $parametros['fmmto'],
-                                            $parametros['asignado']);*/
-                    }
+                
+                if ($sql->rowCount() > 0){
+                    $respuesta = true;
                 }
 
-                return array("respuesta"=>$respuesta);
+                return $respuesta;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
 
+        private function crearNuevoMantenimiento($parametros){
+            try {
+                $fecha_base = $parametros['fmmto'];
+                $tipo = $parametros['tipo_mmtto'];
+                $last = $parametros['lastMmtto'];
+
+                if ($tipo == "1") {
+                    $fecha_mantenimiento = date('Y-m-d', strtotime("+6 months", strtotime($fecha_base)));
+                    $estado = 0;
+                } else {
+                    $fecha_mantenimiento = $fecha_base;
+                    $estado = 1;
+                }
+                
+                $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
+                                                        SET nrodoc = :documento,
+                                                            idprod = :producto,
+                                                            cserie = :serie,
+                                                            cobserva = :observa,
+                                                            ntipo = :tipo,
+                                                            idcostos = :costos,
+                                                            iduser = :usuario,
+                                                            fmtto = :fecha,
+                                                            flgestado = :estado");
+
+                $sql->execute(["documento"  =>$parametros['documento_usuario'],
+                                    "producto"  =>$parametros['codigo_producto'],
+                                    "serie"     =>$parametros['serie_producto'],
+                                    "observa"   =>null,
+                                    "tipo"      =>$parametros['tipo_mmtto'],
+                                    "costos"    =>$parametros['codigo_costos'],
+                                    "usuario"   =>$parametros['user'],
+                                    "fecha"     =>$fecha_mantenimiento,
+                                    "estado"    =>$estado]);
+                
+                if ($sql->rowCount() > 0){
+                    $respuesta = true;
+                }
+
+                return $respuesta;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -634,6 +725,33 @@
             }
         }
 
+        private function actualizarFechasMttos($parametros){
+            try {
+                $sql=$this->db->connect()->prepare("UPDATE ti_mmttos m
+                                                        JOIN (
+                                                            SELECT idreg, 
+                                                                fmtto,
+                                                                @fecha_acumulada := DATE_ADD(@fecha_acumulada, INTERVAL 6 MONTH) as nueva_fecha
+                                                            FROM ti_mmttos, ( SELECT @fecha_acumulada := NOW() ) var
+                                                            WHERE cserie = :serie
+                                                            AND fmtto > NOW()
+                                                            AND nrodoc = :documento
+                                                            AND idcostos = :costos
+                                                            ORDER BY fmtto ASC
+                                                        ) AS calculos ON m.idreg= calculos.idreg
+                                                        SET m.fmtto = calculos.nueva_fecha;");
+                $sql->execute(["serie"=>$parametros['serie_producto'],
+                                "costos"=>$parametros['codigo_costos'],
+                                "documento"=>$parametros['documento_usuario']]);
+                
+                return $sql->rowCount();
+                                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function actualizarSeries($parametros){
             try {
                 $serie = $parametros['serie_anterior'];
@@ -674,6 +792,18 @@
 
 
                 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function anularMantenimiento($parametros){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
+                                                        SET ti_mmttos.flgactivo = 0
+                                                        WHERE ti_mmttos.idreg =:indice");
+                $sql->execute(["indice"=>$parametros["indice"]]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

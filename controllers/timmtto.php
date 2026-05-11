@@ -46,5 +46,9 @@
         function archivoExcel() {
             echo json_encode($this->model->crearExcel($_POST['detalles']));
         }
+
+        function anula() {
+            echo json_encode($this->model->anularMantenimiento($_POST));
+        }
     }
 ?>

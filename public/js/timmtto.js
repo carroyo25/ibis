@@ -25,101 +25,18 @@ $(() => {
 
   const tabla_principal = document.getElementById("tablaPrincipal");
 
-  tabla_principal.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    if (e.target.matches(".click_link_date *")) {
-      serie = e.target.parentNode.getAttribute("href");
-      docidetuser = e.target.parentNode.dataset.documento;
-
-      $("#cambio_fecha").fadeIn();
-    } else if (e.target.matches(".click_link_serie *")) {
-      serie = e.target.parentNode.getAttribute("href");
-      docidetuser = e.target.parentNode.dataset.documento;
-
-      fila = e.target.closest("tr").getAttribute("data-id");
-
-      $("#serie_nueva").val(serie);
-
-      $("#cambio_serie").fadeIn();
-    } else if (e.target.matches(".click_tr *")) {
-      const tr = e.target.closest(".click_tr");
-
-      $("#serie").val(e.target.closest(".click_tr").dataset.serie);
-      $("#idmmtto").val(e.target.closest(".click_tr").dataset.id);
-      $("#descripcion").val(e.target.closest(".click_tr").cells[1].innerHTML);
-      $("#fecha_sugerida").val(
-        e.target.closest(".click_tr").cells[5].innerHTML,
-      );
-      $("#usuario").val(e.target.closest(".click_tr").cells[2].innerHTML);
-      $("#sendNotify").prop("href", e.target.closest(".click_tr").dataset.id);
-
-      $("#correo_usuario").val(
-        tr.dataset.correo === "null" ? "" : tr.dataset.correo,
-      );
-      $("#procesador").val(
-        tr.dataset.procesador === "null" ? "" : tr.dataset.procesador,
-      );
-      $("#ram").val(tr.dataset.ram === "null" ? "" : tr.dataset.ram);
-      $("#hdd").val(tr.dataset.hdd === "null" ? "" : tr.dataset.hdd);
-      $("#otros").val(tr.dataset.otros === "null" ? "" : tr.dataset.otros);
-
-      idprod = $(this).data("idprod");
-      cc = $(this).data("costos");
-      docidetuser = $(this).data("documento");
-
-      $("#tabla_detalles_mttos tbody").empty();
-
-      id = $(this).data("id");
-
-      let formData = new FormData();
-      formData.append(
-        "serie",
-        e.target.closest(".click_tr").cells[3].innerHTML,
-      );
-      formData.append(
-        "documento",
-        e.target.closest(".click_tr").dataset.documento,
-      );
-
-      fetch(RUTA + "timmtto/anteriores", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          data.mmttos.forEach((element) => {
-            let row = `<tr>
-                                    <td class="textoCentro">${element.frelmtto}</td>
-                                    <td class="pl20px">${element.cobserva}</td>
-                                    <td class="pl20px">${element.tecnico}</td>
-                                    <td class="textoCentro"><a href="#" class="photo_details"><i class="fas fa-images"></i></a></td>
-                                    <td class="textoCentro"><a href="#" class="photo_details"><i class="fas fa-trash"></i></a></td></td>
-                                </tr>`;
-
-            $("#tabla_detalles_mttos tbody").append(row);
-          });
-
-          $("#idlastmmtto").val(data.lastmmttos.id);
-          $("#fecha_sugerida").val(data.lastmmttos.fecha_proxima);
-
-          $("#dialogo_registro").fadeIn();
-        });
-
-      return false;
-    }
-
-    return false;
-  });
 
   $("#btnAceptarDialogo").click(function (e) {
     e.preventDefault();
 
+    const formData = new FormData();
+
     try {
-      if ($("#fecha_mmto").val() == "")
+      if ( $("#fecha_mmto").val() == "" )
         throw new Error("No ingreso fecha del mantenimiento");
 
-      let formData = new FormData();
+      formData.append("lastMmtto",document.getElementById('idlastmmtto').value);
+
       formData.append("id", $("#idmmtto").val());
       formData.append("fmmto", $("#fecha_mmto").val());
       formData.append("correo", $("#correo_usuario").val());
@@ -136,26 +53,25 @@ $(() => {
       formData.append("otros", $("#otros").val()); //
       formData.append("estado", $("#estado_equipo").val()); //
 
-      formData.append("codigo_costos", cc);
-      formData.append("codigo_producto", null);
+      formData.append("codigo_costos", $("#codigo_proyecto").val());
       formData.append("serie_producto", $("#serie").val());
-      formData.append("documento_usuario", docidetuser);
-
-      formData.append("lastMmtto", $("#idlastmmtto").val());
+      formData.append("documento_usuario", $("#nro_documento").val());
+      formData.append("codigo_producto", $("#codigo_producto").val());
+      formData.append("proximos", $("#proximos").val());
 
       fetch(RUTA + "timmtto/mantenimiento", {
         method: "POST",
         body: formData,
       })
-        .then((response) => response.json())
-        .then((data) => {
+      .then((response) => response.json())
+      .then((data) => {
           if (data.respuesta) {
             mostrarMensaje("Mantenimiento registrado", "mensaje_correcto");
             $("#dialogo_registro").fadeOut();
           }
-        });
+      });
     } catch (error) {
-      mostrarMensaje(error, "mensaje_error");
+      mostrarMensaje(error.message, "mensaje_error");
     }
 
     return false;
@@ -413,199 +329,254 @@ detalles = () => {
   return DATA;
 };
 
- function formatearFecha(fecha) {
-            if (!fecha) return '-';
-            const partes = fecha.split('-');
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+function formatearFecha(fecha) {
+    if (!fecha) return '-';
+    const partes = fecha.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function formatearDias(dias, flgestado) {
+    if (flgestado === 1) {
+        return `<span class="dias-positivo">✅ Realizado</span>`;
+    } else if (dias < 0) {
+        return `<span class="dias-negativo">📉 ${Math.abs(dias)} días (vencido)</span>`;
+    } else if (dias === 0) {
+        return `<span class="dias-positivo">📅 Hoy</span>`;
+    } else if (dias <= 30) {
+        return `<span class="dias-positivo">📈 +${dias} días (próximo)</span>`;
+    } else {
+        return `<span class="dias-positivo">📈 +${dias} días</span>`;
+    }
+}
+
+function getEstadoBadge(dias, flgestado) {
+    if (flgestado === 1) {
+        return '<span class="badge-status badge-completado">✅ COMPLETADO</span>';
+    } else if (dias < 0) {
+        return '<span class="badge-status badge-vencido">⚠️ VENCIDO</span>';
+    } else if (dias === 0) {
+        return '<span class="badge-status badge-pendiente">📅 HOY</span>';
+    } else if (dias <= 30) {
+        return '<span class="badge-status badge-pendiente">🔄 PRÓXIMO</span>';
+    } else {
+        return '<span class="badge-status badge-normal">📆 NORMAL</span>';
+    }
+}
+
+function agruparPorSerie(data) {
+    const grupos = {};
+    data.forEach(item => {
+        const serie = item.cserie;
+        if (!grupos[serie]) {
+            grupos[serie] = {
+                cserie: serie,
+                idx: item.idreg,
+                producto: item.idprod,
+                nrodoc: item.nrodoc,
+                fentrega: item.fentrega,
+                nombre: item.nombre,
+                documento: item.nrodoc,
+                correo:item.correo,
+                cdesprod: item.cdesprod,
+                hdd: item.chdd,
+                procesador: item.cprocesador,
+                ram: item.cram,
+                otros:item.totros,
+                estado:item.nestado,
+                proyecto:item.idcostos,
+                mantenimientos: []
+            };
         }
+        grupos[serie].mantenimientos.push({
+            fmtto: item.fmtto,
+            cobserva: item.cobserva,
+            idreg: item.idreg,
+            dias_diferencia: item.dias_diferencia,
+            flgestado: item.flgestado,
+            tecnico:item.cnameuser,
+            dni:item.nrodoc
+        });
+    });
+    // Ordenar mantenimientos por fecha
+    for (let serie in grupos) {
+        grupos[serie].mantenimientos.sort((a, b) => a.dias_diferencia - b.dias_diferencia);
+    }
+    return Object.values(grupos);
+}
 
-        function formatearDias(dias, flgestado) {
-            if (flgestado === 1) {
-                return `<span class="dias-positivo">✅ Realizado</span>`;
-            } else if (dias < 0) {
-                return `<span class="dias-negativo">📉 ${Math.abs(dias)} días (vencido)</span>`;
-            } else if (dias === 0) {
-                return `<span class="dias-positivo">📅 Hoy</span>`;
-            } else {
-                return `<span class="dias-positivo">📈 +${dias} días</span>`;
-            }
-        }
+function getClaseFila(mantto) {
+    if (mantto.flgestado === 1) return 'completado-row';
+    if (mantto.dias_diferencia < 0) return 'vencido-row';
+    return 'pendiente-row';
+}
 
-        function getEstadoBadge(dias, flgestado) {
-            if (flgestado === 1) {
-                return '<span class="badge-status badge-completado">✅ COMPLETADO</span>';
-            } else if (dias < 0) {
-                return '<span class="badge-status badge-vencido">⚠️ VENCIDO</span>';
-            } else if (dias === 0) {
-                return '<span class="badge-status badge-pendiente">📅 HOY</span>';
-            } else if (dias <= 30) {
-                return '<span class="badge-status badge-pendiente">🔄 PRÓXIMO</span>';
-            } else {
-                return '<span class="badge-status badge-normal">📆 NORMAL</span>';
-            }
-        }
+function getEstadoGeneralSerie(mantenimientos) {
+    const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
+    const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
+    if (tieneVencido) return 'badge-vencido';
+    if (tienePendiente) return 'badge-pendiente';
+    return 'badge-normal';
+}
 
-        function agruparPorSerie(data) {
-            const grupos = {};
-            
-            data.forEach(item => {
-                const serie = item.cserie;
-                if (!grupos[serie]) {
-                    grupos[serie] = {
-                        cserie: serie,
-                        documento: item.nrodoc,
-                        fentrega: item.fentrega,
-                        nombre: item.nombre,
-                        estado: item.ESTADO,
-                        flgactivo: item.flgactivo,
-                        cdesprod: item.cdesprod,
-                        mantenimientos: []
-                    };
-                }
-                grupos[serie].mantenimientos.push({
-                    fmtto: item.fmtto,
-                    cobserva: item.cobserva,
-                    idreg: item.idreg,
-                    dias_diferencia: item.dias_diferencia,
-                    idprod: item.idprod,
-                    flgestado: item.flgestado,
-                    ntipo: item.ntipo
-                });
-            });
-            
-            for (let serie in grupos) {
-                grupos[serie].mantenimientos.sort((a, b) => a.dias_diferencia - b.dias_diferencia);
-            }
-            
-            return Object.values(grupos);
-        }
+function getTextoEstadoGeneral(mantenimientos) {
+    const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
+    const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
+    const total = mantenimientos.length;
+    const completados = mantenimientos.filter(m => m.flgestado === 1).length;
+    
+    if (tieneVencido) return `⚠️ ${total - completados} vencidos`;
+    if (tienePendiente) return `⏳ ${total - completados} pendientes`;
+    return `✅ ${completados}/${total} completados`;
+}
 
-        function getClaseFila(mantto) {
-            if (mantto.flgestado === 1) return 'completado-row';
-            if (mantto.dias_diferencia < 0) return 'vencido-row';
-            return 'pendiente-row';
-        }
+function limpiarId(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
+}
 
-        function getEstadoGeneralSerie(mantenimientos) {
-            const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
-            const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
-            
-            if (tieneVencido) return 'badge-vencido';
-            if (tienePendiente) return 'badge-pendiente';
-            return 'badge-normal';
-        }
+function toggleSerie(serieId) {
+    const detailRow = document.querySelector(`.detail-row[data-serie-id="${serieId}"]`);
+    const icon = document.getElementById(`icon-${serieId}`);
+    if (!detailRow || !icon) return;
+    if (detailRow.classList.contains('hidden')) {
+        detailRow.classList.remove('hidden');
+        icon.classList.add('rotated');
+    } else {
+        detailRow.classList.add('hidden');
+        icon.classList.remove('rotated');
+    }
+}
 
-        function getTextoEstadoGeneral(mantenimientos) {
-            const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
-            const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
-            
-            if (tieneVencido) return '⚠️ Con vencidos';
-            if (tienePendiente) return '⏳ Pendientes';
-            return '✅ Todos completados';
-        }
+function abrirModalSerie(serie) {
+    const modal = document.getElementById('dialogo_registro');
 
-        function limpiarId(str) {
-            return str.replace(/[^a-zA-Z0-9]/g, '_');
-        }
+    document.getElementById('serie').value = serie.cserie;
+    document.getElementById('descripcion').value = serie.cdesprod;
+    document.getElementById('usuario').value = serie.nombre;
+    document.getElementById('correo_usuario').value = serie.correo;
+    document.getElementById('procesador').value = serie.procesador;
+    document.getElementById('ram').value = serie.ram == 'null' ? '':serie.ram;
+    document.getElementById('hdd').value = serie.hdd == 'null' ? '':serie.hdd;
+    document.getElementById('estado_equipo').value = serie.estado;
+    document.getElementById('otros').value = serie.otros == 'null' ? '':serie.otros;
+    document.getElementById('idlastmmtto').value = 0;
+    document.getElementById("nro_documento").value = serie.documento;
+    document.getElementById("codigo_proyecto").value = serie.proyecto;
+    document.getElementById("codigo_producto").value = serie.producto;
 
-        function renderSeries(series) {
-            const tbody = document.getElementById("tableBody");
-            if (!tbody) return;
+    const detalle = document.getElementById('bodyDetalle');
+    detalle.innerHTML = '';
+    let proximos = 0;
+    
+    serie.mantenimientos.forEach(mmtto =>{     
+      const estado = mmtto.flgestado;
+      const tr = document.createElement('tr');
 
-            tbody.innerHTML = "";
+      tr.innerHTML=`<td>${formatearFecha(mmtto.fmtto)}</td>
+                    <td>${mmtto.cobserva}</td>
+                    <td>${mmtto.tecnico}</td>`;
+      if ( estado == 1 ){
+        detalle.appendChild(tr);
+      }else{
+        document.getElementById('idlastmmtto').value = mmtto.idreg;
+        document.getElementById('proximos').value = proximos++;
+      } 
+    });
 
-            let totalMant = 0;
-            let totalVencidos = 0;
-            let totalPendientes = 0;
-            let totalCompletados = 0;
+    modal.style.display = 'block';
+}
 
-            series.forEach((serie) => {
-                totalMant += serie.mantenimientos.length;
-                totalVencidos += serie.mantenimientos.filter(
-                    (m) => m.flgestado === 0 && m.dias_diferencia < 0,
-                ).length;
-                totalPendientes += serie.mantenimientos.filter(
-                    (m) => m.flgestado === 0 && m.dias_diferencia >= 0,
-                ).length;
-                totalCompletados += serie.mantenimientos.filter(
-                    (m) => m.flgestado === 1,
-                ).length;
+function cerrarModalSerie() {
+    document.getElementById('dialogo_registro').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
 
-                const estadoClase = getEstadoGeneralSerie(serie.mantenimientos);
-                const estadoTexto = getTextoEstadoGeneral(serie.mantenimientos);
-                const serieId = limpiarId(serie.cserie);
+function renderSeries(series) {
+    const tbody = document.getElementById("tableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
 
-                const row = tbody.insertRow();
-                row.classList.add('serie-principal');
-                row.setAttribute('data-serie-id', serieId);
-                row.setAttribute('onclick', `toggleSerie('${serieId}')`);
-                row.innerHTML = `
-                    <td class="serie-td">
-                        <span class="toggle-icon" id="icon-${serieId}">▶</span>
-                        <span class="serie-code">🔧 ${serie.cserie}</span>
-                    </td>
-                    <td class="serie-nombre">${serie.nombre}</td>
-                    <td class="serie-nombre">${serie.documento}</td>
-                    <td class="serie-producto">${serie.cdesprod}</td>
-                    <td>${formatearFecha(serie.fentrega)}</td>
-                    <td><span class="badge-status ${estadoClase}">${estadoTexto}</span></td>
-                    <td><a href="#" class="textoCentro actions"><i class="fas fa-cogs"></i></a></td>
-                `;
+    series.forEach((serie) => {
+        const estadoClase = getEstadoGeneralSerie(serie.mantenimientos);
+        const estadoTexto = getTextoEstadoGeneral(serie.mantenimientos);
+        const serieId = limpiarId(serie.cserie);
 
-                const detailRow = tbody.insertRow();
-                detailRow.classList.add('detail-row', 'hidden');
-                detailRow.setAttribute('data-serie-id', serieId);
-                detailRow.innerHTML = `
-                    <td colspan="7" style="padding: 0;">
-                        <table class="sub-table">
-                            <thead>
-                                <tr>
-                                    <th>ID Registro</th>
-                                    <th>Fecha Mantenimiento</th>
-                                    <th>Estado</th>
-                                    <th>Días</th>
-                                    <th>Observaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${serie.mantenimientos.map(m => `
-                                    <tr class="${getClaseFila(m)}">
-                                        <td>${m.idreg}</td>
-                                        <td>${formatearFecha(m.fmtto)}</td>
-                                        <td>${getEstadoBadge(m.dias_diferencia, m.flgestado)}</td>
-                                        <td>${formatearDias(m.dias_diferencia, m.flgestado)}</td>
-                                        <td>${m.cobserva || '-'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </td>
-                `;
-            });
-        }
+        const row = tbody.insertRow();
+        row.classList.add('serie-principal');
+        row.setAttribute('data-serie-id', serieId);
+        row.innerHTML = `
+            <td class="serie-td">
+                <span class="toggle-icon" id="icon-${serieId}">▶</span>
+                <span class="serie-code">🔧 ${serie.cserie}</span>
+            </td>
+            <td>${serie.nombre}</td>
+            <td>${serie.documento}</td>
+            <td>${serie.cdesprod}</td>
+            <td>${formatearFecha(serie.fentrega)}</td>
+            <td><span class="badge-status ${estadoClase}">${estadoTexto}</span></td>
+            <td style="text-align: center;">
+                <span class="modal-icon" onclick="event.stopPropagation();abrirModalSerie(${JSON.stringify(serie).replace(/"/g, '&quot;')})">📋</span>
+            </td>
+        `;
+        
+        row.addEventListener('click', function(e) {
+            if (e.target.classList && e.target.classList.contains('modal-icon')) return;
+            toggleSerie(serieId);
+        });
 
-        function toggleSerie(serieId) {
-            const rows = document.querySelectorAll('#tableBody tr');
-            let detailRow = null;
-            let icon = null;
-            
-            rows.forEach(row => {
-                if (row.getAttribute('data-serie-id') === serieId) {
-                    if (row.classList.contains('detail-row')) {
-                        detailRow = row;
-                    } else if (row.classList.contains('serie-principal')) {
-                        icon = row.querySelector(`#icon-${serieId}`);
-                    }
-                }
-            });
-            
-            if (!detailRow || !icon) return;
-            
-            if (detailRow.classList.contains('hidden')) {
-                detailRow.classList.remove('hidden');
-                icon.classList.add('rotated');
-            } else {
-                detailRow.classList.add('hidden');
-                icon.classList.remove('rotated');
-            }
-        }
+        const detailRow = tbody.insertRow();
+        detailRow.classList.add('detail-row', 'hidden');
+        detailRow.setAttribute('data-serie-id', serieId);
+        detailRow.innerHTML = `
+            <td colspan="7" style="padding: 0;">
+                <table class="sub-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha Mantenimiento</th>
+                            <th>Estado</th>
+                            <th>Días</th>
+                            <th>Observaciones</th>
+                            <th>Subir Fotos</th>
+                            <th>Ver Fotos</th>
+                            <th>Eliminar MMTTO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${serie.mantenimientos.map(m => `
+                            <tr class="${getClaseFila(m)}" id="${m.idreg}">
+                                <td>${m.idreg}</td>
+                                <td>${formatearFecha(m.fmtto)}</td>
+                                <td>${getEstadoBadge(m.dias_diferencia, m.flgestado)}</td>
+                                <td>${formatearDias(m.dias_diferencia, m.flgestado)}</td>
+                                <td>${m.cobserva || '-'}</td>
+                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();subirFotos('subir fotos')"><i class="fas fa-file-upload"></i></span></td>
+                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();verFotos('ver fotos')"><i class="fas fa-image"></i></span></td>
+                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();eliminarRegistro(${m.idreg})"><i class="fas fa-trash"></i></span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </td>
+        `;
+    });
+}
+
+function eliminarRegistro(id){
+  try {
+    const formData = new FormData();
+    formData.append('indice',id);
+
+    fetch(RUTA+'timmtto/anula',{
+      method:'POST',
+      body:formData
+    })
+    .then(response =>response.json())
+    .then(data=>{
+      document.getElementById(id).remove();
+      mostrarMensaje('Registro Eliminado',"mensaje_correcto");
+    })
+  } catch (error) {
+    mostrarMensaje(error.message,"mensaje_error");
+  }
+  
+}
