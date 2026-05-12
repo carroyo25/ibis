@@ -205,6 +205,41 @@
             </tbody>
         </table>
     </div>
+    <div id="uploadModal" class="modals">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📸 Subir Fotos</h3>
+                <span class="modal-close" onclick="cerrarUploadModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="dropArea" class="drop-area" onclick="document.getElementById('fileInput').click()">
+                    <span class="upload-icon">📷</span>
+                    <div class="upload-text">Arrastra y suelta tus fotos aquí</div>
+                    <div class="upload-subtext">o haz clic para seleccionar archivos</div>
+                    <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(event.target.files)">
+                </div>
+                <div id="previewContainer" class="preview-images"></div>
+                <button class="btn-subir" onclick="subirFotos()">📤 Subir <span id="fotoCount">0</span> fotos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver fotos -->
+    <div id="viewModal" class="modals">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🖼️ Galería de Fotos</h3>
+                <span class="modal-close" onclick="cerrarViewModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="galleryContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal para vista ampliada -->
+    <div id="fullscreenModal" class="modal-fullscreen" onclick="cerrarFullscreen()">
+        <span class="fullscreen-close">&times;</span>
+        <img id="fullscreenImg" class="fullscreen-img">
+    </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/timmtto.js?<?php echo constant('VERSION')?>"></script>

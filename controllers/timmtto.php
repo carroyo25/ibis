@@ -50,5 +50,9 @@
         function anula() {
             echo json_encode($this->model->anularMantenimiento($_POST));
         }
+
+        function upload_fotos() {
+            echo json_encode($this->model->subirFotos($_POST));
+        }
     }
 ?>

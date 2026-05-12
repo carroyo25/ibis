@@ -25,17 +25,19 @@ $(() => {
 
   const tabla_principal = document.getElementById("tablaPrincipal");
 
-
   $("#btnAceptarDialogo").click(function (e) {
     e.preventDefault();
 
     const formData = new FormData();
 
     try {
-      if ( $("#fecha_mmto").val() == "" )
+      if ($("#fecha_mmto").val() == "")
         throw new Error("No ingreso fecha del mantenimiento");
 
-      formData.append("lastMmtto",document.getElementById('idlastmmtto').value);
+      formData.append(
+        "lastMmtto",
+        document.getElementById("idlastmmtto").value,
+      );
 
       formData.append("id", $("#idmmtto").val());
       formData.append("fmmto", $("#fecha_mmto").val());
@@ -63,13 +65,13 @@ $(() => {
         method: "POST",
         body: formData,
       })
-      .then((response) => response.json())
-      .then((data) => {
+        .then((response) => response.json())
+        .then((data) => {
           if (data.respuesta) {
             mostrarMensaje("Mantenimiento registrado", "mensaje_correcto");
             $("#dialogo_registro").fadeOut();
           }
-      });
+        });
     } catch (error) {
       mostrarMensaje(error.message, "mensaje_error");
     }
@@ -330,180 +332,194 @@ detalles = () => {
 };
 
 function formatearFecha(fecha) {
-    if (!fecha) return '-';
-    const partes = fecha.split('-');
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  if (!fecha) return "-";
+  const partes = fecha.split("-");
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function formatearDias(dias, flgestado) {
-    if (flgestado === 1) {
-        return `<span class="dias-positivo">✅ Realizado</span>`;
-    } else if (dias < 0) {
-        return `<span class="dias-negativo">📉 ${Math.abs(dias)} días (vencido)</span>`;
-    } else if (dias === 0) {
-        return `<span class="dias-positivo">📅 Hoy</span>`;
-    } else if (dias <= 30) {
-        return `<span class="dias-positivo">📈 +${dias} días (próximo)</span>`;
-    } else {
-        return `<span class="dias-positivo">📈 +${dias} días</span>`;
-    }
+  if (flgestado === 1) {
+    return `<span class="dias-positivo">✅ Realizado</span>`;
+  } else if (dias < 0) {
+    return `<span class="dias-negativo">📉 ${Math.abs(dias)} días (vencido)</span>`;
+  } else if (dias === 0) {
+    return `<span class="dias-positivo">📅 Hoy</span>`;
+  } else if (dias <= 30) {
+    return `<span class="dias-positivo">📈 +${dias} días (próximo)</span>`;
+  } else {
+    return `<span class="dias-positivo">📈 +${dias} días</span>`;
+  }
 }
 
 function getEstadoBadge(dias, flgestado) {
-    if (flgestado === 1) {
-        return '<span class="badge-status badge-completado">✅ COMPLETADO</span>';
-    } else if (dias < 0) {
-        return '<span class="badge-status badge-vencido">⚠️ VENCIDO</span>';
-    } else if (dias === 0) {
-        return '<span class="badge-status badge-pendiente">📅 HOY</span>';
-    } else if (dias <= 30) {
-        return '<span class="badge-status badge-pendiente">🔄 PRÓXIMO</span>';
-    } else {
-        return '<span class="badge-status badge-normal">📆 NORMAL</span>';
-    }
+  if (flgestado === 1) {
+    return '<span class="badge-status badge-completado">✅ COMPLETADO</span>';
+  } else if (dias < 0) {
+    return '<span class="badge-status badge-vencido">⚠️ VENCIDO</span>';
+  } else if (dias === 0) {
+    return '<span class="badge-status badge-pendiente">📅 HOY</span>';
+  } else if (dias <= 30) {
+    return '<span class="badge-status badge-pendiente">🔄 PRÓXIMO</span>';
+  } else {
+    return '<span class="badge-status badge-normal">📆 NORMAL</span>';
+  }
 }
 
 function agruparPorSerie(data) {
-    const grupos = {};
-    data.forEach(item => {
-        const serie = item.cserie;
-        if (!grupos[serie]) {
-            grupos[serie] = {
-                cserie: serie,
-                idx: item.idreg,
-                producto: item.idprod,
-                nrodoc: item.nrodoc,
-                fentrega: item.fentrega,
-                nombre: item.nombre,
-                documento: item.nrodoc,
-                correo:item.correo,
-                cdesprod: item.cdesprod,
-                hdd: item.chdd,
-                procesador: item.cprocesador,
-                ram: item.cram,
-                otros:item.totros,
-                estado:item.nestado,
-                proyecto:item.idcostos,
-                mantenimientos: []
-            };
-        }
-        grupos[serie].mantenimientos.push({
-            fmtto: item.fmtto,
-            cobserva: item.cobserva,
-            idreg: item.idreg,
-            dias_diferencia: item.dias_diferencia,
-            flgestado: item.flgestado,
-            tecnico:item.cnameuser,
-            dni:item.nrodoc
-        });
-    });
-    // Ordenar mantenimientos por fecha
-    for (let serie in grupos) {
-        grupos[serie].mantenimientos.sort((a, b) => a.dias_diferencia - b.dias_diferencia);
+  const grupos = {};
+  data.forEach((item) => {
+    const serie = item.cserie;
+    if (!grupos[serie]) {
+      grupos[serie] = {
+        cserie: serie,
+        idx: item.idreg,
+        producto: item.idprod,
+        nrodoc: item.nrodoc,
+        fentrega: item.fentrega,
+        nombre: item.nombre,
+        documento: item.nrodoc,
+        correo: item.correo,
+        cdesprod: item.cdesprod,
+        hdd: item.chdd,
+        procesador: item.cprocesador,
+        ram: item.cram,
+        otros: item.totros,
+        estado: item.nestado,
+        proyecto: item.idcostos,
+        mantenimientos: [],
+      };
     }
-    return Object.values(grupos);
+    grupos[serie].mantenimientos.push({
+      fmtto: item.fmtto,
+      cobserva: item.cobserva,
+      idreg: item.idreg,
+      dias_diferencia: item.dias_diferencia,
+      flgestado: item.flgestado,
+      tecnico: item.cnameuser,
+      dni: item.nrodoc,
+      fotos: item.fotos,
+    });
+  });
+  // Ordenar mantenimientos por fecha
+  for (let serie in grupos) {
+    grupos[serie].mantenimientos.sort(
+      (a, b) => a.dias_diferencia - b.dias_diferencia,
+    );
+  }
+  return Object.values(grupos);
 }
 
 function getClaseFila(mantto) {
-    if (mantto.flgestado === 1) return 'completado-row';
-    if (mantto.dias_diferencia < 0) return 'vencido-row';
-    return 'pendiente-row';
+  if (mantto.flgestado === 1) return "completado-row";
+  if (mantto.dias_diferencia < 0) return "vencido-row";
+  return "pendiente-row";
 }
 
 function getEstadoGeneralSerie(mantenimientos) {
-    const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
-    const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
-    if (tieneVencido) return 'badge-vencido';
-    if (tienePendiente) return 'badge-pendiente';
-    return 'badge-normal';
+  const tieneVencido = mantenimientos.some(
+    (m) => m.flgestado === 0 && m.dias_diferencia < 0,
+  );
+  const tienePendiente = mantenimientos.some(
+    (m) => m.flgestado === 0 && m.dias_diferencia >= 0,
+  );
+  if (tieneVencido) return "badge-vencido";
+  if (tienePendiente) return "badge-pendiente";
+  return "badge-normal";
 }
 
 function getTextoEstadoGeneral(mantenimientos) {
-    const tieneVencido = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia < 0);
-    const tienePendiente = mantenimientos.some(m => m.flgestado === 0 && m.dias_diferencia >= 0);
-    const total = mantenimientos.length;
-    const completados = mantenimientos.filter(m => m.flgestado === 1).length;
-    
-    if (tieneVencido) return `⚠️ ${total - completados} vencidos`;
-    if (tienePendiente) return `⏳ ${total - completados} pendientes`;
-    return `✅ ${completados}/${total} completados`;
+  const tieneVencido = mantenimientos.some(
+    (m) => m.flgestado === 0 && m.dias_diferencia < 0,
+  );
+  const tienePendiente = mantenimientos.some(
+    (m) => m.flgestado === 0 && m.dias_diferencia >= 0,
+  );
+  const total = mantenimientos.length;
+  const completados = mantenimientos.filter((m) => m.flgestado === 1).length;
+
+  if (tieneVencido) return `⚠️ ${total - completados} vencidos`;
+  if (tienePendiente) return `⏳ ${total - completados} pendientes`;
+  return `✅ ${completados}/${total} completados`;
 }
 
 function limpiarId(str) {
-    return str.replace(/[^a-zA-Z0-9]/g, '_');
+  return str.replace(/[^a-zA-Z0-9]/g, "_");
 }
 
 function toggleSerie(serieId) {
-    const detailRow = document.querySelector(`.detail-row[data-serie-id="${serieId}"]`);
-    const icon = document.getElementById(`icon-${serieId}`);
-    if (!detailRow || !icon) return;
-    if (detailRow.classList.contains('hidden')) {
-        detailRow.classList.remove('hidden');
-        icon.classList.add('rotated');
-    } else {
-        detailRow.classList.add('hidden');
-        icon.classList.remove('rotated');
-    }
+  const detailRow = document.querySelector(
+    `.detail-row[data-serie-id="${serieId}"]`,
+  );
+  const icon = document.getElementById(`icon-${serieId}`);
+  if (!detailRow || !icon) return;
+  if (detailRow.classList.contains("hidden")) {
+    detailRow.classList.remove("hidden");
+    icon.classList.add("rotated");
+  } else {
+    detailRow.classList.add("hidden");
+    icon.classList.remove("rotated");
+  }
 }
 
 function abrirModalSerie(serie) {
-    const modal = document.getElementById('dialogo_registro');
+  const modal = document.getElementById("dialogo_registro");
 
-    document.getElementById('serie').value = serie.cserie;
-    document.getElementById('descripcion').value = serie.cdesprod;
-    document.getElementById('usuario').value = serie.nombre;
-    document.getElementById('correo_usuario').value = serie.correo;
-    document.getElementById('procesador').value = serie.procesador;
-    document.getElementById('ram').value = serie.ram == 'null' ? '':serie.ram;
-    document.getElementById('hdd').value = serie.hdd == 'null' ? '':serie.hdd;
-    document.getElementById('estado_equipo').value = serie.estado;
-    document.getElementById('otros').value = serie.otros == 'null' ? '':serie.otros;
-    document.getElementById('idlastmmtto').value = 0;
-    document.getElementById("nro_documento").value = serie.documento;
-    document.getElementById("codigo_proyecto").value = serie.proyecto;
-    document.getElementById("codigo_producto").value = serie.producto;
+  document.getElementById("serie").value = serie.cserie;
+  document.getElementById("descripcion").value = serie.cdesprod;
+  document.getElementById("usuario").value = serie.nombre;
+  document.getElementById("correo_usuario").value = serie.correo;
+  document.getElementById("procesador").value = serie.procesador;
+  document.getElementById("ram").value = serie.ram == "null" ? "" : serie.ram;
+  document.getElementById("hdd").value = serie.hdd == "null" ? "" : serie.hdd;
+  document.getElementById("estado_equipo").value = serie.estado;
+  document.getElementById("otros").value =
+    serie.otros == "null" ? "" : serie.otros;
+  document.getElementById("idlastmmtto").value = 0;
+  document.getElementById("nro_documento").value = serie.documento;
+  document.getElementById("codigo_proyecto").value = serie.proyecto;
+  document.getElementById("codigo_producto").value = serie.producto;
 
-    const detalle = document.getElementById('bodyDetalle');
-    detalle.innerHTML = '';
-    let proximos = 0;
-    
-    serie.mantenimientos.forEach(mmtto =>{     
-      const estado = mmtto.flgestado;
-      const tr = document.createElement('tr');
+  const detalle = document.getElementById("bodyDetalle");
+  detalle.innerHTML = "";
+  let proximos = 0;
 
-      tr.innerHTML=`<td>${formatearFecha(mmtto.fmtto)}</td>
+  serie.mantenimientos.forEach((mmtto) => {
+    const estado = mmtto.flgestado;
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `<td>${formatearFecha(mmtto.fmtto)}</td>
                     <td>${mmtto.cobserva}</td>
                     <td>${mmtto.tecnico}</td>`;
-      if ( estado == 1 ){
-        detalle.appendChild(tr);
-      }else{
-        document.getElementById('idlastmmtto').value = mmtto.idreg;
-        document.getElementById('proximos').value = proximos++;
-      } 
-    });
+    if (estado == 1) {
+      detalle.appendChild(tr);
+    } else {
+      document.getElementById("idlastmmtto").value = mmtto.idreg;
+      document.getElementById("proximos").value = proximos++;
+    }
+  });
 
-    modal.style.display = 'block';
+  modal.style.display = "block";
 }
 
 function cerrarModalSerie() {
-    document.getElementById('dialogo_registro').style.display = 'none';
-    document.body.style.overflow = 'auto';
+  document.getElementById("dialogo_registro").style.display = "none";
+  document.body.style.overflow = "auto";
 }
 
 function renderSeries(series) {
-    const tbody = document.getElementById("tableBody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
+  const tbody = document.getElementById("tableBody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
 
-    series.forEach((serie) => {
-        const estadoClase = getEstadoGeneralSerie(serie.mantenimientos);
-        const estadoTexto = getTextoEstadoGeneral(serie.mantenimientos);
-        const serieId = limpiarId(serie.cserie);
+  series.forEach((serie) => {
+    const estadoClase = getEstadoGeneralSerie(serie.mantenimientos);
+    const estadoTexto = getTextoEstadoGeneral(serie.mantenimientos);
+    const serieId = limpiarId(serie.cserie);
 
-        const row = tbody.insertRow();
-        row.classList.add('serie-principal');
-        row.setAttribute('data-serie-id', serieId);
-        row.innerHTML = `
+    const row = tbody.insertRow();
+    row.classList.add("serie-principal");
+    row.setAttribute("data-serie-id", serieId);
+    row.innerHTML = `
             <td class="serie-td">
                 <span class="toggle-icon" id="icon-${serieId}">▶</span>
                 <span class="serie-code">🔧 ${serie.cserie}</span>
@@ -514,19 +530,20 @@ function renderSeries(series) {
             <td>${formatearFecha(serie.fentrega)}</td>
             <td><span class="badge-status ${estadoClase}">${estadoTexto}</span></td>
             <td style="text-align: center;">
-                <span class="modal-icon" onclick="event.stopPropagation();abrirModalSerie(${JSON.stringify(serie).replace(/"/g, '&quot;')})">📋</span>
+                <span class="modal-icon" onclick="event.stopPropagation();abrirModalSerie(${JSON.stringify(serie).replace(/"/g, "&quot;")})">📋</span>
             </td>
         `;
-        
-        row.addEventListener('click', function(e) {
-            if (e.target.classList && e.target.classList.contains('modal-icon')) return;
-            toggleSerie(serieId);
-        });
 
-        const detailRow = tbody.insertRow();
-        detailRow.classList.add('detail-row', 'hidden');
-        detailRow.setAttribute('data-serie-id', serieId);
-        detailRow.innerHTML = `
+    row.addEventListener("click", function (e) {
+      if (e.target.classList && e.target.classList.contains("modal-icon"))
+        return;
+      toggleSerie(serieId);
+    });
+
+    const detailRow = tbody.insertRow();
+    detailRow.classList.add("detail-row", "hidden");
+    detailRow.setAttribute("data-serie-id", serieId);
+    detailRow.innerHTML = `
             <td colspan="7" style="padding: 0;">
                 <table class="sub-table">
                     <thead>
@@ -542,41 +559,262 @@ function renderSeries(series) {
                         </tr>
                     </thead>
                     <tbody>
-                        ${serie.mantenimientos.map(m => `
+                        ${serie.mantenimientos
+                          .map(
+                            (m) => `
                             <tr class="${getClaseFila(m)}" id="${m.idreg}">
                                 <td>${m.idreg}</td>
                                 <td>${formatearFecha(m.fmtto)}</td>
                                 <td>${getEstadoBadge(m.dias_diferencia, m.flgestado)}</td>
                                 <td>${formatearDias(m.dias_diferencia, m.flgestado)}</td>
-                                <td>${m.cobserva || '-'}</td>
-                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();subirFotos('subir fotos')"><i class="fas fa-file-upload"></i></span></td>
-                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();verFotos('ver fotos')"><i class="fas fa-image"></i></span></td>
-                                <td><span data-id="${m.idreg}" onclick="event.stopPropagation();eliminarRegistro(${m.idreg})"><i class="fas fa-trash"></i></span></td>
+                                <td>${m.cobserva || "-"}</td>
+                                <td style="text-align:center"><span data-id="${m.idreg}" onclick="event.stopPropagation();abrirUploadModal(${m.idreg})"><i class="fas fa-file-upload"></i></span></td>
+                                <td style="text-align:center"><span data-id="${m.idreg}" style="position:relative" onclick="event.stopPropagation();abrirViewModal(${m.idreg})"><i class="fas fa-image"></i><span class="contador_fotos">${m.fotos || ""}</span></span></td>
+                                <td style="text-align:center"><span data-id="${m.idreg}" onclick="event.stopPropagation();eliminarRegistro(${m.idreg})"><i class="fas fa-trash"></i></span></td>
                             </tr>
-                        `).join('')}
+                        `,
+                          )
+                          .join("")}
                     </tbody>
                 </table>
             </td>
         `;
-    });
+  });
 }
 
-function eliminarRegistro(id){
+function eliminarRegistro(id) {
   try {
     const formData = new FormData();
-    formData.append('indice',id);
+    formData.append("indice", id);
 
-    fetch(RUTA+'timmtto/anula',{
-      method:'POST',
-      body:formData
+    fetch(RUTA + "timmtto/anula", {
+      method: "POST",
+      body: formData,
     })
-    .then(response =>response.json())
-    .then(data=>{
-      document.getElementById(id).remove();
-      mostrarMensaje('Registro Eliminado',"mensaje_correcto");
-    })
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById(id).remove();
+        mostrarMensaje("Registro Eliminado", "mensaje_correcto");
+      });
   } catch (error) {
-    mostrarMensaje(error.message,"mensaje_error");
+    mostrarMensaje(error.message, "mensaje_error");
   }
-  
+}
+
+function cerrarUploadModal() {
+  const modal = document.getElementById("uploadModal");
+
+  // Fadeout
+  modal.style.transition = "opacity 0.2s";
+  modal.style.opacity = "0";
+
+  setTimeout(() => {
+    modal.classList.remove("show");
+    modal.style.opacity = "";
+    modal.style.transition = "";
+
+    // Limpiar todo
+    currentMantenimientoId = null;
+    fotosPendientes = [];
+    document.getElementById("previewContainer").innerHTML = "";
+    document.getElementById("fileInput").value = "";
+    //document.getElementById("fotoCount").innerText = "0";
+    const dropArea = document.getElementById("dropArea");
+    if (dropArea) dropArea.classList.remove("drag-over");
+  }, 200);
+}
+
+function abrirUploadModal(mantenimientoId) {
+  currentMantenimientoId = mantenimientoId;
+  fotosPendientes = [];
+  actualizarPreview();
+  document.getElementById("fileInput").value = "";
+  document.getElementById("uploadModal").classList.add("show");
+  setTimeout(setupDragAndDrop, 100);
+}
+
+function actualizarPreview() {
+  const previewContainer = document.getElementById("previewContainer");
+  const fotoCountSpan = document.getElementById("fotoCount");
+
+  previewContainer.innerHTML = fotosPendientes
+    .map(
+      (foto, idx) => `
+                <div class="preview-item">
+                    <img src="${foto}" class="preview-img">
+                    <button class="remove-img" onclick="removerFotoPendiente(${idx})">×</button>
+                </div>
+            `,
+    )
+    .join("");
+
+  if (fotoCountSpan) {
+    fotoCountSpan.innerText = fotosPendientes.length;
+  }
+}
+
+function setupDragAndDrop() {
+  const dropArea = document.getElementById("dropArea");
+  if (!dropArea) return;
+
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    dropArea.classList.add("drag-over");
+  }
+
+  function unhighlight(e) {
+    dropArea.classList.remove("drag-over");
+  }
+
+  dropArea.addEventListener("drop", handleDrop, false);
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  const previewContainer = document.getElementById("previewContainer");
+  const fileArray = Array.from(files);
+
+  fileArray.forEach((file) => {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        fotosPendientes.push(e.target.result);
+        actualizarPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+function removerFotoPendiente(index) {
+  fotosPendientes.splice(index, 1);
+  actualizarPreview();
+}
+
+function subirFotos() {
+  if (fotosPendientes.length === 0) {
+    alert("Selecciona o arrastra al menos una foto");
+    return;
+  }
+
+  // Mostrar indicador de carga
+  const btnSubir = document.querySelector(".btn-subir");
+  const textoOriginal = btnSubir.innerHTML;
+  btnSubir.innerHTML = "⏳ Subiendo...";
+  btnSubir.disabled = true;
+
+  // Crear FormData para enviar los archivos
+  const formData = new FormData();
+  formData.append("mantenimiento_id", currentMantenimientoId);
+
+  // Convertir las fotos pendientes (base64) a archivos Blob
+  fotosPendientes.forEach((base64, index) => {
+    const blob = dataURLtoBlob(base64);
+    formData.append(`fotos[]`, blob, `foto_${Date.now()}_${index}.jpg`);
+  });
+
+  // Enviar al backend
+  fetch(RUTA + "timmtto/upload_fotos", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        cerrarUploadModal();
+
+        // Mostrar mensaje de éxito
+      } else {
+        alert("Error al subir fotos: " + data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Error de conexión al servidor");
+    })
+    .finally(() => {
+      // Restaurar botón
+      btnSubir.innerHTML = `📤 Subir <span id="fotoCount">0</span> fotos`;
+      btnSubir.disabled = false;
+    });
+
+  function guardarFotosStorage() {
+    localStorage.setItem(
+      "mantenimiento_fotos_desktop",
+      JSON.stringify(fotosStorage),
+    );
+  }
+}
+
+// Función auxiliar: Convertir dataURL a Blob
+function dataURLtoBlob(dataURL) {
+  const arr = dataURL.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+function abrirViewModal(mantenimientoId) {
+  const fotos = obtenerFotos(mantenimientoId);
+  const galleryContainer = document.getElementById("galleryContainer");
+
+  if (fotos.length === 0) {
+    galleryContainer.innerHTML = `
+                    <div class="empty-gallery">
+                        <span style="font-size: 48px;">📷</span>
+                        <p style="margin-top: 12px;">No hay fotos adjuntas</p>
+                        <button class="action-btn-small upload" style="margin-top: 16px; padding: 8px 16px;" onclick="cerrarViewModal(); abrirUploadModal(${mantenimientoId})">
+                            📸 Subir Fotos
+                        </button>
+                    </div>
+                `;
+  } else {
+    galleryContainer.innerHTML = `
+                    <div class="gallery-grid">
+                        ${fotos
+                          .map(
+                            (foto, idx) => `
+                            <div class="gallery-item">
+                                <img src="${foto}" class="gallery-img" onclick="abrirFullscreen('${foto}')">
+                                <button class="gallery-delete" onclick="eliminarFoto(${mantenimientoId}, ${idx})">🗑️</button>
+                            </div>
+                        `,
+                          )
+                          .join("")}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="action-btn-small upload" style="width:100%; padding: 10px;" onclick="cerrarViewModal(); abrirUploadModal(${mantenimientoId})">
+                            📸 Agregar más fotos
+                        </button>
+                    </div>
+                `;
+  }
+
+  document.getElementById("viewModal").classList.add("show");
 }

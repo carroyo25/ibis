@@ -32,16 +32,15 @@
                                                         DATEDIFF(
                                                             m.fmtto,
                                                         CURDATE()) AS dias_diferencia,
-                                                        m.idprod,
                                                         UPPER(p.cdesprod) cdesprod,
                                                         m.idreg,
-                                                        m.nrodoc,
                                                         e.chdd,
                                                         e.cprocesador,
                                                         e.cram,
                                                         e.totros,
                                                         e.nestado,
-                                                        UPPER(u.cnameuser) cnameuser
+                                                        UPPER(u.cnameuser) cnameuser,
+                                                        ( SELECT COUNT(*) FROM lg_regdocumento l WHERE l.nidrefer = m.idreg AND l.cmodulo = 'FOT' AND l.nflgactivo = 1 ) fotos
                                                     FROM
                                                         ti_mmttos m
                                                         LEFT JOIN linked_data.vw_personal_ultimo_ingreso_aquarius a ON a.NUM_DOC_IDENTIDAD = m.nrodoc
@@ -807,6 +806,109 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
+            }
+        }
+
+        public function subirFotos(){
+            $uploadDir = 'public/documentos/ti/fotos/';
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+            $maxFileSize = 5 * 1024 * 1024; // 5MB
+
+            $response = ['success' => false, 'message' => '', 'fotos_urls' => []];
+
+            try {
+                // Validar que llegó el mantenimiento_id
+                if (!isset($_POST['mantenimiento_id'])) {
+                    throw new Exception('ID de mantenimiento no proporcionado');
+                }
+                
+                $mantenimientoId = $_POST['mantenimiento_id'];
+                
+                // Validar que hay archivos
+                if (!isset($_FILES['fotos']) || empty($_FILES['fotos']['name'][0])) {
+                    throw new Exception('No se recibieron fotos');
+                }
+                
+                $archivosSubidos = [];
+                $errors = [];
+                
+                foreach ($_FILES['fotos']['tmp_name'] as $key => $tmp_name) {
+                    $fileName = $_FILES['fotos']['name'][$key];
+                    $fileType = $_FILES['fotos']['type'][$key];
+                    $fileSize = $_FILES['fotos']['size'][$key];
+                    $fileError = $_FILES['fotos']['error'][$key];
+                    
+                    // Validar tipo
+                    if (!in_array($fileType, $allowedTypes)) {
+                        $errors[] = "Tipo no permitido: $fileName";
+                        continue;
+                    }
+                    
+                    // Validar tamaño
+                    if ($fileSize > $maxFileSize) {
+                        $errors[] = "Archivo muy grande: $fileName";
+                        continue;
+                    }
+                    
+                    // Validar errores
+                    if ($fileError !== UPLOAD_ERR_OK) {
+                        $errors[] = "Error al subir: $fileName";
+                        continue;
+                    }
+                    
+                    // Generar nombre único
+                    $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+                    $newFileName = $mantenimientoId . '_' . time() . '_' . uniqid() . '.' . $extension;
+                    $uploadPath = $uploadDir . $newFileName;
+                    
+                    // Mover archivo
+                    if (move_uploaded_file($tmp_name, $uploadPath)) {
+                        $url = 'uploads/mantenimientos/' . $newFileName;
+                        $archivosSubidos[] = $url;
+                        
+                        // Aquí puedes guardar en base de datos
+                        $this->guardarFotoEnBD($mantenimientoId,$newFileName,$fileName);
+                    } else {
+                        $errors[] = "Error al mover archivo: $fileName";
+                    }
+                }
+                
+                if (count($archivosSubidos) > 0) {
+                    $response['success'] = true;
+                    $response['message'] = 'Fotos subidas correctamente';
+                    $response['fotos_urls'] = $archivosSubidos;
+                    if (!empty($errors)) {
+                        $response['message'] .= ' Algunos archivos no se subieron: ' . implode(', ', $errors);
+                    }
+                } else {
+                    throw new Exception('No se pudo subir ningún archivo: ' . implode(', ', $errors));
+                }
+                
+            } catch (Exception $e) {
+                $response['message'] = $e->getMessage();
+            }
+
+            return $response;
+                        
+        }
+
+        private function guardarFotoEnBD($mantenimientoId,$urlFoto,$nombreArchivo) {
+            try {
+
+                $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod,
+                                                                        cmodulo=:mod,
+                                                                        cdocumento=:doc,
+                                                                        creferencia=:ref,
+                                                                        nflgactivo=:est");
+                $sql->execute(["cod"=>$mantenimientoId,
+                                "mod"=>"FOT",
+                                "ref"=>$urlFoto,
+                                "doc"=>$nombreArchivo,
+                                "est"=>1]);
+                
+            } catch (PDOException $e) {
+                error_log("Error al guardar foto en BD: " . $e->getMessage());
             }
         }
     }
