@@ -645,7 +645,7 @@
 
                 if ($existe == 0){
 
-                    for ($i=0; $i < 4; $i++) { 
+                    for ($i=0; $i < 1; $i++) { 
                         $respuesta = false;
                         $fechaMtto = $this->calcularProximos($fechas[$i]);
                         $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 

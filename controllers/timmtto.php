@@ -54,5 +54,9 @@
         function upload_fotos() {
             echo json_encode($this->model->subirFotos($_POST));
         }
+
+        function fotos(){
+            echo json_encode($this->model->obtenerFotos($_POST));
+        }
     }
 ?>

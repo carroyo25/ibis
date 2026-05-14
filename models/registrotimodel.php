@@ -324,5 +324,88 @@
                 return false;
             }  
         }
+
+        public function crearFirma($parametros){
+            try {
+                error_reporting(E_ALL);
+                ini_set('display_errors', 1);
+
+                // Sanitizar y validar entradas
+                $nombre = explode(' ',$parametros['nombres']);
+                $apellidos = trim($parametros['apellidos']);
+                $documento = $parametros['documento'];
+                $correo = $parametros['correo'];
+                $cargo = trim($parametros['cargo']);
+                $anexo = isset($parametros['anexo']) ? trim($parametros['anexo']) : '';
+
+
+                // Verificar que el archivo de imagen base existe
+                $baseImagePath = dirname(__DIR__)."/public/img/spbfirma.png";
+                if (!file_exists($baseImagePath)) {
+                    echo json_encode(["error" => "Imagen base no encontrada"]);
+                    exit;
+                }
+
+                // Crear imagen desde archivo PNG
+                $img = imagecreatefrompng($baseImagePath);
+                if (!$img) {
+                    echo json_encode(["error" => "Error al crear la imagen"]);
+                    exit;
+                }
+
+                // Definir colores
+                $colorNegro = imagecolorallocate($img, 35, 31, 32);
+                $colorGris = imagecolorallocate($img, 129, 140, 163);
+                $colorGrisOscuro = imagecolorallocate($img, 88, 89, 91);
+
+                // Fuentes - Usar rutas relativas para mejor portabilidad
+                $fontPath = dirname(__DIR__) . "/public/fonts/";
+                $fontBold = $fontPath . "GothamBold.otf";
+                $fontRegular = $fontPath . "ARLRDBD.TTF";
+
+                // Verificar que las fuentes existen
+                if (!file_exists($fontBold) || !file_exists($fontRegular)) {
+                    echo json_encode(["error" => "Fuentes no encontradas"]);
+                    imagedestroy($img);
+                    exit;
+                }
+
+                // Convertir nombre a formato título (primera letra de cada palabra mayúscula)
+                $nombreFormateado = ucwords($nombre[0]).' '.$apellidos;
+
+                // Agregar texto del nombre
+                imagettftext($img, 15, 0, 263, 45, $colorGrisOscuro, $fontRegular, $nombreFormateado);
+
+                // Agregar texto del cargo
+                imagettftext($img, 12, 0, 265, 63, $colorGris, $fontRegular, $cargo);
+
+                // Agregar teléfono y anexo
+                $telefonoTexto = 'T.(511) 2016870';
+                if (!empty($anexo)) {
+                    $telefonoTexto .= ' A.' . $anexo;
+                }
+                imagettftext($img, 12, 0, 265, 130, $colorGrisOscuro, $fontBold, $telefonoTexto);
+
+                $directory = dirname(__DIR__);
+
+                // Ruta completa del archivo
+                $filePath = 'public\\documentos\\ti\\firmas\\'.$documento.'.png';
+
+                // Guardar la imagen
+                if (imagepng($img, $filePath, 6, NULL)) { // Nivel de compresión 6 (balance calidad/tamaño)
+                    $salidaJson = ["archivo" => $filePath, "success" => true];
+                } else {
+                    $salidaJson = ["error" => "Error al guardar la imagen"];
+                }
+
+                // Limpiar memoria
+                imagedestroy($img);
+
+                return $salidaJson;
+
+            } catch (PDOException $th) {
+                return $th->getMessage();
+            }
+        }
     }
 ?>

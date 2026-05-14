@@ -29,5 +29,9 @@
         function datosNombre(){
             echo json_encode($this->model->buscarDatosNombre($_POST));
         }
+
+        function firma(){
+            echo json_encode($this->model->crearFirma($_POST));
+        }
     }
 ?>

@@ -782,39 +782,58 @@ function dataURLtoBlob(dataURL) {
 
 function abrirViewModal(mantenimientoId) {
   const fotos = obtenerFotos(mantenimientoId);
+
   const galleryContainer = document.getElementById("galleryContainer");
 
-  if (fotos.length === 0) {
-    galleryContainer.innerHTML = `
-                    <div class="empty-gallery">
-                        <span style="font-size: 48px;">📷</span>
-                        <p style="margin-top: 12px;">No hay fotos adjuntas</p>
-                        <button class="action-btn-small upload" style="margin-top: 16px; padding: 8px 16px;" onclick="cerrarViewModal(); abrirUploadModal(${mantenimientoId})">
-                            📸 Subir Fotos
-                        </button>
-                    </div>
-                `;
-  } else {
-    galleryContainer.innerHTML = `
-                    <div class="gallery-grid">
-                        ${fotos
-                          .map(
-                            (foto, idx) => `
-                            <div class="gallery-item">
-                                <img src="${foto}" class="gallery-img" onclick="abrirFullscreen('${foto}')">
-                                <button class="gallery-delete" onclick="eliminarFoto(${mantenimientoId}, ${idx})">🗑️</button>
-                            </div>
-                        `,
-                          )
-                          .join("")}
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <button class="action-btn-small upload" style="width:100%; padding: 10px;" onclick="cerrarViewModal(); abrirUploadModal(${mantenimientoId})">
-                            📸 Agregar más fotos
-                        </button>
-                    </div>
-                `;
-  }
+  try {
+    const formData = new FormData();
+    formData.append("id", mantenimientoId);
 
-  document.getElementById("viewModal").classList.add("show");
+    fetch(RUTA + "timmtto/fotos", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.datos.length > 0) {
+          galleryContainer.innerHTML = `<div class="gallery-grid">
+                                              ${data.datos
+                                                .map(
+                                                  (dato, idx) => `
+                                                <div class="gallery-item">
+                                                    <img src="${"public/documentos/ti/fotos/" + dato.foto}" 
+                                                    class="gallery-img" onclick="abrirFullscreen('${"public/documentos/ti/fotos/" + dato.foto}')">
+                                                </div>`,
+                                                )
+                                                .join("")}
+                                          </div>`;
+
+          document.getElementById("viewModal").classList.add("show");
+        }
+      });
+  } catch (error) {
+    mostrarMensaje("No se regitraron fotos", "mensaje_error");
+  }
+}
+
+function cerrarViewModal() {
+  document.getElementById("viewModal").classList.remove("show");
+}
+
+function obtenerFotos(mantenimientoId) {
+  try {
+    const formData = new FormData();
+    formData.append("id", mantenimientoId);
+
+    fetch(RUTA + "timmtto/fotos", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      });
+  } catch (error) {
+    mostrarMensaje("No se regitraron fotos", "mensaje_error");
+  }
 }

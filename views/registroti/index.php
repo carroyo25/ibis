@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es" sigplusextliteextension-installed="true" sigwebext-installed="true">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <title>Document</title>
 </head>
+
 <body onload="ClearFormData();">
     <div class="mensaje">
         <p></p>
@@ -15,7 +17,7 @@
             <h3>Observaciones</h3>
             <hr>
             <div class="cuerpoComentarios">
-                
+
             </div>
             <div>
                 <button type="button" id="btnAceptarComentarios">Aceptar</button>
@@ -41,52 +43,91 @@
         </div>
     </div>
     <div class="modal" id="dialogo_registro">
-        <div class="ventanaConsumo">
-            <h3>Registrar Consumo</h3>
-            <div class="contenedor">
-                <div class="cabecera_dialogo">
-                    <label for="codigoSearch">Codigo</label>
-                    <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
-                    <label for="descripSearch">Descripcion</label>
-                    <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
-                </div>
-                <div class="tabla_dialogo">
-                    <table id="tabla_detalles_productos" class="tabla">
-                        <thead class="stickytop">
-                            <tr>
-                                <th>Codigo</th>
-                                <th>Descripcion</th>
-                                <th>Und</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+        <div class="modal-wrap">
+            <div class="dashboard">
+                <div class="card-form">
+                    <div class="form-header">
+                        <h2>Registro de Activos / Kardex</h2>
+                    </div>
+                    <div class="form-container">
+                        <!-- Primera fila: Código y Descripción -->
+                        <div class="cuerpo_dialogo">
+                            <div class="datos_cuerpo">
+                                <div>
+                                    <label for="codigoSearch">Codigo :</label>
+                                    <input type="text" name="codigoSearch" id="codigoSearch" placeholder="B00011020090">
+                                </div>
+                                <div>
+                                    <label for="descripSearch">Descripcion :</label>
+                                    <input type="text" name="descripSearch" id="descripSearch" placeholder="Descripcion Item">
+                                </div>
+                            </div>
+                        </div>
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="cuerpo_dialogo">
-                    <div class="datos_cuerpo">
-                        <label for="patrimonio">Patrimonio</label>
-                        <input type="checkbox" name="patrimonio" id="patrimonio">
-                        <label for="cantidad_dialogo">Cantidad</label>
-                        <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
-                        <label for="serie_dialogo">N° Serie</label>
-                        <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie">
+                        <!-- Tabla de registros -->
+                        <div class="card-table">
+                            <div class="tabla-scroll">
+                                <table id="tablaKardex">
+                                    <thead>
+                                        <tr>
+                                            <th>Codigo</th>
+                                            <th>Descripcion</th>
+                                            <th>Unidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Segunda sección: Cantidad, Serie, Anexo, Correo, Patrimonio -->
+                        <div class="cuerpo_dialogo">
+                            <div class="datos_cuerpo">
+                                <div>
+                                    <label for="cantidad_dialogo">Cantidad :</label>
+                                    <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad" value="1">
+                                </div>
+                                <div>
+                                    <label for="serie_dialogo">N° Serie :</label>
+                                    <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie" style="text-transform: uppercase;">
+                                </div>
+                                <div>
+                                    <label for="numero_anexo">N° Anexo :</label>
+                                    <input type="text" name="numero_anexo" id="numero_anexo" placeholder="Anexo">
+                                </div>
+                                <div>
+                                    <label for="email">Correo:</label>
+                                    <input type="text" name="email" id="email" placeholder="usuario@empresa.com">
+                                </div>
+                                <div class="oculto">
+                                    <label for="patrimonio">Patrimonio :</label>
+                                    <input type="checkbox" name="patrimonio" id="patrimonio" checked>
+                                </div>
+                            </div>
+                            <div class="datos_cuerpo_observaciones">
+                                <label for="observaciones_dialogo">Observaciones</label>
+                                <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Escriba notas, incidencias o detalles adicionales..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Firma Colaborador -->
+                        <div class="card-table firma-container" style="padding: .5rem; background: white; border-radius: 1.8rem; margin-top: 0.5rem;">
+                            <h2>Firma Colaborador</h2>
+                            <div class="card_img">
+                                <img src="public/img/spbfirma.png" alt="Firma del colaborador" id="firma" style="border: 1px solid #ccc; border-radius: 0.8rem; padding: 0.5rem;">
+                            </div>
+                        </div>
                     </div>
-                    <div class="datos_cuerpo_observaciones">
-                        <label for="observaciones_dialogo">Observaciones</label>
-                        <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Observaciones"></textarea>
+                    <div class="opciones_dialogo">
+                        <button type="button" id="btnFirmaCorreo">✍️ Firma / Correo</button>
+                        <button type="button" id="btnAceptarDialogoKardex">✅ Aceptar</button>
+                        <button type="button" id="btnCancelarDialogoKardex">🗑️ Cancelar</button>
                     </div>
-                    <!--<div class="firma">
-                        <img src="public/img/sepcon_firma.png" alt="">
-                    </div>-->
-                </div>
-                <div class="opciones_dialogo">
-                    <button type="button" id="btnAceptarDialogoKardex">Aceptar</button>
-                    <button type="button" id="btnCancelarDialogoKardex">Cancelar</button>
                 </div>
             </div>
         </div>
+
     </div>
     <div class="modal" id="exporta">
         <div class="ventanaPregunta">
@@ -134,7 +175,7 @@
                 <section>
                     <label for="motivo_cambio">Motivo de Cambio</label>
                     <select id="motivo_cambio">
-                        <option value="-1">Elija Opcion</option>   
+                        <option value="-1">Elija Opcion</option>
                         <option value="240">DESGASTE</option>
                         <option value="241">ROTURA</option>
                         <option value="242">PERDIDA</option>
@@ -144,7 +185,7 @@
                     </select>
                 </section>
                 <section>
-                    
+
                 </section>
             </div>
         </div>
@@ -152,8 +193,12 @@
     <div class="cabezaModulo">
         <h1>Registro de Equipos</h1>
         <div>
-            <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i><p>Kardex</p></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+            <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i>
+                <p>Kardex</p>
+            </a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i>
+                <p>Inicio</p>
+            </a>
         </div>
     </div>
     <div class="barraTrabajo">
@@ -181,9 +226,9 @@
             </div>
             <div>
                 <img src="" id="vistafirma" class="oculto">
-            </div> 
+            </div>
             <!--no te olvides cambiar esto-->
-            
+
             <button type="button" class="boton3 oculto" id="btnFirmar" onclick="StartSign()">Firmar</button>
             <button id="btnGrabarKardex" class="boton3">Aceptar</button>
             <!--<div>
@@ -214,20 +259,21 @@
                 </tr>
             </thead>
             <tbody>
-                
+
             </tbody>
         </table>
     </div>
-    <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
+    <canvas id="cnv" name="cnv" width="500" height="100"></canvas>
     <canvas name="SigImg" id="SigImg" width="500" height="100"></canvas>
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
-	</form>
+    </form>
 
-    <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/regfirma.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/registroti.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL'); ?>public/js/jquery.js"></script>
+    <script src="<?php echo constant('URL'); ?>public/js/regfirma.js"></script>
+    <script src="<?php echo constant('URL'); ?>public/js/funciones.js?<?php echo constant('VERSION') ?>"></script>
+    <script src="<?php echo constant('URL'); ?>public/js/registroti.js?<?php echo constant('VERSION') ?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js"></script>
 </body>
+
 </html>

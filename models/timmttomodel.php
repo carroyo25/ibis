@@ -911,5 +911,26 @@
                 error_log("Error al guardar foto en BD: " . $e->getMessage());
             }
         }
+
+        public function obtenerFotos($parametros){
+            try {
+                $docData = [];
+                $sql = $this->db->connect()->prepare("SELECT d.nidrefer,
+                                                            d.creferencia foto
+                                                    FROM lg_regdocumento d
+                                                    WHERE d.cmodulo = 'FOT'
+                                                    AND d.nidrefer=:id");
+                $sql->execute(["id"=>$parametros['id']]);
+                
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+            } catch (Exception $e) {
+                $response['message'] = $e->getMessage();
+                return $response;  
+            }
+        }
     }
 ?>

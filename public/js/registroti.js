@@ -1,5 +1,6 @@
 $(function(){
-    
+    //console.log(screen.width,screen.height);
+
     $("#esperar").css({"display":"none","opacity":"0"});
 
     let fila = "",
@@ -8,7 +9,9 @@ $(function(){
         codigo="",
         idprod="",
         descripcion="",
-        und = "";
+        und = "",
+        nombrefirma = "",
+        apellidosfirma = "";
 
         $("#espera").fadeOut();
 
@@ -34,6 +37,9 @@ $(function(){
                         $("#cut").val(data.datos[0].cut);
                         $("#correo").val(data.datos[0].correo);
                         $("#docident").val(data.datos[0].dni);
+
+                        apellidosfirma = data.datos[0].paterno+' '+data.datos[0].materno;
+                        nombrefirma = data.datos[0].nombres;
     
                         $("#tablaPrincipal tbody")
                             .empty()
@@ -133,10 +139,15 @@ $(function(){
 
         $("#btnRegister").click(function(e){
             e.preventDefault();
+
+                if($("#docident").val() == ""){
+                    mostrarMensaje("Ingrese el nombre o el documento del colaborardor","mensaje_error");
+                    return false;
+                }
     
                 $.post(RUTA+"registroti/buscaCatalogo", {tipo:37},
                     function (data, textStatus, jqXHR) {
-                        $("#tabla_detalles_productos tbody")
+                        $("#tablaKardex tbody")
                             .empty()
                             .append(data);
     
@@ -149,6 +160,29 @@ $(function(){
             
             return false;
         });
+
+        $("#btnFirmaCorreo").click((e)=>{
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append("nombres",nombrefirma);
+            formData.append("apellidos",apellidosfirma);
+            formData.append("cargo",$("#cargo").val());
+            formData.append("anexo",$("#numero_anexo").val());
+            formData.append("documento",$("#docident").val());
+            formData.append("correo",$("#email").val());
+
+            fetch(RUTA+'registroti/firma',{
+                method:'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data=>{
+                $("#firma").attr('src',data.archivo);
+            })
+
+            return false;
+        })
     
         //filtrar Item del pedido
         $("#codigoSearch, #descripSearch").on("keypress", function (e) {
@@ -159,7 +193,7 @@ $(function(){
                                                     descripcion:$("#descripSearch").val(),
                                                     tipo:37},
                         function (data, textStatus, jqXHR) {
-                            $("#tabla_detalles_productos tbody")
+                            $("#tablaKardex tbody")
                                 .empty()
                                 .append(data);
                             $("#esperar").fadeOut();
@@ -169,7 +203,7 @@ $(function(){
             }
         });
     
-        $("#tabla_detalles_productos tbody").on('click','tr', function(e) {
+        $("#tablaKardex tbody").on('click','tr', function(e) {
             e.preventDefault();
     
             idprod = $(this).data("idprod");

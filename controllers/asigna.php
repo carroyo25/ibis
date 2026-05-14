@@ -32,6 +32,5 @@
         function libera(){
             echo json_encode($this->model->modificarAsignacion($_POST['pedido'],$_POST['usuario']));
         }
-        
     }
 ?>
