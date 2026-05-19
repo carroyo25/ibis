@@ -23,7 +23,7 @@
         }
 
         function firmaTi(){
-            echo $this->model->subirFirmaTi($_POST['detalles'],$_POST['correo'],$_POST['nombre'],$_POST['cc']);
+            echo $this->model->subirFirmaTi($_POST['detalles'],$_POST['correo'],$_POST['nombre'],$_POST['cc'],$_POST['documento'],$_POST['enviar_firma']);
         }
 
         function datosNombre(){
@@ -32,6 +32,10 @@
 
         function firma(){
             echo json_encode($this->model->crearFirma($_POST));
+        }
+
+        function correo_firma(){
+            echo json_encode($this->model->enviarCorreoFirma($_POST));
         }
     }
 ?>

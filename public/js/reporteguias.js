@@ -1,114 +1,99 @@
-$(function(){
-    llenarListado();
-})
+(async () => {
+  const totalItems = await contarItems("reporteguias/itemsConsulta");
+  const btns = document.getElementsByClassName("page-btn");
 
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById("vistaprevia").style.display === 'block') {
-        fadeOut(document.getElementById("vistaprevia"));
+  let itemsPorPagina = itemsPorPantalla();
+  let totalPaginas = Math.ceil(totalItems / itemsPorPagina);
+  let currentPage = 1;
+
+  crearBotonesPaginacion(totalPaginas, 1, 30);
+
+  $("#esperar").css({ display: "none" });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.matches(".page-btn")) {
+      e.preventDefault();
+
+      currentPage = parseInt(e.target.innerHTML);
+      cleanActives();
+
+      e.target.classList.add("active");
+
+      return false;
+    } else if (e.target.matches(".next-page")) {
+      const lastInView = btns[btns.length - 1].textContent;
+
+      if ( currentPage === parseInt(lastInView) ){
+        crearBotonesPaginacion(totalPaginas, parseInt(lastInView)+1, parseInt(lastInView)+30);
+        currentPage = 1;
+      }else{
+        cleanActives();
+        currentPage++;
+        btns[currentPage-1].classList.add("active");
+      }
+    } else if (e.target.matches(".first-page")) {
+      if ( currentPage > 1 ){
+        cleanActives();
+        currentPage--;
+        //btns[currentPage-1].classList.add("active");
+      }
     }
-});
+  });
+})();
 
-document.addEventListener("click",(e)=>{
-    if (e.target.id == 'btnConsulta'){
-        e.preventDefault();
-
-        llenarListado();
-
-        return false;
-    }else if (e.target.matches(".pointer *")){
-        e.preventDefault();
-
-        const parentPointer = e.target.closest('.pointer').dataset.guiaid;
-        const parentSunat = e.target.closest('.pointer').dataset.guiasunatnro;
-
-        if ( parentSunat === "null" || parentSunat === null ){
-            document.getElementById("pdfPreview").setAttribute('src','https://sicalsepcon.net/ibis/public/documentos/guias_remision/' + parentPointer +'.pdf');
-        }else{
-            document.getElementById("pdfPreview").setAttribute('src','https://sicalsepcon.net/ibis/public/documentos/guias_remision/20504898173-09-T001-' + parentSunat +'.pdf');
-        }
-
-        fadeIn(document.getElementById("vistaprevia"));
-
-        return false;
-    }else if (e.target.matches(".cerrar_vista")){
-        e.preventDefault();
-
-        fadeOut(document.getElementById("vistaprevia"));
-
-        return false;
-    }
-})
-
-llenarListado = async () => {
-    try {
-        let formData = new FormData();
-        formData.append("anio", document.getElementById("anioSearch").value);
-        formData.append("guia", document.getElementById("guiaSearch").value);
-        formData.append("sunat", document.getElementById("guiaSunat").value);
-
-        $("#esperar").css({"display":"block"});
-        
-        const response = await fetch(RUTA + "reporteguias/listaGuias", {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        const tablaCuerpo = document.getElementById("tablaPrincipalCuerpo");
-        
-        if (!tablaCuerpo) {
-            throw new Error("Element with ID 'tablaPrincipalCuerpo' not found");
-        }
-
-        tablaCuerpo.innerHTML = "";
-
-        const fragment = document.createDocumentFragment();
-
-        data.datos.forEach(element => {
-            const tr = document.createElement("tr");
-            
-            tr.classList.add("pointer");
-            tr.dataset.guiaid = element.cnumguia;
-            tr.dataset.guiasunatnro = element.guiasunat;
-            tr.innerHTML = `<td class="textoCentro">${element.cnumguia}</td>
-                            <td class="textoCentro">${element.freg || ''}</td>
-                            <td class="textoCentro">${element.anio || ''}</td>
-                            <td class="textoCentro">${element.guiasunat || ''}</td>
-                            <td class="textoCentro">${element.cenvio || ''}</td>
-                            <td class="pl20px">${element.cobserva || ''}</td>`;
-
-            fragment.appendChild(tr);
-        });
-
-        tablaCuerpo.appendChild(fragment);
-        $("#esperar").css({"display":"none"});
-
-    } catch (error) {
-        console.error("Error en llenarListado:", error);
-        // You might want to show an error message to the user here
-    }
-};
-
-// Función para fade in
-function fadeIn(element) {
-    element.style.display = 'block';
-    // Timeout para permitir el cambio de display antes de la transición
-    setTimeout(() => {
-        element.style.opacity = '1';
-    }, 10);
+async function contarItems(ruta_consulta) {
+  try {
+    const response = await fetch(RUTA + ruta_consulta);
+    const data = await response.text();
+    return data;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
 }
 
-// Función para fade out
-function fadeOut(element) {
-    element.style.opacity = '0';
-    // Esperar a que termine la transición antes de ocultar
-    setTimeout(() => {
-        element.style.display = 'none';
-    }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
+function itemsPorPantalla() {
+  let itemsPorPantalla = 30;
+
+  const altoPantalla = screen.height;
+
+  if (altoPantalla <= 768) itemsPorPantalla = 18;
+
+  return itemsPorPantalla;
 }
 
+function crearBotonesPaginacion(totalPages, currentPage, maxVisible) {
+  const container = document.getElementById("paginador");
+
+  container.innerHTML = "";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "◀ Anterior";
+  prevBtn.className = "first-page";
+
+  container.appendChild(prevBtn);
+
+  for (let i = currentPage; i <= maxVisible; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    pageBtn.className = "page-btn";
+
+    container.appendChild(pageBtn);
+  }
+
+  // botón siguiente
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Siguiente ▶";
+  nextBtn.className = "next-page";
+  if (currentPage === totalPages) nextBtn.disabled = true;
+  nextBtn.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+    }
+  });
+  container.appendChild(nextBtn);
+}
+
+function cleanActives() {
+  document.querySelectorAll('.page-btn').forEach(btn => btn.classList.remove('active'));
+}

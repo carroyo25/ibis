@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Mantenimientos Próximos - Mobile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>
+                <span>⚠️</span>
+                Mantenimientos Próximos
+            </h1>
+            <p>Mantenimientos programados para los próximos 30 días</p>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number" id="totalCount">0</div>
+            <div class="summary-label">Mantenimientos por vencer</div>
+            <div class="summary-badge" id="dateRange">Próximos 30 días</div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all" onclick="filtrarPorTipo('all')">📋 Todos</button>
+            <button class="filter-btn" data-filter="urgente" onclick="filtrarPorTipo('urgente')">🔴 Urgentes (0-7 días)</button>
+            <button class="filter-btn" data-filter="proximo" onclick="filtrarPorTipo('proximo')">🟠 Próximos (8-30 días)</button>
+        </div>
+
+        <div id="mantenimientosContainer" class="mantenimientos-list">
+            <!-- Las tarjetas se cargan dinámicamente -->
+        </div>
+
+        <div class="footer">
+            <p>👇 Toca cualquier tarjeta para ver más detalles</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

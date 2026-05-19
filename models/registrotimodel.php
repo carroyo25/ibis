@@ -56,7 +56,7 @@
                 return $salida;
 
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
+                return "Error: ".$th->getMessage();
                 return false;
             }
         }
@@ -131,6 +131,7 @@
                 return array("datos" => $datos,
                             "registrado"=>$registrado,
                             "anteriores"=>$this->kardexEquipos($datos[0]->dni,$costos),
+                            "firma"=>$this->buscarFirma($dni),
                             "ruta"=>'');
 
             }catch (PDOException $th) {
@@ -325,6 +326,15 @@
             }  
         }
 
+        private function buscarFirma($dni){
+            $archivo = dirname(__DIR__)."/public/documentos/ti/firmas/${dni}.png";
+            if (file_exists($archivo)){
+                return "/ibis/public/documentos/ti/firmas/${dni}.png";
+            }else{
+                return 'public/img/spbfirma.png';
+            }
+        }
+
         public function crearFirma($parametros){
             try {
                 error_reporting(E_ALL);
@@ -342,14 +352,14 @@
                 // Verificar que el archivo de imagen base existe
                 $baseImagePath = dirname(__DIR__)."/public/img/spbfirma.png";
                 if (!file_exists($baseImagePath)) {
-                    echo json_encode(["error" => "Imagen base no encontrada"]);
+                    return json_encode(["error" => "Imagen base no encontrada"]);
                     exit;
                 }
 
                 // Crear imagen desde archivo PNG
                 $img = imagecreatefrompng($baseImagePath);
                 if (!$img) {
-                    echo json_encode(["error" => "Error al crear la imagen"]);
+                    return json_encode(["error" => "Error al crear la imagen"]);
                     exit;
                 }
 
@@ -407,5 +417,134 @@
                 return $th->getMessage();
             }
         }
+
+        public function enviarCorreoFirma($parametros){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+                // 🔹 FORZAR CODIFICACIÓN UTF-8 DESDE EL INICIO
+                header('Content-Type: text/html; charset=utf-8');
+                
+                // Datos de la firma
+                $nombre = utf8_decode($parametros['nombre']);
+                $destino = $parametros['destino']; // Email del destinatario
+                $documento = $parametros['dni']; // Imagen de la firma en base64
+                $fecha_actual = date("d/m/Y H:i:s");
+                $firma = 'public/documentos/ti/firmas/'.$parametros['dni'].'.png';
+                $base64 = base64_encode($firma);
+                
+                // Configuración del correo
+                $subject = 'Firma de Correo Electrónico - ' . $nombre;
+                $origen = "sicalsepcon@sepcon.net";
+                $nombre_envio = "Sical - Soporte Técnico";
+                
+                // Configuración SMTP (mejor desde variables de entorno o archivo de configuración)
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0; // 0 = sin debug, 1 = errores, 2 = todo
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = SMTP_PASS; // ⚠️ No usar sesión, poner fijo o en config
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                );
+
+                // 🔹 CONFIGURACIÓN DE CODIFICACIÓN UTF-8 EN PHPMailer
+                $mail->CharSet = 'UTF-8';
+                $mail->Encoding = 'quoted-printable';
+                $mail->setLanguage('es', 'public/PHPMailer/language/');
+                
+                // Configurar remitentes y destinatarios
+                $mail->setFrom($origen, $nombre_envio);
+                $mail->addAddress($destino, $nombre); // Destinatario principal
+                //$mail->addAddress($origen, $nombre_envio); // Copia al sistema
+                
+                // Si se requiere copia al remitente
+                if (isset($parametros['copia']) && $parametros['copia'] == true) {
+                    $mail->addAddress($parametros['correo_tecnico'], utf8_decode($parametros['nombre_tecnico']));
+                }
+                
+                $mail->Subject = $subject;
+                
+                // Construir mensaje HTML con la firma
+                $mensaje = '
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #0364B8; color: white; padding: 15px; text-align: center; }
+                        .content { padding: 20px; background: #f9f9f9; }
+                        .firma { margin: 20px 0; text-align: center; padding: 15px; background: white; border: 1px solid #ddd; }
+                        .footer { font-size: 0.7rem; color: #0364B8; font-style: italic; text-align: center; margin-top: 20px; }
+                        .cargo { color: #666; font-size: 0.9rem; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h3>Sistema de Firmas Digitales</h3>
+                        </div>
+                        <div class="content">
+                            <p>Estimado: <strong>' . utf8_decode($parametros['nombre']) . '</strong></p>
+                            <p>Se adjunta su firma digital generada el día <strong>' . $fecha_actual . '</strong></p>
+                            
+                            <p>La firma ha sido generada exitosamente y puede ser utilizada en sus comunicaciones oficiales.</p>
+                            <p>Atentamente,</p>
+                            <p><strong>Área de Soporte Técnico</strong></p>
+                        </div>
+                        <div class="footer">
+                            <p>Este es un correo generado automáticamente, por favor no responder.</p>
+                            <p>Sistema de Firmas Digitales - Sical</p>
+                        </div>
+                    </div>
+                </body>
+                </html>';
+                
+                $mail->msgHTML($mensaje);
+                
+                // Adjuntar la firma como imagen (opcional)
+                
+                if (file_exists($firma)) {
+                     $mail->AddAttachment($firma);
+                }
+                
+                // Enviar correo
+                if ($mail->send()) {
+                    $estadoEnvio = true;
+                    $clase = "mensaje_exito";
+                    $salida = "Correo enviado exitosamente a: " . $destino;
+                    $mail->ClearAddresses();
+                } else {
+                    $estadoEnvio = false;
+                    $clase = "mensaje_error";
+                    $salida = "Error al enviar: " . $mail->ErrorInfo;
+                }
+                
+                // Retornar respuesta JSON
+                return array([
+                    'success' => $estadoEnvio,
+                    'message' => $salida,
+                    'class' => $clase
+                ]);
+                
+            } catch (Exception $th) {
+                return array([
+                    'success' => false,
+                    'message' => 'Error: ' . $th->getMessage(),
+                    'class' => 'mensaje_error'
+                ]);
+            }
+        } 
     }
 ?>

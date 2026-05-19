@@ -13,6 +13,10 @@
         function listaGuias(){
             echo json_encode($this->model->listarGuias($_POST));
         }
+
+        function itemsConsulta(){
+            echo $this->model->contarGuias();
+        }
         
     }
 ?>

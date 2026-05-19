@@ -25,14 +25,38 @@
         </div>
     </div>
     <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
+        <div class="dialog_pregunta">
             <h3>¿Datos Correctos?</h3>
             <div>
-                <button type="button" id="btnAceptarGrabar">Aceptar</button>
-                <button type="button" id="btnCancelarGrabar">Cancelar</button>
+                <button type="button" id="btnAceptarGrabar" class="boton_aceptar">Aceptar</button>
+                <button type="button" id="btnCancelarGrabar" class="boton_cancelar">Cancelar</button>
             </div>
         </div>
     </div>
+    <div class="modal" id="enviar_firma">
+        <div class="dialog_pregunta">
+            <h3>📧 Enviar Firma por Correo</h3>
+            
+            <!-- Campo de email principal -->
+            <div class="grupo-email">
+                <label>Correo electrónico del destinatario <span>*</span></label>
+                <input type="email" id="email_destino" placeholder="ejemplo@correo.com" autocomplete="off">
+                <div class="mensaje-error" id="errorEmail">Ingrese un correo electrónico válido</div>
+            </div>
+            
+            <!-- Checkbox opcional para enviar copia -->
+            <div class="grupo-copia">
+                <input type="checkbox" class="copia-checkbox" id="enviar_copia">
+                <label for="enviar_copia">Enviar copia a mi correo</label>
+            </div>
+            
+            <div class="botones-modal">
+                <button type="button" id="btnAceptarEnviar" class="boton_aceptar">Enviar</button>
+                <button type="button" id="btnCancelarEnviar" class="boton_cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="borrarFila">
         <div class="ventanaPregunta">
             <h3>¿Borrar la fila?</h3>
@@ -194,7 +218,11 @@
         <h1>Registro de Equipos</h1>
         <div>
             <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i>
-                <p>Kardex</p>
+                <p>Asignar Equipo</p>
+            </a>
+            <a href="#" id="send_signature">
+                <i class="fas fa-envelope-open-text"></i>
+                <p>Enviar Firma</p>
             </a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i>
                 <p>Inicio</p>
@@ -225,16 +253,12 @@
                 <input type="cargo" id="cargo" name="cargo" class="ingreso">
             </div>
             <div>
-                <img src="" id="vistafirma" class="oculto">
+                <img src="public/img/spbfirma.png" id="firma_barra" class="firma_barra">
             </div>
-            <!--no te olvides cambiar esto-->
 
             <button type="button" class="boton3 oculto" id="btnFirmar" onclick="StartSign()">Firmar</button>
             <button id="btnGrabarKardex" class="boton3">Aceptar</button>
-            <!--<div>
-                <label for="codeRead">Codigo: </label>
-                <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
-            </div>-->
+        
         </div>
     </div>
     <div class="itemsTabla">

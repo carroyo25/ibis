@@ -28,7 +28,7 @@
 
   .form-header {
     background: linear-gradient(120deg, #0f2b4d, #1b4a7a);
-    padding: 1.2rem .5rem;
+    padding: 1.2rem 0.5rem;
     color: white;
   }
 
@@ -379,68 +379,341 @@
 
 /* MEDIA QUERY CORREGIDO para 1366x768 */
 @media screen and (max-width: 1366px) and (max-height: 768px) {
-    .dashboard .form-container {
-        height: auto;
-        max-height: 60vh;
-        min-height: 350px;
-        overflow-y: auto;
-        padding: 1.5rem 1.5rem 0.8rem;
-    }
-    
-    /* Ajustes adicionales para mejorar la visualización */
-    .dashboard .datos_cuerpo {
-        gap: 0.8rem 1.5rem;
-        padding: 1rem 1.2rem;
-    }
-    
-    .dashboard .datos_cuerpo input {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
-    }
-    
-    .dashboard .opciones_dialogo {
-        padding: 0.5rem 1.5rem 1.2rem 1.5rem;
-    }
-    
-    .dashboard button {
-        padding: 0.5rem 1.3rem;
-        font-size: 0.8rem;
-    }
-    
-    .dashboard .form-header h2 {
-        font-size: 1.3rem;
-    }
-    
-    .dashboard .form-header p {
-        font-size: 0.75rem;
-    }
+  .dashboard .form-container {
+    height: auto;
+    max-height: 60vh;
+    min-height: 350px;
+    overflow-y: auto;
+    padding: 1.5rem 1.5rem 0.8rem;
+  }
+
+  /* Ajustes adicionales para mejorar la visualización */
+  .dashboard .datos_cuerpo {
+    gap: 0.8rem 1.5rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .dashboard .datos_cuerpo input {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .dashboard .opciones_dialogo {
+    padding: 0.5rem 1.5rem 1.2rem 1.5rem;
+  }
+
+  .dashboard button {
+    padding: 0.5rem 1.3rem;
+    font-size: 0.8rem;
+  }
+
+  .dashboard .form-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .dashboard .form-header p {
+    font-size: 0.75rem;
+  }
 }
 
 /* Media query específico para altura menor a 900px */
 @media screen and (max-height: 900px) {
-    .dashboard .form-container {
-        max-height: 60vh;
-        min-height: 300px;
-    }
-    
-    .dashboard .tabla-scroll {
-        height: 6rem;
-    }
+  .dashboard .form-container {
+    max-height: 60vh;
+    min-height: 300px;
+  }
+
+  .dashboard .tabla-scroll {
+    height: 6rem;
+  }
 }
 
 /* Media query para pantallas muy pequeñas */
 @media screen and (max-width: 1366px) and (max-height: 600px) {
-    .dashboard .form-container {
-        max-height: 50vh;
-        min-height: 250px;
-    }
-    
-    .dashboard .datos_cuerpo {
-        margin-bottom: 1rem;
-    }
+  .dashboard .form-container {
+    max-height: 50vh;
+    min-height: 250px;
+  }
+
+  .dashboard .datos_cuerpo {
+    margin-bottom: 1rem;
+  }
 }
 
 /* Ocultar br - esto parece estar bien */
 br {
   display: none;
 }
+
+/*para la ventana de pregunta*/
+.dialog_pregunta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 30px 35px;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  min-width: 380px;
+  max-width: 450px;
+  text-align: center;
+  animation: slideIn 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  h3 {
+    margin: 0 0 25px 0;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 12px;
+  }
+
+  h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 2px;
+  }
+
+  div:first-of-type {
+    margin: 20px 0;
+    text-align: left;
+    background: #f0f2f5;
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  div:first-of-type:hover {
+    background: #e8eaed;
+  }
+
+  /* Checkbox personalizado */
+  #enviar_firma {
+    display: none;
+  }
+
+  #enviar_firma + label {
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #2c3e50;
+    user-select: none;
+    display: inline-block;
+  }
+
+  #enviar_firma + label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    background: white;
+    transition: all 0.2s ease;
+  }
+
+  #enviar_firma + label::after {
+    content: "✓";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+  }
+
+  #enviar_firma:checked + label::before {
+    background: #3498db;
+    border-color: #3498db;
+  }
+
+  #enviar_firma:checked + label::after {
+    transform: translateY(-50%) scale(1);
+  }
+
+  div:last-of-type {
+    margin: 25px 0 0 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  button {
+    padding: 10px 28px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .boton_aceptar {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
+  }
+
+  .boton_aceptar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+  }
+
+  .boton_cancelar {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+  }
+
+  .boton_cancelar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translate(-50%, -60%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+  }
+}
+
+.firma_barra{
+    width: 19rem;
+    margin-top: 6px;
+    margin-left: 2rem;
+}
+
+
+/* Grupo del correo electrónico */
+        .grupo-email {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .grupo-email label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .grupo-email label span {
+            color: #e74c3c;
+        }
+
+        .grupo-email input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: monospace;
+        }
+
+        .grupo-email input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .grupo-email input::placeholder {
+            color: #bbb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Checkbox para enviar copia al remitente */
+        .grupo-copia {
+            margin: 15px 0;
+            text-align: left;
+            background: #f0f2f5;
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .grupo-copia:hover {
+            background: #e8eaed;
+        }
+
+        /* Checkbox personalizado pequeño */
+        .copia-checkbox {
+            display: none;
+        }
+
+        .copia-checkbox + label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #2c3e50;
+            user-select: none;
+            display: inline-block;
+        }
+
+        .copia-checkbox + label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .copia-checkbox + label::after {
+            content: '✓';
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .copia-checkbox:checked + label::before {
+            background: #3498db;
+            border-color: #3498db;
+        }
+
+        .copia-checkbox:checked + label::after {
+            transform: translateY(-50%) scale(1);
+        }

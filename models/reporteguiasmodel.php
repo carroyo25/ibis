@@ -17,6 +17,9 @@
                 $anio  = (int) $datos['anio'];
                 $guia  = !empty($datos['guia']) ? '%' . $datos['guia'] . '%' : '%';
                 $sunat = !empty($datos['sunat']) ? '%' . $datos['sunat'] . '%' : '%';
+
+                $inicio = $datos['inicio'];
+                $items = $datos['items'];
         
                 $sql = $this->db->connect()->prepare("
                     SELECT
@@ -37,12 +40,15 @@
                         AND lg_guias.cnumguia LIKE :guia
                         AND YEAR(lg_guias.freg) = :anio
                     ORDER BY
-                        lg_guias.freg DESC");
+                        lg_guias.freg DESC
+                    LIMIT :inicio,:limite");
         
                 $sql->execute([
                     "sunat" => $sunat,
                     "guia"  => $guia,
-                    "anio"  => $anio
+                    "anio"  => $anio,
+                    "inicio"=> $inicio,
+                    "limite"=> $items,
                 ]);
         
                 $docData = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -56,7 +62,8 @@
         
                 return [
                     "success" => true,
-                    "datos"   => $docData
+                    "datos"   => $docData,
+                    "items"   => $this->contarGuias()
                 ];
         
             } catch (PDOException $e) {
@@ -72,6 +79,20 @@
                     "message" => $e->getMessage()
                 ];
             }
+        }
+
+        public function contarGuias(){
+            $sql = $this->db->connect()->query("SELECT
+                        count(lg_guias.cnumguia) AS total_items
+                    FROM
+                        lg_guias 
+                    WHERE
+                        lg_guias.nflgActivo = 1");
+            
+            $sql->execute();
+            $result = $sql->fetchAll();
+
+            return $result[0]['total_items'];
         }
     }
 ?>

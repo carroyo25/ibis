@@ -68,6 +68,12 @@
             </tbody>
         </table>
     </div>
+    <div class="paginator_container">
+        <div class="paginador_wrap" id="paginador">
+            
+        </div>
+    </div>
+    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/reporteguias.js?<?php echo constant('VERSION')?>"></script>

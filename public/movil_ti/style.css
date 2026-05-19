@@ -1,0 +1,346 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, Helvetica,
+    Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+/* Contenedor principal */
+.app-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.header p {
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+/* Tarjeta de resumen */
+.summary-card {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.summary-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+.summary-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  margin-top: 12px;
+}
+
+/* Filtros */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.filter-btn:active {
+  transform: scale(0.96);
+}
+
+/* Lista de mantenimientos */
+.mantenimientos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* Tarjeta de mantenimiento */
+.mantenimiento-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+  cursor: pointer;
+  border-left: 4px solid;
+}
+
+.mantenimiento-card:active {
+  transform: scale(0.98);
+}
+
+.mantenimiento-card.urgente {
+  border-left-color: #dc3545;
+  background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+}
+
+.mantenimiento-card.proximo {
+  border-left-color: #ff9800;
+  background: linear-gradient(135deg, #fff 0%, #fffaf0 100%);
+}
+
+.mantenimiento-card.normal {
+  border-left-color: #28a745;
+}
+
+/* Encabezado de la tarjeta */
+.card-header {
+  padding: 16px;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.serie-info {
+  flex: 1;
+}
+
+.serie-name {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #1e3c72;
+  background: #e8f0fe;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.trabajador-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.producto-name {
+  font-size: 0.7rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Badge de días */
+.dias-badge {
+  text-align: center;
+  min-width: 70px;
+}
+
+.dias-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dias-label {
+  font-size: 0.6rem;
+  color: #6c757d;
+}
+
+.dias-number.positivo {
+  color: #28a745;
+}
+
+.dias-number.negativo {
+  color: #dc3545;
+}
+
+/* Detalles expandibles */
+.card-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.card-details.open {
+  max-height: 500px;
+  transition: max-height 0.4s ease-in;
+}
+
+.details-content {
+  padding: 16px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+}
+
+.detail-label {
+  width: 90px;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.detail-value {
+  flex: 1;
+  color: #495057;
+}
+
+.observacion-text {
+  background: #e9ecef;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  color: #495057;
+  margin-top: 8px;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.badge-vencido {
+  background: #fee2e2;
+  color: #dc3545;
+}
+
+.badge-proximo {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge-normal {
+  background: #d1fae5;
+  color: #059669;
+}
+
+/* Indicador de toggle */
+.toggle-indicator {
+  text-align: center;
+  padding: 10px;
+  background: #f8f9fa;
+  font-size: 0.7rem;
+  color: #2a5298;
+  font-weight: 600;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Loader y estados vacíos */
+.empty-state {
+  background: white;
+  border-radius: 24px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-state span {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.65rem;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mantenimiento-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
