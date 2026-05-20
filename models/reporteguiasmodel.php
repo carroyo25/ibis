@@ -81,18 +81,34 @@
             }
         }
 
-        public function contarGuias(){
-            $sql = $this->db->connect()->query("SELECT
-                        count(lg_guias.cnumguia) AS total_items
-                    FROM
-                        lg_guias 
-                    WHERE
-                        lg_guias.nflgActivo = 1");
-            
-            $sql->execute();
-            $result = $sql->fetchAll();
+        public function contarGuias($filtros = []) {
+            try {
+                $anio  = isset($filtros['anio']) ? (int) $filtros['anio'] : date("Y");
+                $guia  = isset($filtros['guia']) && !empty($filtros['guia']) ? '%' . $filtros['guia'] . '%' : '%';
+                $sunat = isset($filtros['sunat']) && !empty($filtros['sunat']) ? '%' . $filtros['sunat'] . '%' : '%';
 
-            return $result[0]['total_items'];
+                $sql = $this->db->connect()->prepare("
+                    SELECT COUNT(*) as total
+                    FROM lg_guias 
+                    WHERE lg_guias.nflgActivo = 1 
+                        AND IFNULL(lg_guias.guiasunat,'') LIKE :sunat
+                        AND lg_guias.cnumguia LIKE :guia
+                        AND YEAR(lg_guias.freg) = :anio
+                ");
+
+                $sql->execute([
+                    "sunat" => $sunat,
+                    "guia"  => $guia,
+                    "anio"  => $anio,
+                ]);
+
+                $result = $sql->fetch(PDO::FETCH_ASSOC);
+                return $result['total'];
+
+            } catch (PDOException $e) {
+                error_log("Database Error: " . $e->getMessage());
+                return 0;
+            }
         }
     }
 ?>

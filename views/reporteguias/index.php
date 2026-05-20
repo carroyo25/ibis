@@ -51,7 +51,7 @@
             </div>
         </form>
     </div>
-    <div class="itemsTabla">
+    <div class="itemsTablaReporte">
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>

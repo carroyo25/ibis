@@ -1,61 +1,239 @@
 :root {
-    /* Primary Colors */
-    --color-primary-main: #5A3FE1;
-    --color-primary-hover: #3314C7;
-    --color-primary-pressed: #200F70;
-    --color-primary-focus: #AC9FF0;
-    --color-primary-border: #C4BAF5;
-    --color-primary-secondary: #EFEDFA;
+  /* Primary Colors */
+  --color-primary-main: #5a3fe1;
+  --color-primary-hover: #3314c7;
+  --color-primary-pressed: #200f70;
+  --color-primary-focus: #ac9ff0;
+  --color-primary-border: #c4baf5;
+  --color-primary-secondary: #efedfa;
 
-    /* Gray Colors */
-    --color-gray-100: #ECECEC;
-    --color-gray-200: #D8D8D8;
-    --color-gray-300: #C5C5C5;
-    --color-gray-400: #B1B1B1;
-    --color-gray-500: #9E9E9E;
-    --color-gray-600: #7E7E7E;
-    --color-gray-700: #5F5F5F;
-    --color-gray-800: #3F3F3F;
-    --color-gray-900: #202020;
+  /* Gray Colors */
+  --color-gray-100: #ececec;
+  --color-gray-200: #d8d8d8;
+  --color-gray-300: #c5c5c5;
+  --color-gray-400: #b1b1b1;
+  --color-gray-500: #9e9e9e;
+  --color-gray-600: #7e7e7e;
+  --color-gray-700: #5f5f5f;
+  --color-gray-800: #3f3f3f;
+  --color-gray-900: #202020;
 }
 
-.paginator_container{
-    position: fixed;
-    width: 83%;
-    bottom: 41px;
-    display: flex;
-    justify-content: center;
+/* Contenedor de la tabla */
+.itemsTablaReporte {
+  overflow-x: auto;
+  margin: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: white;
+
+  /* Tabla principal */
+  #tablaPrincipal {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+  }
+
+  /* Encabezado */
+  #tablaPrincipal thead tr {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-main) 0%,
+      var(--color-primary-hover) 100%
+    );
+    color: white;
+  }
+
+  #tablaPrincipal th {
+    padding: 14px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Encabezado fijo */
+  #tablaPrincipal .stickytop {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Celdas del cuerpo */
+  #tablaPrincipal td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--color-gray-200);
+    color: var(--color-gray-800);
+  }
+
+  /* Filas alternadas */
+  #tablaPrincipal tbody tr:nth-child(even) {
+    background-color: var(--color-primary-secondary);
+  }
+
+  /* Hover en filas */
+  #tablaPrincipal tbody tr:hover {
+    background-color: var(--color-primary-focus);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+
+  /* Primera columna (Número de Guía) */
+  #tablaPrincipal td:first-child{
+    font-weight: 600;
+    color: var(--color-primary-main);
+  }
+
+  /* Columna de observaciones */
+  #tablaPrincipal td:last-child {
+    text-align: left;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .itemsTabla {
+      margin: 10px;
+      border-radius: 8px;
+    }
+
+    #tablaPrincipal th,
+    #tablaPrincipal td {
+      padding: 8px 6px;
+      font-size: 12px;
+    }
+
+    #tablaPrincipal td:last-child {
+      max-width: 150px;
+    }
+  }
+
+  /* Scrollbar personalizada */
+  .itemsTabla::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .itemsTabla::-webkit-scrollbar-track {
+    background: var(--color-gray-200);
+    border-radius: 10px;
+  }
+
+  .itemsTabla::-webkit-scrollbar-thumb {
+    background: var(--color-primary-main);
+    border-radius: 10px;
+  }
+
+  .itemsTabla::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-hover);
+  }
+}
+
+.paginator_container {
+  position: fixed;
+  width: 83%;
+  bottom: 41px;
+  display: flex;
+  justify-content: center;
 }
 
 .paginador_wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #c2c2c2;
-    padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+
+  button {
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 10px;
+    color: var(--color-primary-main);
     border-radius: 8px;
-    
+    border: none;
+    background-color: var(--color-primary-secondary);
+    transition: all 0.2s ease;
+    min-width: 38px;
+    text-align: center;
 
-    button {
-        padding: 5px 5px;
-        margin: 5px 5px;
-        cursor: pointer;
-        outline: 1px solid var(--color-primary-main);
-        color: var(--color-primary-main);
-        border-radius: 4px;
-        border: none;
-        background-color: var(--color-primary-secondary);
-        border: 2px solid transparent;
-        transition: all .5s;
-
-        &:hover{
-            border: 2px solid var(--color-gray-800);
-            color: var(--color-primary-main);
-        }
+    &:hover {
+      background-color: var(--color-primary-main);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(90, 63, 225, 0.3);
     }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 .paginador_wrap button.active {
+  background-color: var(--color-primary-main);
+  color: white;
+  box-shadow: 0 2px 8px rgba(90, 63, 225, 0.4);
+  transform: scale(1.05);
+}
+
+.paginador_wrap .first-page,
+.paginador_wrap .next-page {
+  padding: 8px 18px;
+  background-color: white;
+  border: 1px solid var(--color-gray-300);
+  color: var(--color-gray-700);
+
+  &:hover {
     background-color: var(--color-primary-main);
+    border-color: var(--color-primary-main);
     color: white;
+  }
+}
+
+.paginador_wrap button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+
+  &:hover {
+    background-color: white;
+    color: var(--color-gray-700);
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .paginator_container {
+    width: 95%;
+    bottom: 20px;
+  }
+
+  .paginador_wrap {
+    padding: 5px 8px;
+    gap: 4px;
+
+    button {
+      padding: 5px 10px;
+      font-size: 12px;
+      min-width: 32px;
+    }
+
+    .first-page,
+    .next-page {
+      padding: 5px 12px;
+    }
+  }
 }
