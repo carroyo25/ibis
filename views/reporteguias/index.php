@@ -55,10 +55,21 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Num. Guia</th>
-                    <th>F. Envio</th>
-                    <th>Año</th>
-                    <th>Guia</br>Sunat</th>
+                    <th data-campo="cnumguia">Num. Guia <a href="#" class='filtro'>🔽</a>
+                        <div class="filtro-container">
+                            <input type="text" name="filtro-Search" id="filtro-Search" placeholder ="🔍 Buscar">
+                            <ul class="lista-filtro">
+
+                            </ul>
+                            <div class="opciones-filtro">
+                                <a href="#" id="aplicar-filtro">Aplicar</a>
+                                <a href="#" id="limpiar-filtro">Limpiar</a>
+                            </div>
+                        </div>
+                    </th>
+                    <th data-campo="freg">F. Emisión <a href="#" class='filtro'>🔽</a></th>
+                    <th data-campo="freg">Año <a href="#" class='filtro'>🔽</a></th>
+                    <th data-campo="guiasunat">Guia</br>Sunat <a href="#" class='filtro'>🔽</a></th>
                     <th>Tipo Transporte</th>
                     <th width="45%">Observaciones</th>
                 </tr>

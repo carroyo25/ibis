@@ -27,11 +27,11 @@
                         lg_guias.corigen,
                         lg_guias.cdestino,
                         lg_guias.ftraslado,
-                        lg_guias.freg,
+                        DATE_FORMAT(lg_guias.freg,'%d/%m/%Y') emision,
                         lg_guias.guiasunat,
                         YEAR(lg_guias.freg) AS anio,
                         lg_guias.cenvio,
-                        lg_guias.cobserva
+                        UPPER(lg_guias.cobserva) cobserva
                     FROM
                         lg_guias 
                     WHERE

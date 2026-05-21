@@ -1,5 +1,5 @@
 (async () => {
-  const itemsPorPagina = 12;
+  const itemsPorPagina = 15;
 
   function obtenerFiltros() {
     let anio = $("#anioSearch").val();
@@ -63,10 +63,7 @@
   const dom = {
     paginador: document.getElementById("paginador"),
     actualizarBtns: () => document.getElementsByClassName("page-btn"),
-    cleanActives: () =>
-      document
-        .querySelectorAll(".page-btn")
-        .forEach((btn) => btn.classList.remove("active")),
+    cleanActives: () => document.querySelectorAll(".page-btn").forEach((btn) => btn.classList.remove("active")),
   };
 
   const renderizarPaginador = (numeroActivo = null) => {
@@ -131,17 +128,40 @@
 
     datos.forEach((row) => {
       tbody.append(`
-        <tr>
+        <tr data-interna="${row.cnumguia}" data-sunat="${row.guiasunat}" class="fila-pdf">
           <td>${row.cnumguia || ""}</td>
-          <td>${row.ftraslado || row.freg || ""}</td>
+          <td>${row.emision || ""}</td>
           <td>${row.anio || ""}</td>
           <td>${row.guiasunat || ""}</td>
-          <td>${row.cenvio || ""}</td>
+          <td>${row.cenvio || " "}</td>
           <td>${row.cobserva || ""}</td>
         </tr>
       `);
     });
   }
+
+  // Evento para las filas
+  $("#tablaPrincipalCuerpo").on("click", "tr", function () {
+    const ruta = "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
+    const pdfPreview = document.getElementById("pdfPreview");
+
+    const guiaInterna = $(this).data('interna');
+    const guiaSunat = $(this).data('sunat');
+
+    if (guiaSunat === "null" || guiaSunat === null) {
+      pdfPreview.setAttribute("src", ruta + guiaInterna + ".pdf");
+    } else {
+      pdfPreview.setAttribute("src",ruta + "20504898173-09-T001-" + guiaSunat + ".pdf");
+    }
+
+    fadeIn(document.getElementById("vistaprevia"));
+    return false;
+  });
+
+  $("#closePreview").click(function(e){
+    document.getElementById("pdfPreview").innerHTML = "";
+    fadeOut(document.getElementById("vistaprevia"));
+  });
 
   async function recargarTodo() {
     filtros = obtenerFiltros();
@@ -245,4 +265,22 @@
       return false;
     }
   });
+
+  // Función para fade in
+  function fadeIn(element) {
+    element.style.display = "block";
+    // Timeout para permitir el cambio de display antes de la transición
+    setTimeout(() => {
+      element.style.opacity = "1";
+    }, 10);
+  }
+
+  // Función para fade out
+  function fadeOut(element) {
+    element.style.opacity = "0";
+    // Esperar a que termine la transición antes de ocultar
+    setTimeout(() => {
+      element.style.display = "none";
+    }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
+  }
 })();
