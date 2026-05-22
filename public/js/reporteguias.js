@@ -3,7 +3,6 @@
 
   function obtenerFiltros() {
     let anio = $("#anioSearch").val();
-    console.log("Año obtenido:", anio); // Para depurar
 
     return {
       anio: anio ? parseInt(anio) : new Date().getFullYear(),
@@ -163,6 +162,8 @@
     fadeOut(document.getElementById("vistaprevia"));
   });
 
+  
+
   async function recargarTodo() {
     filtros = obtenerFiltros();
     totalItems = await contarItemsConFiltros(filtros);
@@ -207,6 +208,7 @@
 
   document.addEventListener("click", async (e) => {
     const btns = dom.actualizarBtns();
+
     if (!btns.length) return;
 
     if (e.target.matches(".page-btn")) {
@@ -262,6 +264,16 @@
         renderizarPaginador();
         await cargarPagina(estado.paginaActual);
       }
+      return false;
+    }
+
+    if (e.target.matches(".filtro")){
+      e.preventDefault();
+
+      $(this).next('.filtro-container').show(function () {
+          //capturarValoresColumnas($(t), idx);
+      });
+
       return false;
     }
   });

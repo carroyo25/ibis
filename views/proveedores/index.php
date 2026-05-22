@@ -32,7 +32,6 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado" value="7">
                     <input type="hidden" name="codigo_rubro" id="codigo_rubro" value="7">
 
-
                     <input type="hidden" name="activeTab" id="activeTab" value="tab1">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

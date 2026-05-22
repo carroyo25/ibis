@@ -1,11 +1,14 @@
 $(function(){
 	let nroRegistro = 0;
+	permisos = [];
 	
     $(".acordeon .submenu").on("click","a", function (e) {
         e.preventDefault();
 
         $(".opcion").removeClass("visitado");
         $(this).addClass("visitado");
+
+		$("#modulo").val($(this).data('modulo'));
 		
 		$("#esperar").css({"display":"block"});
         
@@ -17,6 +20,7 @@ $(function(){
 		})
 		.then(response => response.text())
 		.then(data => {
+			
 			$(".cargaModulo").html(data);
 		});
 

@@ -60,5 +60,9 @@
         function marcaRegistro() {
             echo $this->model->marcarAsignacion($_POST['user'],$_POST['id']);
         }
+
+        function permisos(){
+            echo json_encode($this->model->verificarPermiso($_POST));
+        }
     }
 ?>

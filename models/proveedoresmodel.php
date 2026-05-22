@@ -346,5 +346,33 @@
                 return false;
             }
         }
+
+        /*verificar permisos de creacion*/
+        public function verificarPermiso($parametros){
+            try{
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        m.agrega,
+                                                        m.modifica,
+                                                        m.elimina
+                                                    FROM tb_usermod m
+                                                    WHERE m.ncodmod =:modulo
+                                                    AND m.iduser =:usuario
+                                                    AND m.flgactivo = 1");
+
+                $sql->execute(["modulo"=>$parametros['modulo'],"usuario"=>$parametros['user']]);
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
