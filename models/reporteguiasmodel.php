@@ -110,5 +110,45 @@
                 return 0;
             }
         }
+
+        public function llenarFiltros($parametros){
+            try {
+                $campo = $parametros['campo'];
+                $limite = $parametros['items'] == '0' ? ' LIMIT 100': '';
+
+                $slqChain = "SELECT
+                                g.cnumguia 
+                            FROM
+                                lg_guias g
+                            WHERE 
+                            g.nflgActivo = 1
+                            ORDER BY
+                                g.freg DESC
+                            LIMIT 100";
+
+                $sql = $this->db->connect()->prepare($slqChain);
+                
+                $docData = $sql->fetchAll(PDO::FETCH_ASSOC);
+        
+                if (empty($docData)) {
+                    return [
+                        "success" => false,
+                        "message" => "No se encontraron registros."
+                    ];
+                }
+        
+                return [
+                    "success" => true,
+                    "datos"   => $docData
+                ];
+
+            } catch (Exception $e) {
+                error_log("General Error: " . $e->getMessage());
+                return [
+                    "success" => false,
+                    "message" => $e->getMessage()
+                ];
+            }
+        }
     }
 ?>

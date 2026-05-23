@@ -32,6 +32,10 @@
             
             echo json_encode(["total" => $total]);
         }
+
+        public function filtros(){
+            echo json_encode($this->model->llenarFiltros($_POST));
+        }
         
     }
 ?>

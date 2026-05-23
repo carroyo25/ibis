@@ -55,7 +55,7 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th data-campo="cnumguia">Num. Guia <a href="#" class='filtro'>🔽</a>
+                    <th data-campo="cnumguia">Num. Guia <a href="filtro_guias" class='filtro'>🔽</a>
                         <div class="filtro-container">
                             <input type="text" name="filtro-Search" id="filtro-Search" placeholder ="🔍 Buscar">
                             <ul class="lista-filtro">

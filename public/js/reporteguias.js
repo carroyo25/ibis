@@ -1,4 +1,6 @@
 (async () => {
+  $("#esperar").css({ display: "none" });
+
   const itemsPorPagina = 15;
 
   function obtenerFiltros() {
@@ -140,12 +142,19 @@
   }
 
   // Evento para las filas
-  $("#tablaPrincipalCuerpo").on("click", "tr", function () {
+  $("#tablaPrincipalCuerpo").on("click", "tr", function (e) {
     const ruta = "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
     const pdfPreview = document.getElementById("pdfPreview");
 
     const guiaInterna = $(this).data('interna');
     const guiaSunat = $(this).data('sunat');
+
+    if ( $('.filtro-container').is(':visible') && !$(e.target).closest('.filtro-container').length && !$(e.target).closest('.filtro').length) {
+
+        $('.filtro-container').slideUp();
+
+        return false;
+    }
 
     if (guiaSunat === "null" || guiaSunat === null) {
       pdfPreview.setAttribute("src", ruta + guiaInterna + ".pdf");
@@ -154,6 +163,7 @@
     }
 
     fadeIn(document.getElementById("vistaprevia"));
+
     return false;
   });
 
@@ -161,8 +171,6 @@
     document.getElementById("pdfPreview").innerHTML = "";
     fadeOut(document.getElementById("vistaprevia"));
   });
-
-  
 
   async function recargarTodo() {
     filtros = obtenerFiltros();
@@ -203,8 +211,6 @@
       `<tr><td colspan="6">No se encontraron registros</td></tr>`,
     );
   }
-
-  $("#esperar").css({ display: "none" });
 
   document.addEventListener("click", async (e) => {
     const btns = dom.actualizarBtns();
@@ -267,14 +273,23 @@
       return false;
     }
 
-    if (e.target.matches(".filtro")){
+    if ( e.target.matches(".filtro" )){
       e.preventDefault();
 
-      $(this).next('.filtro-container').show(function () {
-          //capturarValoresColumnas($(t), idx);
-      });
+      let campo = $(e.target).parent().data('campo');
+      const filtro = $(e.target).parent().find('.filtro-container');
+
+      if (!$('.filtro-container').is(':visible')){
+          llenarFiltros(campo,0,filtro);
+      }else{
+        $('.filtro-container').slideUp();
+      }
 
       return false;
+    }
+
+    if ( $('.filtro-container').is(':visible') && !$(e.target).closest('.filtro-container').length && !$(e.target).closest('.filtro').length) {
+        $('.filtro-container').slideUp();
     }
   });
 
@@ -294,5 +309,29 @@
     setTimeout(() => {
       element.style.display = "none";
     }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
+  }
+
+  function llenarFiltros(campo,limite,filtro){
+    const formData = new FormData();
+    
+    let visible = false;
+    
+    formData.append("campo",campo);
+    formData.append("items",limite);
+
+    fetch(RUTA+'reporteguias/filtros',{
+      method:'POST',
+      body:formData
+    })
+    .then(response => response.json())
+    .then(data=>{
+      console.log(data);
+      filtro.slideDown();
+
+      visible = true;
+    })
+
+    return visible;
+
   }
 })();
