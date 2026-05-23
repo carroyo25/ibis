@@ -1,7 +1,9 @@
-$(function() {
+$(async function() {
     var tabActive = "tab1";
     var accion = "";
     var index = "";
+
+    const permisos = await permisosUsuario();
     
     $("#esperar").fadeOut();
 
@@ -13,13 +15,16 @@ $(function() {
             "json"
     );
 
-    $("#nuevoRegistro").click(function (e) { 
+    $("#nuevoRegistro").click(async function (e) { 
         e.preventDefault();
-
-        $("#proceso").fadeIn();
-
-        accion = 'n';
-
+        
+        if( permisos[0]['agrega'] != null ){
+            $("#proceso").fadeIn();
+            accion = 'n';
+        }else{
+            mostrarMensaje("No tiene acceso a crear proveedores","mensaje_correcto");
+        }
+        
         return false;
     });
 
@@ -99,14 +104,21 @@ $(function() {
                 );
             }
             else {
-                $.post(RUTA+"proveedores/modificaEntidad", {datos:result,
-                                                            contactos:JSON.stringify(obtenerContactos()),
-                                                            bancos:JSON.stringify(obtenerBancos())},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
-                    },
-                    "json"
-                );
+
+                if( permisos[0]['modifica'] != null ){
+
+                    $.post(RUTA+"proveedores/modificaEntidad", {datos:result,
+                                                                contactos:JSON.stringify(obtenerContactos()),
+                                                                bancos:JSON.stringify(obtenerBancos())},
+                        function (data, textStatus, jqXHR) {
+                            mostrarMensaje(data.mensaje,data.clase);
+                        },
+                        "json"
+                    );
+
+                }else{
+                    mostrarMensaje("No tiene acceso a modificar proveedores","mensaje_correcto");
+                }
             }
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -308,6 +320,7 @@ $(function() {
 
         return false;
     });
+  
 })
 
 obtenerBancos = () =>{
@@ -361,3 +374,4 @@ obtenerContactos = () => {
 
     return DATA;
 }
+

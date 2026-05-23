@@ -81,6 +81,7 @@
                 <input type="hidden" id="almacen" name="almacen" value="<?php echo $_SESSION['almacen']?>">
                 <input type="hidden" id="medicos" name="medicos" value="<?php echo $_SESSION['medicos']?>">
                 <input type="hidden" id="mmtto" name="mmtto" value="<?php echo $_SESSION['mmtto']?>">
+                <input type="hidden" id="modulo" name="modulo">
             </div>
         </div>
         <div class="areaTrabajo">
