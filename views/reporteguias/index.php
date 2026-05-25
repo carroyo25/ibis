@@ -31,7 +31,7 @@
             <div class="variasConsultas">
                     <div>
                         <label for="tipo">Nro. Guia</label>
-                        <input type="text" id="guiaSearch" name="">
+                        <input type="text" id="guiaSearch" name="guiaSearch">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
@@ -57,12 +57,12 @@
                 <tr>
                     <th data-campo="cnumguia">Num. Guia <a href="filtro_guias" class='filtro'>🔽</a>
                         <div class="filtro-container">
-                            <input type="text" name="filtro-Search" id="filtro-Search" placeholder ="🔍 Buscar">
-                            <ul class="lista-filtro">
+                            <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="cnumgia">
 
                             </ul>
                             <div class="opciones-filtro">
-                                <a href="#" id="aplicar-filtro">Aplicar</a>
+                                <a href="#" id="aplicar-filtro" data-campo="cnumguia">Aplicar</a>
                                 <a href="#" id="limpiar-filtro">Limpiar</a>
                             </div>
                         </div>

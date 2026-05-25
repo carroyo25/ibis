@@ -64,7 +64,10 @@
   const dom = {
     paginador: document.getElementById("paginador"),
     actualizarBtns: () => document.getElementsByClassName("page-btn"),
-    cleanActives: () => document.querySelectorAll(".page-btn").forEach((btn) => btn.classList.remove("active")),
+    cleanActives: () =>
+      document
+        .querySelectorAll(".page-btn")
+        .forEach((btn) => btn.classList.remove("active")),
   };
 
   const renderizarPaginador = (numeroActivo = null) => {
@@ -143,23 +146,30 @@
 
   // Evento para las filas
   $("#tablaPrincipalCuerpo").on("click", "tr", function (e) {
-    const ruta = "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
+    const ruta =
+      "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
     const pdfPreview = document.getElementById("pdfPreview");
 
-    const guiaInterna = $(this).data('interna');
-    const guiaSunat = $(this).data('sunat');
+    const guiaInterna = $(this).data("interna");
+    const guiaSunat = $(this).data("sunat");
 
-    if ( $('.filtro-container').is(':visible') && !$(e.target).closest('.filtro-container').length && !$(e.target).closest('.filtro').length) {
+    if (
+      $(".filtro-container").is(":visible") &&
+      !$(e.target).closest(".filtro-container").length &&
+      !$(e.target).closest(".filtro").length
+    ) {
+      $(".filtro-container").slideUp();
 
-        $('.filtro-container').slideUp();
-
-        return false;
+      return false;
     }
 
     if (guiaSunat === "null" || guiaSunat === null) {
       pdfPreview.setAttribute("src", ruta + guiaInterna + ".pdf");
     } else {
-      pdfPreview.setAttribute("src",ruta + "20504898173-09-T001-" + guiaSunat + ".pdf");
+      pdfPreview.setAttribute(
+        "src",
+        ruta + "20504898173-09-T001-" + guiaSunat + ".pdf",
+      );
     }
 
     fadeIn(document.getElementById("vistaprevia"));
@@ -167,7 +177,7 @@
     return false;
   });
 
-  $("#closePreview").click(function(e){
+  $("#closePreview").click(function (e) {
     document.getElementById("pdfPreview").innerHTML = "";
     fadeOut(document.getElementById("vistaprevia"));
   });
@@ -273,23 +283,38 @@
       return false;
     }
 
-    if ( e.target.matches(".filtro" )){
+    if (e.target.matches(".filtro")) {
       e.preventDefault();
 
-      let campo = $(e.target).parent().data('campo');
-      const filtro = $(e.target).parent().find('.filtro-container');
+      let campo = $(e.target).parent().data("campo");
+      const filtro = $(e.target).parent().find(".filtro-container");
 
-      if (!$('.filtro-container').is(':visible')){
-          llenarFiltros(campo,0,filtro);
-      }else{
-        $('.filtro-container').slideUp();
+      if (!$(".filtro-container").is(":visible")) {
+        llenarFiltros(campo, 100, '',true);
+      } else {
+        $(".filtro-container").slideUp();
       }
 
       return false;
     }
 
-    if ( $('.filtro-container').is(':visible') && !$(e.target).closest('.filtro-container').length && !$(e.target).closest('.filtro').length) {
-        $('.filtro-container').slideUp();
+    if (
+      $(".filtro-container").is(":visible") &&
+      !$(e.target).closest(".filtro-container").length &&
+      !$(e.target).closest(".filtro").length
+    ) {
+      $(".filtro-container").slideUp();
+    }
+  });
+
+  document.addEventListener("keydown", async (e) => {
+    if (e.target.matches(".filtro-Search")) {
+      if (e.key == "Enter") {
+        let campo = e.target.closest('th').dataset.campo;
+        let string = e.target.value;
+        
+        llenarFiltros(campo, 0, string, false);
+      }
     }
   });
 
@@ -311,27 +336,33 @@
     }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
   }
 
-  function llenarFiltros(campo,limite,filtro){
+  function llenarFiltros(campo, limite, string, visible) {
     const formData = new FormData();
-    
-    let visible = false;
-    
-    formData.append("campo",campo);
-    formData.append("items",limite);
+    const lista_filtro = document.getElementById("lista-filtro");
 
-    fetch(RUTA+'reporteguias/filtros',{
-      method:'POST',
-      body:formData
+    formData.append("campo", campo);
+    formData.append("items", limite);
+    formData.append("string", string);
+
+    fetch(RUTA + "reporteguias/filtros", {
+      method: "POST",
+      body: formData,
     })
-    .then(response => response.json())
-    .then(data=>{
-      console.log(data);
-      filtro.slideDown();
+      .then((response) => response.json())
+      .then((data) => {
+        lista_filtro.innerHTML = "";
 
-      visible = true;
-    })
+        data.datos.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<input type="checkbox"></><label>${item.cnumguia}</label>`;
 
-    return visible;
+          lista_filtro.appendChild(li);
+        });
 
+        if (visible)
+          filtro.slideDown();
+      });
+
+    return false;
   }
 })();

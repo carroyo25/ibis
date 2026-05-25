@@ -159,6 +159,23 @@
     max-height: 500px;
     border: 1px solid #c2c2c2;
     margin: 10px 12px;
+    overflow: auto;
+    color: #000;
+    display: flex;
+    gap:10px;
+    transition: all .5s;
+    flex-direction: column;
+    
+    li{
+      display: flex;
+      gap: 20px;
+      padding: 5px;
+
+      &:hover{
+        background: #0f5a33;
+        color: #fff;
+      }
+    } 
   }
 
   .opciones-filtro {
@@ -174,7 +191,7 @@
     }
 
     #aplicar-filtro {
-      background: #0f5a33;
+      background: #006093;
       color: white;
     }
   }

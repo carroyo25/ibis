@@ -113,11 +113,11 @@
 
         public function llenarFiltros($parametros){
             try {
-                $campo = $parametros['campo'];
+                $campo = "g.".$parametros['campo'];
                 $limite = $parametros['items'] == '0' ? ' LIMIT 100': '';
 
                 $slqChain = "SELECT
-                                g.cnumguia 
+                                $campo 
                             FROM
                                 lg_guias g
                             WHERE 
@@ -127,13 +127,15 @@
                             LIMIT 100";
 
                 $sql = $this->db->connect()->prepare($slqChain);
+                $sql->execute();
                 
                 $docData = $sql->fetchAll(PDO::FETCH_ASSOC);
         
                 if (empty($docData)) {
                     return [
                         "success" => false,
-                        "message" => "No se encontraron registros."
+                        "message" => "No se encontraron registros.",
+                        "consulta" => $slqChain
                     ];
                 }
         
