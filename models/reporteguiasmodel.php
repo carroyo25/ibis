@@ -114,17 +114,20 @@
         public function llenarFiltros($parametros){
             try {
                 $campo = "g.".$parametros['campo'];
-                $limite = $parametros['items'] == '0' ? ' LIMIT 100': '';
+                $limite = $parametros['items'] == 0 ? ' LIMIT 25': '';
+                $cadena = $parametros['string'] == '' ? "$campo LIKE '%'": "$campo LIKE '%".$parametros['string']."%'";
+                $lista = $parametros['lista'];
 
                 $slqChain = "SELECT
                                 $campo 
                             FROM
                                 lg_guias g
                             WHERE 
-                            g.nflgActivo = 1
+                                g.nflgActivo = 1
+                                AND $cadena 
                             ORDER BY
                                 g.freg DESC
-                            LIMIT 100";
+                            $limite";
 
                 $sql = $this->db->connect()->prepare($slqChain);
                 $sql->execute();
@@ -135,20 +138,22 @@
                     return [
                         "success" => false,
                         "message" => "No se encontraron registros.",
-                        "consulta" => $slqChain
+                        "consulta" => htmlspecialchars($slqChain,ENT_QUOTES,'UTF-8')
                     ];
                 }
         
                 return [
                     "success" => true,
-                    "datos"   => $docData
+                    "datos"   => $docData,
+                    "consulta" => $slqChain
                 ];
 
             } catch (Exception $e) {
                 error_log("General Error: " . $e->getMessage());
                 return [
                     "success" => false,
-                    "message" => $e->getMessage()
+                    "message" => $e->getMessage(),
+                    "consulta" => htmlspecialchars($slqChain,ENT_QUOTES,'UTF-8')
                 ];
             }
         }

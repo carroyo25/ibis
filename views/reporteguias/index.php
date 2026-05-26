@@ -58,12 +58,12 @@
                     <th data-campo="cnumguia">Num. Guia <a href="filtro_guias" class='filtro'>🔽</a>
                         <div class="filtro-container">
                             <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
-                            <ul class="lista-filtro" id="lista-filtro" data-campo="cnumgia">
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="cnumguia">
 
                             </ul>
                             <div class="opciones-filtro">
-                                <a href="#" id="aplicar-filtro" data-campo="cnumguia">Aplicar</a>
-                                <a href="#" id="limpiar-filtro">Limpiar</a>
+                                <a href="#" id="aplicar-filtro" data-campo="cnumguia" class="botones_filtro">Aplicar</a>
+                                <a href="#" id="limpiar-filtro"  class="botones_filtro">Limpiar</a>
                             </div>
                         </div>
                     </th>

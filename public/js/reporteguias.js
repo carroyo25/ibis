@@ -290,7 +290,7 @@
       const filtro = $(e.target).parent().find(".filtro-container");
 
       if (!$(".filtro-container").is(":visible")) {
-        llenarFiltros(campo, 100, '',true);
+        llenarFiltros(campo, 0,'',true,filtro,null);
       } else {
         $(".filtro-container").slideUp();
       }
@@ -298,11 +298,21 @@
       return false;
     }
 
-    if (
-      $(".filtro-container").is(":visible") &&
-      !$(e.target).closest(".filtro-container").length &&
-      !$(e.target).closest(".filtro").length
-    ) {
+    if(e.target.matches(".botones_filtro")){
+      e.preventDefault();
+
+      if (e.target.id == "aplicar-filtro"){
+        let campo = $(e.target).data("campo");
+        const filtro = $(e.target).parent().find(".filtro-container");
+
+        console.log(obtenerValoresSeleccionados(campo));
+
+      }
+  
+      return false;
+    }
+
+    if ($(".filtro-container").is(":visible") && !$(e.target).closest(".filtro-container").length && !$(e.target).closest(".filtro").length) {
       $(".filtro-container").slideUp();
     }
   });
@@ -313,7 +323,7 @@
         let campo = e.target.closest('th').dataset.campo;
         let string = e.target.value;
         
-        llenarFiltros(campo, 0, string, false);
+        llenarFiltros(campo, 0, string, false, null);
       }
     }
   });
@@ -336,13 +346,14 @@
     }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
   }
 
-  function llenarFiltros(campo, limite, string, visible) {
+  function llenarFiltros(campo, limite, string, visible, filtro, lista) {
     const formData = new FormData();
     const lista_filtro = document.getElementById("lista-filtro");
 
     formData.append("campo", campo);
     formData.append("items", limite);
     formData.append("string", string);
+    formData.append("lista", lista);
 
     fetch(RUTA + "reporteguias/filtros", {
       method: "POST",
@@ -354,7 +365,7 @@
 
         data.datos.forEach((item) => {
           const li = document.createElement("li");
-          li.innerHTML = `<input type="checkbox"></><label>${item.cnumguia}</label>`;
+          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.cnumguia}"></><label>${item.cnumguia}</label>`;
 
           lista_filtro.appendChild(li);
         });
@@ -364,5 +375,19 @@
       });
 
     return false;
+  }
+
+  function obtenerValoresSeleccionados(campo) {
+        const listaFiltro = document.querySelector(`.lista-filtro[data-campo="${campo}"]`);
+        
+        if (!listaFiltro) return [];
+        
+        const checkboxes = document.querySelectorAll('#lista-filtro input[type="checkbox"]:checked');
+        const valores = Array.from(checkboxes).map(cb => ({
+              value: cb.value,
+              texto: cb.dataset.texto || cb.closest('li')?.querySelector('label')?.textContent.trim()
+        }));
+        
+        return valores;
   }
 })();
