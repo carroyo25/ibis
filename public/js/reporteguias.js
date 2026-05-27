@@ -2,6 +2,7 @@
   $("#esperar").css({ display: "none" });
 
   const itemsPorPagina = 15;
+  let campoFiltroActual = null; // Variable global para guardar el campo del filtro
 
   function obtenerFiltros() {
     let anio = $("#anioSearch").val();
@@ -15,10 +16,24 @@
 
   async function contarItemsConFiltros(filtros) {
     try {
+      let datosEnvio = {
+        anio: filtros.anio
+      };
+      
+      if (filtros.guia && filtros.guia.trim() !== '') {
+        datosEnvio.guia = filtros.guia.split(',');
+      }
+      
+      if (filtros.sunat && filtros.sunat.trim() !== '') {
+        datosEnvio.sunat = filtros.sunat.split(',');
+      }
+      
+      console.log("Enviando a contarItems:", datosEnvio);
+      
       const response = await fetch(RUTA + "reporteguias/itemsConsulta", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(filtros),
+        body: JSON.stringify(datosEnvio),
       });
       const data = await response.json();
       return data.total || 0;
@@ -30,16 +45,26 @@
 
   async function listarGuias(inicio, items, filtros) {
     try {
+      let datosEnvio = {
+        anio: filtros.anio,
+        inicio: inicio,
+        items: items
+      };
+      
+      if (filtros.guia && filtros.guia.trim() !== '') {
+        datosEnvio.guia = filtros.guia.split(',');
+      }
+      
+      if (filtros.sunat && filtros.sunat.trim() !== '') {
+        datosEnvio.sunat = filtros.sunat.split(',');
+      }
+      
+      console.log("Enviando a listarGuias:", datosEnvio);
+      
       const response = await fetch(RUTA + "reporteguias/listaGuias", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          anio: filtros.anio,
-          guia: filtros.guia,
-          sunat: filtros.sunat,
-          inicio: inicio,
-          items: items,
-        }),
+        body: JSON.stringify(datosEnvio),
       });
       const data = await response.json();
       return data;
@@ -144,24 +169,109 @@
     });
   }
 
+  function obtenerValoresSeleccionados() {
+    const checkboxes = document.querySelectorAll('#lista-filtro input[type="checkbox"]:checked');
+    const valores = Array.from(checkboxes).map(cb => cb.value);
+    return valores;
+  }
+
+  async function aplicarFiltroCheckboxes(campo) {
+    const valoresSeleccionados = obtenerValoresSeleccionados();
+    
+    if (valoresSeleccionados.length === 0) {
+      console.log("No hay checkboxes seleccionados");
+      return;
+    }
+    
+    $("#esperar").css({ display: "flex" });
+    
+    // Crear nuevos filtros directamente
+    let filtrosActuales = {
+      anio: $("#anioSearch").val() ? parseInt($("#anioSearch").val()) : new Date().getFullYear(),
+      guia: "",
+      sunat: ""
+    };
+    
+    if (campo === 'cnumguia') {
+      const valoresString = valoresSeleccionados.join(',');
+      filtrosActuales.guia = valoresString;
+      $("#guiaSearch").val(valoresString);
+    } else if (campo === 'guiasunat') {
+      const valoresString = valoresSeleccionados.join(',');
+      filtrosActuales.sunat = valoresString;
+      $("#guiaSunat").val(valoresString);
+    }
+    
+    totalItems = await contarItemsConFiltros(filtrosActuales);
+    totalPaginas = Math.ceil(totalItems / itemsPorPagina);
+    
+    estado = {
+      indexBtn: 0,
+      rangoInicio: 1,
+      rangoFin: Math.min(20, totalPaginas),
+      paginaActual: 1,
+    };
+    
+    if (totalPaginas > 0) {
+      renderizarPaginador(1);
+      const inicio = 0;
+      const resultado = await listarGuias(inicio, itemsPorPagina, filtrosActuales);
+      if (resultado && resultado.success) {
+        renderizarTabla(resultado.datos);
+      } else if (resultado && !resultado.success) {
+        $("#tablaPrincipalCuerpo").html(
+          `<tr><td colspan="6">${resultado.message}</td></tr>`,
+        );
+      }
+    } else {
+      $("#paginador").html("");
+      $("#tablaPrincipalCuerpo").html(
+        `<tr><td colspan="6">No se encontraron registros</td></tr>`,
+      );
+    }
+    
+    $(".filtro-container").slideUp();
+    $("#esperar").css({ display: "none" });
+  }
+
+  function llenarFiltros(campo, limite, string, visible, filtro, lista) {
+    const formData = new FormData();
+    const lista_filtro = document.getElementById("lista-filtro");
+
+    formData.append("campo", campo);
+    formData.append("items", limite);
+    formData.append("string", string);
+    formData.append("lista", lista);
+
+    fetch(RUTA + "reporteguias/filtros", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        lista_filtro.innerHTML = "";
+
+        data.datos.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.cnumguia}"><label>${item.cnumguia}</label>`;
+          lista_filtro.appendChild(li);
+        });
+
+        if (visible) {
+          filtro.slideDown();
+        }
+      });
+
+    return false;
+  }
+
   // Evento para las filas
   $("#tablaPrincipalCuerpo").on("click", "tr", function (e) {
-    const ruta =
-      "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
+    const ruta = "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
     const pdfPreview = document.getElementById("pdfPreview");
 
     const guiaInterna = $(this).data("interna");
     const guiaSunat = $(this).data("sunat");
-
-    if (
-      $(".filtro-container").is(":visible") &&
-      !$(e.target).closest(".filtro-container").length &&
-      !$(e.target).closest(".filtro").length
-    ) {
-      $(".filtro-container").slideUp();
-
-      return false;
-    }
 
     if (guiaSunat === "null" || guiaSunat === null) {
       pdfPreview.setAttribute("src", ruta + guiaInterna + ".pdf");
@@ -173,7 +283,6 @@
     }
 
     fadeIn(document.getElementById("vistaprevia"));
-
     return false;
   });
 
@@ -205,9 +314,10 @@
     }
   }
 
-  // Evento del botón consultar
   $("#btnConsulta").on("click", async () => {
     $("#esperar").css({ display: "flex" });
+    $("#guiaSearch").val('');
+    $("#guiaSunat").val('');
     await recargarTodo();
     $("#esperar").css({ display: "none" });
   });
@@ -225,8 +335,6 @@
   document.addEventListener("click", async (e) => {
     const btns = dom.actualizarBtns();
 
-    if (!btns.length) return;
-
     if (e.target.matches(".page-btn")) {
       e.preventDefault();
       const nuevoIndex = Array.from(btns).indexOf(e.target);
@@ -241,7 +349,7 @@
 
     if (e.target.matches(".next-page")) {
       e.preventDefault();
-      const { indexBtn, rangoInicio, rangoFin, paginaActual } = estado;
+      const { indexBtn, rangoInicio, rangoFin } = estado;
 
       if (indexBtn + 1 === btns.length) {
         if (rangoFin < totalPaginas) {
@@ -264,7 +372,7 @@
 
     if (e.target.matches(".first-page")) {
       e.preventDefault();
-      const { indexBtn, rangoInicio, paginaActual } = estado;
+      const { indexBtn, rangoInicio } = estado;
 
       if (indexBtn > 0) {
         dom.cleanActives();
@@ -285,30 +393,25 @@
 
     if (e.target.matches(".filtro")) {
       e.preventDefault();
-
-      let campo = $(e.target).parent().data("campo");
+      campoFiltroActual = $(e.target).parent().data("campo");
+      console.log("Campo filtro guardado:", campoFiltroActual);
+      
       const filtro = $(e.target).parent().find(".filtro-container");
 
       if (!$(".filtro-container").is(":visible")) {
-        llenarFiltros(campo, 0,'',true,filtro,null);
+        llenarFiltros(campoFiltroActual, 0, '', true, filtro, null);
       } else {
         $(".filtro-container").slideUp();
       }
-
       return false;
     }
 
-    if(e.target.matches(".botones_filtro")){
+    if (e.target.matches(".botones_filtro")) {
       e.preventDefault();
-
-      if (e.target.id == "aplicar-filtro"){
-        let campo = $(e.target).data("campo");
-        const filtro = $(e.target).parent().find(".filtro-container");
-
-        console.log(obtenerValoresSeleccionados(campo));
-
+      if (e.target.id == "aplicar-filtro") {
+        console.log("Aplicando filtro con campo:", campoFiltroActual);
+        await aplicarFiltroCheckboxes(campoFiltroActual);
       }
-  
       return false;
     }
 
@@ -322,72 +425,22 @@
       if (e.key == "Enter") {
         let campo = e.target.closest('th').dataset.campo;
         let string = e.target.value;
-        
-        llenarFiltros(campo, 0, string, false, null);
+        llenarFiltros(campo, 0, string, false, null, null);
       }
     }
   });
 
-  // Función para fade in
   function fadeIn(element) {
     element.style.display = "block";
-    // Timeout para permitir el cambio de display antes de la transición
     setTimeout(() => {
       element.style.opacity = "1";
     }, 10);
   }
 
-  // Función para fade out
   function fadeOut(element) {
     element.style.opacity = "0";
-    // Esperar a que termine la transición antes de ocultar
     setTimeout(() => {
       element.style.display = "none";
-    }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
-  }
-
-  function llenarFiltros(campo, limite, string, visible, filtro, lista) {
-    const formData = new FormData();
-    const lista_filtro = document.getElementById("lista-filtro");
-
-    formData.append("campo", campo);
-    formData.append("items", limite);
-    formData.append("string", string);
-    formData.append("lista", lista);
-
-    fetch(RUTA + "reporteguias/filtros", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        lista_filtro.innerHTML = "";
-
-        data.datos.forEach((item) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.cnumguia}"></><label>${item.cnumguia}</label>`;
-
-          lista_filtro.appendChild(li);
-        });
-
-        if (visible)
-          filtro.slideDown();
-      });
-
-    return false;
-  }
-
-  function obtenerValoresSeleccionados(campo) {
-        const listaFiltro = document.querySelector(`.lista-filtro[data-campo="${campo}"]`);
-        
-        if (!listaFiltro) return [];
-        
-        const checkboxes = document.querySelectorAll('#lista-filtro input[type="checkbox"]:checked');
-        const valores = Array.from(checkboxes).map(cb => ({
-              value: cb.value,
-              texto: cb.dataset.texto || cb.closest('li')?.querySelector('label')?.textContent.trim()
-        }));
-        
-        return valores;
+    }, 300);
   }
 })();

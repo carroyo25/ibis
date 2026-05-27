@@ -69,7 +69,18 @@
                     </th>
                     <th data-campo="freg">F. Emisión <a href="#" class='filtro'>🔽</a></th>
                     <th data-campo="freg">Año <a href="#" class='filtro'>🔽</a></th>
-                    <th data-campo="guiasunat">Guia</br>Sunat <a href="#" class='filtro'>🔽</a></th>
+                    <th data-campo="guiasunat">Guia</br>Sunat <a href="#" class='filtro'>🔽</a>
+                        <div class="filtro-container">
+                            <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="guiasunat">
+
+                            </ul>
+                            <div class="opciones-filtro">
+                                <a href="#" id="aplicar-filtro" data-campo="guiasunat" class="botones_filtro">Aplicar</a>
+                                <a href="#" id="limpiar-filtro"  class="botones_filtro">Limpiar</a>
+                            </div>
+                        </div>
+                    </th>
                     <th>Tipo Transporte</th>
                     <th width="45%">Observaciones</th>
                 </tr>
