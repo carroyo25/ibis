@@ -44,7 +44,7 @@
                     </div>
                     <div>
                         <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="text" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
                     <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
             </div>
@@ -57,23 +57,30 @@
                     <th data-campo="cnumguia">Num. Guia <a href="filtro_guias" class='filtro'>🔽</a>
                         <div class="filtro-container">
                             <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
-                            <ul class="lista-filtro" id="lista-filtro" data-campo="cnumguia">
-
-                            </ul>
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="cnumguia"></ul>
                             <div class="opciones-filtro">
                                 <a href="#" id="aplicar-filtro" data-campo="cnumguia" class="botones_filtro">Aplicar</a>
                                 <a href="#" id="limpiar-filtro"  class="botones_filtro">Limpiar</a>
                             </div>
                         </div>
                     </th>
-                    <th data-campo="freg">F. Emisión <a href="#" class='filtro'>🔽</a></th>
-                    <th data-campo="freg">Año <a href="#" class='filtro'>🔽</a></th>
+                    <th>F. Emisión 
+                        
+                    </th>
+                    <th data-campo="freg">Año <a href="#" class='filtro'>🔽</a>
+                        <div class="filtro-container">
+                            <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="freg"></ul>
+                            <div class="opciones-filtro">
+                                <a href="#" id="aplicar-filtro" data-campo="freg" class="botones_filtro">Aplicar</a>
+                                <a href="#" id="limpiar-filtro"  class="botones_filtro">Limpiar</a>
+                            </div>
+                        </div>
+                    </th>
                     <th data-campo="guiasunat">Guia</br>Sunat <a href="#" class='filtro'>🔽</a>
                         <div class="filtro-container">
                             <input type="text" name="filtro-Search" class="filtro-Search" placeholder ="🔍 Buscar">
-                            <ul class="lista-filtro" id="lista-filtro" data-campo="guiasunat">
-
-                            </ul>
+                            <ul class="lista-filtro" id="lista-filtro" data-campo="guiasunat"></ul>
                             <div class="opciones-filtro">
                                 <a href="#" id="aplicar-filtro" data-campo="guiasunat" class="botones_filtro">Aplicar</a>
                                 <a href="#" id="limpiar-filtro"  class="botones_filtro">Limpiar</a>

@@ -6,10 +6,8 @@
   let contenedorActual = null;
 
   function obtenerFiltros() {
-    let anio = $("#anioSearch").val();
-
     return {
-      anio: anio ? parseInt(anio) : new Date().getFullYear(),
+      anio: $("#anioSearch").val(),
       guia: $("#guiaSearch").val(),
       sunat: $("#guiaSunat").val(),
     };
@@ -17,9 +15,18 @@
 
   async function contarItemsConFiltros(filtros) {
     try {
-      let datosEnvio = {
-        anio: filtros.anio,
-      };
+      let datosEnvio = {};
+
+      // Verificar si anio existe y es string antes de usar includes
+      if (filtros.anio) {
+        if (typeof filtros.anio === "string" && filtros.anio.includes(",")) {
+          datosEnvio.anio = filtros.anio.split(",");
+        } else if (typeof filtros.anio === "string") {
+          datosEnvio.anio = [filtros.anio];
+        } else if (Array.isArray(filtros.anio)) {
+          datosEnvio.anio = filtros.anio; // Ya es array
+        }
+      }
 
       if (filtros.guia && filtros.guia.trim() !== "") {
         datosEnvio.guia = filtros.guia.split(",");
@@ -28,8 +35,6 @@
       if (filtros.sunat && filtros.sunat.trim() !== "") {
         datosEnvio.sunat = filtros.sunat.split(",");
       }
-
-      console.log("Enviando a contarItems:", datosEnvio);
 
       const response = await fetch(RUTA + "reporteguias/itemsConsulta", {
         method: "POST",
@@ -59,8 +64,6 @@
       if (filtros.sunat && filtros.sunat.trim() !== "") {
         datosEnvio.sunat = filtros.sunat.split(",");
       }
-
-      console.log("Enviando a listarGuias:", datosEnvio);
 
       const response = await fetch(RUTA + "reporteguias/listaGuias", {
         method: "POST",
@@ -170,78 +173,92 @@
     });
   }
 
-  function obtenerValoresSeleccionados() {
-    const checkboxes = document.querySelectorAll(
-      '#lista-filtro input[type="checkbox"]:checked',
-    );
-    const valores = Array.from(checkboxes).map((cb) => cb.value);
-    return valores;
-  }
+  function obtenerTodosLosFiltros() {
+    const filtros = {};
+    
+    document.querySelectorAll('th[data-campo]').forEach(th => {
+        const campo = th.dataset.campo;
+        const lista = th.querySelector('.lista-filtro');
+        
+        if (lista) {
+            const checkboxes = lista.querySelectorAll('input[type="checkbox"]:checked');
+            const valores = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (valores.length > 0) {
+                filtros[campo] = valores;
+            }
+        }
+    });
+    
+    return filtros; // Retorna objeto, no array
+}
 
   async function aplicarFiltroCheckboxes(campo) {
-    const valoresSeleccionados = obtenerValoresSeleccionados();
-
-    if (valoresSeleccionados.length === 0) {
-      console.log("No hay checkboxes seleccionados");
-      return;
+    // Mapeo de campos
+    const MAPA_CAMPOS = {
+        "cnumguia": { input: "#guiaSearch", filtro: "guia" },
+        "guiasunat": { input: "#guiaSunat", filtro: "sunat" },
+        "freg": { input: "#anioSearch", filtro: "anio" }
+    };
+    
+    const config = MAPA_CAMPOS[campo];
+    if (!config) {
+        console.error(`Campo desconocido: ${campo}`);
+        return;
+    }
+    
+    const todosLosFiltros = obtenerTodosLosFiltros();
+    const valoresDelCampo = todosLosFiltros[campo] || [];
+    
+    if (valoresDelCampo.length === 0) {
+        console.log(`No hay valores seleccionados para ${campo}`);
+        return;
     }
 
     $("#esperar").css({ display: "flex" });
 
-    // Crear nuevos filtros directamente
-    let filtrosActuales = {
-      anio: $("#anioSearch").val()
-        ? parseInt($("#anioSearch").val())
-        : new Date().getFullYear(),
-      guia: "",
-      sunat: "",
+    // Construir filtros
+    const filtrosActuales = {
+        anio: $("#anioSearch").val(),
+        guia: $("#guiaSearch").val(),
+        sunat: $("#guiaSunat").val(),
+        [config.filtro]: valoresDelCampo.join(",")  // Asignar dinámicamente
     };
+    
+    $(config.input).val(filtrosActuales[config.filtro]);
 
-    if (campo === "cnumguia") {
-      const valoresString = valoresSeleccionados.join(",");
-      filtrosActuales.guia = valoresString;
-      $("#guiaSearch").val(valoresString);
-    } else if (campo === "guiasunat") {
-      const valoresString = valoresSeleccionados.join(",");
-      filtrosActuales.sunat = valoresString;
-      $("#guiaSunat").val(valoresString);
-    }
-
+    // Ejecutar consulta
     totalItems = await contarItemsConFiltros(filtrosActuales);
     totalPaginas = Math.ceil(totalItems / itemsPorPagina);
 
-    estado = {
-      indexBtn: 0,
-      rangoInicio: 1,
-      rangoFin: Math.min(20, totalPaginas),
-      paginaActual: 1,
-    };
-
     if (totalPaginas > 0) {
-      renderizarPaginador(1);
-      const inicio = 0;
-      const resultado = await listarGuias(
-        inicio,
-        itemsPorPagina,
-        filtrosActuales,
-      );
-      if (resultado && resultado.success) {
-        renderizarTabla(resultado.datos);
-      } else if (resultado && !resultado.success) {
-        $("#tablaPrincipalCuerpo").html(
-          `<tr><td colspan="6">${resultado.message}</td></tr>`,
-        );
-      }
+        estado = {
+            indexBtn: 0,
+            rangoInicio: 1,
+            rangoFin: Math.min(20, totalPaginas),
+            paginaActual: 1,
+        };
+        
+        renderizarPaginador(1);
+        const resultado = await listarGuias(0, itemsPorPagina, filtrosActuales);
+        
+        if (resultado?.success) {
+            renderizarTabla(resultado.datos);
+        } else {
+            $("#tablaPrincipalCuerpo").html(
+                `<tr><td colspan="6">${resultado?.message || "Error al cargar datos"}</td></tr>`
+            );
+        }
     } else {
-      $("#paginador").html("");
-      $("#tablaPrincipalCuerpo").html(
-        `<tr><td colspan="6">No se encontraron registros</td></tr>`,
-      );
+        $("#paginador").html("");
+        $("#tablaPrincipalCuerpo").html(
+            `<tr><td colspan="6">No se encontraron registros</td></tr>`
+        );
     }
 
     $(".filtro-container").slideUp();
     $("#esperar").css({ display: "none" });
-  }
+}
 
   //esta es la funcion para llenar los filtros
   function llenarFiltros(
@@ -271,7 +288,7 @@
 
         data.datos.forEach((item) => {
           const li = document.createElement("li");
-          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.cnumguia}"><label>${item.cnumguia}</label>`;
+          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.valor}"><label>${item.valor}</label>`;
           lista_filtro.appendChild(li);
         });
 
@@ -301,7 +318,11 @@
       );
     }
 
-    fadeIn(document.getElementById("vistaprevia"));
+    if (!$(".filtro-container").is(":visible")) {
+      fadeIn(document.getElementById("vistaprevia"));
+      $(".filtro-container").slideUp();
+    }
+
     return false;
   });
 
@@ -432,14 +453,18 @@
       } else {
         $(".filtro-container").slideUp();
       }
+
       return false;
     }
 
     if (e.target.matches(".botones_filtro")) {
       e.preventDefault();
       if (e.target.id == "aplicar-filtro") {
-        console.log("Aplicando filtro con campo:", campoFiltroActual);
+        console.log(campoFiltroActual);
+
         await aplicarFiltroCheckboxes(campoFiltroActual);
+      } else {
+        limpiarFiltros();
       }
       return false;
     }
@@ -458,7 +483,11 @@
       if (e.key == "Enter") {
         let campo = e.target.closest("th").dataset.campo;
         let string = e.target.value;
-        llenarFiltros(campo, 0, string, false, null, null);
+        const contenedorActual = document.querySelector(
+          `.lista-filtro[data-campo="${campo}"]`,
+        );
+
+        llenarFiltros(campo, 0, string, false, null, null, contenedorActual);
       }
     }
   });

@@ -62,7 +62,7 @@
                 $sql = $this->db->connect()->prepare("
                     SELECT 
                         lg_guias.cnumguia,
-                        DATE_FORMAT(lg_guias.freg, '%Y-%m-%d') as emision,
+                        DATE_FORMAT(lg_guias.freg, '%d/%m/%Y') as emision,
                         YEAR(lg_guias.freg) as anio,
                         lg_guias.guiasunat,
                         lg_guias.cenvio,
@@ -99,68 +99,75 @@
 
         public function contarGuias($filtros = []) {
             try {
-                $anio = isset($filtros['anio']) ? (int) $filtros['anio'] : date("Y");
+                $conditions = ["nflgActivo = 1"];
+                $params = [];
                 
-                $conditions = ["lg_guias.nflgActivo = 1", "YEAR(lg_guias.freg) = ?"];
-                $params = [$anio];
-                
-                // Manejar guia - puede ser string o array
-                if (isset($filtros['guia']) && !empty($filtros['guia'])) {
-                    if (is_array($filtros['guia'])) {
-                        $placeholders = implode(',', array_fill(0, count($filtros['guia']), '?'));
-                        $conditions[] = "lg_guias.cnumguia IN ($placeholders)";
-                        $params = array_merge($params, $filtros['guia']);
-                    } else {
-                        $conditions[] = "lg_guias.cnumguia LIKE ?";
-                        $params[] = '%' . $filtros['guia'] . '%';
-                    }
+                // Año (array o valor único)
+                if (!empty($filtros['anio'])) {
+                    $anios = is_array($filtros['anio']) ? $filtros['anio'] : [$filtros['anio']];
+                    $placeholders = implode(',', array_fill(0, count($anios), '?'));
+                    $conditions[] = "YEAR(freg) IN ($placeholders)";
+                    $params = array_merge($params, $anios);
                 }
                 
-                // Manejar sunat - puede ser string o array
-                if (isset($filtros['sunat']) && !empty($filtros['sunat'])) {
-                    if (is_array($filtros['sunat'])) {
-                        $placeholders = implode(',', array_fill(0, count($filtros['sunat']), '?'));
-                        $conditions[] = "IFNULL(lg_guias.guiasunat,'') IN ($placeholders)";
-                        $params = array_merge($params, $filtros['sunat']);
-                    } else {
-                        $conditions[] = "IFNULL(lg_guias.guiasunat,'') LIKE ?";
-                        $params[] = '%' . $filtros['sunat'] . '%';
-                    }
+                // Guía (array o valor único)
+                if (!empty($filtros['guia'])) {
+                    $guias = is_array($filtros['guia']) ? $filtros['guia'] : [$filtros['guia']];
+                    $placeholders = implode(',', array_fill(0, count($guias), '?'));
+                    $conditions[] = "cnumguia IN ($placeholders)";
+                    $params = array_merge($params, $guias);
+                }
+                
+                // Sunat (array o valor único)
+                if (!empty($filtros['sunat'])) {
+                    $sunats = is_array($filtros['sunat']) ? $filtros['sunat'] : [$filtros['sunat']];
+                    $placeholders = implode(',', array_fill(0, count($sunats), '?'));
+                    $conditions[] = "guiasunat IN ($placeholders)";
+                    $params = array_merge($params, $sunats);
                 }
                 
                 $whereClause = implode(" AND ", $conditions);
-                $sql = $this->db->connect()->prepare("
-                    SELECT COUNT(*) as total
-                    FROM lg_guias 
-                    WHERE $whereClause
-                ");
+                $sql = "SELECT COUNT(*) as total FROM lg_guias WHERE $whereClause";
                 
-                $sql->execute($params);
-                $result = $sql->fetch(PDO::FETCH_ASSOC);
-                return $result['total'];
+                error_log("SQL: $sql");
+                error_log("Params: " . json_encode($params));
                 
-            } catch (PDOException $e) {
-                error_log("Database Error contarGuias: " . $e->getMessage());
-                error_log("Params: " . print_r($params, true));
+                $stmt = $this->db->connect()->prepare($sql);
+                $stmt->execute($params);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                return (int)$result['total'];
+                
+            } catch (Exception $e) {
+                error_log("Error contarGuias: " . $e->getMessage());
                 return 0;
             }
         }
 
         public function llenarFiltros($parametros){
             try {
-                $campo = "g.".$parametros['campo'];
+                $campo = "";
+
+                if ( $parametros['campo'] != 'freg' ){
+                    $campo = "g.{$parametros['campo']}";
+                }else{
+                    $campo = "YEAR(g.{$parametros['campo']})";
+                }
+
                 $limite = $parametros['items'] == 0 ? ' LIMIT 25': '';
                 $cadena = $parametros['string'] == '' ? "$campo LIKE '%'": "$campo LIKE '%".$parametros['string']."%'";
                 $lista = $parametros['lista'];
 
                 $slqChain = "SELECT
-                                $campo cnumguia
+                                $campo valor
                             FROM
                                 lg_guias g
                             WHERE 
                                 g.nflgActivo = 1
                                 AND $cadena
                                 AND $campo IS NOT NULL
+                            GROUP BY
+                                $campo
                             ORDER BY
                                 g.freg DESC
                             $limite";
