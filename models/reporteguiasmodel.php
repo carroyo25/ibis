@@ -154,7 +154,7 @@
                 $lista = $parametros['lista'];
 
                 $slqChain = "SELECT
-                                $campo 
+                                $campo cnumguia
                             FROM
                                 lg_guias g
                             WHERE 

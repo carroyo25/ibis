@@ -3,6 +3,7 @@
 
   const itemsPorPagina = 15;
   let campoFiltroActual = null; // Variable global para guardar el campo del filtro
+  let contenedorActual = null;
 
   function obtenerFiltros() {
     let anio = $("#anioSearch").val();
@@ -17,19 +18,19 @@
   async function contarItemsConFiltros(filtros) {
     try {
       let datosEnvio = {
-        anio: filtros.anio
+        anio: filtros.anio,
       };
-      
-      if (filtros.guia && filtros.guia.trim() !== '') {
-        datosEnvio.guia = filtros.guia.split(',');
+
+      if (filtros.guia && filtros.guia.trim() !== "") {
+        datosEnvio.guia = filtros.guia.split(",");
       }
-      
-      if (filtros.sunat && filtros.sunat.trim() !== '') {
-        datosEnvio.sunat = filtros.sunat.split(',');
+
+      if (filtros.sunat && filtros.sunat.trim() !== "") {
+        datosEnvio.sunat = filtros.sunat.split(",");
       }
-      
+
       console.log("Enviando a contarItems:", datosEnvio);
-      
+
       const response = await fetch(RUTA + "reporteguias/itemsConsulta", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,19 +49,19 @@
       let datosEnvio = {
         anio: filtros.anio,
         inicio: inicio,
-        items: items
+        items: items,
       };
-      
-      if (filtros.guia && filtros.guia.trim() !== '') {
-        datosEnvio.guia = filtros.guia.split(',');
+
+      if (filtros.guia && filtros.guia.trim() !== "") {
+        datosEnvio.guia = filtros.guia.split(",");
       }
-      
-      if (filtros.sunat && filtros.sunat.trim() !== '') {
-        datosEnvio.sunat = filtros.sunat.split(',');
+
+      if (filtros.sunat && filtros.sunat.trim() !== "") {
+        datosEnvio.sunat = filtros.sunat.split(",");
       }
-      
+
       console.log("Enviando a listarGuias:", datosEnvio);
-      
+
       const response = await fetch(RUTA + "reporteguias/listaGuias", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,52 +171,60 @@
   }
 
   function obtenerValoresSeleccionados() {
-    const checkboxes = document.querySelectorAll('#lista-filtro input[type="checkbox"]:checked');
-    const valores = Array.from(checkboxes).map(cb => cb.value);
+    const checkboxes = document.querySelectorAll(
+      '#lista-filtro input[type="checkbox"]:checked',
+    );
+    const valores = Array.from(checkboxes).map((cb) => cb.value);
     return valores;
   }
 
   async function aplicarFiltroCheckboxes(campo) {
     const valoresSeleccionados = obtenerValoresSeleccionados();
-    
+
     if (valoresSeleccionados.length === 0) {
       console.log("No hay checkboxes seleccionados");
       return;
     }
-    
+
     $("#esperar").css({ display: "flex" });
-    
+
     // Crear nuevos filtros directamente
     let filtrosActuales = {
-      anio: $("#anioSearch").val() ? parseInt($("#anioSearch").val()) : new Date().getFullYear(),
+      anio: $("#anioSearch").val()
+        ? parseInt($("#anioSearch").val())
+        : new Date().getFullYear(),
       guia: "",
-      sunat: ""
+      sunat: "",
     };
-    
-    if (campo === 'cnumguia') {
-      const valoresString = valoresSeleccionados.join(',');
+
+    if (campo === "cnumguia") {
+      const valoresString = valoresSeleccionados.join(",");
       filtrosActuales.guia = valoresString;
       $("#guiaSearch").val(valoresString);
-    } else if (campo === 'guiasunat') {
-      const valoresString = valoresSeleccionados.join(',');
+    } else if (campo === "guiasunat") {
+      const valoresString = valoresSeleccionados.join(",");
       filtrosActuales.sunat = valoresString;
       $("#guiaSunat").val(valoresString);
     }
-    
+
     totalItems = await contarItemsConFiltros(filtrosActuales);
     totalPaginas = Math.ceil(totalItems / itemsPorPagina);
-    
+
     estado = {
       indexBtn: 0,
       rangoInicio: 1,
       rangoFin: Math.min(20, totalPaginas),
       paginaActual: 1,
     };
-    
+
     if (totalPaginas > 0) {
       renderizarPaginador(1);
       const inicio = 0;
-      const resultado = await listarGuias(inicio, itemsPorPagina, filtrosActuales);
+      const resultado = await listarGuias(
+        inicio,
+        itemsPorPagina,
+        filtrosActuales,
+      );
       if (resultado && resultado.success) {
         renderizarTabla(resultado.datos);
       } else if (resultado && !resultado.success) {
@@ -229,14 +238,23 @@
         `<tr><td colspan="6">No se encontraron registros</td></tr>`,
       );
     }
-    
+
     $(".filtro-container").slideUp();
     $("#esperar").css({ display: "none" });
   }
 
-  function llenarFiltros(campo, limite, string, visible, filtro, lista) {
+  //esta es la funcion para llenar los filtros
+  function llenarFiltros(
+    campo,
+    limite,
+    string,
+    visible,
+    filtro,
+    lista,
+    contenedor,
+  ) {
     const formData = new FormData();
-    const lista_filtro = document.getElementById("lista-filtro");
+    const lista_filtro = contenedor;
 
     formData.append("campo", campo);
     formData.append("items", limite);
@@ -267,7 +285,8 @@
 
   // Evento para las filas
   $("#tablaPrincipalCuerpo").on("click", "tr", function (e) {
-    const ruta = "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
+    const ruta =
+      "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
     const pdfPreview = document.getElementById("pdfPreview");
 
     const guiaInterna = $(this).data("interna");
@@ -316,8 +335,8 @@
 
   $("#btnConsulta").on("click", async () => {
     $("#esperar").css({ display: "flex" });
-    $("#guiaSearch").val('');
-    $("#guiaSunat").val('');
+    $("#guiaSearch").val("");
+    $("#guiaSunat").val("");
     await recargarTodo();
     $("#esperar").css({ display: "none" });
   });
@@ -394,12 +413,22 @@
     if (e.target.matches(".filtro")) {
       e.preventDefault();
       campoFiltroActual = $(e.target).parent().data("campo");
-      console.log("Campo filtro guardado:", campoFiltroActual);
-      
+      const contenedorActual = document.querySelector(
+        `.lista-filtro[data-campo="${campoFiltroActual}"]`,
+      );
+
       const filtro = $(e.target).parent().find(".filtro-container");
 
       if (!$(".filtro-container").is(":visible")) {
-        llenarFiltros(campoFiltroActual, 0, '', true, filtro, null);
+        llenarFiltros(
+          campoFiltroActual,
+          0,
+          "",
+          true,
+          filtro,
+          null,
+          contenedorActual,
+        );
       } else {
         $(".filtro-container").slideUp();
       }
@@ -415,7 +444,11 @@
       return false;
     }
 
-    if ($(".filtro-container").is(":visible") && !$(e.target).closest(".filtro-container").length && !$(e.target).closest(".filtro").length) {
+    if (
+      $(".filtro-container").is(":visible") &&
+      !$(e.target).closest(".filtro-container").length &&
+      !$(e.target).closest(".filtro").length
+    ) {
       $(".filtro-container").slideUp();
     }
   });
@@ -423,7 +456,7 @@
   document.addEventListener("keydown", async (e) => {
     if (e.target.matches(".filtro-Search")) {
       if (e.key == "Enter") {
-        let campo = e.target.closest('th').dataset.campo;
+        let campo = e.target.closest("th").dataset.campo;
         let string = e.target.value;
         llenarFiltros(campo, 0, string, false, null, null);
       }
@@ -442,5 +475,17 @@
     setTimeout(() => {
       element.style.display = "none";
     }, 300);
+  }
+
+  // Ejemplo de botón limpiar
+  function limpiarFiltros() {
+    document
+      .querySelectorAll('#lista-filtro input[type="checkbox"]')
+      .forEach((cb) => {
+        cb.checked = false;
+      });
+    $("#guiaSearch").val("");
+    $("#guiaSunat").val("");
+    recargarTodo();
   }
 })();

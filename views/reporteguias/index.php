@@ -22,7 +22,6 @@
     <div class="cabezaModulo">
         <h1>Reporte de Guias</h1>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
