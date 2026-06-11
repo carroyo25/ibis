@@ -22,6 +22,7 @@
                 <tr>
                     <th>✅</th>
                     <th>Item.</th>
+                    <th>Codigo.</th>
                     <th>Descripcion</th>
                     <th>OC/OS</th>
                     <th>PDF</th>

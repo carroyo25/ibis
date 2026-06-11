@@ -9,6 +9,10 @@
             $this->view->listaCostos = "";
             $this->view->render('ordendescarga/index');
         }
+
+        function pdf(){
+            echo json_encode($this->model->descargarPdf($_POST));
+        }
         
     }
 ?>

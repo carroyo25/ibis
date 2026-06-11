@@ -1,4 +1,6 @@
 $(() => {
+    $("#esperar").fadeOut();
+    
     $("#btnConsulta").click(function(e){
 
         let str = $("#formConsulta").serialize();

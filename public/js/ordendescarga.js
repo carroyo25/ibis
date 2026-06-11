@@ -66,15 +66,18 @@ $(async function () {
                 if (!row || row.length === 0) continue;
                 
                 const numero = row[0] !== undefined && row[0] !== null ? String(row[0]).trim() : "";
-                const descripcion = row[1] !== undefined && row[1] !== null ? String(row[1]).trim() : "";
-                const oc = row[2] !== undefined && row[2] !== null ? String(row[2]).trim() : "";
+                const codigo = row[1] !== undefined && row[1] !== null ? String(row[1]).trim() : "";
+                const descripcion = row[2] !== undefined && row[1] !== null ? String(row[2]).trim() : "";
+                const oc = row[3] !== undefined && row[3] !== null ? String(row[3]).trim() : "";
                 
                 if (numero === "" && descripcion === "") continue;
+
                 if (isNotFound(oc)) continue;
                 
                 items.push({
                     id: nextId++,
                     numero: numero,
+                    codigo: codigo,
                     descripcion: descripcion,
                     oc: oc,
                     selected: false
@@ -87,7 +90,6 @@ $(async function () {
             }
             
             allItems = items;
-            //dataPanel.style.display = 'block';
             renderTable();
             return true;
             
@@ -145,6 +147,10 @@ $(async function () {
             const tdNumero = document.createElement('td');
             tdNumero.style.textAlign = 'center';
             tdNumero.innerHTML = `<span class="numero-cell">${escapeHtml(String(item.numero))}</span>`;
+
+            const tdCodigo = document.createElement('td');
+            tdCodigo.className = 'codigo-cell';
+            tdCodigo.innerHTML = escapeHtml(item.codigo) || '—';
             
             const tdDesc = document.createElement('td');
             tdDesc.className = 'descripcion-cell';
@@ -169,11 +175,51 @@ $(async function () {
             
             row.appendChild(tdCheck);
             row.appendChild(tdNumero);
+            row.appendChild(tdCodigo);
             row.appendChild(tdDesc);
             row.appendChild(tdOc);
             row.appendChild(tdPdf);
             tableBody.appendChild(row);
         });
     }
-  
+    
+    function downloadSinglePDF(item){
+        try {
+            const formData = new FormData();
+            
+            formData.append("codigo",item.codigo);
+            formData.append("oc",item.oc);
+
+            fetch(RUTA+'ordendescarga/pdf',{
+                method:'POST',
+                body:formData
+            })
+            .then(repsonse => repsonse.json())
+            .then(data => {
+                // Crear link invisible
+                if (data.existe == 1){
+                    const link = document.createElement('a');
+                    link.href = data.archivo.ruta;
+                    link.download = data.archivo.archivo;
+                    document.body.appendChild(link);
+                    
+                    // Forzar clic
+                    link.click();
+                    
+                    // Limpiar
+                    document.body.removeChild(link);
+                }else{
+                    mostrarMensaje("No exste la OC refererida, revise el codigo del item","mensaje_error");
+                }
+                
+            })
+
+        } catch (error) {
+            console.error('Error:', error);
+        }  
+    }
+
+    function downloadMultiplePDF(){
+        
+    }
 });
