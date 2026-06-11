@@ -147,7 +147,6 @@
                                                     LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
                                                     INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
                                                     LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-                                                WHERE lg_ordendet.id_orden = :id
                                                 AND lg_ordendet.nestado = 1");
 
                 $sql->execute(["id" => $id]);

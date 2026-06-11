@@ -839,7 +839,7 @@
                                                     LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
-                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.nropedido
+                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.cnumero
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
@@ -1732,6 +1732,7 @@
                                 </cac:DeliveryCustomerParty>
                                 <!-- DATOS DEL PROVEEDOR -->
                                 <!-- DATOS DEL TRASLADO -->
+                                
                                 <cac:Shipment>
                                     <!-- ID OBLIGATORIO POR UBL -->
                                     <cbc:ID>SUNAT_Envio</cbc:ID>
@@ -1749,6 +1750,9 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                          <!-- PLACA DEL VEHICULO -->
                                         <cac:TransportMeans>
                                             <cac:RoadTransport>
@@ -1914,6 +1918,9 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
@@ -2066,6 +2073,9 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                          <!-- PLACA DEL VEHICULO -->
                                         <cac:TransportMeans>
                                             <cac:RoadTransport>
