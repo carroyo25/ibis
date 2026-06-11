@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/registroti.css?<?php echo constant('VERSION')?>">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/asigna.css?<?php echo constant('VERSION')?>">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/paginationv3.css?<?php echo constant('VERSION')?>">
+    <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/tablas.css?<?php echo constant('VERSION')?>">
     <title>Sistema Ibis -- Control de Procesos</title>
 </head>
 <body>
