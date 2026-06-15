@@ -13,6 +13,10 @@
         function consultaProductos(){
             echo json_encode($this->model->listarMinimos($_POST));
         }
+
+        function registro(){
+            echo json_encode($this->model->regristrarMinimo);
+        }
         
     }
 ?>

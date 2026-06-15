@@ -2,7 +2,7 @@ $(() =>{
 
     $("#esperar").fadeOut();
     
-    let fila;
+    let fila,producto,costos;
 
     $("#btnConsulta").click(function (e) { 
         e.preventDefault();
@@ -23,7 +23,7 @@ $(() =>{
             data[0].forEach(element =>{
                 row += `<tr class="pointer" 
                             data-indice='${element.idreg}' 
-                            data-idproducto='${element.idprod}'
+                            data-idproducto='${element.codprod}'
                             data-detpedido='${element.idpedido}'
                             data-costos='${element.idcostos}'>
                             <td class="textoDerecha">${item++}</td>
@@ -46,6 +46,8 @@ $(() =>{
         e.preventDefault();
 
         fila = $(this);
+        producto = $(this).data('codprod');
+        costos = $(this).data('costos');
 
         $("#codigoSearch").val($(this).find('td').eq(1).text());
         $("#descripSearch").val($(this).find('td').eq(2).text());
@@ -66,8 +68,34 @@ $(() =>{
     $("#btnAceptarDialogoMinimo").click(function (e) { 
         e.preventDefault();
 
+        fila.find('td').eq(5).text( $("#fecha").val());
         fila.find('td').eq(6).text( $("#total_minimo").val());
-        $("#dialogo_registro").fadeOut();
+
+        try {
+            $("#dialogo_registro").fadeOut();
+
+            const formData = new FormData();
+            formData.append('idprod',producto);
+            formData.append('regitra',$("id_user").val());
+            formData.append('fecha',$("fecha").val());
+            formData.append('cantidad',$("cant_personal").val());
+            formData.append('porcentaje',$("porcentaje_minimo").val());
+            formData.append('costos',costos);
+
+            fetch(RUTA+'minimos,registro',{
+                method:'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data=>{
+                console.log(data);
+            })
+
+
+
+        } catch (error) {
+            console.log(error.message);    
+        }
         
         return false;
     });

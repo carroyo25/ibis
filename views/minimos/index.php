@@ -20,7 +20,7 @@
                 <div class="cuerpo_dialogo">
                     <div class="datos_cuerpo">
                         <label for="fecha">Fecha</label>
-                        <input type="date" name="fecha" id="fecha">
+                        <input type="date" name="fecha" id="fecha" value="<?php echo date("Y-m-d");?>">
                         <label for="cant_personal">Cantidad Personal</label>
                         <input type="number" name="cant_personal" id="cant_personal">
                         <label for="porcentaje_minimo">Porcent. Min.</label>

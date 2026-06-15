@@ -10,9 +10,9 @@
             $docData = [];
             $respuesta = false;
 
-            $costos  = $parametros['costos'] == '-1' ? '%':$parametros['costos'];
-            $codigo  = $parametros['codigo'] == '' ? '%':$parametros['codigo'];
-            $descrip = $parametros['descripcion'] == '' ? '%':$parametros['descripcion'];
+            $costos  = $parametros['costos'] == '-1' ? '%': $parametros['costos'];
+            $codigo  = $parametros['codigo'] == '' ? '%': '%'.$parametros['codigo'].'%';
+            $descrip = $parametros['descripcion'] == '' ? '%': '%'.$parametros['descripcion'].'%';
 
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -31,15 +31,15 @@
                                                     tb_unimed.cabrevia 
                                                 FROM
                                                     alm_existencia
-                                                    INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                    INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                 WHERE
                                                     alm_existencia.nflgActivo 
                                                     AND cm_producto.flgActivo 
                                                     AND cm_producto.ngrupo = 17 
                                                     AND cm_producto.nclase = 56 
-                                                    AND alm_cabexist.idcostos LIKE :costos 
+                                                    AND alm_cabexist.idcostos = :costos 
                                                     AND cm_producto.cdesprod LIKE :descripcion
                                                     AND alm_existencia.codprod LIKE :codigo
                                                 GROUP BY
@@ -58,6 +58,15 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
+            }
+        }
+
+        public function registrarMinimos($parametros){
+            try {
+                var_dump($parametros);
+                
+            } catch (PDOException $th) {
+                return array("error"=> $th->getMessage());
             }
         }
     }
