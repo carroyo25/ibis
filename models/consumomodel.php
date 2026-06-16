@@ -713,89 +713,77 @@
                 $descripcion = $desc == "" ?  '%' : '%'.$desc.'%';
                 $codigo = $cod == "" ? '%' : $cod;
 
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        cm_producto.id_cprod,
-                                                        cm_producto.ccodprod,
-                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        tb_unimed.cabrevia,
-                                                        tb_unimed.ncodmed,
-                                                        recepcion.ingresos,
-                                                        inventarios.inventarios_cantidad,
-                                                        consumo.cantidad_consumo,
-                                                        consumo.cantidad_devuelto,
-                                                        recepcion.cc,
-                                                        sal_trans.salida_transferencia
-                                                    FROM
-                                                        cm_producto
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM( alm_existencia.cant_ingr ) AS ingresos,
-                                                            alm_existencia.codprod,
-                                                            alm_cabexist.idcostos AS cc 
-                                                        FROM
-                                                            alm_existencia
-                                                            LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
-                                                        WHERE
-                                                            alm_existencia.nflgActivo = 1 
-                                                            AND alm_cabexist.idcostos = :existencias 
-                                                        GROUP BY
-                                                            alm_existencia.codprod 
-                                                        ) AS recepcion ON recepcion.codprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM( alm_inventariodet.cant_ingr ) AS inventarios_cantidad,
-                                                            alm_inventariocab.idcostos,
-                                                            alm_inventariodet.codprod 
-                                                        FROM
-                                                            alm_inventariodet
-                                                            INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
-                                                        WHERE
-                                                            alm_inventariodet.nflgActivo = 1 
-                                                            AND alm_inventariocab.idcostos = :inventario 
-                                                        GROUP BY
-                                                            alm_inventariodet.codprod 
-                                                        ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM( alm_consumo.cantsalida ) AS cantidad_consumo,
-                                                            SUM( alm_consumo.cantdevolucion ) AS cantidad_devuelto,
-                                                            alm_consumo.idprod 
-                                                        FROM
-                                                            alm_consumo 
-                                                        WHERE
-                                                            alm_consumo.ncostos = :salidas 
-                                                            AND alm_consumo.flgactivo = 1 
-                                                        GROUP BY
-                                                            alm_consumo.idprod 
-                                                        ) AS consumo ON consumo.idprod = cm_producto.id_cprod
-                                                         LEFT JOIN (
-                                                            SELECT
-                                                                SUM( alm_transferdet.ncanti ) AS salida_transferencia,
-                                                                alm_transferdet.idcprod,
-                                                                alm_transferdet.iditem 
-                                                            FROM
-                                                                alm_transferdet
-                                                                LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
-                                                            WHERE
-                                                                alm_transferdet.nflgactivo = 1 
-                                                                AND alm_transfercab.idcc = :ctransfsalida 
-                                                            GROUP BY
-                                                                alm_transferdet.idcprod 
-                                                            ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
-                                                    WHERE
-                                                        cm_producto.flgActivo = 1 
-                                                        AND cm_producto.ntipo = 37
-                                                        AND cm_producto.ccodprod LIKE :codigo
-                                                        AND cm_producto.cdesprod LIKE :descripcion
-                                                    ORDER BY
-                                                        cm_producto.cdesprod ASC");
+                $sql = $this->db->connect()->prepare("WITH 
+                                                    recepcion AS (
+                                                        SELECT 
+                                                            e.codprod,
+                                                            SUM(e.cant_ingr) AS ingresos,
+                                                                    c.idcostos
+                                                        FROM alm_existencia e
+                                                        INNER JOIN alm_cabexist c ON c.idreg = e.idregistro AND c.idcostos = :existencias
+                                                        WHERE e.nflgActivo = 1
+                                                        GROUP BY e.codprod
+                                                    ),
+                                                    inventarios AS (
+                                                        SELECT 
+                                                            d.codprod,
+                                                            SUM(d.cant_ingr) AS inventarios_cantidad
+                                                        FROM alm_inventariodet d
+                                                        INNER JOIN alm_inventariocab c ON c.idreg = d.idregistro AND c.idcostos = :inventario
+                                                        WHERE d.nflgActivo = 1
+                                                        GROUP BY d.codprod
+                                                    ),
+                                                    consumo AS (
+                                                        SELECT 
+                                                            idprod,
+                                                            SUM(cantsalida) AS cantidad_consumo,
+                                                            SUM(cantdevolucion) AS cantidad_devuelto
+                                                        FROM alm_consumo
+                                                        WHERE ncostos = :salidas AND flgactivo = 1
+                                                        GROUP BY idprod
+                                                    ),
+                                                    transferencia AS (
+                                                        SELECT 
+                                                            d.idcprod,
+                                                            SUM(d.ncanti) AS salida_transferencia
+                                                        FROM alm_transferdet d
+                                                        INNER JOIN alm_transfercab c ON c.idreg = d.idtransfer AND c.idcc = :ctransfsalida
+                                                        WHERE d.nflgactivo = 1
+                                                        GROUP BY d.idcprod
+                                                    )
+                                                    SELECT 
+                                                        p.id_cprod,
+                                                        p.ccodprod,
+                                                        UPPER(p.cdesprod) AS cdesprod,
+                                                        u.cabrevia,
+                                                        u.ncodmed,
+                                                        COALESCE(r.ingresos, 0) AS ingresos,
+                                                        COALESCE(i.inventarios_cantidad, 0) AS inventarios_cantidad,
+                                                        COALESCE(c.cantidad_consumo, 0) AS cantidad_consumo,
+                                                        COALESCE(c.cantidad_devuelto, 0) AS cantidad_devuelto,
+                                                        COALESCE(st.salida_transferencia, 0) AS salida_transferencia
+                                                    FROM cm_producto p
+                                                    INNER JOIN tb_unimed u ON u.ncodmed = p.nund
+                                                    LEFT JOIN recepcion r ON r.codprod = p.id_cprod
+                                                    LEFT JOIN inventarios i ON i.codprod = p.id_cprod
+                                                    LEFT JOIN consumo c ON c.idprod = p.id_cprod
+                                                    LEFT JOIN transferencia st ON st.idcprod = p.id_cprod
+                                                    WHERE 
+                                                        p.flgActivo = 1 
+                                                        AND p.ntipo = 37
+                                                        AND p.cdesprod LIKE :descripcion
+                                                        AND p.ccodprod LIKE :codigo
+                                                    ORDER BY 
+                                                        p.cdesprod ASC");
                 $sql->execute(["existencias" =>$cc,
                                 "inventario" =>$cc,
                                 "salidas"=>$cc,
                                 "ctransfsalida"=>$cc, 
                                 "descripcion"=>$descripcion,
                                 "codigo"=>$codigo]);
+
+                /*
+                */
 
                 $rowCount = $sql->rowCount();
 

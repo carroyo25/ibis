@@ -74,13 +74,15 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2">Item</th>
-                    <th rowspan="2">Codigo</th>
-                    <th rowspan="2" width="50%">Descripcion</th>
-                    <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Cantidad<br>Ingreso</th>
-                    <th rowspan="2">Ingreso<br>Salida</th>
-                    <th rowspan="2">Cantidad<br>Mínima</th>
+                    <th >Item</th>
+                    <th >Codigo</th>
+                    <th width="50%">Descripcion</th>
+                    <th >Unidad</th>
+                    <th >Cantidad <br>Ingreso</th>
+                    <th >Cantidad <br>Consumida</th>
+                    <th >Fecha<br> Registro</th>
+                    <th >Cantidad<br> Mínima</th>
+                    <th >Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,6 +91,7 @@
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/minimos.js?<?php echo constant('VERSION')?>"></script>
 </body>

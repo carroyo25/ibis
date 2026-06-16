@@ -1,5 +1,4 @@
 $(function () {
-  //console.log(screen.width,screen.height);
 
   $("#esperar").css({ display: "none", opacity: "0" });
 
@@ -109,6 +108,8 @@ $(function () {
       formData.append("documento", $("#docident").val());
       formData.append("costos", $("#costosSearch").val());
 
+      $("#espera").fadeIn();
+
       fetch(RUTA + "consumo/mantenimientos", {
         method: "POST",
         body: formData,
@@ -124,8 +125,8 @@ $(function () {
               $(row).insertBefore("#tablaPrincipal tbody tr:first");
             }
 
-            cleanDialogControls();
             idprod = "";
+            $("#espera").fadeOut();
           }
         });
     } catch (error) {
@@ -139,8 +140,6 @@ $(function () {
     e.preventDefault();
 
     $("#dialogo_registro").fadeOut();
-
-    cleanDialogControls();
 
     idprod = "";
 
@@ -258,6 +257,7 @@ $(function () {
     let boton = $(this);
 
     boton.css("pointer-events", "none");
+    $("#espera").fadeIn();
 
     let canvas = document.getElementById("cnv");
 
@@ -280,6 +280,9 @@ $(function () {
           $(".ingreso").val("");
 
           boton.css("pointer-events", "all");
+
+          cleanDialogControls();
+          $("#espera").fadeOut();
         } else {
           mostrarMensaje("Hubo un error al grabar", "mensaje_error");
         }
@@ -300,6 +303,8 @@ $(function () {
     $(".ingreso").val("");
 
     $("#pregunta").fadeOut();
+
+    cleanDialogControls();
 
     return false;
   });
@@ -362,6 +367,7 @@ cleanDialogControls = () => {
   $("#observaciones_dialogo").val("");
   $("#firma, #firma_barra").attr("src", "public/img/spbfirma.png");
   $("#tablaPrincipal tbody").empty();
+
   $("#costosSearch").val(-1);
   $(".ingreso").val("");
 };

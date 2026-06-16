@@ -15,7 +15,7 @@
         }
 
         function registro(){
-            echo json_encode($this->model->regristrarMinimo);
+            echo json_encode($this->model->regristrarMinimo($_POST));
         }
         
     }
