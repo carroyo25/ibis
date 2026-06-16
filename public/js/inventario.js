@@ -1,194 +1,193 @@
 $(() => {
+  let accion = 0;
+  let fila = "";
 
-    let accion = 0;
-    let fila = "";
+  $("#esperar").fadeOut();
 
-    $("#esperar").fadeOut();
+  $("#nuevoRegistro").click(function (e) {
+    e.preventDefault();
+    $("form")[1].reset();
+    $("#tablaDetalles tbody").empty();
 
-    $("#nuevoRegistro").click(function (e) { 
-        e.preventDefault();
-        $("form")[1].reset();
-        $("#tablaDetalles tbody").empty();
+    $.post(
+      RUTA + "inventario/nuevoRegistro",
+      function (data, textStatus, jqXHR) {
+        $("#numero").val(data.numero);
 
-        $.post(RUTA+"inventario/nuevoRegistro",
-            function (data, textStatus, jqXHR) {
-                $("#numero").val(data.numero);
+        $(".primeraBarra").css("background", "#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
 
-                $(".primeraBarra").css("background","#0078D4");
-                $(".primeraBarra span").text("Datos Generales");
+        $("#proceso").fadeIn();
+      },
+      "json",
+    );
 
-                $("#proceso").fadeIn(); 
-            },
-            "json"
-        );
+    accion = 0;
 
-        accion = 0;
+    return false;
+  });
 
-        return false;
-    });
+  $("#closeProcess").click(function (e) {
+    e.preventDefault();
 
-    $("#closeProcess").click(function (e) { 
-        e.preventDefault();
+    $("#proceso").fadeOut();
+    $("form")[1].reset();
+    $("#tablaDetalles tbody").empty();
 
-        $("#proceso").fadeOut();
-        $("form")[1].reset();
-        $("#tablaDetalles tbody").empty();
+    return false;
+  });
 
-        return false;
-    });
+  $(".tituloVentana").on("click", "a", function (e) {
+    e.preventDefault();
 
-    $(".tituloVentana").on("click","a", function (e) {
-        e.preventDefault();
+    $(this).parent().parent().parent().parent().fadeOut();
 
-        $(this).parent().parent().parent().parent().fadeOut();
+    return false;
+  });
 
-        return false;
-    });
+  $(".mostrarLista").focus(function (e) {
+    e.preventDefault();
 
-    $(".mostrarLista").focus(function (e) { 
-        e.preventDefault();
+    $(this).next().slideDown();
 
-        $(this).next().slideDown();
+    return false;
+  });
 
-        return false;
-    });
+  $(".cerrarLista").focus(function (e) {
+    e.preventDefault();
 
-    $(".cerrarLista").focus(function (e) { 
-        e.preventDefault();
-        
-        $(".lista").fadeOut();
+    $(".lista").fadeOut();
 
-        return false;
-    });
+    return false;
+  });
 
-    $(".lista").on("click",'a', function (e) {
-        e.preventDefault();
+  $(".lista").on("click", "a", function (e) {
+    e.preventDefault();
 
-        let control = $(this).parent().parent().parent();
-        let destino = $(this).parent().parent().parent().prev();
-        let contenedor_padre = $(this).parent().parent().parent().attr("id");
-        let codigo = $(this).attr("href");
-        
-        control.slideUp()
-        destino.val($(this).text());
-        id = destino.attr("id");
+    let control = $(this).parent().parent().parent();
+    let destino = $(this).parent().parent().parent().prev();
+    let contenedor_padre = $(this).parent().parent().parent().attr("id");
+    let codigo = $(this).attr("href");
 
-        if (contenedor_padre == "listaCostos"){
-            $("#codigo_costos").val(codigo);
-        }else if(contenedor_padre == "listaAlmacen"){
-            $("#codigo_almacen").val(codigo);
-        }else if(contenedor_padre == "listaRecepciona") {
-            $("#codigo_autoriza").val(codigo);
-        }else if(contenedor_padre == "listaTipo") {
-            $("#codigo_tipo").val(codigo);
-        }
+    control.slideUp();
+    destino.val($(this).text());
+    id = destino.attr("id");
 
-        return false;
-    });
+    if (contenedor_padre == "listaCostos") {
+      $("#codigo_costos").val(codigo);
+    } else if (contenedor_padre == "listaAlmacen") {
+      $("#codigo_almacen").val(codigo);
+    } else if (contenedor_padre == "listaRecepciona") {
+      $("#codigo_autoriza").val(codigo);
+    } else if (contenedor_padre == "listaTipo") {
+      $("#codigo_tipo").val(codigo);
+    }
 
-    $("#itemsAdd").click(function (e) { 
-        e.preventDefault();
-        
-        $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
-            function (data, textStatus, jqXHR) {
-                $("#tablaModulos tbody")
-                    .empty()
-                    .append(data);
-                $("#busqueda").fadeIn();
-            },
-            "text"
-        );
-        
-        return false;
-    });
+    return false;
+  });
 
-    $("#itemsImport").click(function (e) { 
-        e.preventDefault();
+  $("#itemsAdd").click(function (e) {
+    e.preventDefault();
 
-        if (accion == 0)
-            $("#fileUpload").trigger("click");
-        
-        return false;
-    });
-
-    $("#fileUpload").change(function (e) { 
-        e.preventDefault();
-
-        const input = document.querySelector('#fileUpload');
-        
-        try {
-            if (validarExtension(input)) throw "Archivo Inválido";
-
-            $("#archivo").val(input.files[0].name);
-            const formData = new FormData();
-            formData.append('fileUpload', input.files[0]);
-
-            $("#esperar").fadeIn();
-
-            fetch (RUTA+'inventario/importarItems',{
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .catch(error => console.error('Error:', error))
-            .then(data => {
-                $("#tablaDetalles tbody")
-                    .empty()
-                    .append(data.datos);
-
-                $("#esperar").fadeOut();
-                
-                mostrarMensaje(data.mensaje,'mensaje_correcto');
-            });  
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });
-
-    //filtrar Item del pedido
-    $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
-        if(e.which == 13) {
-            $("#esperar").fadeIn();
-            
-            $.post(RUTA+"pedidos/filtraItemsAlmacen", {codigo:$("#txtBuscarCodigo").val(),
-                                                descripcion:$("#txtBuscarDescrip").val(),
-                                                tipo:$("#tipo").val()},
-                    function (data, textStatus, jqXHR) {
-                        $("#tablaModulos tbody")
-                            .empty()
-                            .append(data);
-                        $("#esperar").fadeOut();
-                    },
-                    "text"
-                );
-        }
-    });
-
-    $("#tablaDetalles").on('click','a', function(e) {
-        e.preventDefault();
-
-        fila = $(this).parent().parent();
-
+    $.post(
+      RUTA + "pedidos/llamaProductos",
+      { tipo: 37 },
+      function (data, textStatus, jqXHR) {
+        $("#tablaModulos tbody").empty().append(data);
         $("#busqueda").fadeIn();
+      },
+      "text",
+    );
 
-        return false;
-    });
+    return false;
+  });
 
-    $("#tablaModulos tbody").on("click","tr", function (e) {
-        e.preventDefault();
+  $("#itemsImport").click(function (e) {
+    e.preventDefault();
 
-        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
-        let idprod = $(this).data("idprod");
-        let nunid = $(this).data("ncomed");
-        let codigo = $(this).children('td:eq(0)').text();
-        let descrip = $(this).children('td:eq(1)').text();
-        let unidad = $(this).children('td:eq(2)').text();
-        let grabado = 0;
+    if (accion == 0) $("#fileUpload").trigger("click");
 
-        if ( !accion ){
-            let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+    return false;
+  });
+
+  $("#fileUpload").change(function (e) {
+    e.preventDefault();
+
+    const input = document.querySelector("#fileUpload");
+
+    try {
+      if (validarExtension(input)) throw "Archivo Inválido";
+
+      $("#archivo").val(input.files[0].name);
+      const formData = new FormData();
+      formData.append("fileUpload", input.files[0]);
+
+      $("#esperar").fadeIn();
+
+      fetch(RUTA + "inventario/importarItems", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .catch((error) => console.error("Error:", error))
+        .then((data) => {
+          $("#tablaDetalles tbody").empty().append(data.datos);
+
+          $("#esperar").fadeOut();
+
+          mostrarMensaje(data.mensaje, "mensaje_correcto");
+        });
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  //filtrar Item del pedido
+  $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
+    if (e.which == 13) {
+      $("#esperar").fadeIn();
+
+      $.post(
+        RUTA + "pedidos/filtraItemsAlmacen",
+        {
+          codigo: $("#txtBuscarCodigo").val(),
+          descripcion: $("#txtBuscarDescrip").val(),
+          tipo: $("#tipo").val(),
+        },
+        function (data, textStatus, jqXHR) {
+          $("#tablaModulos tbody").empty().append(data);
+          $("#esperar").fadeOut();
+        },
+        "text",
+      );
+    }
+  });
+
+  $("#tablaDetalles").on("click", "a", function (e) {
+    e.preventDefault();
+
+    fila = $(this).parent().parent();
+
+    $("#busqueda").fadeIn();
+
+    return false;
+  });
+
+  $("#tablaModulos tbody").on("click", "tr", function (e) {
+    e.preventDefault();
+
+    let nFilas = $.strPad($("#tablaDetalles tr").length, 3);
+    let idprod = $(this).data("idprod");
+    let nunid = $(this).data("ncomed");
+    let codigo = $(this).children("td:eq(0)").text();
+    let descrip = $(this).children("td:eq(1)").text();
+    let unidad = $(this).children("td:eq(2)").text();
+    let grabado = 0;
+
+    if (!accion) {
+      let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
                         <td class="textoCentro">${nFilas}</td>
                         <td class="textoCentro">${codigo}</td>
                         <td class="pl20px">${descrip}</td>
@@ -211,222 +210,230 @@ $(() => {
                         <td><textarea></textarea></td>
                     </tr>`;
 
-            $("#tablaDetalles tbody").append(row);
-        }else{
-            changeValues(fila,idprod,descrip,codigo,unidad);
-        } 
-        
-        return false;
-    });
+      $("#tablaDetalles tbody").append(row);
+    } else {
+      changeValues(fila, idprod, descrip, codigo, unidad);
+    }
 
-    $("#saveDocument").click(function (e) { 
-        e.preventDefault();
+    return false;
+  });
 
-        try {
-            let result = {};
+  $("#saveDocument").click(function (e) {
+    e.preventDefault();
 
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            });
+    try {
+      let result = {};
 
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_almacen'] == '') throw "Elija un almacen";
-            if (result['codigo_tipo'] == '') throw "Elija el concepto de ingreso";
-            if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
-            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
+      $.each($("#formProceso").serializeArray(), function () {
+        result[this.name] = this.value;
+      });
 
-            $("#esperar").css({"display":"block"});
-            //$("#proceso").fadeIn();
+      if (result["codigo_costos"] == "") throw "Elija Centro de Costos";
+      if (result["codigo_almacen"] == "") throw "Elija un almacen";
+      if (result["codigo_tipo"] == "") throw "Elija el concepto de ingreso";
+      if ($("#tablaDetalles tbody tr").length <= 0)
+        throw "El pedido no tienes items";
+      if (checkCantTables($("#tablaDetalles tbody > tr"), 5))
+        throw "No ingreso cantidad en un item";
 
-            if (accion == 0) {
-                $.post(RUTA+"inventario/grabaRegistro", {cabecera:result,detalles:JSON.stringify(itemsSave())},
-                    function (data, textStatus, jqXHR) {
+      $("#esperar").css({ display: "block" });
+      //$("#proceso").fadeIn();
 
-                        $(".primeraBarra").css("background","#819830");
-                        $(".primeraBarra span").text('Datos Generales ... Grabado');
+      if (accion == 0) {
+        $.post(
+          RUTA + "inventario/grabaRegistro",
+          { cabecera: result, detalles: JSON.stringify(itemsSave()) },
+          function (data, textStatus, jqXHR) {
+            $(".primeraBarra").css("background", "#819830");
+            $(".primeraBarra span").text("Datos Generales ... Grabado");
 
-                        mostrarMensaje(data.mensaje,'mensaje_correcto');
+            mostrarMensaje(data.mensaje, "mensaje_correcto");
 
-                        //$("#proceso").fadeOut();
-                        $("#esperar").css({"display":"none"});
-                    },
-                    "json"
-                );
-            }else {
-                $.post(RUTA+"inventario/actualizaDetalles", {detalles:JSON.stringify(itemsSave())},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje('Items actualizados','mensaje_correcto');
-
-                        $("#proceso").fadeOut();
-
-                        $("#esperar").css({"display":"none"});
-                    },
-                    "json"
-                );
-            }
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-        return false;
-    });
-
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
-        e.preventDefault();
-
-        $.post(RUTA+"inventario/consulta", {id:$(this).data('doc')},
-            function (data, text, requestXHR) {
-                $("#codigo_inventario").val(data.cabecera[0].idreg);
-                $("#codigo_costos").val(data.cabecera[0].idcostos);
-                $("#codigo_almacen").val(data.cabecera[0].ncodalm);
-                $("#codigo_autoriza").val(data.cabecera[0].iduser);
-                $("#codigo_tipo").val(data.cabecera[0].ntipomov);
-                $("#fecha").val(data.cabecera[0].ffechadoc);
-                $("#numero").val($.strPad(data.cabecera[0].idreg,6));
-                $("#costos").val(data.cabecera[0].cdesproy);
-                $("#almacen_inventario").val(data.cabecera[0].almacen);
-                $("#registra").val(data.cabecera[0].cnombres);
-                $("#tipoMovimiento").val(data.cabecera[0].cdescripcion);
-                $("#fechaIngreso").val(data.cabecera[0].ffechaInv);
-
-
-                $("#tablaDetalles tbody")
-                    .empty()
-                    .append(data.detalles);
-
-                
-                $(".primeraBarra").css("background","#0078D4");
-                $(".primeraBarra span").text("Datos Generales");
-            },
-            "json"
+            //$("#proceso").fadeOut();
+            $("#esperar").css({ display: "none" });
+          },
+          "json",
         );
+      } else {
+        $.post(
+          RUTA + "inventario/actualizaDetalles",
+          { detalles: JSON.stringify(itemsSave()) },
+          function (data, textStatus, jqXHR) {
+            mostrarMensaje("Items actualizados", "mensaje_correcto");
 
-        accion = 1;
+            $("#proceso").fadeOut();
 
-        $("#proceso").fadeIn();
+            $("#esperar").css({ display: "none" });
+          },
+          "json",
+        );
+      }
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+    return false;
+  });
 
-        return false;
-    });
+  $("#tablaPrincipal tbody").on("click", "tr", function (e) {
+    e.preventDefault();
 
-    $("#closeDocument").click(function (e) { 
-        e.preventDefault();
-        
-        $("#vistadocumento").fadeOut();
+    $.post(
+      RUTA + "inventario/consulta",
+      { id: $(this).data("doc") },
+      function (data, text, requestXHR) {
+        $("#codigo_inventario").val(data.cabecera[0].idreg);
+        $("#codigo_costos").val(data.cabecera[0].idcostos);
+        $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+        $("#codigo_autoriza").val(data.cabecera[0].iduser);
+        $("#codigo_tipo").val(data.cabecera[0].ntipomov);
+        $("#fecha").val(data.cabecera[0].ffechadoc);
+        $("#numero").val($.strPad(data.cabecera[0].idreg, 6));
+        $("#costos").val(data.cabecera[0].cdesproy);
+        $("#almacen_inventario").val(data.cabecera[0].almacen);
+        $("#registra").val(data.cabecera[0].cnombres);
+        $("#tipoMovimiento").val(data.cabecera[0].cdescripcion);
+        $("#fechaIngreso").val(data.cabecera[0].ffechaInv);
 
-        return false;
-    });
+        $("#tablaDetalles tbody").empty().append(data.detalles);
 
-    $("#itemsVerify").click(function(e){
-       e.preventDefault();
+        $(".primeraBarra").css("background", "#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
+      },
+      "json",
+    );
 
-       $.post(RUTA+"inventario/xlsExport", {detalles:JSON.stringify(itemsSave())},
-        function (data, text, requestXHR) {
-            window.location.href = data.documento;
-        },
-        "json"
-       );
+    accion = 1;
 
-       return false;
-    });
+    $("#proceso").fadeIn();
 
-    $("#cancelDocument").click(function(e){
-        e.preventDefault();
+    return false;
+  });
 
-        try {
-            if ($("#rol_user").val() != 2) throw new Error("No esta autorizado para esta accion");
+  $("#closeDocument").click(function (e) {
+    e.preventDefault();
 
-            let formData = new FormData();
-            formData.append("id",$("#codigo_inventario").val());
+    $("#vistadocumento").fadeOut();
 
-            fetch(RUTA+"inventario/anula",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarMensaje(data.mensaje,"mensaje_correcto");
-            })
-            
-            
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error");
-        }
+    return false;
+  });
 
-        return false;
-    });
+  $("#itemsVerify").click(function (e) {
+    e.preventDefault();
 
-    
-})
+    $.post(
+      RUTA + "inventario/xlsExport",
+      { detalles: JSON.stringify(itemsSave()) },
+      function (data, text, requestXHR) {
+        window.location.href = data.documento;
+      },
+      "json",
+    );
 
+    return false;
+  });
 
-itemsSave = () =>{
-    DATA = [];
-    let TABLA = $("#tablaDetalles tbody >tr");
+  $("#cancelDocument").click(function (e) {
+    e.preventDefault();
 
-    TABLA.each(function(){
-        let IDPROD          = $(this).data('idprod'),
-            GRABADO         = $(this).data('grabado'),
-            IDREG           = $(this).data('registro'),
-            MARCA           = $(this).find('td').eq(4).children().val(),
-            CANTIDAD        = $(this).find('td').eq(5).children().val(),
-            ORDEN           = $(this).find('td').eq(6).children().val(),
-            COLADA          = $(this).find('td').eq(7).children().val(),
-            TAG             = $(this).find('td').eq(8).children().val(),
-            SERIE           = $(this).find('td').eq(9).children().val(),
-            NCERTCAL        = $(this).find('td').eq(10).children().val(),
-            FECCAL          = $(this).find('td').eq(11).children().val(),
-            VENCE           = $(this).find('td').eq(12).children().val(),
-            REGLIB          = $(this).find('td').eq(13).children().val(),
-            ESTADO          = $(this).find('td').eq(14).children().val(),
-            CONDICION       = $(this).find('td').eq(15).children().val(),
-            CONTENEDOR      = $(this).find('td').eq(16).children().val(),
-            ESTANTE         = $(this).find('td').eq(17).children().val(),
-            FILA            = $(this).find('td').eq(18).children().val(),
-            OBSERVACIONES   = $(this).find('td').eq(19).children().val(),
-            CODIGO          = $(this).find('td').eq(1).text(),
-            DESCRIPCION     = $(this).find('td').eq(2).text();
-            UNIDAD          = $(this).find('td').eq(3).text();
-           
+    try {
+      if ($("#rol_user").val() != 2)
+        throw new Error("No esta autorizado para esta accion");
 
-        item= {};
-        
-        //if ( GRABADO == 0) {
-            item['idprod']         = IDPROD;
-            item['marca']          = MARCA;
-            item['cantidad']       = CANTIDAD;
-            item['orden']          = ORDEN;
-            item['colada']         = COLADA;
-            item['tag']            = TAG;
-            item['serie']          = SERIE;
-            item['ncertcal']       = NCERTCAL;
-            item['feccal']         = FECCAL;
-            item['vence']          = VENCE;
-            item['reglib']         = REGLIB;
-            item['estado']         = ESTADO;
-            item['condicion']      = CONDICION;
-            item['contenedor']     = CONTENEDOR;
-            item['estante']        = ESTANTE;
-            item['fila']           = FILA;
-            item['observaciones']  = OBSERVACIONES;
-            item['idreg']          = IDREG;
-            item['codigo']         = CODIGO;
-            item['descripcion']    = DESCRIPCION;
-            item['unidad']         = UNIDAD;
+      let formData = new FormData();
+      formData.append("id", $("#codigo_inventario").val());
 
-            DATA.push(item);
-        //} 
-    })
+      fetch(RUTA + "inventario/anula", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          mostrarMensaje(data.mensaje, "mensaje_correcto");
+        });
+    } catch (error) {
+      mostrarMensaje(error.message, "mensaje_error");
+    }
 
-    return DATA;
-}
+    return false;
+  });
+});
 
-changeValues = (fila,idprod,descripcion,codigo,unidad) => {
-    fila
-        .attr('data-idprod',idprod)
-        .attr('data-estado',1)
-        .css('background','rgba(56,132,192,0.2)')
-        .end()
-        .parent().find('td').eq(1).text(codigo)
-        .parent().find('td').eq(3).text(unidad)
-        .parent().find('td').eq(2).text(descripcion);
-}
+itemsSave = () => {
+  DATA = [];
+  let TABLA = $("#tablaDetalles tbody >tr");
 
+  TABLA.each(function () {
+    let IDPROD = $(this).data("idprod"),
+      GRABADO = $(this).data("grabado"),
+      IDREG = $(this).data("registro"),
+      MARCA = $(this).find("td").eq(4).children().val(),
+      CANTIDAD = $(this).find("td").eq(5).children().val(),
+      ORDEN = $(this).find("td").eq(6).children().val(),
+      COLADA = $(this).find("td").eq(7).children().val(),
+      TAG = $(this).find("td").eq(8).children().val(),
+      SERIE = $(this).find("td").eq(9).children().val(),
+      NCERTCAL = $(this).find("td").eq(10).children().val(),
+      FECCAL = $(this).find("td").eq(11).children().val(),
+      VENCE = $(this).find("td").eq(12).children().val(),
+      REGLIB = $(this).find("td").eq(13).children().val(),
+      ESTADO = $(this).find("td").eq(14).children().val(),
+      CONDICION = $(this).find("td").eq(15).children().val(),
+      CONTENEDOR = $(this).find("td").eq(16).children().val(),
+      ESTANTE = $(this).find("td").eq(17).children().val(),
+      FILA = $(this).find("td").eq(18).children().val(),
+      OBSERVACIONES = $(this).find("td").eq(19).children().val(),
+      CODIGO = $(this).find("td").eq(1).text(),
+      DESCRIPCION = $(this).find("td").eq(2).text();
+    UNIDAD = $(this).find("td").eq(3).text();
+
+    item = {};
+
+    //if ( GRABADO == 0) {
+    item["idprod"] = IDPROD;
+    item["marca"] = MARCA;
+    item["cantidad"] = CANTIDAD;
+    item["orden"] = ORDEN;
+    item["colada"] = COLADA;
+    item["tag"] = TAG;
+    item["serie"] = SERIE;
+    item["ncertcal"] = NCERTCAL;
+    item["feccal"] = FECCAL;
+    item["vence"] = VENCE;
+    item["reglib"] = REGLIB;
+    item["estado"] = ESTADO;
+    item["condicion"] = CONDICION;
+    item["contenedor"] = CONTENEDOR;
+    item["estante"] = ESTANTE;
+    item["fila"] = FILA;
+    item["observaciones"] = OBSERVACIONES;
+    item["idreg"] = IDREG;
+    item["codigo"] = CODIGO;
+    item["descripcion"] = DESCRIPCION;
+    item["unidad"] = UNIDAD;
+
+    DATA.push(item);
+    //}
+  });
+
+  return DATA;
+};
+
+changeValues = (fila, idprod, descripcion, codigo, unidad) => {
+  fila
+    .attr("data-idprod", idprod)
+    .attr("data-estado", 1)
+    .css("background", "rgba(56,132,192,0.2)")
+    .end()
+    .parent()
+    .find("td")
+    .eq(1)
+    .text(codigo)
+    .parent()
+    .find("td")
+    .eq(3)
+    .text(unidad)
+    .parent()
+    .find("td")
+    .eq(2)
+    .text(descripcion);
+};
