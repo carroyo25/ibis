@@ -615,6 +615,7 @@
                                                         tb_parametros.cabrevia,
                                                         FORMAT( lg_ordencab.ntcambio, 2 ) AS ntcambio,
                                                         lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
                                                         tb_proyectos.ccodproy 
                                                     FROM
                                                         lg_ordendet
@@ -641,7 +642,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['ntcambio'].'</td>
                                         <td class="textoDerecha">'.$rs['nunitario'].'</td>
-                                        <td class="textoDerecha">'.$rs['id_regmov'].'</td>
+                                        <td class="textoDerecha">'.$rs['cnumero'].'</td>
                                         <td class="textoDerecha">'.$rs['ccodproy'].'</td>
                                     </tr>';
                     }

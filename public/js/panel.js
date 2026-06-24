@@ -1,7 +1,13 @@
 $(function(){
 	let nroRegistro = 0;
 	permisos = [];
-	
+
+
+	//MUESTRA EL MODAL DE ALERTA DE MINIMOS
+	if ($("#alerta_minimo").val() == 1 ){
+		$("#alertaMinimos").fadeIn();
+	}
+
     $(".acordeon .submenu").on("click","a", function (e) {
         e.preventDefault();
 

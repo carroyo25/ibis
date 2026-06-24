@@ -61,3 +61,12 @@
 #esperar {
   z-index: 9999;
 }
+
+/*NUEVO ESTILO PARA LOS MODALS*/
+.modalWrap{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

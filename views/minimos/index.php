@@ -15,21 +15,23 @@
             <div class="contenedor">
                 <div class="cabecera_dialogo">
                     <label for="codigoSearch">Codigo</label>
-                    <input type="text" name="codigoSearch" id="codigoSearch" readonly>
+                    <input type="text" name="codigoSearch" id="codigoSearch">
                     <label for="descripSearch">Descripcion</label>
                     <input type="text" name="descripSearch" id="descripSearch" readonly>
                 </div>
                 
                 <div class="cuerpo_dialogo">
                     <div class="datos_cuerpo_minimo">
+                        <label for="unidad">Unidad</label>
+                        <input type="text" name="unidad" id="unidad" value="" readonly>
                         <label for="fecha">Fecha</label>
                         <input type="date" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>">
-                        <label for="cant_personal">Cantidad Personal</label>
+                        <label for="cant_personal">Cant. Personal</label>
                         <input type="number" name="cant_personal" id="cant_personal">
                         <label for="porcentaje_minimo">Porcent. Min.</label>
                         <input type="number" name="porcentaje_minimo" id="porcentaje_minimo">
                         <label for="total_minimo">Total Minimo</label>
-                        <input type="number" name="total_minimo" id="total_minimo" readonly>
+                        <input type="number" name="total_minimo" id="total_minimo">
                     </div>
                     <div class="datos_cuerpo_observaciones">
                         <label for="observaciones_dialogo">Observaciones</label>
@@ -48,6 +50,7 @@
     <div class="cabezaModulo">
         <h1>Control de Existencias Minimas</h1>
         <div>
+            <a href="#" id="newRegister"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>

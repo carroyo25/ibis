@@ -39,5 +39,9 @@ class Minimos extends Controller
         // Obtener TODOS los datos sin paginación
         echo json_encode($this->model->listarMinimosExportar($costos, $codigo, $descripcion));
     }
+
+    function buscaCodigo(){
+        echo json_encode($this->model->buscarProducto($_POST));
+    }
 }
 ?>

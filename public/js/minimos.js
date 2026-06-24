@@ -1,7 +1,7 @@
 $(() => {
   $("#esperar").fadeOut();
 
-  let fila, producto, costos;
+  let fila, producto, costos, origen;
   const RUTA = $("#url_base").val() || "";
 
   // ===== VERIFICAR PERMISOS =====
@@ -42,20 +42,17 @@ $(() => {
     })
       .then((response) => response.json())
       .then((data) => {
-        /*console.log("Datos recibidos:", data);
-        console.log("Total registros:", data.total);
-        console.log("Total páginas:", data.total_paginas);
-        console.log("Página actual:", data.pagina);*/
-
         let row = "";
         let item = (pagina - 1) * 10 + 1;
+
+        console.log(JSON.stringify(data))
 
         if (data.success && data.data.length > 0) {
           data.data.forEach((element) => {
             const ingresos = parseFloat(element.ingresos) || 0;
-            const consumos = parseFloat(element.consumos) || 0;
+            const consumos = parseFloat(element.salidas) || 0;
             const saldo = ingresos - consumos;
-            const stockMinimo = parseFloat(element.ntotal) || 0;
+            const stockMinimo = parseFloat(element.nminimo) || 0;
 
             let estado, colorEstado;
             if (saldo <= 0) {
@@ -81,11 +78,11 @@ $(() => {
                                 <td class="textoDerecha">${item++}</td>
                                 <td class="textoCentro">${element.ccodprod || ""}</td>
                                 <td class="pl20px">${element.cdesprod || ""}</td>
-                                <td class="textoCentro">${element.cabrevia || ""}</td>
+                                <td class="textoCentro">${element.unidad || ""}</td>
                                 <td class="textoDerecha">${element.ingresos || "0.00"}</td>
-                                <td class="textoDerecha">${element.consumos || "0.00"}</td>
+                                <td class="textoDerecha">${element.salidas || "0.00"}</td>
                                 <td class="textoCentro">${element.ffecha || ""}</td>
-                                <td class="textoDerecha">${element.ntotal || ""}</td>
+                                <td class="textoDerecha">${stockMinimo || ""}</td>
                                 <td class="textoCentro"><span style="background:${colorEstado}; padding:4px 8px; border-radius:12px; font-size:11px; color:${estado === "CRÍTICO" || estado === "EXCESO" ? "white" : "#333"}; font-weight:bold;">${estado}</span></td>
                             </tr>`;
           });
@@ -173,6 +170,43 @@ $(() => {
     }
   });
 
+  // REGISTRAR CODIGOS NUEVOS
+  $("#newRegister").click(async function (e) {
+    e.preventDefault();
+
+    // Verificar permisos antes de abrir el modal
+    const idUser = $("#id_user").val() || 1;
+    const permisos = await verificarPermisos(idUser, 65);
+
+    origen = "boton";
+
+    if (!permisos || !permisos.datos[0].agrega) {
+      mostrarMensaje(
+        "⚠️ No tienes permisos para registrar mínimos",
+        "mensaje_error",
+      );
+      return; // No abre el modal
+    }
+
+    if ($("#costosSearch").val() == "-1") {
+      mostrarMensaje("⚠️ Seleccione un centro de costos", "mensaje_error");
+      return; // No abre el modal
+    }
+
+    // Si tiene permiso, continúa con el registro
+    costos = $("#costosSearch").val();
+
+    $("#cant_personal").val("");
+    $("#porcentaje_minimo").val("");
+    $("#total_minimo").val("");
+    $("#observaciones_dialogo").val("");
+    $("#fecha").val(new Date().toISOString().split("T")[0]);
+
+    $("#dialogo_registro").fadeIn();
+
+    return false;
+  });
+
   // ===== DOBLE CLIC EN FILA PARA REGISTRAR MÍNIMO =====
   $("#tablaBody").on("dblclick", "tr.pointer", async function (e) {
     e.preventDefault();
@@ -181,7 +215,7 @@ $(() => {
     const idUser = $("#id_user").val() || 1;
     const permisos = await verificarPermisos(idUser, 65);
 
-    //console.log("Permisos:", permisos.datos[0].agrega);
+    origen = "tabla";
 
     if (!permisos || !permisos.datos[0].agrega) {
       mostrarMensaje(
@@ -640,6 +674,31 @@ $(() => {
     } catch (error) {
       console.error("Error al exportar:", error);
       mostrarMensaje("💣 Error al exportar: " + error.message, "mensaje_error");
+    }
+  });
+
+  // CONSULTAR EL CODIGO SI ES NUEVO
+  $("#codigoSearch").keypress(function (e) {
+    if (e.which == 13) {
+      if (origen == "boton") {
+        if ($(this).val() === "") {
+          mostrarMensaje("🚩 Ingrese un codigo válido", "mensaje_error");
+        }else{
+          let formData = new FormData();
+          formData.append("codigo",$(this).val())
+
+          fetch(RUTA+'minimos/buscaCodigo',{
+            method:'POST',
+            body:formData
+          })
+          .then(response => response.json())
+          .then(data =>{
+            producto = data.datos[0]['id_cprod'];
+            $("#descripSearch").val(data.datos[0]['cdesprod']);
+            $("#unidad").val(data.datos[0]['cabrevia']);
+          })
+        }
+      }
     }
   });
 

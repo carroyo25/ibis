@@ -62,6 +62,14 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="alertaMinimos">
+        <div class="modalWrap">
+            <div class="minimos">
+                <h1>Aca debe mostrar las alertas minimas</h1>
+                <a href="#" id="closeAlertMinimos">X</a>
+            </div>
+        </div>
+    </div>
     <div class="wrap">
         <div class="cabecera">
             <img src="<?php echo constant('URL')?>public/img/ibis.png" alt="">
@@ -81,6 +89,7 @@
                 <input type="hidden" id="almacen" name="almacen" value="<?php echo $_SESSION['almacen']?>">
                 <input type="hidden" id="medicos" name="medicos" value="<?php echo $_SESSION['medicos']?>">
                 <input type="hidden" id="mmtto" name="mmtto" value="<?php echo $_SESSION['mmtto']?>">
+                <input type="hidden" id="alerta_minimo" name="alerta_minimo" value="<?php echo $_SESSION['minimos']?>">
                 <input type="hidden" id="modulo" name="modulo">
             </div>
         </div>

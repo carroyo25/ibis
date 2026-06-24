@@ -19,7 +19,8 @@
                                                              tb_user.nrol,
                                                              tb_user.fusrmmtto,
                                                              tb_user.fusrmedica,
-                                                             tb_user.fusralmacen
+                                                             tb_user.fusralmacen,
+                                                             tb_user.minalert
                                                         FROM tb_user 
                                                         WHERE 
                                                            tb_user.cnameuser=:user 
@@ -42,6 +43,7 @@
                     $_SESSION['medicos']    = $rq[0]['fusrmedica'];
                     $_SESSION['mmtto']      = $rq[0]['fusrmmtto'];
                     $_SESSION['password']   = "aK8izG1WEQwwB1X";
+                    $_SESSION['minimos']    = $rq[0]['minalert'];
                 }else{
                     $respuesta = false;
                     session_destroy();
