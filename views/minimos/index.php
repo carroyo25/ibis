@@ -97,7 +97,7 @@
                     <th>Estado</th>
                 </tr>
             </thead>
-            <tbody id="tablaBody">
+            <tbody id="tablaBodyMinimos">
                 <tr>
                     <td colspan="9" style="text-align:center; padding:40px; color:#999;">
                         <i class="fas fa-search" style="font-size:24px; display:block; margin-bottom:10px;"></i>

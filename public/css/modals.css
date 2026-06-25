@@ -9,11 +9,11 @@
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   bottom: 5%;
   -webkit-transition: 0.5s;
   transition: 0.5s;
@@ -21,10 +21,12 @@
   font-size: 1.2rem;
 }
 
-.mensaje_error span, .mensaje_correcto span {
+.mensaje_error span,
+.mensaje_correcto span {
   font-size: 20px;
 }
-.mensaje_error span:before, .mensaje_correcto span:before {
+.mensaje_error span:before,
+.mensaje_correcto span:before {
   margin-right: 30px;
   font-size: 2rem;
   font-family: "Font Awesome 5 Free";
@@ -63,10 +65,197 @@
 }
 
 /*NUEVO ESTILO PARA LOS MODALS*/
-.modalWrap{
+.modalWrap {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .minimos {
+    background: #fff;
+    height: 80vh;
+    border-radius: 8px;
+    padding: 0.5rem;
+    max-width: 80%;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+      h1 {
+        color: #1a1a2e;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .badge {
+          background: #e74c3c;
+          color: white;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 14px;
+        }
+      }
+
+      .stats {
+        display: flex;
+        gap: 20px;
+
+        .stat-item {
+          background: #f8f9fa;
+          padding: 8px 18px;
+          border-radius: 8px;
+          text-align: center;
+
+          .number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+          }
+
+          .label {
+            font-size: 12px;
+            color: #7f8c8d;
+          }
+        }
+
+        .stat-item.critical .number {
+          color: #e74c3c;
+        }
+        .stat-item.warning .number {
+          color: #f39c12;
+        }
+        .stat-item.normal .number {
+          color: #27ae60;
+        }
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-cerrar {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .btn-cerrar:hover {
+        background: #c0392b;
+        transform: scale(1.02);
+      }
+
+      .btn-enviar {
+        background: #3498db;
+        color: white;
+      }
+
+      .btn-enviar:hover {
+        background: #2980b9;
+        transform: scale(1.02);
+      }
+
+      .btn-enviar:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    .filtros {
+      background: white;
+      padding: 15px 30px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      select,
+      input {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      select {
+        max-width: 25%;
+      }
+
+      label {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 12px;
+      }
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      height: 50vh;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #1a1a2e;
+        color: white;
+      }
+
+      thead th {
+        padding: 15px 20px;
+        text-align: left;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+      }
+
+      tbody tr:hover {
+        background: #f8f9fa;
+      }
+
+      tbody td {
+        padding: 7px 10px;
+        font-size: 12px;
+        color: #2c3e50;
+      }
+    }
+  }
 }

@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/exceltable.css">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/pagination.css">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/paginationv2.css?<?php echo constant('VERSION')?>">
-    <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/groups.css?<?php echo constant('VERSION')?>">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/registroti.css?<?php echo constant('VERSION')?>">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/asigna.css?<?php echo constant('VERSION')?>">
     
@@ -65,8 +64,73 @@
     <div class="modal" id="alertaMinimos">
         <div class="modalWrap">
             <div class="minimos">
-                <h1>Aca debe mostrar las alertas minimas</h1>
-                <a href="#" id="closeAlertMinimos">X</a>
+                <!-- Header -->
+                <div class="header">
+                    <h1>
+                        🚨 Alertas de Stock Mínimo
+                        <span class="badge" id="totalAlertas">0</span>
+                    </h1>
+                    <div class="stats">
+                        <div class="stat-item critical">
+                            <div class="number" id="criticosCount">0</div>
+                            <div class="label">⚠️ Críticos</div>
+                        </div>
+                        <div class="stat-item warning">
+                            <div class="number" id="warningCount">0</div>
+                            <div class="label">⚡ Alerta</div>
+                        </div>
+                        <div class="stat-item normal">
+                            <div class="number" id="normalCount">0</div>
+                            <div class="label">✅ Normal</div>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-enviar" id="btnEnviarCorreoMinimo">
+                            ✉️ Enviar por Correo
+                        </button>
+                        <button class="btn btn-cerrar" id="btnCerrarMinimo">
+                            ❌ Cerrar
+                        </button>
+                    </div>
+                </div>
+                <!-- Filtros -->
+                <div class="filtros">
+                    <label for="filtroCodigo">🔍 Codigo:</label>
+                    <input type="text" id="filtroCodigo" placeholder="Buscar codigo..." />
+
+
+                    <label for="filtroProducto">📦 Producto:</label>
+                    <input type="text" id="filtroProducto" placeholder="Buscar producto..." />
+
+                    <label for="filtroCostos">🏷️ Centro Costos:</label>
+                    <select id="filtroCostos">
+                        <?php echo $this->listaCostosSelect ?>
+                    </select>
+                </div>
+
+                <!-- Tabla -->
+                    <div class="table-container">
+                        <table id="tabla_minimos">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Unidad</th>
+                                    <th>Stock Actual</th>
+                                    <th>Mínimo</th>
+                                    <th>Estado</th>
+                                    <th>Progreso</th>
+                                    <th>Centro Costos</th>
+                                    <th>Ingresos</th>
+                                    <th>Salidas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaBody">
+                                <!-- Los datos se insertarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

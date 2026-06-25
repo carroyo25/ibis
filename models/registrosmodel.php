@@ -157,7 +157,7 @@
                                                         INNER JOIN ibis.tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                         INNER JOIN ibis.tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                         INNER JOIN ibis.tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.alm_despachocab ON ibis.alm_despachodet.id_regalm = ibis.alm_despachocab.id_regalm
                                                     WHERE
                                                         alm_despachodet.id_regalm = :indice

@@ -26,15 +26,20 @@ $(() => {
   function consultarDatos(pagina) {
     pagina = pagina || 1;
 
-    let formData = new FormData();
-    formData.append("costos", $("#costosSearch").val());
-    formData.append("codigo", $("#codigoBusqueda").val());
-    formData.append("descripcion", $("#descripcionSearch").val());
-    formData.append("page", pagina);
+    const costosSearch = $("#costosSearch").val() || "";
+    const codigoBusqueda = $("#codigoBusqueda").val() || "";
+    const descripcionSearch = $("#descripcionSearch").val() || "";
 
-    $("#tablaBody").html(
+    // Mostrar loading
+    $("#tablaPrincipal tbody").html(
       '<tr><td colspan="9" style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i><p>Cargando...</p></td></tr>',
     );
+
+    let formData = new FormData();
+    formData.append("costos", costosSearch);
+    formData.append("codigo", codigoBusqueda);
+    formData.append("descripcion", descripcionSearch);
+    formData.append("page", pagina);
 
     fetch(RUTA + "minimos/consultaProductosPaginado", {
       method: "POST",
@@ -45,73 +50,112 @@ $(() => {
         let row = "";
         let item = (pagina - 1) * 10 + 1;
 
-        console.log(JSON.stringify(data))
-
-        if (data.success && data.data.length > 0) {
+        if (data.success && data.data && data.data.length > 0) {
           data.data.forEach((element) => {
-            const ingresos = parseFloat(element.ingresos) || 0;
-            const consumos = parseFloat(element.salidas) || 0;
-            const saldo = ingresos - consumos;
-            const stockMinimo = parseFloat(element.nminimo) || 0;
+            // ===== MAPEO DE CAMPOS =====
+            const idprod = element.idprod || "";
+            const ccodprod = element.ccodprod || "";
+            const cdesprod = element.cdesprod || "";
+            const unidad = element.unidad || "";
 
-            let estado, colorEstado;
-            if (saldo <= 0) {
+            const ingresos =
+              parseFloat(String(element.ingresos || "0").replace(/,/g, "")) ||
+              0;
+            const salidas =
+              parseFloat(String(element.salidas || "0").replace(/,/g, "")) || 0;
+            const saldo = ingresos - salidas;
+            const stockMinimo =
+              parseFloat(String(element.nminimo || "0").replace(/,/g, "")) || 0;
+
+            let ffecha = element.ffecha || "";
+            if (ffecha && ffecha.includes("-")) {
+              const parts = ffecha.split("-");
+              ffecha = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            const idcostos = element.idcostos || "";
+
+            // ===== DETERMINAR ESTADO =====
+            let estado, colorEstado, textoColor;
+            if (saldo <= 0 && stockMinimo > 0) {
               estado = "CRÍTICO";
-              colorEstado = "#FF6B6B";
+              colorEstado = "#DC3545";
+              textoColor = "white";
             } else if (stockMinimo > 0 && saldo <= stockMinimo) {
               estado = "MÍNIMO";
               colorEstado = "#FFC107";
+              textoColor = "#856404";
             } else if (saldo > 0 && saldo <= 50) {
               estado = "BAJO";
               colorEstado = "#FD7E14";
+              textoColor = "white";
             } else if (saldo > 200) {
               estado = "EXCESO";
               colorEstado = "#17A2B8";
+              textoColor = "white";
             } else {
               estado = "NORMAL";
               colorEstado = "#C6F6D5";
+              textoColor = "#2D3748";
             }
 
+            // ===== CONSTRUIR FILA =====
             row += `<tr class="pointer" 
-                                data-idproducto='${element.codprod || ""}'
-                                data-costos='${element.idcostos || ""}'>
-                                <td class="textoDerecha">${item++}</td>
-                                <td class="textoCentro">${element.ccodprod || ""}</td>
-                                <td class="pl20px">${element.cdesprod || ""}</td>
-                                <td class="textoCentro">${element.unidad || ""}</td>
-                                <td class="textoDerecha">${element.ingresos || "0.00"}</td>
-                                <td class="textoDerecha">${element.salidas || "0.00"}</td>
-                                <td class="textoCentro">${element.ffecha || ""}</td>
-                                <td class="textoDerecha">${stockMinimo || ""}</td>
-                                <td class="textoCentro"><span style="background:${colorEstado}; padding:4px 8px; border-radius:12px; font-size:11px; color:${estado === "CRÍTICO" || estado === "EXCESO" ? "white" : "#333"}; font-weight:bold;">${estado}</span></td>
-                            </tr>`;
+                          data-idproducto="${idprod}"
+                          data-costos="${idcostos}"
+                          data-ccodprod="${ccodprod}"
+                          data-cdesprod="${cdesprod}">
+                          <td class="textoDerecha">${item++}</td>
+                          <td class="textoCentro">${ccodprod || "-"}</td>
+                          <td class="pl20px">${cdesprod || "-"}</td>
+                          <td class="textoCentro">${unidad || "-"}</td>
+                          <td class="textoDerecha">${ingresos.toFixed(2)}</td>
+                          <td class="textoDerecha">${salidas.toFixed(2)}</td>
+                          <td class="textoCentro">${ffecha || "-"}</td>
+                          <td class="textoDerecha">${stockMinimo > 0 ? stockMinimo.toFixed(2) : "-"}</td>
+                          <td class="textoCentro">
+                              <span style="background:${colorEstado}; padding:4px 10px; border-radius:12px; font-size:11px; color:${textoColor}; font-weight:bold; display:inline-block; white-space:nowrap;">
+                                  ${estado}
+                              </span>
+                          </td>
+                      </tr>`;
           });
         } else {
-          row = `<tr><td colspan="9" style="text-align:center; padding:20px; color:#999;">No se encontraron resultados</td></tr>`;
+          row = `<tr><td colspan="9" style="text-align:center; padding:30px; color:#999;">
+                      <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
+                      No se encontraron resultados
+                  </td></tr>`;
         }
 
-        $("#tablaBody").empty().append(row);
+        // ===== INSERTAR FILAS USANDO EL SELECTOR CORRECTO =====
+        $("#tablaPrincipal tbody").empty().append(row);
 
         // ===== GENERAR PAGINADOR =====
-        let pag = `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; padding:10px 0; gap:10px;">
-                <div style="font-size:14px; color:#666;">
-                    <i class="fas fa-database" style="margin-right:5px;"></i>
-                    <strong>${data.total || 0}</strong> registros encontrados
-                </div>
-                <div style="display:flex; justify-content:center; align-items:center; gap:5px; flex-wrap:wrap;">`;
+        const total = data.total || 0;
+        const totalPaginas = data.total_paginas || Math.ceil(total / 10) || 1;
+        const paginaActual = data.pagina || pagina;
 
-        if (data.total_paginas > 1) {
-          pag += `<button onclick="consultarDatos(${pagina - 1})" style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${pagina === 1 ? "opacity:0.5; cursor:not-allowed;" : ""}" ${pagina === 1 ? "disabled" : ""}>
-                    <i class="fas fa-chevron-left"></i>
-                </button>`;
+        let pag = `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; padding:10px 0; gap:10px;">
+                  <div style="font-size:14px; color:#666;">
+                      <i class="fas fa-database" style="margin-right:5px;"></i>
+                      <strong>${total}</strong> registros encontrados
+                  </div>
+                  <div style="display:flex; justify-content:center; align-items:center; gap:5px; flex-wrap:wrap;">`;
+
+        if (totalPaginas > 1) {
+          pag += `<button onclick="consultarDatos(${paginaActual - 1})" 
+                              style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${paginaActual <= 1 ? "opacity:0.5; cursor:not-allowed;" : ""}" 
+                              ${paginaActual <= 1 ? "disabled" : ""}>
+                              <i class="fas fa-chevron-left"></i>
+                          </button>`;
 
           const maxPaginasMostrar = 5;
           let inicioPaginas = Math.max(
             1,
-            pagina - Math.floor(maxPaginasMostrar / 2),
+            paginaActual - Math.floor(maxPaginasMostrar / 2),
           );
           let finPaginas = Math.min(
-            data.total_paginas,
+            totalPaginas,
             inicioPaginas + maxPaginasMostrar - 1,
           );
 
@@ -124,30 +168,38 @@ $(() => {
           }
 
           for (let i = inicioPaginas; i <= finPaginas; i++) {
-            pag += `<button onclick="consultarDatos(${i})" style="padding:5px 12px; border:1px solid #ddd; background:${i === pagina ? "#1e3c72" : "white"}; color:${i === pagina ? "white" : "#333"}; cursor:pointer; border-radius:4px; font-weight:${i === pagina ? "bold" : "normal"};">${i}</button>`;
+            const isActive = i === paginaActual;
+            pag += `<button onclick="consultarDatos(${i})" 
+                                      style="padding:5px 12px; border:1px solid #ddd; background:${isActive ? "#1e3c72" : "white"}; color:${isActive ? "white" : "#333"}; cursor:pointer; border-radius:4px; font-weight:${isActive ? "bold" : "normal"};">
+                                      ${i}
+                                  </button>`;
           }
 
-          if (finPaginas < data.total_paginas) {
+          if (finPaginas < totalPaginas) {
             pag += `<span style="padding:5px 10px; color:#999;">…</span>`;
           }
 
-          pag += `<button onclick="consultarDatos(${pagina + 1})" style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${pagina === data.total_paginas ? "opacity:0.5; cursor:not-allowed;" : ""}" ${pagina === data.total_paginas ? "disabled" : ""}>
-                    <i class="fas fa-chevron-right"></i>
-                </button>`;
+          pag += `<button onclick="consultarDatos(${paginaActual + 1})" 
+                              style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${paginaActual >= totalPaginas ? "opacity:0.5; cursor:not-allowed;" : ""}" 
+                              ${paginaActual >= totalPaginas ? "disabled" : ""}>
+                              <i class="fas fa-chevron-right"></i>
+                          </button>`;
 
-          pag += `<span style="margin-left:10px; font-size:13px; color:#666;">Página ${pagina} de ${data.total_paginas}</span>`;
+          pag += `<span style="margin-left:10px; font-size:13px; color:#666;">Página ${paginaActual} de ${totalPaginas}</span>`;
         } else {
           pag += `<span style="font-size:13px; color:#999;">Página 1 de 1</span>`;
         }
 
         pag += `</div></div>`;
-
         $("#paginador").html(pag);
       })
       .catch((error) => {
-        console.error("Error:", error);
-        $("#tablaBody").html(
-          `<tr><td colspan="9" style="text-align:center; color:red; padding:40px;"><i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:10px;"></i>Error al cargar datos</td></tr>`,
+        console.error("❌ Error:", error);
+        $("#tablaPrincipal tbody").html(
+          `<tr><td colspan="9" style="text-align:center; color:red; padding:40px;">
+                          <i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:10px;"></i>
+                          Error al cargar datos: ${error.message}
+                      </td></tr>`,
         );
         $("#paginador").empty();
       });
@@ -208,7 +260,7 @@ $(() => {
   });
 
   // ===== DOBLE CLIC EN FILA PARA REGISTRAR MÍNIMO =====
-  $("#tablaBody").on("dblclick", "tr.pointer", async function (e) {
+  $("#tablaPrincipal tbody").on("dblclick", "tr.pointer", async function (e) {
     e.preventDefault();
 
     // Verificar permisos antes de abrir el modal
@@ -683,20 +735,20 @@ $(() => {
       if (origen == "boton") {
         if ($(this).val() === "") {
           mostrarMensaje("🚩 Ingrese un codigo válido", "mensaje_error");
-        }else{
+        } else {
           let formData = new FormData();
-          formData.append("codigo",$(this).val())
+          formData.append("codigo", $(this).val());
 
-          fetch(RUTA+'minimos/buscaCodigo',{
-            method:'POST',
-            body:formData
+          fetch(RUTA + "minimos/buscaCodigo", {
+            method: "POST",
+            body: formData,
           })
-          .then(response => response.json())
-          .then(data =>{
-            producto = data.datos[0]['id_cprod'];
-            $("#descripSearch").val(data.datos[0]['cdesprod']);
-            $("#unidad").val(data.datos[0]['cabrevia']);
-          })
+            .then((response) => response.json())
+            .then((data) => {
+              producto = data.datos[0]["id_cprod"];
+              $("#descripSearch").val(data.datos[0]["cdesprod"]);
+              $("#unidad").val(data.datos[0]["cabrevia"]);
+            });
         }
       }
     }

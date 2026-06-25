@@ -10,20 +10,13 @@
                 $this->view->rol = $_SESSION['rol'];
                 $this->view->iniciales = strtoupper($_SESSION['inicial']);
                 $this->view->acordeon = $this->model->acordeon($_SESSION['iduser']);
+                $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             }else {
                 header('Location: '.constant('URL'));
             }
             
             $this->view->render('panel/index');
         }
-
-        /*$_SESSION['iduser'];
-        $_SESSION['user'];
-        $_SESSION['nombres'];
-        $_SESSION['correo'];
-        $_SESSION['cargo'];
-        $_SESSION['inicial'];
-        $_SESSION['rol'];*/
 
         function pedidos(){
             echo json_encode($this->model->listarPanelPedidos());
@@ -63,6 +56,10 @@
 
         function permisos(){
             echo json_encode($this->model->verificarPermiso($_POST));
+        }
+
+        function muestraMinimos(){
+            echo json_encode($this->model->consultarMinimos($_POST));
         }
     }
 ?>

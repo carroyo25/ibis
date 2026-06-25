@@ -819,5 +819,95 @@
                 return false;
             }
         }
+
+        public function consultarMinimos($parametros){
+            try {
+                $docData = [];
+
+                $costos = $parametros['costos'] == '-1' ? '%': $parametros['costos'];
+                $codigo = $parametros['codigo'] == '' ? '%': '%'.$parametros['codigo'].'%';
+                $producto = $parametros['producto'] == '' ? '%': '%'.$parametros['producto'].'%';
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        m.idprod,
+                                                        m.ffecha,
+                                                        r.ccodprod,
+                                                        UPPER( r.cdesprod ) descripcion,
+                                                        n.cabrevia,
+                                                        UPPER( p.ccodproy ) proyecto,
+                                                        m.ntotal,
+                                                        COALESCE ( ex2.total_ingresos, 0 ) AS ingresos,
+                                                        COALESCE ( s.total_salidas, 0 ) AS salidas 
+                                                    FROM
+                                                        alm_minimo m
+                                                        LEFT JOIN tb_costusu u ON m.ncostos = u.ncodproy
+                                                        LEFT JOIN tb_proyectos p ON m.ncostos = p.nidreg
+                                                        LEFT JOIN cm_producto r ON r.id_cprod = m.idprod
+                                                        LEFT JOIN tb_unimed n ON n.ccodmed = r.nund
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            ex.codprod,
+                                                            ce.idcostos,
+                                                            SUM( ex.cant_ingr ) AS total_ingresos 
+                                                        FROM
+                                                            alm_existencia ex
+                                                            LEFT JOIN alm_cabexist ce ON ce.idreg = ex.idregistro 
+                                                        WHERE
+                                                            ex.nflgActivo = 1 
+                                                        GROUP BY
+                                                            ex.codprod,
+                                                            ce.idcostos 
+                                                        ) ex2 ON ex2.codprod = m.idprod 
+                                                        AND ex2.idcostos = m.ncostos
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            c.idprod,
+                                                            c.ncostos,
+                                                            SUM( c.cantsalida ) AS total_salidas 
+                                                        FROM
+                                                            alm_consumo c 
+                                                        GROUP BY
+                                                            c.idprod,
+                                                            c.ncostos 
+                                                        ) s ON s.idprod = m.idprod 
+                                                        AND s.ncostos = m.ncostos
+                                                        INNER JOIN (
+                                                        SELECT
+                                                            m2.idprod,
+                                                            m2.ncostos,
+                                                            MAX( m2.ffecha ) AS ultima_fecha 
+                                                        FROM
+                                                            alm_minimo m2 
+                                                        WHERE
+                                                            m2.swactivo = 1 
+                                                        GROUP BY
+                                                            m2.idprod,
+                                                            m2.ncostos 
+                                                        ) ultimo ON ultimo.idprod = m.idprod 
+                                                        AND ultimo.ncostos = m.ncostos 
+                                                        AND ultimo.ultima_fecha = m.ffecha 
+                                                    WHERE
+                                                        m.swactivo = 1 
+                                                        AND u.id_cuser = :usuario 
+                                                        AND p.nflgactivo = 1 
+                                                        AND m.ncostos LIKE :costos 
+                                                        AND r.ccodprod LIKE :codigo 
+                                                        AND r.cdesprod LIKE :descripcion
+                                                    GROUP BY r.ccodprod");
+                
+                $sql->execute(["costos"=>$costos,
+                                "usuario"=>$parametros['usuario'],
+                                "codigo"=>$codigo,
+                                "descripcion"=>$producto]);
+
+                while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+            } catch (PDOException $th) {
+                return array("mensaje"=>$th->getMessage());
+            }
+        }
     }
 ?>
