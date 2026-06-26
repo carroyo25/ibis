@@ -340,7 +340,7 @@ $(function () {
         $("#partida").val(data.cabecera[0].cdescripcion);
         $("#fecha_entrega").val(data.cabecera[0].entrega);
 
-        if (data.cabecera[0].idtipomov == 38) {
+        if (data.cabecera[0].idtipomov == 38 || data.cabecera[0].idtipomov == 311) {
           $("#requestAprob").removeClass("desactivado");
           $("#sendItem").addClass("desactivado");
         } else {
@@ -975,7 +975,10 @@ function changeStatus(aprobacion, tipo) {
             $("#requestAprob").removeClass("desactivado");
             $("#sendItem").addClass("desactivado");
             break;
-            
+        case 311:
+            $("#requestAprob").removeClass("desactivado");
+            $("#sendItem").addClass("desactivado");
+            break;  
         case 37:
             if (aprobacion === 1) {
                 $("#sendItem").removeClass("desactivado");

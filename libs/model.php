@@ -1385,6 +1385,8 @@
         //listado de productos (USUARIOS COMUNES)
         public function listarProductos($tipo){
              try {
+                 $tipoNuevo = $tipo == 311 ? 38 : $tipo; 
+
                  $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
@@ -1402,7 +1404,7 @@
                                                     AND cm_producto.flgActivo = 1
                                                     AND cm_producto.ngrupo != 45
                                                     LIMIT 100");
-                $sql->execute(["tipo"=>$tipo]);
+                $sql->execute(["tipo"=>$tipoNuevo]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
