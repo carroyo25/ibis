@@ -131,10 +131,11 @@
                                         <?php echo $this->listaTipos?>
                                     </ul>
                                 </div>
+                                <button class ="btnHelp" data-concepto="tipo">❔</button>
                             </div>
                             
 
-                            <label for="vence" data-etiqueta="fecha_entrega">Fecha<br/>Entrega :</label>
+                            <label for="vence" data-etiqueta="fecha_entrega">Fecha Entrega :</label>
                             <input type="date" name="fecha_entrega" id="fecha_entrega" class="cerrarLista">
                             
                             <label for="pedidommto" data-etiqueta="pedido_mmtto">Ped. MMTO:</label>
@@ -244,6 +245,30 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="helpWindow">
+        <div class="ventanaPregunta">
+            <div>
+                <table class="helpTable">
+                    <tbody>
+                        <tr>
+                            <td>🔴 Bienes</td>
+                            <td>Pedido de bienes</td>
+                        </tr>
+                        <tr>
+                            <td>🔵 Servicios</td>
+                            <td>Pedido de servicios</td>
+                        </tr>
+                        <tr>
+                            <td>🟣 Servicio con personal</td>
+                            <td>Servicios con ingreso de personal a obra</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button type="button" id="btnCerraHelp">Cerrar</button>
+            </div>
         </div>
     </div>
     <div class="modal" id="sendMail">

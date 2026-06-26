@@ -152,6 +152,7 @@
                             <option value="-1">Elija Tipo</option>
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
+                            <option value="311">Serv. con personal</option>
                         </select>
                     </div>
                     <div>

@@ -1693,7 +1693,6 @@ thead .sticky-column {
 .ventanaInformes .statusTraslado .estados {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (1fr)[4];
   grid-template-columns: repeat(4, 1fr);
   border: 1px dotted #ccc;
   width: 100%;
@@ -2485,7 +2484,6 @@ thead .sticky-column {
 .ventanaProceso .firmas {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (1fr)[4];
   grid-template-columns: repeat(4, 1fr);
   background: #fff;
 }
@@ -3245,6 +3243,7 @@ thead .sticky-column {
   -ms-grid-rows: 1fr 10px 1fr 10px 1fr;
   grid-template-rows: repeat(3, 1fr);
   gap: 10px;
+  position: relative;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(1), .ventanaProceso .seccion_medio_grid > *:nth-child(1), .ventanaProceso .seccion_derecha_grid > *:nth-child(1) {
   -ms-grid-row: 1;
@@ -4505,6 +4504,28 @@ thead .sticky-column {
       }
     }
   }
+}
+
+/**AYUDA EN LOS PEDIDOS*/
+
+.btnHelp{
+    position: absolute;
+    height: 27px;
+    width: 33px !important;
+    right: 2px;
+    top: 7px
+}
+
+.helpTable{
+    font-size: smaller;
+    text-align: left;
+    background: antiquewhite;
+    color:#000;
+    line-height: 2rem;
+    
+    td {
+      padding: .5rem;
+    }
 }
 
 /******** FIN DE VENTANA ACTIVOS **********/

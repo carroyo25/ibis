@@ -794,6 +794,22 @@ $(function () {
 
     return false;
   });
+
+  $(".btnHelp").click(function(e){
+    e.preventDefault();
+
+    $("#helpWindow").fadeIn();
+
+    return false;
+  });
+
+  $("#btnCerraHelp").click(function(e){
+    e.preventDefault();
+
+    $("#helpWindow").fadeOut();
+
+    return false;
+  });
 });
 
 itemsPreview = () => {
