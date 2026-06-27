@@ -113,16 +113,14 @@
                         <table id="tabla_minimos">
                             <thead>
                                 <tr>
+                                    <th>Centro Costos</th>
                                     <th>Código</th>
                                     <th>Producto</th>
                                     <th>Unidad</th>
-                                    <th>Stock Actual</th>
-                                    <th>Mínimo</th>
                                     <th>Estado</th>
-                                    <th>Progreso</th>
-                                    <th>Centro Costos</th>
-                                    <th>Ingresos</th>
-                                    <th>Salidas</th>
+                                    <th>Fecha</th>
+                                    <th>Minimo</th>
+                                    <th>Stock</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaBody">

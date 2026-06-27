@@ -830,7 +830,7 @@
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         m.idprod,
-                                                        m.ffecha,
+                                                        DATE_FORMAT(m.ffecha,'%d/%m/%Y') ffecha,
                                                         r.ccodprod,
                                                         UPPER( r.cdesprod ) descripcion,
                                                         n.cabrevia,

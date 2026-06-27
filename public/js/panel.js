@@ -34,15 +34,14 @@ $(function () {
 
             // ===== MAPEO DE CAMPOS (AJUSTA SEGÚN TU ESTRUCTURA) =====
             const ccodprod = item.ccodprod || item.codigo || item.codprod || "";
-            const cdesprod =
-              item.cdesprod || item.descripcion || item.nombre || "";
+            const cdesprod = item.cdesprod || item.descripcion || item.nombre || "";
             const unidad = item.unidad || item.cabrevia || item.umedida || "";
-            const stockActual =
-              parseFloat(item.stock_actual || item.ingresos || "0") || 0;
-            const stockMinimo =
-              parseFloat(item.stock_minimo || item.nminimo || "0") || 0;
+            const stockActual = parseFloat(item.stock_actual || item.ingresos || "0") || 0;
+            const stockMinimo = parseFloat(item.ntotal || item.ntotal || "0") || 0;
             const ingresos = parseFloat(item.ingresos || "0") || 0;
             const salidas = parseFloat(item.salidas || "0") || 0;
+            const stkActual = ((ingresos - salidas) || "0") ;
+            const stkMin = parseInt(stockMinimo*1.5);
 
             // Fecha
             let ffecha = item.ffecha || item.fecha || "";
@@ -77,26 +76,19 @@ $(function () {
 
             // ===== CONSTRUIR FILA =====
             row += `<tr class="pointer" 
-                          data-idproducto="${item.idprod || item.id_cprod || ""}"
                           data-costos="${item.idcostos || item.costos || ""}">
+                          <td class="textoCentro">${item.proyecto}</td>
                           <td>${ccodprod}</td>
                           <td>${cdesprod}</td>
-                          <td class="textoCentro">${unidad}</td>
-                          <td class="textoDerecha">${ingresos.toFixed(2)}</td>
-                          <td class="textoDerecha">${salidas.toFixed(2)}</td>
-                          <td class="textoDerecha">${stockActual.toFixed(2)}</td>
-                          <td class="textoDerecha">${stockMinimo > 0 ? stockMinimo.toFixed(2) : "-"}</td>
-                          <td class="textoCentro">${ffecha || "-"}</td>
+                          <td>${unidad}</td>
                           <td class="textoCentro">
-                              <span style="background:${colorEstado}; padding:4px 10px; border-radius:12px; font-size:11px; color:${textoColor}; font-weight:bold; display:inline-block; white-space:nowrap;">
+                             <span style="background:${colorEstado}; padding:4px 10px; border-radius:12px; font-size:11px; color:${textoColor}; font-weight:bold; display:inline-block; white-space:nowrap;">
                                   ${estado}
                               </span>
                           </td>
-                          <td class="textoCentro">
-                              <button class="btn-ver-detalle" data-id="${item.idprod || item.id_cprod || ""}" style="padding:4px 12px; background:#1e3c72; color:white; border:none; border-radius:4px; cursor:pointer;">
-                                  <i class="fas fa-eye"></i> Ver
-                              </button>
-                          </td>
+                          <td class="textoDerecha">${item.ffecha}</td>
+                          <td class="textoDerecha">${stkMin}</td>
+                          <td class="textoDerecha">${stkActual}</td>
                       </tr>`;
           });
 
