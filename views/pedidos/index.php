@@ -247,6 +247,7 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <!--VENTANA DE AYUDA PARA EL MODULO DE PEDIDOS-->
     <div class="modal" id="helpWindow">
         <div class="ventanaPregunta">
             <div>

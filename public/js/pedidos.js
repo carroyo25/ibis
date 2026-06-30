@@ -340,6 +340,7 @@ $(function () {
         $("#partida").val(data.cabecera[0].cdescripcion);
         $("#fecha_entrega").val(data.cabecera[0].entrega);
 
+        //SE ACTUALIZA PARA 311 - SERVICIOS CON PERSONAL
         if (data.cabecera[0].idtipomov == 38 || data.cabecera[0].idtipomov == 311) {
           $("#requestAprob").removeClass("desactivado");
           $("#sendItem").addClass("desactivado");
@@ -985,6 +986,8 @@ function changeStatus(aprobacion, tipo) {
     
     // Resetear estados primero (opcional)
     // $("#sendItem, #requestAprob").removeClass("desactivado");
+
+    //SE AGREGA EL VALOR 311 PARA SERVICIO CON PERSONAL
     
     switch(tipo) {
         case 38:

@@ -94,7 +94,7 @@
                 WHERE
                     lg_ordencab.id_centi = :enti 
                     AND lg_ordencab.nEstadoDoc = 60
-                    AND lg_ordencab.cper = YEAR(NOW()) 
+                    /*AND lg_ordencab.cper = YEAR(NOW()) */
                 ORDER BY
                     lg_ordencab.cnumero DESC";
             

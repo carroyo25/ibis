@@ -147,6 +147,7 @@
                         </select>
                     </div>
                     <div>
+                        <!-- SE AGREGO LA OPCION 311 -->
                         <label for="tipo">Tipo</label>
                         <select name="tipoSearch" id="tipoSearch">
                             <option value="-1">Elija Tipo</option>

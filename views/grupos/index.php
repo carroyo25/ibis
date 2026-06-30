@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
     <title>Document</title>
 </head>
 <body>
@@ -22,42 +25,45 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w40por">
-            <div class="cabezaProceso">
-                <form action="#" autocomplete="off" id="formProceso">
-                    <input type="hidden" name="codgrupo" id="codgrupo">
-                    <div class="barraOpciones primeraBarra">
-                        <span>Datos Generales</span>
-                        <div>
-                            <button type="button" id="grabarItem" title="Grabar Datos">
-                                <p><i class="far fa-save"></i> Grabar Registro</p> 
-                            </button>
-                            
-                            <button type="button" id="cerrarVentana" title="Cerrar">
-                                <i class="fas fa-window-close"></i>
-                            </button>
+        <div class="modalWrap">
+            <div class="modal-card">
+                <div class="cabezaProceso">
+                    <form action="#" autocomplete="off" id="formProceso">
+                        <input type="hidden" name="codgrupo" id="codgrupo">
+                        <div class="barraOpciones primeraBarra">
+                            <span>Datos Generales</span>
+                            <div>
+                                <button type="button" id="grabarItem" title="Grabar Datos">
+                                    <p><i class="far fa-save"></i> Grabar Registro</p> 
+                                </button>
+                                
+                                <button type="button" id="cerrarVentana" title="Cerrar">
+                                    <i class="fas fa-window-close"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dataProceso_flex_columna">
-                        <div class="seccion_izquierda">
-                            <div class="column2">
-                                <label for="clave">codigo. :</label>
-                                <input type="text" name="codigo" id="codigo" class="mayusculas obligatorio" autocomplete="off">
-                                <label for="clave">Nombre. :</label>
-                                <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
-                                <label>Tipo</label>
-                                <div class="controles_lineal">
-                                    <input type="radio" name="tipoClase" id="bien" value="37">
-                                    <label for="bien">Bien</label>
-                                    <input type="radio" name="tipoClase" id="servicio" value="38">
-                                    <label for="servicio">Servicio</label>
+                        <div class="dataProceso_flex_columna">
+                            <div class="seccion_izquierda">
+                                <div class="column2">
+                                    <label for="codigo">codigo. :</label>
+                                    <input type="text" name="codigo" id="codigo" class="mayusculas obligatorio" autocomplete="off">
+                                    <label for="nombre">Nombre. :</label>
+                                    <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
+                                    <label for="tipo">Tipo</label>
+                                    <div class="controles_lineal">
+                                        <input type="radio" name="tipoClase" id="bien" value="37">
+                                        <label for="bien">Bien</label>
+                                        <input type="radio" name="tipoClase" id="servicio" value="38">
+                                        <label for="servicio">Servicio</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
         </div>
+        </div>
+        
     </div>
     <div class="cabezaModulo">
         <h1>Catálogo Grupos</h1>
@@ -74,7 +80,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th width="10%">Codigo</th>
                     <th>Denominación</th>

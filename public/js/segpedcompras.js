@@ -35,7 +35,7 @@ $(function(){
                         $("#codigo_atencion").val(data.cabecera[0].nivelAten);
                         $("#emitido").val(data.cabecera[0].docPdfEmit);
                         $("#elabora").val(data.cabecera[0].cnombres);
-                        $("#numero").val(numero);
+                        $("#numero").val(data.cabecera[0].nrodoc);
                         $("#emision").val(data.cabecera[0].emision);
                         $("#costos").val(data.cabecera[0].proyecto);
                         $("#area").val(data.cabecera[0].area);
