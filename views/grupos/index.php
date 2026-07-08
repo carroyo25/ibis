@@ -45,9 +45,9 @@
                         <div class="dataProceso_flex_columna">
                             <div class="seccion_izquierda">
                                 <div class="column2">
-                                    <label for="codigo">codigo. :</label>
+                                    <label for="codigo">Codigo :</label>
                                     <input type="text" name="codigo" id="codigo" class="mayusculas obligatorio" autocomplete="off">
-                                    <label for="nombre">Nombre. :</label>
+                                    <label for="nombre">Nombre :</label>
                                     <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
                                     <label for="tipo">Tipo</label>
                                     <div class="controles_lineal">
@@ -87,8 +87,13 @@
                     <th width="3%">...</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php echo $this->listaGrupos;?>
+            <tbody id="tbodyGrupos">
+                <tr>
+                    <td colspan="9" style="text-align:center; padding:30px; color:#999;">
+                        <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
+                        No se encontraron resultados
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>

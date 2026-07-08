@@ -6,7 +6,6 @@
         }
 
         function render(){
-            $this->view->listaGrupos = $this->model->listarGrupos();
             $this->view->render('grupos/index');
         }
 
@@ -19,7 +18,11 @@
         }
 
         function actualizaTabla(){
-            echo $this->model->listarGrupos();
+            $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+            $limit = 15;
+            
+            $resultado = $this->model->listarGruposPaginados($_POST, $page, $limit);
+            echo json_encode($resultado);
         }
 
         function consultaId(){

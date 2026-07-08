@@ -6,36 +6,62 @@
             parent::__construct();
         }
 
-        public function listarGrupos(){
+        public function listarGruposPaginados($parametros, $page = 1, $limit = 15){
+            $offset = ($page - 1) * $limit;
+            $descrip = $parametros['descripcion'] == '' ? '%' : '%' . $parametros['descripcion'] . '%';
+
             try {
-                $salida = "";
+                $db = $this->db->connect();
+                
+                // Contar total
+                $sqlCount = "SELECT
+                                COUNT( g.ncodgrupo ) AS total 
+                            FROM
+                                tb_grupo g
+                            WHERE  g.nflgactivo = 1
+                                AND g.cdescrip LIKE :descripcion";
 
-                $sql = $this->db->connect()->query("SELECT ccodcata,cdescrip,ncodgrupo 
-                                            FROM tb_grupo 
-                                            WHERE nflgactivo = 1
-                                            ORDER BY ccodcata");
-                $sql->execute();
-                $rowCount = $sql->rowcount();
+                $stmt = $db->prepare($sqlCount);
+                $stmt->execute(["descripcion" => $descrip]);
+                $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
+                $totalPaginas = ceil($total / $limit);
 
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida .='<tr data-id ="'.$rs['ncodgrupo'].'" class="pointer">
-                                        <td class="textoCentro">'.$rs['ccodcata'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdescrip']).'</td>
-                                        <td class="textoCentro"><a href="'.$rs['ncodgrupo'].'"><i class="fas fa-trash-alt"></i></a></td>
-                                    </tr>';
-                    }
-                }else{
-                    $salida = '<tr>
-                            <td colspan="3" class="textoCentro">No hay registros</td>
-                        </tr>';
+                // Consulta con LIMIT
+                $sql = "SELECT g.ccodcata,
+                                UPPER(g.cdescrip) cdescrip,
+                                g.ncodgrupo 
+                        FROM tb_grupo g
+                        WHERE 
+                            g.nflgactivo = 1
+                            AND g.cdescrip LIKE :descripcion  
+                        ORDER BY ccodcata
+                        LIMIT :offset, :limit";
+
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(':descripcion', $descrip);
+                $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+                $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $data = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $data[] = $row;
                 }
 
-                return $salida;
+                //retorno del a funcion
+                return [
+                    'success' => true,
+                    'data' => $data,
+                    'total' => intval($total),
+                    'pagina' => $page,
+                    'total_paginas' => $totalPaginas
+                ];
 
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
+                return [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ];
             }
         }
 
@@ -70,7 +96,7 @@
                 $salida = array("respuesta"=>$respuesta,
                                  "mensaje"=>$mensaje,
                                  "clase"=>$clase,
-                                "items"=>$this->listarGrupos());
+                                "items"=>null);
                 return $salida;
 
             } catch (PDOException $th) {
@@ -112,7 +138,7 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_grupo SET nflgactivo = 0 WHERE ncodgrupo=:id");
                 $sql->execute([$id]);
 
-                return $this->listarGrupos();
+                //return $this->listarGrupos1();
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

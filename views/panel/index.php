@@ -85,9 +85,14 @@
                         </div>
                     </div>
                     <div class="header-actions">
-                        <button class="btn btn-enviar" id="btnEnviarCorreoMinimo">
-                            ✉️ Enviar por Correo
+                        <button class="btn btn-consultar" id="btnConsultar">
+                            🔍 Consultar
                         </button>
+
+                        <!--<button class="btn btn-enviar" id="btnEnviarCorreoMinimo">
+                            ✉️ Enviar por Correo
+                        </button>-->
+
                         <button class="btn btn-cerrar" id="btnCerrarMinimo">
                             ❌ Cerrar
                         </button>
@@ -127,6 +132,11 @@
                                 <!-- Los datos se insertarán aquí -->
                             </tbody>
                         </table>
+                    </div>
+                    <!--checkbottom para anular alertas-->
+                    <div class="boxNotify">
+                        <input type="checkbox" name="alert_cancel" id="alert_cancel" checked>
+                        <label for="alert_cancel">Cancelar la notificacion</label>
                     </div>
                 </div>
             </div>
