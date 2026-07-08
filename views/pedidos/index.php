@@ -343,6 +343,7 @@
                         <select name="tipoSearch" id="tipoSearch">
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
+                            <option value="311">Servicios con personal</option>
                         </select>
                     </div>
                     <div>

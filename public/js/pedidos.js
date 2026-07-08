@@ -107,9 +107,9 @@ $(function () {
     if (contenedor_padre == "listaCostos") {
       $("#codigo_costos").val(codigo);
       aprobacion = $(this).data("aprobacion");
-      
-      changeStatus( aprobacion,$("#codigo_tipo").val() );   
-      
+
+      changeStatus(aprobacion, $("#codigo_tipo").val());
+
       $.post(
         RUTA + "pedidos/numeroDocumento",
         { cc: codigo },
@@ -129,8 +129,7 @@ $(function () {
     } else if (contenedor_padre == "listaTipo") {
       $("#codigo_tipo").val(codigo);
 
-      changeStatus( aprobacion,$("#codigo_tipo").val() );
-
+      changeStatus(aprobacion, $("#codigo_tipo").val());
     } else if (contenedor_padre == "listaPartidas") {
       $("#codigo_partida").val(codigo);
     }
@@ -193,15 +192,28 @@ $(function () {
     return false;
   });
 
-  $("#tablaDetalles tbody").on("keypress", "input", function (e) {
-    if (e.which == 13) {
-      //para cambiar el foco con el enter
+  $("#tablaDetalles tbody").on("keydown", "input", function (e) {
+    // Usamos keydown en lugar de keypress (mejor compatibilidad)
+    if (e.key === "Enter" || e.keyCode === 13) {
+      e.preventDefault(); // Previene comportamientos no deseados
 
-      cb = parseInt($(this).attr("tabindex"));
+      const currentTabIndex = parseInt($(this).attr("tabindex"));
+      const nextTabIndex = currentTabIndex + 1;
 
-      if ($(":input[tabindex='" + (cb + 1) + "']") != null) {
-        $(":input[tabindex='" + (cb + 1) + "']").focus();
-        $(":input[tabindex='" + (cb + 1) + "']").select();
+      // Buscamos el siguiente input con tabindex
+      const $nextInput = $(`:input[tabindex="${nextTabIndex}"]`);
+
+      if ($nextInput.length > 0 && $nextInput.is(":visible")) {
+        // Si existe y está visible, movemos el foco
+        $nextInput.focus();
+        $nextInput.select();
+      } else {
+        // Opcional: Si no hay siguiente, buscar el primero (comportamiento cíclico)
+        const $firstInput = $(`:input[tabindex]`).first();
+        if ($firstInput.length > 0) {
+          $firstInput.focus();
+          $firstInput.select();
+        }
       }
     }
   });
@@ -341,7 +353,10 @@ $(function () {
         $("#fecha_entrega").val(data.cabecera[0].entrega);
 
         //SE ACTUALIZA PARA 311 - SERVICIOS CON PERSONAL
-        if (data.cabecera[0].idtipomov == 38 || data.cabecera[0].idtipomov == 311) {
+        if (
+          data.cabecera[0].idtipomov == 38 ||
+          data.cabecera[0].idtipomov == 311
+        ) {
           $("#requestAprob").removeClass("desactivado");
           $("#sendItem").addClass("desactivado");
         } else {
@@ -526,7 +541,7 @@ $(function () {
         $("#fileAtachs")[0].reset();
         $("#listaArchivos").empty();
       },
-  });
+    });
 
     return false;
   });
@@ -796,7 +811,7 @@ $(function () {
     return false;
   });
 
-  $(".btnHelp").click(function(e){
+  $(".btnHelp").click(function (e) {
     e.preventDefault();
 
     $("#helpWindow").fadeIn();
@@ -804,7 +819,7 @@ $(function () {
     return false;
   });
 
-  $("#btnCerraHelp").click(function(e){
+  $("#btnCerraHelp").click(function (e) {
     e.preventDefault();
 
     $("#helpWindow").fadeOut();
@@ -972,44 +987,43 @@ anularRequerimiento = (fila, id, usuario) => {
     });
 };
 
-
 function changeStatus(aprobacion, tipo) {
-    // Validaciones mejoradas
-    aprobacion = parseInt(aprobacion);
-    tipo = parseInt(tipo);
-    
-    // Si no hay tipo válido, desactivar ambos botones?
-    if (isNaN(tipo) || tipo === 0) {
-        $("#sendItem, #requestAprob").addClass("desactivado");
-        return;
-    }
-    
-    // Resetear estados primero (opcional)
-    // $("#sendItem, #requestAprob").removeClass("desactivado");
+  // Validaciones mejoradas
+  aprobacion = parseInt(aprobacion);
+  tipo = parseInt(tipo);
 
-    //SE AGREGA EL VALOR 311 PARA SERVICIO CON PERSONAL
-    
-    switch(tipo) {
-        case 38:
-            $("#requestAprob").removeClass("desactivado");
-            $("#sendItem").addClass("desactivado");
-            break;
-        case 311:
-            $("#requestAprob").removeClass("desactivado");
-            $("#sendItem").addClass("desactivado");
-            break;  
-        case 37:
-            if (aprobacion === 1) {
-                $("#sendItem").removeClass("desactivado");
-                $("#requestAprob").addClass("desactivado");
-            } else {
-                $("#sendItem").addClass("desactivado");
-                $("#requestAprob").removeClass("desactivado");
-            }
-            break;
-            
-        default:
-            console.log('🎯 Otro tipo:', tipo);
-            // Aquí puedes manejar otros tipos si es necesario
-    }
+  // Si no hay tipo válido, desactivar ambos botones?
+  if (isNaN(tipo) || tipo === 0) {
+    $("#sendItem, #requestAprob").addClass("desactivado");
+    return;
+  }
+
+  // Resetear estados primero (opcional)
+  // $("#sendItem, #requestAprob").removeClass("desactivado");
+
+  //SE AGREGA EL VALOR 311 PARA SERVICIO CON PERSONAL
+
+  switch (tipo) {
+    case 38:
+      $("#requestAprob").removeClass("desactivado");
+      $("#sendItem").addClass("desactivado");
+      break;
+    case 311:
+      $("#requestAprob").removeClass("desactivado");
+      $("#sendItem").addClass("desactivado");
+      break;
+    case 37:
+      if (aprobacion === 1) {
+        $("#sendItem").removeClass("desactivado");
+        $("#requestAprob").addClass("desactivado");
+      } else {
+        $("#sendItem").addClass("desactivado");
+        $("#requestAprob").removeClass("desactivado");
+      }
+      break;
+
+    default:
+      console.log("🎯 Otro tipo:", tipo);
+    // Aquí puedes manejar otros tipos si es necesario
+  }
 }
