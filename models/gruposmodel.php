@@ -29,7 +29,8 @@
                 // Consulta con LIMIT
                 $sql = "SELECT g.ccodcata,
                                 UPPER(g.cdescrip) cdescrip,
-                                g.ncodgrupo 
+                                g.ncodgrupo,
+                                g.ntipclase
                         FROM tb_grupo g
                         WHERE 
                             g.nflgactivo = 1
@@ -76,7 +77,6 @@
                     $mensaje = "Código de grupo duplicado";
                     $clase = "mensaje_error";
                 }else{
-
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_grupo 
                                                             SET ccodcata=:cod,cdescrip=:descrip,nnivclas=:niv,
                                                                 ntipclase=:tipo");

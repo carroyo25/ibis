@@ -16,13 +16,17 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+         <div class="modalWrap">
+            <div class="ventanaPreguntaEliminar">
+                <div class="modal-icon">⚠️</div>
+                <h2 class="modal-title">¿Eliminar registro?</h2>
+                <p class="modal-message">Esta acción no se puede deshacer. ¿Estás seguro de que deseas continuar?</p>
+                <div class="modal-buttons">
+                    <button class="btn-cancel" id="btnCancelarPregunta">Cancelar</button>
+                    <button class="btn-delete" id="btnAceptarPregunta">Sí, eliminar</button>
+                </div>
             </div>
-        </div>
+         </div>
     </div>
     <div class="modal" id="proceso">
         <div class="modalWrap">
@@ -66,7 +70,7 @@
         
     </div>
     <div class="cabezaModulo">
-        <h1>Catálogo Grupos</h1>
+        <h1>Grupos</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -97,6 +101,9 @@
             </tbody>
         </table>
     </div>
+     <!-- PAGINADOR -->
+    <div id="paginador"></div>
+    <!-- SCRIPTS -->
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/grupos.js?<?php echo constant('VERSION')?>"></script>

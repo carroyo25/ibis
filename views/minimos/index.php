@@ -106,7 +106,6 @@
                 </tr>
             </tbody>
         </table>
-        
     </div>
     <!-- PAGINADOR -->
     <div id="paginador"></div>

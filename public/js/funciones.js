@@ -776,3 +776,68 @@ async function permisosUsuario() {
   const data = await response.json();
   return data.datos;
 }
+
+// ===== GENERAR PAGINADOR =====
+  function paginador(ftotal,ftotalPaginas,fpagina){
+        const total = ftotal || 0;
+        const totalPaginas = ftotalPaginas || Math.ceil(total / 10) || 1;
+        const paginaActual = fpagina || 1;
+
+        let pag = `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; padding:10px 0; gap:10px;">
+                  <div style="font-size:14px; color:#666;">
+                      <i class="fas fa-database" style="margin-right:5px;"></i>
+                      <strong>${total}</strong> registros encontrados
+                  </div>
+                  <div style="display:flex; justify-content:center; align-items:center; gap:5px; flex-wrap:wrap;">`;
+
+        if (totalPaginas > 1) {
+          pag += `<button onclick="consultarDatos(${paginaActual - 1})" 
+                              style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${paginaActual <= 1 ? "opacity:0.5; cursor:not-allowed;" : ""}" 
+                              ${paginaActual <= 1 ? "disabled" : ""}>
+                              <i class="fas fa-chevron-left"></i>
+                          </button>`;
+
+          const maxPaginasMostrar = 5;
+          let inicioPaginas = Math.max(
+            1,
+            paginaActual - Math.floor(maxPaginasMostrar / 2),
+          );
+          let finPaginas = Math.min(
+            totalPaginas,
+            inicioPaginas + maxPaginasMostrar - 1,
+          );
+
+          if (finPaginas - inicioPaginas < maxPaginasMostrar - 1) {
+            inicioPaginas = Math.max(1, finPaginas - maxPaginasMostrar + 1);
+          }
+
+          if (inicioPaginas > 1) {
+            pag += `<span style="padding:5px 10px; color:#999;">…</span>`;
+          }
+
+          for (let i = inicioPaginas; i <= finPaginas; i++) {
+            const isActive = i === paginaActual;
+            pag += `<button onclick="consultarDatos(${i})" 
+                                      style="padding:5px 12px; border:1px solid #ddd; background:${isActive ? "#1e3c72" : "white"}; color:${isActive ? "white" : "#333"}; cursor:pointer; border-radius:4px; font-weight:${isActive ? "bold" : "normal"};">
+                                      ${i}
+                                  </button>`;
+          }
+
+          if (finPaginas < totalPaginas) {
+            pag += `<span style="padding:5px 10px; color:#999;">…</span>`;
+          }
+
+          pag += `<button onclick="consultarDatos(${paginaActual + 1})" 
+                              style="padding:5px 12px; border:1px solid #ddd; background:white; cursor:pointer; border-radius:4px; ${paginaActual >= totalPaginas ? "opacity:0.5; cursor:not-allowed;" : ""}" 
+                              ${paginaActual >= totalPaginas ? "disabled" : ""}>
+                              <i class="fas fa-chevron-right"></i>
+                          </button>`;
+
+          pag += `<span style="margin-left:10px; font-size:13px; color:#666;">Página ${paginaActual} de ${totalPaginas}</span>`;
+        } else {
+          pag += `<span style="font-size:13px; color:#999;">Página 1 de 1</span>`;
+        }
+
+        pag += `</div></div>`;
+        $("#paginador").html(pag);
+  }

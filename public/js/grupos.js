@@ -9,7 +9,9 @@ $(function () {
   $("#nuevoRegistro").click(function (e) {
     e.preventDefault();
 
-    $("#proceso").fadeIn();
+    $("#proceso").fadeIn(function(e){
+      $("#formProceso")[0].reset;
+    });
 
     accion = "n";
 
@@ -36,10 +38,7 @@ $(function () {
           { datos: result },
           function (data, textStatus, jqXHR) {
             mostrarMensaje(data.mensaje, data.clase);
-
-            $("#tablaPrincipal tbody").empty().append(data.items);
-
-            $("form")[0].reset();
+            $("#formProceso").trigger("reset");  // Alternativa con jQuery
           },
           "json",
         );
@@ -63,20 +62,11 @@ $(function () {
   $("#cerrarVentana").click(function (e) {
     e.preventDefault();
 
-    $("#proceso").fadeOut();
+    $("#proceso").fadeOut(function(e){
+      $("#formProceso").trigger("reset");  // Alternativa con jQuery
+    });
 
-    /*$.post(
-      RUTA + "grupos/actualizaTabla",
-      function (data, textStatus, jqXHR) {
-        $("#tablaPrincipal tbody").empty().append(data);
-        $("#proceso").fadeOut(function () {
-          if ($("#formProceso").length) {
-            $("#formProceso")[0].reset();
-          }
-        });
-      },
-      "text",
-    );*/
+    consultarDatos(1);
 
     return false;
   });
@@ -128,9 +118,9 @@ $(function () {
       RUTA + "grupos/desactivaGrupo",
       { id: index },
       function (data, textStatus, jqXHR) {
-        $("#tablaPrincipal tbody").empty().append(data);
-
-        $("#pregunta").fadeOut();
+        $("#pregunta").fadeOut(function(){
+          consultarDatos(1);
+        });
       },
       "text",
     );
@@ -138,13 +128,14 @@ $(function () {
     return false;
   });
 
-  /*$("#consulta").keyup(function () {
-    _this = this;
-    buscar(_this); // arrow function para activa el buscador
-  });*/
+  $("#consulta").keypress(function (e) {
+    if (e.which == 13) {
+      consultarDatos(1);
+    } 
+  });
 
   //FUNCION PRINCIPAL PARA CONSULTAR DATOS DE LA TABLA
-  async function consultarDatos(pagina){
+  async function consultarDatos(pagina) {
     pagina = pagina || 1;
     const descripcion = $("#consulta").val() || "";
 
@@ -154,42 +145,80 @@ $(function () {
     );
 
     let formData = new FormData();
-    formData.append('descripcion',descripcion);
+    formData.append("descripcion", descripcion);
     formData.append("page", pagina);
 
-    fetch(RUTA+"grupos/actualizaTabla",{
-        method:'POST',
-        body:formData
+    fetch(RUTA + "grupos/actualizaTabla", {
+      method: "POST",
+      body: formData,
     })
-    .then(response => response.json())
-    .then(data =>{
+      .then((response) => response.json())
+      .then((data) => {
         let row = "";
         let item = (pagina - 1) * 10 + 1;
+        let estado, colorFondo, textoColor, badge;
 
-        //VERIRICA SI HAY DATOS EN EL ARREGLO
+        //VERIFICA SI HAY DATOS EN EL ARREGLO
         if (data.success && data.data && data.data.length > 0) {
-            data.data.forEach(element => {
-                // ===== MAPEO DE CAMPOS =====
-                const ncodgrupo = element.ncodgrupo || "";
-                const ccodcata = element.ccodcata || "";
-                const cdescrip = element.cdescrip || "";
+          data.data.forEach((element) => {
+            // ===== MAPEO DE CAMPOS =====
+            const ncodgrupo = element.ncodgrupo || "";
+            const ccodcata = element.ccodcata || "";
+            const cdescrip = element.cdescrip || "";
 
-                // ===== CONSTRUIR FILA =====
-                row += `<tr data-id ="${ncodgrupo}" class="pointer">
-                        <td class="textoCentro">${ccodcata}</td>
-                        <td class="pl20px">${cdescrip}</td>
+            if (element.ntipclase == 37){
+              colorFondo = "linear-gradient(135deg, #17A2B8, #0F7A8A)";  // Azul/Cyan para B
+              textoColor = "white";
+              badge = "📦 ";
+            }else{
+              colorFondo = "linear-gradient(135deg, #1DAA61, #14854A)";  // Verde para S
+              textoColor = "white";
+              badge = "🛠️ ";  // Icono para Servicios
+            }
+
+            // ===== CONSTRUIR FILA =====
+            row += `<tr data-id ="${ncodgrupo}" class="pointer">
+                        <td class="textoCentro">
+                            <span style="background:${colorFondo}; 
+                                        padding:4px 10px; 
+                                        border-radius:12px; 
+                                        font-size:11px; 
+                                        color:${textoColor}; 
+                                        font-weight:bold; 
+                                        display:inline-block; 
+                                        white-space:nowrap;
+                                        width:50%">${ccodcata}
+                            </span>
+                        </td>
+                        <td class="pl20px">${badge + cdescrip}</td>
                         <td class="textoCentro"><a href="${ncodgrupo}"><i class="fas fa-trash-alt"></i></a></td>
                     </tr>`;
-            });
-        }else {
-          row = `<tr><td colspan="9" style="text-align:center; padding:30px; color:#999;">
+          });
+        } else {
+          //SI NO HAY ENVIA UNA FILA DE RESULTADO
+          row = `<tr>
+                    <td colspan="9" style="text-align:center; padding:30px; color:#999;">
                       <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
                       No se encontraron resultados
-                  </td></tr>`;
+                    </td>
+                </tr>`;
         }
 
         // ===== INSERTAR FILAS USANDO EL SELECTOR CORRECTO =====
         $("#tbodyGrupos").empty().append(row);
-    })
+
+        paginador(data.total,data.total_paginas,data.pagina)
+      })
+      .catch((error) => {
+        $("#tablaPrincipal tbody").html(
+          `<tr><td colspan="9" style="text-align:center; color:red; padding:40px;">
+                          <i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:10px;"></i>
+                          Error al cargar datos: ${error.message}
+                      </td></tr>`,
+        );
+        $("#paginador").empty();
+      });
   }
+
+  window.consultarDatos = consultarDatos;
 });
