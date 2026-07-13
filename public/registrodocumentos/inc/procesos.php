@@ -94,8 +94,9 @@
                 WHERE
                     lg_ordencab.id_centi = :enti 
                     AND lg_ordencab.nEstadoDoc = 60
-                    /*AND lg_ordencab.cper = YEAR(NOW()) */
+                    AND lg_ordencab.cper = YEAR(NOW())-1
                 ORDER BY
+                    lg_ordencab.ffechadoc DESC,
                     lg_ordencab.cnumero DESC";
             
             $stmt = $pdo->prepare($sql);

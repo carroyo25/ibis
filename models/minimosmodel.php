@@ -352,7 +352,7 @@
                     $docData[] = $row;
                 }
 
-                return array("datos"=>$docData,'success' => false,);
+                return array("datos"=>$docData,'success' => true);
             } catch (PDOException $e) {
                 return [
                     'success' => false,
