@@ -1,0 +1,156 @@
+.table-container {
+  overflow: auto;
+  border: 1px solid #e6ecf3;
+  border-radius: 10px;
+  max-height: 550px; /* Altura máxima con scroll */
+  position: relative;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Encabezado fijo */
+.table-container thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-container thead th {
+  background: #1e3c72;
+  padding: 12px 15px;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 2px solid #e6ecf3;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Sombra sutil para el encabezado fijo */
+.table-container thead::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 4px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), transparent);
+  pointer-events: none;
+}
+
+.grupo-row td {
+  background: #f7f9fc;
+  padding: 8px 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border-top: 2px solid #e6ecf3;
+  position: sticky;
+  top: 43px; /* Altura del encabezado */
+  z-index: 5;
+}
+.grupo-row td:hover {
+  background: #edf0f5;
+}
+.grupo-row .badge-grupo {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  margin-left: 8px;
+  background: #dbeafe;
+  color: #1a56db;
+}
+.grupo-row i:first-child {
+  margin-right: 10px;
+}
+.toggle-icon-clase {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #7a8a9e;
+  transition: 0.2s;
+}
+.toggle-icon-clase.cerrado {
+  transform: rotate(-90deg);
+}
+
+.item-row {
+  border-bottom: 1px solid #f0f2f5;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.item-row:hover {
+  background: #f7f9fc;
+}
+.item-row.oculto {
+  display: none;
+}
+.item-row td {
+  padding: 10px 15px;
+}
+.item-row .code {
+  font-weight: 600;
+  color: #2a7de1;
+  font-family: monospace;
+}
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.vacio td {
+  text-align: center;
+  padding: 40px;
+  color: #7a8a9e;
+}
+.cargando td {
+  text-align: center;
+  padding: 40px;
+  color: #7a8a9e;
+}
+
+/* =============================================
+           PAGINADOR
+        ============================================= */
+.paginador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.paginador .info {
+  color: #5a6a7a;
+  font-size: 14px;
+}
+.paginador .info strong {
+  color: #1a2634;
+}
+.paginador .botones {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.paginador .botones button {
+  padding: 5px 12px;
+  border: 1px solid #e6ecf3;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.paginador .botones button:hover:not(:disabled) {
+  background: #f0f2f5;
+}
+.paginador .botones button.active {
+  background: #2a7de1;
+  color: white;
+  border-color: #2a7de1;
+}
+.paginador .botones button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

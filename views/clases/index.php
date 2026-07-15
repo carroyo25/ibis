@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/clases.css">
     <title>Document</title>
 </head>
 <body>
@@ -71,8 +75,8 @@
     <div class="cabezaModulo">
         <h1>Catálogo Clases</h1>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">
@@ -82,19 +86,30 @@
         </div>
     </div>
     <div class="itemsTabla">
-        <table id="tablaPrincipal">
-            <thead>
+        <table id="tablaPrincipal" class="table-container">
+            <thead class="stickytop">
                 <tr>
                     <th width="10%">Codigo</th>
                     <th>Denominación</th>
                     <th width="3%">...</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php echo $this->listaClases;?>
+            <tbody id="clasesTbody">
+                <tr>
+                    <td colspan="3" style="text-align:center; padding:30px; color:#999;">
+                        <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
+                        No se encontraron resultados
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
+    <!-- PAGINADOR -->
+     <div class="paginador">
+        <div class="info" id="infoPaginador">Mostrando <strong>0</strong> - <strong>0</strong> de <strong>0</strong></div>
+        <div class="botones" id="botonesPaginador"></div>
+    </div>
+    <!-- SCRIPTS -->
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/clases.js?<?php echo constant('VERSION')?>"></script>

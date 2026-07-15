@@ -84,78 +84,6 @@
             } 
         }
 
-        public function listarTitulosGrupos(){
-            try {
-                $salida = "";
-
-                $sql = $this->db->connect()->query("SELECT
-                                                        tb_grupo.ncodgrupo,
-                                                        UPPER(tb_grupo.cdescrip) AS cdescrip,
-                                                        tb_grupo.ccodcata 
-                                                    FROM
-                                                        tb_grupo
-                                                        INNER JOIN tb_clase ON tb_grupo.ncodgrupo = tb_clase.ncodgrupo 
-                                                    WHERE
-                                                        tb_grupo.nflgactivo = 1 
-                                                    GROUP BY
-                                                        tb_grupo.ncodgrupo 
-                                                    ORDER BY
-                                                        tb_grupo.ccodcata ASC");
-                $sql->execute();
-                $rowCount = $sql->rowcount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida .='<tr class="tituloGrupo">
-                                        <td class="pl20px" colspan="3">'.$rs['ccodcata'].' - '.strtoupper($rs['cdescrip']).'</td>
-                                    </tr>'.$this->listarClases($rs['ncodgrupo']);
-                    }
-                }else{
-                    $salida = '<tr>
-                            <td colspan="3" class="textoCentro">No hay registros</td>
-                        </tr>';
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function consultarGrupoId($id){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                tb_clase.ncodgrupo,
-                                                tb_clase.ncodclase,
-                                                tb_clase.ccodcata,
-                                                tb_clase.cdescrip,
-                                                UPPER(
-                                                CONCAT( tb_grupo.ccodcata, ' - ', tb_grupo.cdescrip )) AS nombre_grupo 
-                                            FROM
-                                                tb_clase
-                                                INNER JOIN tb_grupo ON tb_clase.ncodgrupo = tb_grupo.ncodgrupo 
-                                            WHERE
-                                                tb_clase.ncodclase = :id");
-                 $sql->execute(["id"=>$id]);
-                 $rowCount = $sql->rowCount();
-                 
-                 if ($rowCount > 0) {
-                     $docData = array();
-                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                         $docData[] = $row;
-                     } 
-                 }
-
-                 return array("clase"=>$docData);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-
         private function existeItem($codigo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT ncodclase FROM tb_clase WHERE ccodcata =:codigo");
@@ -171,6 +99,133 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        /*NUEVA ESTRUCTURA DE DATOS*/
+        public function listarGruposConClases($parametros, $page = 1, $limit = 15){
+            $descripcion = $parametros['descripcion'] == '' ? '%':'%'.$parametros['descripcion'].'%';
+            
+            // Calcular offset
+            $offset = ($page - 1) * $limit;
+
+            try {
+                $resultado = [
+                    'grupos' => [],
+                    'total_clases' => 0,
+                    'total_paginas' => 0,
+                    'pagina_actual' => (int)$page
+                ];
+
+                // =============================================
+                // 1. CONSULTA PARA CONTAR TOTAL DE CLASES
+                // =============================================
+                $sqlCount = $this->db->connect()->prepare("
+                    SELECT 
+                        COUNT(*) AS total
+                    FROM 
+                        tb_grupo tg
+                        INNER JOIN tb_clase tc ON tg.ncodgrupo = tc.ncodgrupo
+                    WHERE 
+                        tg.nflgactivo = 1 
+                        AND tc.nflgactivo = 1
+                        AND tc.cdescrip LIKE :descripcion
+                ");
+                $sqlCount->execute(["descripcion" => $descripcion]);
+                $totalClases = $sqlCount->fetch(PDO::FETCH_ASSOC)['total'];
+                
+                $resultado['total_clases'] = (int)$totalClases;
+                $resultado['total_paginas'] = ceil($totalClases / $limit);
+
+            // =============================================
+            // 2. CONSULTA CON PAGINACIÓN (LIMIT Y OFFSET)
+            // =============================================
+            $sql = $this->db->connect()->prepare("SELECT 
+                    tg.ncodgrupo,
+                    tg.ccodcata AS grupo_codigo,
+                    UPPER(tg.cdescrip) AS grupo_descrip,
+                    tc.ncodclase,
+                    tc.ccodcata AS clase_codigo,
+                    UPPER(tc.cdescrip) AS clase_descrip
+                FROM 
+                    tb_grupo tg
+                    INNER JOIN tb_clase tc ON tg.ncodgrupo = tc.ncodgrupo
+                WHERE 
+                    tg.nflgactivo = 1 
+                    AND tc.nflgactivo = 1
+                    AND tc.cdescrip LIKE :descripcion
+                ORDER BY 
+                    tg.ccodcata ASC, 
+                    tc.ccodcata ASC
+                LIMIT :limit OFFSET :offset");
+
+            $sql->bindParam(':descripcion', $descripcion);
+            $sql->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $sql->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $sql->execute();
+            
+            $rows = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+            // =============================================
+            // 3. AGRUPAR LOS DATOS POR GRUPO
+            // =============================================
+            $gruposMap = [];
+
+            foreach ($rows as $row) {
+                $grupoId = $row['ncodgrupo'];
+                
+                // Si el grupo no existe en el mapa, crearlo
+                if (!isset($gruposMap[$grupoId])) {
+                    $gruposMap[$grupoId] = [
+                        'id' => (int)$row['ncodgrupo'],
+                        'codigo' => $row['grupo_codigo'],
+                        'nombre' => $row['grupo_descrip'],
+                        'color' => $this->getColorGrupo($row['grupo_codigo']),
+                        'icon' => $this->getIconGrupo($row['grupo_codigo']),
+                        'items' => []
+                    ];
+                }
+
+                // Agregar la clase al grupo
+                $gruposMap[$grupoId]['items'][] = [
+                    'code' => $row['clase_codigo'],
+                    'desc' => $row['clase_descrip'],
+                    'ncodclase' => (int)$row['ncodclase']
+                ];
+            }
+
+            // Convertir mapa a array indexado
+            $resultado['grupos'] = array_values($gruposMap);
+
+            return $resultado;
+            } catch (PDOException $th) {
+                error_log("Error en listarGruposConClases: " . $th->getMessage());
+                return false;
+            }
+        }
+
+        // Métodos auxiliares para colores e íconos
+        private function getColorGrupo($codigo)
+        {
+            $map = [
+                'B01' => 'b01',
+                'B02' => 'b02',
+                'B03' => 'b03',
+                'B04' => 'b04',
+                'B05' => 'b05'
+            ];
+            return $map[$codigo] ?? 'b01';
+        }
+
+        private function getIconGrupo($codigo)
+        {
+            $map = [
+                'B01' => 'fa-solid fa-pipe',
+                'B02' => 'fa-solid fa-gear',
+                'B03' => 'fa-solid fa-ruler',
+                'B04' => 'fa-solid fa-radio',
+                'B05' => 'fa-solid fa-laptop'
+            ];
+            return $map[$codigo] ?? 'fa-solid fa-folder';
         }
 
     }

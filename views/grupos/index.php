@@ -101,7 +101,7 @@
             </tbody>
         </table>
     </div>
-     <!-- PAGINADOR -->
+    <!-- PAGINADOR -->
     <div id="paginador"></div>
     <!-- SCRIPTS -->
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

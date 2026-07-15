@@ -7,7 +7,7 @@
 
         function render(){
             $this->view->listaGrupos = $this->model->obtenerGrupos();
-            $this->view->listaClases = $this->model->listarTitulosGrupos();
+            //$this->view->listaClases = $this->model->listarTitulosGrupos();
             $this->view->render('clases/index');
         }
 
@@ -29,6 +29,14 @@
 
         function desactivaClase(){
             echo $this->model->desactivar($_POST['id']);
+        }
+
+        function listarClases(){
+            $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+            $limit = 15;
+            
+            $resultado = $this->model->listarGruposConClases($_POST, $page, $limit);
+            echo json_encode($resultado);
         }
         
     }

@@ -30,6 +30,9 @@
                 <a href="click_upload" class="botones__click_accion"><i class="fas fa-upload"></i> <p>Subir Documentos</p></a>
                 <a href="click_download" class="botones__click_accion"><i class="fas fa-download"></i><p>Descargar Archivos</p></a>
                 <a href="click_send" class="botones__click_accion"><i class="fas fa-mail-bulk"></i><p>Enviar Archivos</p></a>
+                <a href="click_update" class="botones__click_accion"><i class="far fa-edit"></i><p>Actualizar Datos</p></a>
+                <a href="click_update_documents" class="botones__click_accion"><i class="fas fa-wrench"></i><p>Actualizar formatos</p></a>
+
             </div>
             <div class="acciones_sistema">
                 <a href="#" class="botones__click_accion"><i class="fas fa-sign-out-alt"></i><p>Cerrar Session</p></a>
