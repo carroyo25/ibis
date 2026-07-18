@@ -12,168 +12,14 @@ $(function () {
     consultarDatos(1);
   });
 
-  $(".ventanaProceso ").click(function (e) {
-    e.preventDefault();
-
-    $(".lista").slideUp();
-
-    return false;
-  });
-
   $("#nuevoRegistro").click(function (e) {
     e.preventDefault();
 
+    //abrirModal();
+
     $("#proceso").fadeIn();
-    accion = "n";
 
     return false;
-  });
-
-  $("#grupo").click(function (e) {
-    e.preventDefault();
-
-    $(this).next().slideDown();
-
-    return false;
-  });
-
-  $(".lista").on("click", "a", function (e) {
-    e.preventDefault();
-
-    let control = $(this).parent().parent().parent();
-    let destino = $(this).parent().parent().parent().prev();
-    let id = "";
-
-    control.slideUp();
-    destino.val($(this).text());
-    id = destino.attr("id");
-
-    $("#codgrupo").val($(this).attr("href"));
-    $("#codigo").val($(this).data("grupo"));
-
-    return false;
-  });
-
-  $("#grabarItem").click(function (e) {
-    e.preventDefault();
-
-    var result = {};
-
-    $.each($("#formProceso").serializeArray(), function () {
-      result[this.name] = this.value;
-    });
-
-    try {
-      if (result["codGrupo"] == "") throw "Escoja una clase";
-      if (result["codigo"] == "") throw "Ingrese el codigo de la clase";
-      if (result["descripcion"] == "") throw "Ingrese el nombre de la clase";
-
-      if (accion == "n")
-        $.post(
-          RUTA + "clases/nuevaClase",
-          { datos: result },
-          function (data, textStatus, jqXHR) {
-            $("#tablaPrincipal tbody").empty().append(data.items);
-            mostrarMensaje(data.mensaje, data.clase);
-            $("form")[0].reset();
-          },
-          "json",
-        );
-      else {
-        $.post(
-          RUTA + "clases/modificaClase",
-          { datos: result },
-          function (data, textStatus, jqXHR) {
-            mostrarMensaje(data.mensaje, data.clase);
-          },
-          "json",
-        );
-      }
-    } catch (error) {
-      mostrarMensaje(error, "mensaje_error");
-    }
-
-    return false;
-  });
-
-  $("#cerrarVentana").click(function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "clases/actualizaTabla",
-      function (data, textStatus, jqXHR) {
-        $("form")[0].reset();
-        $(".lista").hide();
-        $("#tablaPrincipal tbody").empty().append(data);
-        $("#proceso").fadeOut();
-      },
-      "text",
-    );
-
-    return false;
-  });
-
-  $("#tablaPrincipal tbody").on("click", ".pointer", function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "clases/claseId",
-      { id: $(this).data("id") },
-      function (data, textStatus, jqXHR) {
-        $("#codclase").val(data.clase[0].ncodclase);
-        $("#codgrupo").val(data.clase[0].ncodgrupo);
-        $("#grupo").val(data.clase[0].nombre_grupo);
-        $("#codigo").val(data.clase[0].ccodcata);
-        $("#descripcion").val(data.clase[0].cdescrip);
-
-        $("#proceso").fadeIn();
-        accion = "u";
-      },
-      "json",
-    );
-
-    return false;
-  });
-
-  $("#tablaPrincipal tbody").on("click", ".pointer a", function (e) {
-    e.preventDefault();
-
-    index = $(this).attr("href");
-
-    $("#pregunta").fadeIn();
-
-    return false;
-  });
-
-  $("#btnCancelarPregunta").click(function (e) {
-    e.preventDefault();
-
-    $("#pregunta").fadeOut();
-
-    return false;
-  });
-
-  $("#btnAceptarPregunta").click(function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "clases/desactivaClase",
-      { id: index },
-      function (data, textStatus, jqXHR) {
-        $("#tablaPrincipal tbody").empty().append(data);
-
-        $("#pregunta").fadeOut();
-      },
-      "text",
-    );
-
-    return false;
-  });
-
-  $("#consulta").keypress(function (e) {
-    if (e.which == 13) {
-      consultarDatos(1);
-    } 
   });
 
   // =============================================
@@ -199,7 +45,6 @@ $(function () {
       })
         .then((response) => response.json())
         .then((data) => {
-
           if (data && data.grupos) {
             datosGrupos = data.grupos;
             totalRegistros = data.total_clases || 0;
@@ -226,7 +71,10 @@ $(function () {
           tbody.innerHTML = `
                 <tr class="vacio"><td colspan="2"><i class="fas fa-exclamation-circle" style="font-size:24px;display:block;margin-bottom:10px;color:#e74c3c;"></i>Error al cargar datos</td></tr>
             `;
-          mostrarMensaje("Error al cargar datos: " + error.message, "mensaje_error");
+          mostrarMensaje(
+            "Error al cargar datos: " + error.message,
+            "mensaje_error",
+          );
         });
     } catch (error) {
       mostrarMensaje(error.message, "error");
@@ -278,76 +126,77 @@ $(function () {
       });
     });
   }
-// =============================================
-// PAGINADOR
-// =============================================
-function actualizarPaginador(pagina) {
+  // =============================================
+  // PAGINADOR
+  // =============================================
+  function actualizarPaginador(pagina) {
     paginaActual = pagina;
     const totalPaginas = Math.ceil(totalRegistros / POR_PAGINA) || 1;
-    
+
     const inicio = (pagina - 1) * POR_PAGINA + 1;
     const fin = Math.min(pagina * POR_PAGINA, totalRegistros);
-    document.getElementById('infoPaginador').innerHTML = 
-        `Mostrando <strong>${totalRegistros > 0 ? inicio : 0}</strong> - <strong>${fin}</strong> de <strong>${totalRegistros}</strong>`;
-    
-    let botones = '';
-    
+    document.getElementById("infoPaginador").innerHTML =
+      `Mostrando <strong>${totalRegistros > 0 ? inicio : 0}</strong> - <strong>${fin}</strong> de <strong>${totalRegistros}</strong>`;
+
+    let botones = "";
+
     // Botón Anterior
-    botones += `<button class="page-btn" data-page="${pagina - 1}" ${pagina <= 1 ? 'disabled' : ''}>
+    botones += `<button class="page-btn" data-page="${pagina - 1}" ${pagina <= 1 ? "disabled" : ""}>
         <i class="fas fa-chevron-left"></i>
     </button>`;
-    
+
     // Calcular rango de páginas a mostrar
     let inicioPag = Math.max(1, pagina - 3);
     let finPag = Math.min(totalPaginas, pagina + 3);
-    
+
     if (finPag - inicioPag < 6) {
-        if (inicioPag === 1) finPag = Math.min(7, totalPaginas);
-        else if (finPag === totalPaginas) inicioPag = Math.max(1, totalPaginas - 6);
+      if (inicioPag === 1) finPag = Math.min(7, totalPaginas);
+      else if (finPag === totalPaginas)
+        inicioPag = Math.max(1, totalPaginas - 6);
     }
-    
+
     // Primera página y puntos suspensivos
     if (inicioPag > 1) {
-        botones += `<button class="page-btn" data-page="1">1</button>`;
-        if (inicioPag > 2) botones += `<button disabled>...</button>`;
+      botones += `<button class="page-btn" data-page="1">1</button>`;
+      if (inicioPag > 2) botones += `<button disabled>...</button>`;
     }
-    
+
     // Páginas del medio
     for (let i = inicioPag; i <= finPag; i++) {
-        botones += `<button class="page-btn ${i === pagina ? 'active' : ''}" data-page="${i}">${i}</button>`;
+      botones += `<button class="page-btn ${i === pagina ? "active" : ""}" data-page="${i}">${i}</button>`;
     }
-    
+
     // Última página y puntos suspensivos
     if (finPag < totalPaginas) {
-        if (finPag < totalPaginas - 1) botones += `<button disabled>...</button>`;
-        botones += `<button class="page-btn" data-page="${totalPaginas}">${totalPaginas}</button>`;
+      if (finPag < totalPaginas - 1) botones += `<button disabled>...</button>`;
+      botones += `<button class="page-btn" data-page="${totalPaginas}">${totalPaginas}</button>`;
     }
-    
+
     // Botón Siguiente
-    botones += `<button class="page-btn" data-page="${pagina + 1}" ${pagina >= totalPaginas ? 'disabled' : ''}>
+    botones += `<button class="page-btn" data-page="${pagina + 1}" ${pagina >= totalPaginas ? "disabled" : ""}>
         <i class="fas fa-chevron-right"></i>
     </button>`;
-    
-    // Insertar botones en el HTML
-    document.getElementById('botonesPaginador').innerHTML = botones;
-    
-    // 🔥 Agregar event listeners a todos los botones de página
-    document.querySelectorAll('.page-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const page = parseInt(this.dataset.page);
-            irPagina(page);
-        });
-    });
-}
 
-// =============================================
-// FUNCIÓN IR A PÁGINA (GLOBAL)
-// =============================================
-function irPagina(pagina) {
+    // Insertar botones en el HTML
+    document.getElementById("botonesPaginador").innerHTML = botones;
+
+    // 🔥 Agregar event listeners a todos los botones de página
+    document.querySelectorAll(".page-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const page = parseInt(this.dataset.page);
+        irPagina(page);
+      });
+    });
+  }
+
+  // =============================================
+  // FUNCIÓN IR A PÁGINA (GLOBAL)
+  // =============================================
+  function irPagina(pagina) {
     const totalPaginas = Math.ceil(totalRegistros / POR_PAGINA) || 1;
     if (pagina < 1 || pagina > totalPaginas) return;
     consultarDatos(pagina);
-}
+  }
 
   // =============================================
   // ESTADOS DE EXPANSIÓN
@@ -397,5 +246,53 @@ function irPagina(pagina) {
     datosGrupos.forEach((g) => {
       select.innerHTML += `<option value="${g.id || g.codigo}">${g.codigo || g.id} - ${g.nombre}</option>`;
     });
+  }
+
+  // =============================================
+  // MODAL
+  // =============================================
+  function abrirModal(grupoId = null, codigo = null) {
+    document.getElementById("modalOverlay").classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    document.getElementById("editId").value = "";
+    document.getElementById("ccInput").value = "";
+    document.getElementById("codigoInput").value = "";
+    document.getElementById("nombreInput").value = "";
+    document.getElementById("codigoInput").classList.remove("error");
+    document.getElementById("btnEliminar").style.display = "none";
+    document.getElementById("labelGuardar").textContent = "Guardar";
+    document.getElementById("modalTitulo").innerHTML =
+      '<i class="fas fa-plus-circle"></i> Agregar Clase';
+    document.getElementById("previewGrupo").textContent = "B??";
+    document.getElementById("previewCodigo").textContent = "XXXX";
+
+    if (grupoId && codigo) {
+      const grupo = datosGrupos.find((g) => (g.id || g.codigo) == grupoId);
+      if (grupo) {
+        const item = grupo.items.find((i) => i.code === codigo);
+        if (item) {
+          document.getElementById("editId").value =
+            item.ncodclase || item.id || "";
+          document.getElementById("grupoSelect").value = grupoId;
+          document.getElementById("ccInput").value =
+            item.cc || grupo.codigo || "";
+          document.getElementById("codigoInput").value = item.code;
+          document.getElementById("nombreInput").value = item.desc;
+          document.getElementById("labelGuardar").textContent = "Actualizar";
+          document.getElementById("modalTitulo").innerHTML =
+            '<i class="fas fa-edit"></i> Editar Clase';
+          document.getElementById("btnEliminar").style.display = "inline-block";
+          actualizarPreview();
+        }
+      }
+    }
+
+    setTimeout(() => document.getElementById("grupoSelect").focus(), 300);
+  }
+
+  function cerrarModal() {
+    document.getElementById("modalOverlay").classList.remove("active");
+    document.body.style.overflow = "";
   }
 });

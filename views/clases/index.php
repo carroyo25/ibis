@@ -25,52 +25,69 @@
             </div>
         </div>
     </div>
+   
+    <!-- ============================================= -->
+    <!-- MODAL PARA AGREGAR/EDITAR -->
+    <!-- ============================================= -->
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w40por">
-            <div class="cabezaProceso">
-                <form action="#" autocomplete="off" id="formProceso">
+        <div class="modalWrap">
+            <div class="dialog_register">
+               <div class="modal-header-register">
+                    <h2 id="modalTitulo">
+                        <i class="fas fa-plus-circle"></i> Agregar Clase
+                    </h2>
+                    <button class="cerrar" onclick="cerrarModal()">&times;</button>
+                </div>
+                <form id="formClase" onsubmit="guardarClase(event)">
+                    <!-- Campo oculto para ID en edición -->
+                    <input type="hidden" id="editId" value="">
                     <input type="hidden" name="codgrupo" id="codgrupo">
                     <input type="hidden" name="codclase" id="codclase">
                     
-                    <div class="barraOpciones primeraBarra">
-                        <span>Datos del grupo</span>
-                        <div>
-                            <button type="button" id="grabarItem" title="Grabar Datos">
-                                <p><i class="far fa-save"></i> Grabar Registro</p> 
-                            </button>
-                            
-                            <button type="button" id="cerrarVentana" title="Cerrar">
-                                <i class="fas fa-window-close"></i>
-                            </button>
-                        </div>
+                    <!-- Grupo -->
+                    <label class="obligatorio">Grupo</label>
+                    <select id="grupoSelect" required>
+                        <option value="">Seleccione...</option>
+                    </select>
+                    
+                    <!-- CC (Código de Categoría) -->
+                    <label class="obligatorio">CG (Código de Grupo)</label>
+                    <input type="text" id="ccInput" placeholder="Ej: B01" readOnly>
+                    <span class="helper">Código de la categoría (ej: B01, B02, etc.)</span>
+                    
+                    <!-- Código Clase -->
+                    <label class="obligatorio">Código Clase</label>
+                    <input type="text" id="codigoInput" placeholder="Ej: B0104" required oninput="validarCodigo(this)">
+                    <span class="helper">Formato: Letra + 4 dígitos (ej: B0104)</span>
+                    
+                    <!-- Nombre Clase -->
+                    <label class="obligatorio">Nombre</label>
+                    <input type="text" id="nombreInput" placeholder="Nombre de la clase" required>
+                    
+                    <!-- Vista previa -->
+                    <div style="background:#f0f7ff; border:2px dashed #2a7de1; border-radius:8px; padding:8px 15px; margin:10px 0;">
+                        <i class="fas fa-code" style="color:#2a7de1;"></i>
+                        <span style="font-weight:700;font-family:monospace;">
+                            <span id="previewGrupo">B??</span> - <span id="previewCodigo">XXXX</span>
+                        </span>
                     </div>
-                    <div class="dataProceso_flex_columna">
-                        <div class="seccion_izquierda">
-                            <div class="column2_9">
-                                <label for="clase">Grupo:</label>
-                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio busqueda" placeholder="Seleccione una opcion">
-                                <div class="lista" id="listaClase">
-                                    <ul>
-                                        <?php echo $this->listaGrupos?>
-                                    </ul> 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="barraOpciones">
-                            <span>Datos de la Clase</span>
-                        </div>
-                        <div class="seccion_derecha">
-                        <div class="column2_9">
-                                <label for="codigo">Codigo Clase:</label>
-                                <input type="text" name="codigo" id="codigo" class="mayusculas obligatorio" autocomplete="off">
-                                <label for="clave">Nombre Clase:</label>
-                                <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
-                            </div>
-                        </div>
+                    
+                    <!-- Botones -->
+                    <div class="acciones">
+                        <button type="button" class="btn btn-danger" id="btnEliminar" style="display:none;" onclick="eliminarClase()">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                        <button type="button" class="btn btn-cancel" onclick="cerrarModal()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">
+                            <i class="fas fa-save"></i> <span id="labelGuardar">Guardar</span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
+        
     </div>
     <div class="cabezaModulo">
         <h1>Catálogo Clases</h1>
