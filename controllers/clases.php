@@ -39,5 +39,8 @@
             echo json_encode($resultado);
         }
         
+        function grupos(){
+            echo json_encode($this->model->grupos_listado());
+        }
     }
 ?>

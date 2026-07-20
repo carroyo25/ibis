@@ -50,11 +50,6 @@
                         <option value="">Seleccione...</option>
                     </select>
                     
-                    <!-- CC (Código de Categoría) -->
-                    <label class="obligatorio">CG (Código de Grupo)</label>
-                    <input type="text" id="ccInput" placeholder="Ej: B01" readOnly>
-                    <span class="helper">Código de la categoría (ej: B01, B02, etc.)</span>
-                    
                     <!-- Código Clase -->
                     <label class="obligatorio">Código Clase</label>
                     <input type="text" id="codigoInput" placeholder="Ej: B0104" required oninput="validarCodigo(this)">

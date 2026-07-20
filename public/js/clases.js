@@ -15,12 +15,20 @@ $(function () {
   $("#nuevoRegistro").click(function (e) {
     e.preventDefault();
 
-    //abrirModal();
-
     $("#proceso").fadeIn();
 
     return false;
   });
+
+
+  $("#grupoSelect").change((e) =>{
+    e.preventDefault();
+
+    console.log(e.target.value);
+
+    return false;
+  })
+
 
   // =============================================
   // CONSULTAR DATOS
@@ -64,7 +72,7 @@ $(function () {
           }
 
           // Llenar select de grupos para el modal
-          //llenarSelectGrupos();
+          llenarSelectGrupos();
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -242,10 +250,17 @@ $(function () {
   // =============================================
   function llenarSelectGrupos() {
     const select = document.getElementById("grupoSelect");
-    select.innerHTML = '<option value="">Seleccione...</option>';
-    datosGrupos.forEach((g) => {
-      select.innerHTML += `<option value="${g.id || g.codigo}">${g.codigo || g.id} - ${g.nombre}</option>`;
-    });
+    select.innerHTML = '<option value="-1">Seleccione...</option>';
+
+    fetch(RUTA+'clases/grupos',{
+      method:'POST',
+    })
+    .then(response=>response.json())
+    .then(data=>{
+      data.datos.forEach((g) =>{
+        select.innerHTML += `<option value="${g.id}">${g.codigo} - ${g.descripcion}</option>`;
+      })
+    })
   }
 
   // =============================================

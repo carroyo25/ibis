@@ -5788,5 +5788,31 @@
                 return false;
             }  
         }
+
+        /*ACTUALIZAIONES PARA LOS SELECTS*/
+        public function grupos_listado(){
+            try{
+                $docData = [];
+
+                $sql=$this->db->connect()->query("SELECT g.ncodgrupo id,
+                                                        g.ccodcata codigo,
+                                                        UPPER(g.cdescrip) descripcion,
+                                                        g.ntipclase clase,
+                                                        g.nflgactivo
+                                                FROM tb_grupo g
+                                                WHERE g.nflgactivo = 1
+                                                ORDER BY g.ccodcata, g.cdescrip");
+                $sql->execute();
+                
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+
+            }catch (PDOException $th) {
+                return $th->getMessage();
+            }
+        }
     }
 ?>
