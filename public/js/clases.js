@@ -24,6 +24,15 @@ $(function () {
   $("#grupoSelect").change((e) =>{
     e.preventDefault();
 
+    const select = document.getElementById('grupoSelect');
+    const grupoId = select.value;           // Obtiene el value (ej: "3")
+    const grupoCodigo = select.options[select.selectedIndex].getAttribute('data-codigo'); // Obtiene B03
+
+    let formData = new FormData();
+    formData.append('indice',e.target.value);
+    formData.append('codigo',grupoCodigo);
+
+    //fetch
     console.log(e.target.value);
 
     return false;
@@ -258,7 +267,7 @@ $(function () {
     .then(response=>response.json())
     .then(data=>{
       data.datos.forEach((g) =>{
-        select.innerHTML += `<option value="${g.id}">${g.codigo} - ${g.descripcion}</option>`;
+        select.innerHTML += `<option value="${g.id}" data="${g.codigo}">${g.codigo} - ${g.descripcion}</option>`;
       })
     })
   }

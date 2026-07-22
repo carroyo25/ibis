@@ -864,9 +864,6 @@ itemsPreview = () => {
   return DATA;
 };
 
-$(selected).on('change', function() {
-});
-
 itemsSave = () => {
   DATA = [];
   let TABLA = $("#tablaDetalles tbody >tr");

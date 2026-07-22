@@ -681,15 +681,15 @@ $(function(){
         formData.append("adicionales",JSON.stringify(adicionales()));
 
         try {
-            if ( accion == "" ) throw "Orden grabada";
-            if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
-            if (result['numero'] == "") throw "No tiene numero de orden";
-            if (result['dias'] == "") throw "ingrese el numero de dias";
-            if (result['codigo_moneda'] == "") throw "Elija la moneda";
-            if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            if (result['total'] == "") throw "No se registro el total de la orden";
-            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
-            if ($("#id_user").val() <= "") throw "Error General";
+            if ( accion == "" ) throw new Error("Orden grabada");
+            if ($("#codigo_estado").val() == 59) throw new Error("La orden esta en firmas.");
+            if (result['numero'] == "") throw new Error("No tiene numero de orden");
+            if (result['dias'] == "") throw new Error("ingrese el numero de dias");
+            if (result['codigo_moneda'] == "") throw new Error("Elija la moneda");
+            if (result['codigo_pago'] == "") throw new Error("Elija el tipo de pago");
+            if (result['total'] == "") throw new Error("No se registro el total de la orden");
+            if ($("#tablaDetalles tbody tr") .length <= 0) throw new Error("No tiene items cargados");
+            if ($("#id_user").val() <= "") throw new Error("Error General");
 
             grabado = true;
             
