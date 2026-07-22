@@ -725,7 +725,6 @@ $(function(){
                                     $("#it").val(),
                                     response.orden,
                                     $("#codigo_moneda").val());
-
                             
                         accion = ' ';
                     }
