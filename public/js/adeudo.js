@@ -1,7 +1,7 @@
 $(function(){
    $("#esperar").fadeOut();
 
-    if ( ($("#id_user").val() == '62145bbb5a092') || ($("#id_user").val() == '65e8da9840aaa')){
+    if ( ($("#id_user").val() == '62145bbb5a092') || ($("#id_user").val() == '69bc594a41239')){
         $("#btnGrabarKardex").removeClass('oculto');
         $("#btnFirmar").addClass('oculto');
     }else{

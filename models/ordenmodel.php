@@ -263,10 +263,6 @@
             $salida = array("pedido"=>$datosPedido,
                             "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
                             "cambio"=>$cambio);
-            
-            /*$salida = array("pedido"=>$datosPedido,
-                            "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
-                            "cambio"=>$cambio->compra);*/
 
             return $salida;
         }
@@ -793,15 +789,53 @@
 
         private function generarNumeroOrden(){
             try {
-                $sql = $this->db->connect()->query("SELECT COUNT(cnumero) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
-
-                $sql->execute();
-
-                $result = $sql->fetchAll();
+                $db = $this->db->connect();
+                $db->beginTransaction();
                 
-                return $result[0]['numero']+1;
+                // Bloquear la tabla para evitar condiciones de carrera
+                $sqlLock = $db->query("LOCK TABLES lg_ordencab WRITE");
+                
+                // Obtener el máximo número
+                $sqlMax = $db->query("
+                    SELECT MAX(CAST(cnumero AS UNSIGNED)) AS max_numero 
+                    FROM lg_ordencab 
+                    WHERE YEAR(fregsys) = YEAR(NOW())
+                ");
+                $sqlMax->execute();
+                $resultMax = $sqlMax->fetchAll();
+                
+                $nuevoNumero = ($resultMax[0]['max_numero'] === null) ? 1 : $resultMax[0]['max_numero'] + 1;
+                
+                // Verificar si ese número ya existe (por si acaso)
+                $sqlCheck = $db->prepare("
+                    SELECT COUNT(*) AS existe 
+                    FROM lg_ordencab 
+                    WHERE cnumero = :numero 
+                    AND YEAR(fregsys) = YEAR(NOW())
+                ");
+                $sqlCheck->execute([':numero' => $nuevoNumero]);
+                $resultCheck = $sqlCheck->fetchAll();
+                
+                // Si existe, buscar el siguiente disponible
+                while ($resultCheck[0]['existe'] > 0) {
+                    $nuevoNumero++;
+                    $sqlCheck->execute([':numero' => $nuevoNumero]);
+                    $resultCheck = $sqlCheck->fetchAll();
+                }
+                
+                // Desbloquear tabla
+                $db->query("UNLOCK TABLES");
+                
+                $db->commit();
+                
+                return $nuevoNumero;
+                
             } catch (PDOException $th) {
-                echo $th->getMessage();
+                if (isset($db)) {
+                    $db->rollBack();
+                    $db->query("UNLOCK TABLES");
+                }
+                error_log("Error en generarNumeroOrden: " . $th->getMessage());
                 return false;
             }
         }
