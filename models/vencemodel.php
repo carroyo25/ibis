@@ -21,6 +21,7 @@
                                                 alm_existencia.nguia,
                                                 DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
                                                 cm_producto.ccodprod,
+                                                cm_producto.id_cprod,
                                                 UPPER( cm_producto.cdesprod ) AS producto,
                                                 alm_cabexist.idcostos,
                                                 tb_proyectos.ccodproy,
@@ -106,6 +107,7 @@
                                          <td class="textoDerecha">'.number_format($rs['ingresos'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($saldo,2,'.','').'</td>
+                                         <td class="textoDerecha"><a href="'.$rs['id_cprod'].'"><i class="far fa-edit"></i></a></td>
                                     </tr>';
                         }
                         
@@ -408,8 +410,53 @@
                 return $salida;
 
             } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
+                return array("mensaje" =>$th->getMessage());
+            }
+        }
+
+        public function registrarVencimiento($parametros){
+            try {
+                $cc = $parametros['costos'];
+                $id = $parametros['codigo'];
+                $fecha = $parametros['fecha'];
+
+                $mensaje = 'No hay items registrados';
+                $success = false;
+                $counter = 0;
+
+                $sql = $this->db->connect()->prepare("SELECT e.codprod registros 
+                                                        FROM alm_existencia e
+                                                        LEFT JOIN alm_cabexist c ON c.idreg = e.idregistro
+                                                        WHERE e.codprod = :id
+                                                        AND c.idcostos = :costos");
+                
+                $sql ->execute(["id"=>$id,"costos"=>$cc]);
+                $counter = $sql->rowCount();
+
+                if ($counter > 0){
+                    $sql = $this->db->connect()->prepare("UPDATE alm_existencia e
+                                                            INNER JOIN alm_cabexist c ON c.idreg = e.idregistro
+                                                            SET e.vence = :fecha
+                                                            WHERE e.codprod = :id
+                                                            AND c.idcostos = :costos
+                                                            AND e.vence = '0000-00-00';");
+                
+                    $sql ->execute(["id"=>$id,"costos"=>$cc,"fecha"=>$fecha]);
+
+                    $mensaje = "Registros actualizados";
+                    $success = true;
+                    $counter = $sql->rowCount();
+
+                }else{
+                    $mensaje = "No existe registro del producto";
+                    $success = false;
+                    $counter = 0;
+                }
+
+                return array("mensaje"=>$mensaje,"success"=>$success, "registros"=>$counter);
+
+            } catch (PDOException $th) {
+                return array("mensaje" =>$th->getMessage());
             }
         }
     }

@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/wregistro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
     <div class="modal" id="esperar">
@@ -85,9 +87,59 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="registrar">
+        <div class="ventanaPregunta">
+             <div class="card">
+
+                <!-- Encabezado -->
+                <div class="card-header">
+                    <i class="fas fa-boxes"></i>
+                    <h2>Registro de <span>Productos</span></h2>
+                </div>
+
+                <!-- Formulario -->
+                <form id="productForm">
+
+                    <!-- Código -->
+                    <div class="form-group">
+                        <label for="codigo"><i class="fas fa-barcode"></i> Código</label>
+                        <input type="text" id="codigo" placeholder="Ej: PRD-001" />
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="form-group">
+                        <label for="descripcion"><i class="fas fa-align-left"></i> Descripción</label>
+                        <input type="text" id="descripcion"/>
+                    </div>
+
+                    <!-- Fecha de Vencimiento -->
+                    <div class="form-group">
+                        <label for="fecha"><i class="fas fa-calendar-alt"></i> Fecha Vencimiento</label>
+                        <div class="date-wrapper">
+                            <input type="text" id="fecha" placeholder="dd/mm/aaaa" />
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="button-row">
+                        <button type="button" class="btn btn-primary" id="btnAcceptRegister">
+                            <i class="fas fa-check"></i> Aceptar
+                        </button>
+                        <button type="reset" class="btn btn-secondary" id="btnCancelRegister">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Reporte de Vencimiento</h1>
         <div>
+            <a href="#" id="registrarlnk"><i class="fas fa-folder-plus"></i><p>Registrar</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="sendNotificacion"><i class="fas fa-mail-bulk"></i><p>Notificar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -130,6 +182,7 @@
                     <th>Cantidad</br> Ingresada</th>
                     <th>Cantidad</br> Consumida</th>
                     <th>Saldo</th>
+                    <th>...</th>
                 </tr>
             </thead>
             <tbody>

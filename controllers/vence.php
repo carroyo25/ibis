@@ -26,5 +26,9 @@
         function enviaNotificacion() {
             echo json_encode($this->model->notificarVencimientos($_POST['costos'],$_POST['codigo'],$_POST['descripcion']));
         }
+
+        function registraVencimiento(){
+            echo json_encode($this->model->registrarVencimiento($_POST));
+        }
     }
 ?>

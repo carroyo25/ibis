@@ -1,110 +1,224 @@
 $(() => {
-    $("#esperar").fadeOut();
+  $("#esperar").fadeOut();
 
-    $("#btnConsulta").click(function(e){
-        e.preventDefault();
+  let producto = "";
 
-        $.post(RUTA+"vence/consulta",{cc:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#descripcionSearch").val()},
-            function (data, text, requestXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
-            },
-            "text"
-        );
+  // ===== MÁSCARA PARA FECHA (dd/mm/aaaa) =====
+  const fechaInput = document.getElementById("fecha");
 
-        return false;
-    });
+  fechaInput.addEventListener("input", function (e) {
+    let value = this.value.replace(/\D/g, "");
+    if (value.length > 8) value = value.slice(0, 8);
 
-    $("#tablaPrincipal tbody").on("dblclick","tr", function (e) {
-        e.preventDefault();
-        
-        $("#codigo_item").text($(this).find('td').eq(2).text());
-        $("#nombre_item").text($(this).find('td').eq(3).text());
-        
+    let formatted = "";
+    for (let i = 0; i < value.length; i++) {
+      if (i === 2 || i === 4) formatted += "/";
+      formatted += value[i];
+    }
+    this.value = formatted;
+  });
 
-        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$("#costosSearch").val()},
-            function (data, text, requestXHR) {
+  $("#btnConsulta").click(function (e) {
+    e.preventDefault();
 
-                $("#listaVencimientos tbody")
-                    .empty()
-                    .append(data);
-                
-                $("#vistadocumento").fadeIn();
-            },
-            "text"
-        );
+    $.post(
+      RUTA + "vence/consulta",
+      {
+        cc: $("#costosSearch").val(),
+        codigo: $("#codigoBusqueda").val(),
+        descripcion: $("#descripcionSearch").val(),
+      },
+      function (data, text, requestXHR) {
+        $("#tablaPrincipal tbody").empty().append(data);
+      },
+      "text",
+    );
 
-        return false;
-    });
+    return false;
+  });
 
-    $("#closeDocument").click(function (e) { 
-        e.preventDefault();
-        
-        $("#vistadocumento").fadeOut();
+  $("#tablaPrincipal tbody").on("click", "a", function (e) {
+    e.preventDefault();
 
-        return false;
-    });
+    $("#registrar").fadeIn();
 
-    $("#excelFile").click(function (e) { 
-        e.preventDefault();
+    return false;
+  });
 
-        $("#esperar").css("opacity","1").fadeIn();
+  $("#registrarlnk").click(function (e) {
+    e.preventDefault();
 
-        $.post(RUTA+"vence/exportaExcel",{registros:JSON.stringify(detalles())},
-            function (data, textStatus, jqXHR) {
-                $("#esperar").css("opacity","0").fadeOut();
-                window.location.href = data.documento;
-            },
-            "json"
-        );
+    $("#registrar").fadeIn();
 
-        return false;
-    });
-    
+    return false;
+  });
 
-    $("#sendNotificacion").click(function (e) { 
-        e.preventDefault();
+  $("#btnAcceptRegister").click((e) => {
+    e.preventDefault();
 
-        $.post(RUTA+"vence/enviaNotificacion",{costos:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#descripcionSearch").val()},
-            function (data, text, requestXHR) {
+    const boton = $(this);
 
-                $("#listaVencimientos tbody")
-                    .empty()
-                    .append(data);
-            },
-            "json"
-        );
+    boton.html(`<i class="fas fa-spinner fa-spin"></i> Procesando`);
 
-        return false;
-    });
-})
+    if ($("#codigo").val() == "")
+      throw new Error("❓ Ingrese un codigo para registro");
+    if ($("#vencimiento").val() == "")
+      throw new Error("❓ Ingrese fecha de vencimiento");
+    if ($("#costosSearch").val() == "")
+      throw new Error("❓ Seleccione un Centro de Costos");
 
-detalles = () =>{
-    DATA = [];
-    let TABLA = $("#tablaPrincipal tbody >tr");
+    try {
+      const formData = new FormData();
 
-    TABLA.each(function(){
-        let ITEM            = $(this).find('td').eq(0).text(),
-            COSTOS          = $(this).find('td').eq(1).text(),
-            CODIGO          = $(this).find('td').eq(2).text(),
-            DESCRIPCION     = $(this).find('td').eq(3).text(),
-            UNIDAD          = $(this).find('td').eq(4).text(),
-            VENCE           = $(this).find('td').eq(5).text(),
-            DIAS          = $(this).find('td').eq(6).text();
-           
-        item= {};
-        
-        item['item']            = ITEM;
-        item['costos']          = COSTOS;
-        item['codigo']          = CODIGO;
-        item['descripcion']     = DESCRIPCION;
-        item['unidad']          = UNIDAD;
-        item['vence']           = VENCE;
-        item['dias']            = DIAS;
-            
-        DATA.push(item);
-    })
+      formData.append("codigo", producto);
+      formData.append("costos", $("#costosSearch").val());
+      formData.append("fecha", convertirFechaParaBD($("#fecha").val()));
 
-    return DATA;
-}
+      fetch(RUTA + "vence/registraVencimiento", {
+        method: "POST",
+        body: formData,
+      }).then((response) =>
+        response.json().then((data) => {
+          console.log(data);
+          boton.html(`<i class="fas fa-check"></i> Aceptar`);
+          limpiarEntradas();
+        }),
+      );
+    } catch (error) {
+      mostrarMensaje(error.message, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  // CONSULTAR EL CODIGO SI ES NUEVO
+  $("#codigo").keypress(function (e) {
+    if (e.which == 13) {
+      if ($(this).val() === "") {
+        mostrarMensaje("🚩 Ingrese un codigo válido", "mensaje_error");
+      } else {
+        let formData = new FormData();
+        formData.append("codigo", $(this).val());
+
+        fetch(RUTA + "minimos/buscaCodigo", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            producto = data.datos[0]["id_cprod"];
+            $("#descripcion").val(data.datos[0]["cdesprod"]);
+          });
+      }
+    }
+  });
+
+  $("#btnCancelRegister").click((e) => {
+    e.preventDefault();
+
+    $("#registrar").fadeOut();
+
+    return false;
+  });
+
+  $("#tablaPrincipal tbody").on("dblclick", "tr", function (e) {
+    e.preventDefault();
+
+    $("#codigo_item").text($(this).find("td").eq(2).text());
+    $("#nombre_item").text($(this).find("td").eq(3).text());
+
+    $.post(
+      RUTA + "vence/consultaItem",
+      { item: $(this).data("idproducto"), costos: $("#costosSearch").val() },
+      function (data, text, requestXHR) {
+        $("#listaVencimientos tbody").empty().append(data);
+
+        $("#vistadocumento").fadeIn();
+      },
+      "text",
+    );
+
+    return false;
+  });
+
+  $("#closeDocument").click(function (e) {
+    e.preventDefault();
+
+    $("#vistadocumento").fadeOut();
+
+    return false;
+  });
+
+  $("#excelFile").click(function (e) {
+    e.preventDefault();
+
+    $("#esperar").css("opacity", "1").fadeIn();
+
+    $.post(
+      RUTA + "vence/exportaExcel",
+      { registros: JSON.stringify(detalles()) },
+      function (data, textStatus, jqXHR) {
+        $("#esperar").css("opacity", "0").fadeOut();
+        window.location.href = data.documento;
+      },
+      "json",
+    );
+
+    return false;
+  });
+
+  $("#sendNotificacion").click(function (e) {
+    e.preventDefault();
+
+    $.post(
+      RUTA + "vence/enviaNotificacion",
+      {
+        costos: $("#costosSearch").val(),
+        codigo: $("#codigoBusqueda").val(),
+        descripcion: $("#descripcionSearch").val(),
+      },
+      function (data, text, requestXHR) {
+        $("#listaVencimientos tbody").empty().append(data);
+      },
+      "json",
+    );
+
+    return false;
+  });
+
+  function limpiarEntradas() {}
+
+  function convertirFechaParaBD(fechaStr) {
+    const partes = fechaStr.split("/");
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
+});
+
+detalles = () => {
+  DATA = [];
+  let TABLA = $("#tablaPrincipal tbody >tr");
+
+  TABLA.each(function () {
+    let ITEM = $(this).find("td").eq(0).text(),
+      COSTOS = $(this).find("td").eq(1).text(),
+      CODIGO = $(this).find("td").eq(2).text(),
+      DESCRIPCION = $(this).find("td").eq(3).text(),
+      UNIDAD = $(this).find("td").eq(4).text(),
+      VENCE = $(this).find("td").eq(5).text(),
+      DIAS = $(this).find("td").eq(6).text();
+
+    item = {};
+
+    item["item"] = ITEM;
+    item["costos"] = COSTOS;
+    item["codigo"] = CODIGO;
+    item["descripcion"] = DESCRIPCION;
+    item["unidad"] = UNIDAD;
+    item["vence"] = VENCE;
+    item["dias"] = DIAS;
+
+    DATA.push(item);
+  });
+
+  return DATA;
+};
