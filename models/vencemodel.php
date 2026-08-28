@@ -107,7 +107,6 @@
                                          <td class="textoDerecha">'.number_format($rs['ingresos'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($saldo,2,'.','').'</td>
-                                         <td class="textoDerecha"><a href="'.$rs['id_cprod'].'"><i class="far fa-edit"></i></a></td>
                                     </tr>';
                         }
                         

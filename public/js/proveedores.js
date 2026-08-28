@@ -68,8 +68,8 @@ $(async function () {
       let row = `<tr data-grabado="0">
                             <td class="textoCentro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
                             <td class="textoCentro">${bfilas}</td>
-                            <td><select type="text" class="pl20px">${bancos}</select></td>
-                            <td><select type="text" class="pl20px">${monedas}</select></td>
+                            <td><select class="pl20px">${bancos}</select></td>
+                            <td><select class="pl20px">${monedas}</select></td>
                             <td><input type="text" class="minusculas pl20px"></td>
                             <td class="textoCentro"><input type="checkbox"></td>
                         </tr>`;

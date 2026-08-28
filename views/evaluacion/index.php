@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/uploadwindow.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/previewindow.css">
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="esperar">
+    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="leyenda">
@@ -28,7 +32,7 @@
                         </tr>
                         <tr>
                             <td class="textoCentro">3</td>
-                            <td class="textoCentro">Regular</td>
+                            <td class="textoCentro">Normal</td>
                         </tr>
                         <tr>
                             <td class="textoCentro">2</td>
@@ -52,6 +56,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="evalAtach" title="Adjuntar Archivo" class="boton3">
+                                <p><i class="far fa-save"></i> Adjuntar Archivos </p> 
+                            </button>
                             <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
@@ -199,8 +206,98 @@
             </tbody>
         </table>
     </div>
+    <div class="modal" id="archivos">
+        <div class="wrap_modal">
+             <div class="upload-adjuntos">
+                <!-- Header -->
+                <div class="upload-header">
+                    <h3><i class="fas fa-paperclip"></i> Adjuntar Archivos</h3>
+                    <button class="modal-close" id="lnkCerrarAdjuntos">&times;</button>
+                </div>
+
+                <!-- Body -->
+                <div class="upload-body">
+                    <!-- ===== ARCHIVOS YA SUBIDOS ===== -->
+                    <div class="archivos-subidos">
+                        <div class="subtitulo">
+                            <i class="fas fa-check-circle" style="color:#34a853;"></i>
+                            Archivos Adjuntos (<span id="contadorAdjuntos">0</span>)
+                        </div>
+                        <div class="lista-subidos" id="listaSubidos">
+                            <div class="mensaje-vacio">No hay archivos adjuntos</div>
+                        </div>
+                    </div>
+
+                    <!-- ===== SEPARADOR ===== -->
+                    <div class="separador">
+                        <span>Agregar nuevos archivos</span>
+                    </div>
+
+                    <!-- Drop Zone -->
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Arrastra tus archivos aquí o haz clic para seleccionar</p>
+                        <span class="drop-zone-text">PDF, JPG, PNG, DOC (max 4MB)</span>
+                        <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                    </div>
+
+                    <!-- Lista de archivos -->
+                    <div class="lista-archivos" id="listaArchivos">
+                        <!-- Los archivos se agregarán dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="upload-footer">
+                    <button class="btn btn-secondary" id="cancelarModal">Cancelar</button>
+                    <button class="btn btn-primary" id="subirArchivos">
+                        <i class="fas fa-upload"></i> Subir Archivos
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal" id="modalVistaPrevia">
+        <div class="wrap_modal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-pdf"></i> Vista previa del documento</h3>
+                    <button class="modal-close" id="cerrarVistaPrevia">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="pdf-container">
+                        <div class="pdf-loading" id="pdfLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Cargando documento...</p>
+                        </div>
+                        <canvas id="pdfCanvas" style="display:none;"></canvas>
+                        <div class="pdf-error" id="pdfError" style="display:none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>No se pudo cargar el documento</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="pdf-controls">
+                        <button class="btn btn-secondary" id="pdfPrevPage" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+                        <span id="pdfPageInfo">Página 1 de 1</span>
+                        <button class="btn btn-secondary" id="pdfNextPage" disabled>Siguiente <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="pdf-actions">
+                        <button class="btn btn-secondary" id="pdfZoomOut"><i class="fas fa-search-minus"></i></button>
+                        <button class="btn btn-secondary" id="pdfZoomIn"><i class="fas fa-search-plus"></i></button>
+                        <button class="btn btn-secondary" id="cerrarVistaPreviaBtn">Cerrar</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+        
+    </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/evaluacion.js?<?php echo constant('VERSION')?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </body>
 </html>

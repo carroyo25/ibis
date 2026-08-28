@@ -45,8 +45,25 @@ $(() => {
     return false;
   });
 
-  $("#registrarlnk").click(function (e) {
+  $("#registrarlnk").click(async function (e) {
     e.preventDefault();
+
+    // Verificar permisos antes de abrir el modal
+    const idUser = $("#id_user").val() || 1;
+    const permisos = await verificarPermisos(idUser, 55);
+
+    if (!permisos || !permisos.datos[0].agrega) {
+      mostrarMensaje(
+        "⚠️ No tienes permisos para registrar vecimientos",
+        "mensaje_error",
+      );
+      return; // No abre el modal
+    }
+
+    if ($("#costosSearch").val() == "-1") {
+      mostrarMensaje("⚠️ Seleccione un centro de costos", "mensaje_error");
+      return; // No abre el modal
+    }
 
     $("#registrar").fadeIn();
 
@@ -79,9 +96,13 @@ $(() => {
         body: formData,
       }).then((response) =>
         response.json().then((data) => {
-          console.log(data);
           boton.html(`<i class="fas fa-check"></i> Aceptar`);
-          limpiarEntradas();
+          if (data.success) {
+            mostrarMensaje("✅ Vencimientos actualizados", "mensaje_correcto");
+            limpiarEntradas();
+          } else {
+            mostrarMensaje("😒 Error al actualizar", "mensaje_error");
+          }
         }),
       );
     } catch (error) {
@@ -117,6 +138,7 @@ $(() => {
     e.preventDefault();
 
     $("#registrar").fadeOut();
+    limpiarEntradas();
 
     return false;
   });
@@ -186,11 +208,31 @@ $(() => {
     return false;
   });
 
-  function limpiarEntradas() {}
+  function limpiarEntradas() {
+    $("#codigo,#descripcion").val("");
+    $("#fecha").val("dd/mm/yyyy");
+  }
 
   function convertirFechaParaBD(fechaStr) {
     const partes = fechaStr.split("/");
     return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
+
+  async function verificarPermisos(usuario, modulo) {
+    const formData = new FormData();
+    formData.append("user", usuario);
+    formData.append("modulo", modulo);
+
+    try {
+      const response = await fetch(RUTA + "minimos/permisos", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return { permiso: false };
+    }
   }
 });
 

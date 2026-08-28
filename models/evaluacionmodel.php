@@ -151,6 +151,9 @@
         private function evaluar($rol,$tipo){
             try {
                 $salida = "";
+
+                $rol_evalua = $tipo == 38 && $rol == 4 ? $rol_evalua = 9 : $rol_evalua = $rol;
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_criterios.idreg,
                                                         tb_criterios.descripcion,
@@ -160,9 +163,9 @@
                                                     FROM
                                                         tb_criterios 
                                                     WHERE
-                                                        tb_criterios.nrol = :rol 
+                                                        (tb_criterios.nrol = :rol OR  tb_criterios.nrol = 4)
                                                         AND tb_criterios.tipo = :tipo");
-                $sql->execute(["rol"=>$rol,"tipo"=>$tipo]);
+                $sql->execute(["rol"=>$rol_evalua,"tipo"=>$tipo]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
@@ -377,6 +380,158 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        /*subir archivos*/
+        public function subirArchivos($codigo, $adjuntos){
+            // Verificar que exista el array de archivos
+            if (!isset($adjuntos['file']) || empty($adjuntos['file'])) {
+                return [
+                    'success' => false,
+                    'mensaje' => 'No se recibieron archivos',
+                    'subidos' => 0,
+                    'adjuntos' => $this->contarAdjuntos($codigo, 'ORD')
+                ];
+            }
+
+            // Obtener los archivos (pueden ser uno o varios)
+            $files = $adjuntos['file'];
+            
+            // Si es un solo archivo, convertirlo a array
+            if (!is_array($files['name'])) {
+                $files = [
+                    'name' => [$files['name']],
+                    'type' => [$files['type']],
+                    'tmp_name' => [$files['tmp_name']],
+                    'error' => [$files['error']],
+                    'size' => [$files['size']]
+                ];
+            }
+
+            $countfiles = count($files['name']);
+            $subidos = 0;
+
+            for($i = 0; $i < $countfiles; $i++){
+                try {
+                    // Verificar que el archivo no tenga error
+                    if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
+                    
+                    $nombreOriginal = $files['name'][$i];
+                    $ext = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
+                    $filename = uniqid() . "." . $ext;
+                    
+                    // Crear directorio si no existe
+                    $directorio = 'public/documentos/evaluaciones/adjuntos/';
+                    if (!is_dir($directorio)) {
+                        mkdir($directorio, 0777, true);
+                    }
+                    
+                    // Subir archivo
+                    if (move_uploaded_file($files['tmp_name'][$i], $directorio . $filename)) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                            SET nidrefer = :cod,
+                                cmodulo = :mod,
+                                cdocumento = :doc,
+                                creferencia = :ref,
+                                nflgactivo = :est");
+                        
+                        $sql->execute([
+                            "cod" => $codigo,
+                            "mod" => "EVA",
+                            "ref" => $filename,
+                            "doc" => $nombreOriginal,
+                            "est" => 1
+                        ]);
+                        
+                        $subidos++;
+                    } else {
+                        error_log("Error al mover archivo: " . $files['tmp_name'][$i] . " a " . $directorio . $filename);
+                    }
+                    
+                } catch (PDOException $th) {
+                    error_log("Error al subir archivo: " . $th->getMessage());
+                    continue;
+                }
+            }
+
+            // Contar adjuntos después de subir
+            $totalAdjuntos = $this->contarAdjuntos($codigo, 'EVA');
+            
+            return [
+                'success' => true,
+                'adjuntos' => $totalAdjuntos,
+                'subidos' => $subidos,
+                'total' => $countfiles,
+                'mensaje' => $subidos > 0 ? "Se subieron $subidos archivos correctamente" : "No se pudieron subir los archivos"
+            ];
+        }
+
+        public function verAdjuntosEvaluacion($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                    id_regmov,
+                    creferencia,
+                    cdocumento
+                FROM lg_regdocumento 
+                WHERE nidrefer = :id
+                AND nflgactivo = 1
+                AND cmodulo = 'EVA'
+                ORDER BY id_regmov DESC");
+                
+                $sql->execute(['id' => $id]);
+                $rowCount = $sql->rowCount();
+
+                $adjuntos = [];
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $extension = strtolower(pathinfo($rs['cdocumento'], PATHINFO_EXTENSION));
+                        
+                        $adjuntos[] = [
+                            'idreg' => $rs['id_regmov'],
+                            'creferencia' => $rs['creferencia'],
+                            'cdocumento' => $rs['cdocumento'],
+                            'icono' => $this->tipoArchivoNew($extension)
+                        ];
+                    }
+                }
+                
+                return [
+                    'success' => true,
+                    'lista' => $adjuntos,
+                    'total' => $rowCount
+                ];
+
+            } catch (PDOException $th) {
+                error_log("Error en verAdjuntosOrden: " . $th->getMessage());
+                return [
+                    'success' => false,
+                    'lista' => [],
+                    'total' => 0,
+                    'mensaje' => $th->getMessage()
+                ];
+            }
+        }
+
+        // ============ FUNCIÓN PARA ICONO SEGÚN TIPO ============
+        private function tipoArchivoNew($archivo){
+            $extension = strtolower(pathinfo($archivo, PATHINFO_EXTENSION));
+            
+            $iconos = [
+                'pdf' => '<i class="fas fa-file-pdf" style="color:#ea4335;"></i>',
+                'jpg' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'jpeg' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'png' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'doc' => '<i class="fas fa-file-word" style="color:#1a73e8;"></i>',
+                'docx' => '<i class="fas fa-file-word" style="color:#1a73e8;"></i>',
+                'xls' => '<i class="fas fa-file-excel" style="color:#0f9d58;"></i>',
+                'xlsx' => '<i class="fas fa-file-excel" style="color:#0f9d58;"></i>',
+                'zip' => '<i class="fas fa-file-archive" style="color:#5f6368;"></i>',
+                'rar' => '<i class="fas fa-file-archive" style="color:#5f6368;"></i>'
+            ];
+            
+            return $iconos[$extension] ?? '<i class="fas fa-file" style="color:#5f6368;"></i>';
         }
     }
 ?>

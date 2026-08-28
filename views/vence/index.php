@@ -182,7 +182,6 @@
                     <th>Cantidad</br> Ingresada</th>
                     <th>Cantidad</br> Consumida</th>
                     <th>Saldo</th>
-                    <th>...</th>
                 </tr>
             </thead>
             <tbody>
