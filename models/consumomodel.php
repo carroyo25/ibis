@@ -403,7 +403,8 @@
                                                                 ibis.tb_familia.cdescrip AS familia,
                                                                 CONCAT_WS( ' ', aquarius.apellidos, aquarius.nombres ) AS nombres,
                                                                 UPPER(aquarius.dcargo ) AS cargo,
-                                                                ibis.tb_user.cnombres 
+                                                                ibis.tb_user.cnombres,
+                                                                ibis.tb_unimed.cabrevia
                                                             FROM
                                                                 ibis.alm_consumo
                                                                 LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
@@ -412,7 +413,8 @@
                                                                 LEFT JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
                                                                 LEFT JOIN (SELECT rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.dni,
                                                             rrhh.tabla_aquarius.dcargo	FROM rrhh.tabla_aquarius GROUP BY rrhh.tabla_aquarius.dni) AS aquarius ON ibis.alm_consumo.nrodoc = aquarius.dni
-                                                                LEFT JOIN ibis.tb_user ON ibis.alm_consumo.reguser = ibis.tb_user.iduser 
+                                                                LEFT JOIN ibis.tb_user ON ibis.alm_consumo.reguser = ibis.tb_user.iduser
+                                                                LEFT JOIN ibis.tb_unimed ON tb_unimed.ncodmed = cm_producto.nund
                                                             WHERE
                                                                 alm_consumo.flgactivo = 1 
                                                                 AND alm_consumo.ncostos =:cc
@@ -444,8 +446,8 @@
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE CONSUMO');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:S2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:S2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:T2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:T2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
@@ -455,24 +457,28 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(80);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(10);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(30);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(30);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(40);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(30);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(40);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(40);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(30);
                 
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('A2:S2')
+                            ->getStyle('A2:T2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('BFCDDB');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:T2')->getAlignment()->setWrapText(true);
 
                 $objPHPExcel->getActiveSheet()->setCellValue('A2','Número'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('B2','Documento'); // esto cambia
@@ -480,19 +486,20 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('D2','Cargo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('E2','Código'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('F2','Descripcion'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('G2','Fecha Salida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('H2','Cantidad Salida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('I2','Fecha Devolucion'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J2','Cantidad Devolucion'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('K2','Hoja'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('L2','Isometrico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('M2','Observaciones'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('N2','Serie'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('O2','Grupo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('P2','Clase'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Familia'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('R2','Fecha'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('S2','Registrado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','UND.'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','Fecha Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','Cantidad Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','Fecha Devolucion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','Cantidad Devolucion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Hoja'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M2','Isometrico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N2','Observaciones'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O2','Serie'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P2','Grupo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Clase'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('R2','Familia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('S2','Fecha'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T2','Registrado'); // esto cambia
 
                 $fila = 3;
                 $item = 1;
@@ -508,23 +515,24 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['cargo']);
                         $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['codigo']);
                         $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$fila, $rs['descripcion'],PHPExcel_Cell_DataType::TYPE_STRING);
+                        $objPHPExcel->getActiveSheet()->setCellValueExplicit('G'.$fila, $rs['cabrevia'],PHPExcel_Cell_DataType::TYPE_STRING);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fechasalida']));
-                        $objPHPExcel->getActiveSheet()->getStyle('G'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                        $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fechasalida']));
+                        $objPHPExcel->getActiveSheet()->getStyle('H'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['cantsalida']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['fechadevolucion']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['cantsalida']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['fechadevolucion']);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['cantdevolucion']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['nhoja']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['cisometrico']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['cobserentrega']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['cserie']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['grupo']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['clase']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['familia']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['fechasalida']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['cnombres']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['cantdevolucion']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['nhoja']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['cisometrico']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['cobserentrega']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['cserie']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['grupo']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['clase']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['familia']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['fechasalida']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['cnombres']);
 
                         $fila++;
                         $item++;
