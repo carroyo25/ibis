@@ -164,13 +164,15 @@
                 <section>
                     <label for="motivo_cambio">Motivo de Cambio</label>
                     <select id="motivo_cambio">
-                        <option value="-1">Elija Opcion</option>   
-                        <option value="240">DESGASTE</option>
+                        <option value="-1">Seleccione una opcion</option>
+                        <option value="239">PRIMERA ENTREGA </option>
+                        <option value="240">CAMBIO EPP</option>
                         <option value="241">ROTURA</option>
                         <option value="242">PERDIDA</option>
                         <option value="243">DEFORMADO</option>
                         <option value="244">FALTA PARTES</option>
-                        <option value="245">OTROS</option>
+                        <option value="245">DESGASTE POR PROPIO USO</option>
+                        <option value="246">OTROS</option>
                     </select>
                 </section>
                 <section>
