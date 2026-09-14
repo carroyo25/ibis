@@ -125,7 +125,7 @@
                             <input type="text" name="tipo" id="tipo" class="cerrarLista" readonly>
                             <label for="fentrega" data-etiqueta="entrega">Fec.Entrega:</label>
                             <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" value="<?php echo $this->fechaOrden?>" readonly>
-                            <label for="cpago" data-etiqueta="pago">Cond.Pago :</label>
+                            <label for="cpago" data-etiqueta="pago">Pago :</label>
                             <div data-box="lista_pagos">
                                 <input type="text" name="cpago" id="cpago" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
                                 <div class="lista_grid" id="listaPago">
@@ -136,7 +136,7 @@
                             </div>
                             <label for="estado" data-etiqueta="estado">Estado:</label>
                             <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
-                            <label for="tcambio" data-etiqueta="igv">Incluye IGV.</label>
+                            <label for="tcambio" data-etiqueta="igv">Inc.IGV.</label>
                             <div data-box="igv">
                                 <input type="radio" name="radioIgv" id="si" value="0.18">
                                 <label for="si">Si</label>
@@ -174,6 +174,21 @@
                             </div>
                             <button type="button" id="btnEntrega" class="btnCallMenu boton3" data-etiqueta="btn_almacen">+</button>
                         </div>
+                    </div>
+                    <div class="barraOpciones"></div>
+                    <div class="order_new_data">
+                        <label for="punto_entrega">Incoterm/Condición de Entrega</label>
+                        <select name="punto_entrega" id="punto_entrega">
+                            <option value="-1">Seleccione opcion</option>
+                            <option value="1">CIF | CALLAO</option>
+                            <option value="2">DAP | AEROPUERTO LIMA</option>
+                            <option value="3">ENTREGA LOCAL | LURÍN</option>
+                            <option value="4">ENTREGA LOCAL | PUCALLPA</option>
+                        </select>
+                        <label for="punto_entrega">Punto entrega pactado</label>
+                        <input type="text" name="puntoEntrega" id="puntoEntrega">
+                        <label for="fecha_compromiso">Fecha compromiso en punto</label>
+                        <input type="date" name="fecha_compromiso" id="fecha_compromiso">
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
