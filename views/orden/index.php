@@ -177,8 +177,8 @@
                     </div>
                     <div class="barraOpciones"></div>
                     <div class="order_new_data">
-                        <label for="punto_entrega">Incoterm/Condición de Entrega</label>
-                        <select name="punto_entrega" id="punto_entrega">
+                        <label for="condicion_entrega">Incoterm/Condición de Entrega</label>
+                        <select name="condicion_entrega" id="condicion_entrega">
                             <option value="-1">Seleccione opcion</option>
                             <option value="1">CIF | CALLAO</option>
                             <option value="2">DAP | AEROPUERTO LIMA</option>
