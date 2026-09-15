@@ -2720,12 +2720,16 @@
                                                         o.nfirmaLog,
                                                         o.nfirmaFin,
                                                         o.nfirmaOpe,
+                                                        o.nCondicion,
+                                                        o.cPuntoEntrega,
+                                                        o.fCompromiso,
                                                         LPAD(p.nrodoc, 6, 0) AS nrodoc,
                                                         (SELECT SUM(d.nunitario * d.ncanti) 
                                                         FROM lg_ordendet d 
                                                         WHERE d.id_regmov = o.id_regmov AND d.ncanti > 0) AS total_multiplicado,
                                                         UPPER(ex.cdescription) AS condiciones,
-                                                        UPPER(u.cnameuser) AS usuario 
+                                                        UPPER(u.cnameuser) AS usuario,
+                                                        i.cdescripcion  centrega
                                                     FROM
                                                         lg_ordencab o
                                                         LEFT JOIN tb_pedidocab p ON o.id_refpedi = p.idreg
@@ -2738,6 +2742,7 @@
                                                         LEFT JOIN cm_entidad e ON o.id_centi = e.id_centi
                                                         LEFT JOIN cm_entidadcon ec ON e.id_centi = ec.id_centi AND (ec.cnombres IS NOT NULL AND ec.cnombres <> '')
                                                         LEFT JOIN tb_parametros tra ON o.ctiptransp = tra.nidreg
+                                                        LEFT JOIN tb_parametros i ON o.nCondicion = i.nidreg
                                                         LEFT JOIN tb_almacen al ON o.ncodalm = al.ncodalm
                                                         LEFT JOIN lg_ordenextras ex ON o.id_regmov = ex.idorden
                                                         LEFT JOIN tb_user u ON o.id_cuser = u.iduser 
@@ -3355,7 +3360,8 @@
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
                             $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones'],
-                            $cabecera['codigo_tipo'],$cabecera['nivel_autorizacion']);
+                            $cabecera['codigo_tipo'],$cabecera['nivel_autorizacion'],$cabecera['condicion_entrega_texto'],$cabecera['puntoEntrega'],
+                            $cabecera['fecha_compromiso']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();

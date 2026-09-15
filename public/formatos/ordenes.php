@@ -8,7 +8,7 @@
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
-                                    $procura,$finanzas,$operaciones,$tipo,$prioridad)
+                                    $procura,$finanzas,$operaciones,$tipo,$prioridad,$ientrega,$pentrega,$fcompromiso)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -40,6 +40,9 @@
             $this->operaciones      = $operaciones;
             $this->tipo             = $tipo;
             $this->prioridad        = $prioridad;
+            $this->ientrega        = $ientrega;
+            $this->pentrega        = $pentrega;
+            $this->fcompromiso     = $fcompromiso;
         }
 
         function header(){
@@ -131,7 +134,7 @@
             
             $this->Line(200,50,200,80); //Lineas de caja
             $this->Line(10,50,10,80); //Lineas de caja
-            $this->Line(123,50,123,80); //Lineas de caja*/
+            $this->Line(123,50,123,72); //Lineas de caja*/
 
 
             $this->SetY(61);
@@ -176,17 +179,34 @@
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"L",0);
             $this->Cell(10,3,utf8_decode("E-mail :"),0,0);
-            $this->Cell(84,3,utf8_decode($this->cor_contacto),0,0); //envia de parametro
-            //$this->Cell(77,3,utf8_decode(""),"LR",1);
+            $this->Cell(84,3,utf8_decode($this->cor_contacto),0,1); //envia de parametro
+
+            $this->SetFont('Arial','',6);
+            $this->Cell(32,5,utf8_decode("Incoterm/Condición de Entrega"),1,0);
+            $this->SetFont('Arial','',5);
+            $this->Cell(32,5,utf8_decode($this->ientrega),1,0);
+            $this->SetFont('Arial','',6);
+            $this->Cell(25,5,utf8_decode("Punto entrega pactado"),1,0);
+            $this->SetFont('Arial','',5);
+            $this->Cell(54,5,utf8_decode($this->pentrega),1,0);
+            $this->SetFont('Arial','',6);
+            $this->Cell(32,5,utf8_decode("Fecha compromiso en punto"),1,0);
+            $this->SetFont('Arial','',5);
+            $this->Cell(15,5,date("d/m/Y", strtotime($this->fcompromiso)),1,0);
+
+            $this->SetFont('Arial','',6);
+            $this->Cell(77,3,utf8_decode(""),"LR",0);
 
         	$this->SetFillColor(229, 229, 229);
 
 	        // Salto de línea
     		$this->Ln(5);
-            $this->Rect(10,74,190,6,"F"); //fondo de mensaje
+            $this->Rect(10,77,190,6,"F"); //fondo de mensaje
     		$this->SetWidths(array(10,15,15,10,93,17,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
+
+
                     
         }
 

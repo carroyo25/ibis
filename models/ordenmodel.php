@@ -289,7 +289,8 @@
                                                                                 ctiptransp=:transporte,id_cuser=:elabora,ncodpago=:pago,nplazo=:pentrega,cnumcot=:cotizacion,
                                                                                 cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
                                                                                 cverificacion=:verif,cObservacion=:observacion,cReferencia=:referencia,
-                                                                                nAdicional=:adicional,lentrega=:lugar");
+                                                                                nAdicional=:adicional,lentrega=:lugar,nCondicion=:condicion,cPuntoEntrega=:pactado,
+                                                                                fCompromiso=:compromiso");
 
                 $sql ->execute(["pedi"=>$cab->codigo_pedido,
                                 "anio"       =>$periodo[0],
@@ -321,7 +322,10 @@
                                 "observacion"=>$cab->concepto,
                                 "referencia" =>$cab->referencia,
                                 "adicional"  =>$cab->total_adicional,
-                                "lugar"      =>$cab->lentrega]);
+                                "lugar"      =>$cab->lentrega,
+                                "condicion"  =>$cab->condicion_entrega,
+                                "pactado"    =>$cab->puntoEntrega,
+                                "compromiso" =>$cab->fecha_compromiso]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
@@ -442,7 +446,10 @@
                                                              creferencia=:referencia,
                                                              lentrega=:lugar,
                                                              ncodmon=:moneda,
-                                                             cObservacion=:observacion
+                                                             cObservacion=:observacion,
+                                                             nCondicion=:condicion,
+                                                             cPuntoEntrega=:pentrega,
+                                                             fCompromiso=:compromiso
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -457,7 +464,10 @@
                                 "referencia"=>$cabecera['referencia'],
                                 "lugar"=>$cabecera['lentrega'],
                                 "moneda"=>$cabecera['codigo_moneda'],
-                                "observacion"=>$cabecera['concepto']]);
+                                "observacion"=>$cabecera['concepto'],
+                                "condicion"  =>$cabecera['condicion_entrega'],
+                                "pentrega"   =>$cabecera['puntoEntrega'],
+                                "compromiso" =>$cabecera['fecha_compromiso']]);
                 
                 $this->grabarDetalles($cabecera['codigo_orden'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->actualizarDetallesPedido(84,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
@@ -947,99 +957,116 @@
 
         public function importarPedidosCostos($costo){
             try {
+                $salida = '';
+
                 $cc = $costo == '-1' ? "%":$costo;
-
-                $salida = "";
-
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_aprob, 2),',','') AS cantidad,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_resto, 2),',','') AS saldo,
-                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
+                                                        tb_pedidodet.iditem,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cantidad,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS saldo,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS atendida,
+                                                        FORMAT( tb_pedidodet.precio, 2 ) AS precio,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
+                                                        tb_pedidodet.cant_atend AS stock_almacen,
                                                         tb_pedidodet.igv,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_pedidodet.cant_aprob,
+                                                        FORMAT( tb_pedidodet.total, 2 ) AS total,
                                                         tb_pedidodet.estadoItem,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones
-                                                            )
-                                                        ) AS cdesprod,
+                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        UPPER( tb_pedidodet.observaciones ) AS detalle,
                                                         cm_producto.ccodprod,
                                                         cm_producto.id_cprod,
                                                         tb_unimed.ncodmed,
                                                         tb_unimed.cabrevia AS unidad,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy ) AS costos,
                                                         tb_area.ncodarea,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        tb_pedidodet.iditem,
+                                                        UPPER( tb_area.cdesarea ) AS area,
                                                         tb_pedidodet.idcostos,
                                                         tb_pedidodet.nroparte,
                                                         tb_pedidodet.nregistro,
                                                         tb_pedidodet.idarea,
                                                         tb_pedidocab.idreg,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
                                                         tb_pedidocab.emision,
-                                                        UPPER(tb_pedidocab.concepto) AS concepto,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         tb_pedidodet.entidad,
-                                                        tb_pedidodet.total AS total_numero
+                                                        tb_pedidodet.total AS total_numero,
+                                                        tb_equipmtto.cregistro 
                                                     FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                        INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
                                                     WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user
-                                                    AND tb_pedidodet.idasigna = :user_asigna
-                                                    AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                    AND tb_pedidodet.idcostos LIKE :cc
-                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)");
+                                                        tb_pedidodet.nflgActivo = 1 
+                                                        AND tb_pedidodet.idasigna = :user_asigna
+                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
+                                                        AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)
+                                                        AND tb_proyectos.nflgactivo = 1
+                                                        AND tb_pedidodet.nflgOrden = 0
+														AND tb_pedidodet.idcostos LIKE :cc
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem
+                                                    ORDER BY tb_pedidocab.emision DESC");
                 
-                //AND ISNULL(tb_pedidodet.idorden)
-                //se cambia el 58 para llama los items directo con aprobacion
                 
-                $sql->execute(["user"=>$_SESSION['iduser'],
-                                "user_asigna"=>$_SESSION['iduser'],
-                                "cc"=>$cc]);
+                $sql->execute(["user_asigna"=>$_SESSION['iduser'],"cc"=>$cc]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
+                        
+                        $cant   = floatval($rs['cantidad_pedida']) -  floatval($rs['stock_almacen']);
+                        $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];
 
-                        //hace los cálculos de los saldos 
-                        $cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']);
-                        $cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
-                       
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
-                                                       data-entidad="'.$rs['entidad'].'"
-                                                       data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$rs['cantidad_pedida'].'"
-                                                       data-total="'.$rs['total_numero'].'"
-                                                       data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'"
-                                                       data-costos="'.$rs['idcostos'].'"
-                                                       data-itord="-"
-                                                       data-nropedido=""
-                                                       data-nroparte="'.$rs['nroparte'].'">
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl5px">'.$rs['concepto'].'</td>
-                                        <td class="pl5px">'.$rs['area'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha"></td>
-                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
-                                    </tr>';
+                        $compra = ( floatval($rs['cant_aprob']) /*- floatval($rs['cant_aprob'])*/) - floatval($rs['stock_almacen']);
+
+                        //validar para las compras parciales
+                       if ( $compra >= 0 ) {
+                            $salida .='<tr id="'.$rs['iditem'].'"
+                                            class="pointer" data-pedido="'.$rs['idpedido'].'"
+                                            data-entidad="'.$rs['entidad'].'"
+                                            data-unidad="'.$rs['unidad'].'"
+                                            data-cantidad ="'.$rs['cantidad'].'"
+                                            data-total="'.$rs['total_numero'].'"
+                                            data-codprod="'.$rs['id_cprod'].'"
+                                            data-iditem="'.$rs['iditem'].'"
+                                            data-costos="'.$rs['idcostos'].'"
+                                            data-compra="'.$cant.'"
+                                            data-itord="-"
+                                            data-nropedido=""
+                                            data-nparte="'.$rs['nroparte'].'"
+                                            data-estado="'.$rs['estadoItem'].'"
+                                            data-atendida="'.$aten.'"
+                                            data-detalle="'.htmlspecialchars($rs['detalle']).'">
+                                            <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                            <td class="pl5px">'.$rs['concepto'].'</td>
+                                            <td class="pl5px">'.$rs['area'].'</td>
+                                            <td class="textoCentro">'.$rs['ccodproy'].'</td>
+                                            <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
+                                            <td class="textoDerecha">'.$cant.'</td>
+                                            <td class="textoDerecha">'.$aten.'</td>
+                                            <td class="pl5px">'.$rs['cdesprod'].'</td>
+                                            <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="change"><i class="fas fa-wrench"></i></a></td>
+                                            <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="delete"><i class="far fa-trash-alt"></i></a></td>
+                                        </tr>';
+                       }
+                        
                     }
+                }else{
+                    $salida = '<tr>
+                              <td colspan="11" style="text-align:center; padding:30px; color:#5f6368; background:#fff">
+                                <i class="fas fa-file" style="font-size:32px; margin-bottom:8px; color:#9aa0a6;"></i>
+                                No se encontraron items para procesar
+                              </td>
+                            </tr>';
                 }
 
                 return $salida;
@@ -1125,7 +1152,6 @@
             }
         }
 
-
         private function buscarCodigoProducto($codigo){
             try {
                 $docData = [];
@@ -1153,6 +1179,32 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
+            }
+        }
+
+        public function listarValores(){
+            try {
+                $clase = $_POST['clase'];
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT nidreg,cdescripcion 
+                                                        FROM tb_parametros
+                                                        WHERE cclase=:clase
+                                                            AND ccod != '00'
+                                                            AND ( nactivo = 1 OR nactivo IS NULL)
+                                                        ORDER BY cdescripcion");
+                $sql->execute(["clase"=>$clase]);
+
+                while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData,'success' => true);
+            } catch (PDOException $e) {
+                return [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ];
             }
         }
     }

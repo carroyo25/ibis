@@ -114,5 +114,9 @@
         function cambiaItemPedido(){
             echo json_encode($this->model->cambiarItem($_POST));
         }
+
+        function parametros(){
+            echo json_encode($this->model->listarValores($_POST));
+        }
     }    
 ?>

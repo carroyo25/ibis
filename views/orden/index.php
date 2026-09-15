@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Document</title>
 </head>
 <body>
@@ -71,6 +72,7 @@
                     <input type="hidden" name="procura" id="procura" value="0">
                     <input type="hidden" name="finanzas" id="finanzas" value="0">
                     <input type="hidden" name="operaciones" id="operaciones" value="0">
+                    <input type="hidden" name="condicion_entrega_texto" id="condicion_entrega_texto" value="">
                     
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -179,11 +181,6 @@
                     <div class="order_new_data">
                         <label for="condicion_entrega">Incoterm/Condición de Entrega</label>
                         <select name="condicion_entrega" id="condicion_entrega">
-                            <option value="-1">Seleccione opcion</option>
-                            <option value="1">CIF | CALLAO</option>
-                            <option value="2">DAP | AEROPUERTO LIMA</option>
-                            <option value="3">ENTREGA LOCAL | LURÍN</option>
-                            <option value="4">ENTREGA LOCAL | PUCALLPA</option>
                         </select>
                         <label for="punto_entrega">Punto entrega pactado</label>
                         <input type="text" name="puntoEntrega" id="puntoEntrega">
@@ -278,7 +275,7 @@
                             <th>...</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="detalles_pedidos">
 
                     </tbody>
                 </table>
