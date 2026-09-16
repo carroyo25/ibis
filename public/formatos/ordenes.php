@@ -182,7 +182,7 @@
             $this->Cell(84,3,utf8_decode($this->cor_contacto),0,1); //envia de parametro
 
             $this->SetFont('Arial','',6);
-            $this->Cell(32,5,utf8_decode("Incoterm/Condición de Entrega"),1,0);
+            $this->Cell(32,5,utf8_decode("INCOTERM"),1,0);
             $this->SetFont('Arial','',5);
             $this->Cell(32,5,utf8_decode($this->ientrega),1,0);
             $this->SetFont('Arial','',6);
@@ -204,10 +204,7 @@
             $this->Rect(10,77,190,6,"F"); //fondo de mensaje
     		$this->SetWidths(array(10,15,15,10,93,17,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C"));
-    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
-
-
-                    
+    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));      
         }
 
         function footer(){

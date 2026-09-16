@@ -73,6 +73,8 @@ $(function() {
                 $("#total_adicional").val(data.total_adicionales);
 
                 $("#user_genera").val(data.cabecera[0].usuario);
+
+                $("#condicion_entrega_texto").val(data.cabecera[0].centrega);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")

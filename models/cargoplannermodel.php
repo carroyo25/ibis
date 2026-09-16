@@ -109,7 +109,10 @@
                                                     LPAD( alm_transfercab.idreg, 6, 0 ) AS nota_transferencia,
                                                     DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
                                                     UPPER(asignacion.cnameuser) AS asigna,
-                                                    sunat.guiasunat
+                                                    sunat.guiasunat,
+                                                    incoterm.cdescripcion indescrip,
+                                                    lg_ordencab.cPuntoEntrega,
+                                                    DATE_FORMAT(lg_ordencab.fCompromiso, '%d/%m/%Y' ) fCompromiso
                                                 FROM
                                                     tb_pedidodet
                                                     LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -136,6 +139,7 @@
                                                     LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                     LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                     LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
+                                                    LEFT JOIN tb_parametros AS incoterm  ON incoterm.nidreg = lg_ordencab.nCondicion
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND tb_costusu.nflgactivo = 1 
@@ -459,6 +463,9 @@
                                         <td class="pl10px">'.$rs['usuario'].'</td>
                                         <td class="pl10px">'.$rs['asigna'].'</td>
                                         <td class="pl10px">'.$rs['fecha_descarga'].'</td>
+                                        <td class="pl10px">'.$rs['indescrip'].'</td>
+                                        <td class="pl10px">'.$rs['cPuntoEntrega'].'</td>
+                                        <td class="textoCentro">'.$rs['fCompromiso'].'</td>
                                 </tr>';
                                 
                                 $nro_orden = $rs['orden'];
@@ -719,7 +726,10 @@
                                                     LPAD( alm_transfercab.idreg, 6, 0 ) AS nota_transferencia,
                                                     DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
                                                     UPPER( asignacion.cnameuser ) AS asigna,
-                                                    sunat.guiasunat 
+                                                    sunat.guiasunat,
+                                                    incoterm.cdescripcion indescrip,
+                                                    lg_ordencab.cPuntoEntrega,
+                                                    DATE_FORMAT(lg_ordencab.fCompromiso, '%d/%m/%Y' ) fCompromiso
                                                 FROM
                                                     tb_pedidodet
                                                     LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -745,7 +755,8 @@
                                                     LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
                                                     LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                     LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
-                                                    LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm 
+                                                    LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
+                                                    LEFT JOIN tb_parametros AS incoterm  ON incoterm.nidreg = lg_ordencab.nCondicion
                                                 WHERE
                                                     tb_pedidodet.nflgActivo
                                                     AND tb_costusu.id_cuser = :usr
@@ -876,7 +887,7 @@
                     'AN' => 'Fecha Traslado','AO' => 'Registro Almacen','AP' => 'Fecha Ingreso Almacen','AQ' => 'Cantidad en Obra',
                     'AR' => 'Estado Pedido','AS' => 'Estado Item','AT' => 'N° Parte','AU' => 'Codigo Activo',
                     'AV' => 'Operador Logístico','AW' => 'Tipo Transporte','AX' => 'Observaciones/Concepto','AY' => 'Solicitante',
-                    'AZ' => 'Operador Asignado','BA' => 'Fecha Descarga'
+                    'AZ' => 'Operador Asignado','BA' => 'Fecha Descarga','BB' => 'INCOTERM','BC' => 'Pto. Entrega','BD' => 'Fecha Compromiso'
                 ];
                 
                 foreach ($encabezados as $col => $texto) {
@@ -1019,6 +1030,9 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AY'.$fila, $item['solicitante']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AZ'.$fila, $item['operador']);
                     $objPHPExcel->getActiveSheet()->setCellValue('BA'.$fila, $item['fecha_descarga']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BB'.$fila, $item['indescrip']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BC'.$fila, $item['cPuntoEntrega']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BD'.$fila, $item['fCompromiso']);
 
 
                     $fechas = [
@@ -1032,6 +1046,7 @@
                         'AL'    => $item['fecha_envio'],
                         'AP'    => $item['fecha_registro_obra'],
                         'BA'    => $item['fecha_descarga'],
+                        'BD'    => $item['fCompromiso'],
                     ];
                         
                     foreach ($fechas as $col => $fecha) {
@@ -1634,7 +1649,10 @@
                                                         LPAD( alm_transfercab.idreg, 6, 0 ) AS nota_transferencia,
                                                         DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
                                                         UPPER( asignacion.cnameuser ) AS asigna,
-                                                        sunat.guiasunat 
+                                                        sunat.guiasunat,
+                                                        incoterm.cdescripcion indescrip,
+                                                        lg_ordencab.cPuntoEntrega,
+                                                        DATE_FORMAT(lg_ordencab.fCompromiso, '%d/%m/%Y' ) fCompromiso
                                                     FROM
                                                         tb_pedidodet
                                                         LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -1660,7 +1678,8 @@
                                                         LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
                                                         LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                         LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
-                                                        LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm 
+                                                        LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN tb_parametros AS incoterm  ON incoterm.nidreg = lg_ordencab.nCondicion
                                                     WHERE
                                                         tb_pedidodet.nflgActivo 
                                                         AND ISNULL( lg_ordendet.nflgactivo )
@@ -2135,7 +2154,8 @@
                     'AJ' => 14, 'AK' => 12, 'AL' => 12, 'AM' => 15, 'AN' => 15,
                     'AO' => 15, 'AP' => 15, 'AQ' => 15, 'AR' => 12, 'AS' => 15,
                     'AT' => 20, 'AU' => 15, 'AV' => 20, 'AW' => 20, 'AX' => 20,
-                    'AY' => 20, 'AZ' => 20, 'AA' => 20, 'BA' => 40
+                    'AY' => 20, 'AZ' => 20, 'AA' => 20, 'BA' => 40, 'BB' => 40,
+                    'BC' => 40,'BD' => 40
                 ];
                 
                 foreach ($columnas as $col => $width) {
@@ -2150,7 +2170,7 @@
                     'Y' => '#,##0.00', 'AA' => 'dd/mm/yyyy', 'AB' => '#,##0.00','AD' => 'dd/mm/yyyy',
                     'AE' =>'#,##0.00','AI' => '#,##0.00', 'AL' => 'dd/mm/yyyy', 'AN' => 'dd/mm/yyyy',
                     'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00', 'AP' => 'dd/mm/yyyy', 'AA' => 'dd/mm/yyyy',
-                    'BA' => 'dd/mm/yyyy'
+                    'BA' => 'dd/mm/yyyy','BD' => 'dd/mm/yyyy'
                 ];
                 
                 foreach ($formatos as $col => $format) {
@@ -2172,7 +2192,7 @@
                     'AN' => 'Fecha Traslado','AO' => 'Registro Almacen','AP' => 'Fecha Ingreso Almacen','AQ' => 'Cantidad en Obra',
                     'AR' => 'Estado Pedido','AS' => 'Estado Item','AT' => 'N° Parte','AU' => 'Codigo Activo',
                     'AV' => 'Operador Logístico','AW' => 'Tipo Transporte','AX' => 'Observaciones/Concepto','AY' => 'Solicitante',
-                    'AZ' => 'Operador Asignado','BA' => 'Fecha Descarga Orden'
+                    'AZ' => 'Operador Asignado','BA' => 'Fecha Descarga Orden','BB' => 'INCOTERM','BC' => 'Pto. Entrega','BD' => 'Fecha Compromiso'
                 ];
                 
                 foreach ($encabezados as $col => $texto) {
@@ -2187,7 +2207,8 @@
                     'Q2:V2' => '00FFFF',
                     'W2:AD2' => 'BFCDDB',
                     'AE2:AM2' => 'FFFF00',
-                    'AN2:BA2' => '127BDD'
+                    'AN2:BA2' => '127BDD',
+                    'BB2:BD2' => 'C7CBD1',
                 ];
                 
                 foreach ($coloresSecciones as $rango => $color) {
@@ -2472,6 +2493,10 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AY'.$fila, $item['usuario']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AZ'.$fila, $item['asigna']);
                     $objPHPExcel->getActiveSheet()->setCellValue('BA'.$fila, $item['fecha_descarga']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BB'.$fila, $item['indescrip']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BC'.$fila, $item['cPuntoEntrega']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('BD'.$fila, $item['fCompromiso']);
+
 
                     // Formatear fechas
                     $fechas = [
@@ -2485,6 +2510,7 @@
                         'AL'    => $item['salida_lurin'],
                         'AP'    => $item['fecha_ingreso_almacen_obra'],
                         'BA'    => $item['fecha_descarga'],
+                        
                     ];
                     
                     foreach ($fechas as $col => $fecha) {

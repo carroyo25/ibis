@@ -55,6 +55,8 @@
                     <input type="hidden" name="finanzas" id="finanzas" value="0">
                     <input type="hidden" name="operaciones" id="operaciones" value="0">
                     <input type="hidden" name="dias" id="dias" value="0">
+                    <input type="hidden" name="condicion_entrega_texto" id="condicion_entrega_texto" value="">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -160,6 +162,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="barraOpciones"></div>
+                    <div class="order_new_data">
+                        <label for="condicion_entrega">Incoterm/Condición de Entrega</label>
+                        <select name="condicion_entrega" id="condicion_entrega">
+                        </select>
+                        <label for="punto_entrega">Punto entrega pactado</label>
+                        <input type="text" name="puntoEntrega" id="puntoEntrega">
+                        <label for="fecha_compromiso">Fecha compromiso en punto</label>
+                        <input type="date" name="fecha_compromiso" id="fecha_compromiso">
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>

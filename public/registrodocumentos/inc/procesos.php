@@ -47,7 +47,7 @@
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':ruc' => $datos['ruc'],
-                            ':pass' => SHA1($datos['clave'])]);
+                            ':pass' => $datos['clave']]);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $count = $stmt->rowCount();
             

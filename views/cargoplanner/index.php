@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
     <title>Document</title>
     <style>
         :root {
@@ -250,6 +252,98 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <!-- ============================================= -->
+    <!-- MODAL DE LEYENDA -->
+    <!-- ============================================= -->
+    <div class="leyenda-modal-overlay" id="leyendaModal">
+        <div class="leyenda-modal-container">
+
+            <!-- HEADER -->
+            <div class="leyenda-modal-header">
+                <h3><i class="fas fa-palette"></i> Leyenda de Estados</h3>
+                <button class="leyenda-modal-close" id="leyendaCerrar">&times;</button>
+            </div>
+
+            <!-- BODY -->
+            <div class="leyenda-modal-body">
+                <div class="leyenda-grid" id="leyendaGrid">
+
+                    <div class="leyenda-item" data-estado="0">
+                        <span class="leyenda-color" style="background:#D3D3D3;"></span>
+                        <span class="leyenda-texto">0% - Anulado</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="10">
+                        <span class="leyenda-color" style="background:#F5DCC0;"></span>
+                        <span class="leyenda-texto">10% - Creado</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="15">
+                        <span class="leyenda-color" style="background:#FF0000;"></span>
+                        <span class="leyenda-texto">15% - Aprob.</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="20">
+                        <span class="leyenda-color" style="background:#B0C4DE;"></span>
+                        <span class="leyenda-texto">20% - Stock</span>
+                    </div>
+
+                    <div class="leyenda-item leyenda-alerta" data-estado="25">
+                        <span class="leyenda-color" style="background:#FFFF00;"></span>
+                        <span class="leyenda-texto">25% - OC/OS</span>
+                        <i class="fas fa-exclamation-triangle leyenda-icono"></i>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="30">
+                        <span class="leyenda-color" style="background:#D4E8D4;"></span>
+                        <span class="leyenda-texto">30% - Enviado</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="40">
+                        <span class="leyenda-color" style="background:#B4D4B4;"></span>
+                        <span class="leyenda-texto">40% - Ing. Parcial</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="50">
+                        <span class="leyenda-color" style="background:#96C896;"></span>
+                        <span class="leyenda-texto">50% - At. Total</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="60">
+                        <span class="leyenda-color" style="background:#FF00FF;"></span>
+                        <span class="leyenda-texto">60% - Com. Local</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="70">
+                        <span class="leyenda-color" style="background:#FFA500;"></span>
+                        <span class="leyenda-texto">70% - P. Gerencia</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="75">
+                        <span class="leyenda-color" style="background:#00FFFF;"></span>
+                        <span class="leyenda-texto">75% - Transito</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="85">
+                        <span class="leyenda-color" style="background:#F5F5DC;"></span>
+                        <span class="leyenda-texto">85% - Rec. Parcial</span>
+                    </div>
+
+                    <div class="leyenda-item" data-estado="100">
+                        <span class="leyenda-color" style="background:#00FF00;"></span>
+                        <span class="leyenda-texto">100% - Obra</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="leyenda-modal-footer">
+                <button class="leyenda-btn leyenda-btn-secondary" id="leyendaCerrarBtn">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
@@ -257,6 +351,7 @@
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
             <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="3" id="excelJS" class="exportFast oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
+            <a href="#" id="verAyuda"><i class="far fa-question-circle"></i><p>Mostrar Ayuda</p></a> 
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -305,26 +400,12 @@
                             <input type="text" name="anioSearch" id="anioSearch">
                         </div>
                     </div>
-                    <div class="procesos">
-                        <div class="item_anulado"><a href="105" title="Anulado">0%<p>Anulado</p></a></div>
-                        <div class="pedidoCreado"><a href="49" title="Pedido Creado">10%<p>Creado</p></a></div>
-                        <div class="item_aprobado"><a href="54" title="Pedido Aprobado">15%<p>Aprob.</p></div>
-                        <div class="stock"><a href="52" title="Atencion x Stock">20%<p>Stock</p></a></div>
-                        <div class="item_orden"><a href="#" title="con OC/OS">25%<p>OC/OS</p></a></div>
-                        <div class="item_parcial"><a href="#" title="Enviado Proveedor">30%<p>Enviado</p></a></div>
-                        <div class="item_ingreso_parcial" title="Atencion Parcial"><a href="#">40%<p>Ing.Parcial</p></a></div>
-                        <div class="item_ingreso_total" title="Atención Total"><a href="#">50%<p>At.Total</p></a></div>
-                        <div class="item_registro_salida" title="Atencion cx compras locales"><a href="230">60%<p>Com.Local</p></a></div>
-                        <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
-                        <div class="item_transito" title="En transito"><a href="#">75%<p>Transito</p></a></div>
-                        <div class="item_ingreso_parcial" title="Parcial Obra"><a href="#">85%<p>Rec.Parcial</p></a></div>
-                        <div class="item_obra" title="En Obra"><a href="#">100%<p>Obra</p></a></div>
-                    </div>
+                    
                 </div>
                 <div class="botonesConsulta">
-                        <button type="button" id="btnProcesa">Procesar</button>
-                        <button type="button" id="btnExporta">Exportar</button>
-                    </div>
+                    <button type="button" id="btnProcesa">Procesar</button>
+                    <button type="button" id="btnExporta">Exportar</button>
+                </div>
             </div>
         </form>
     </div>
@@ -384,7 +465,10 @@
                     <th data-idcol="42" class="datafiltro">Observaciones/Concepto</th>
                     <th data-idcol="43" class="datafiltro">Solicitante</th>
                     <th data-idcol="44" class="datafiltro" style="background:#819830; color:#000">Pedido Asignado</th>
-                    <th data-idcol="45" style="background:#819830; color:#000">Fecha Descarga</br>Orden</th>
+                    <th data-idcol="45" style="background:#819830; color:#000">Fecha Descarga </br>Orden</th>
+                    <th data-idcol="45" style="background:#C7CBD1; color:#000">INCOTERM</th>
+                    <th data-idcol="45" style="background:#C7CBD1; color:#000">PUNTO DE ENTREGA</th>
+                    <th data-idcol="45" style="background:#C7CBD1; color:#000">FECHA DE COMPROMISO</th>
                 </tr>
             </thead>
             <tbody>
