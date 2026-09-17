@@ -196,22 +196,20 @@ $(function () {
   $("#cargoPlanDescrip tbody").on("dblclick", "tr", function (e) {
     e.preventDefault();
 
-    $("#vistadocumento").fadeIn();
-
     let tabla = $(this);
 
     idpedido = tabla.data("pedido");
 
-    $("#codigo").val(tabla.find("td").eq(12).text());
-    $("#producto").val(tabla.find("td").eq(14).text());
-    $("#unidad").val(tabla.find("td").eq(13).text());
-    $("#cantidad").val(tabla.find("td").eq(11).text());
-    $("#estado").val(tabla.find("td").eq(1).text());
-    $("#nropedido").val(tabla.find("td").eq(8).text());
-    $("#tipo_pedido").val(tabla.find("td").eq(6).text());
-    $("#emision_pedido").val(tabla.find("td").eq(9).text());
-    $("#aprobacion_pedido").val(tabla.find("td").eq(10).text());
-    $("#aprobado_por").val(tabla.data("aprueba"));
+    $("#codigo").text(tabla.find("td").eq(14).text());
+    $("#producto").text(tabla.find("td").eq(16).text());
+    $("#unidad").text(tabla.find("td").eq(15).text());
+    $("#cantidad").text(tabla.find("td").eq(11).text());
+    $("#estado").text(tabla.find("td").eq(1).text());
+    $("#nropedido").text(tabla.find("td").eq(8).text());
+    $("#tipo_pedido").text(tabla.find("td").eq(6).text());
+    $("#emision_pedido").text(tabla.find("td").eq(9).text());
+    $("#aprobacion_pedido").text(tabla.find("td").eq(10).text());
+    $("#aprobado_por").text(tabla.data("aprueba"));
 
     $.post(
       RUTA + "cargoplanner/resumen",
@@ -221,10 +219,12 @@ $(function () {
         despacho: $(this).data("despacho"),
       },
       function (data, textStatus, jqXHR) {
-        $("#tablaOrdenes tbody").empty().append(data.orden);
+        /*/$("#tablaOrdenes tbody").empty().append(data.orden);
         $("#tablaIngresos tbody").empty().append(data.ingresos);
         $("#tablaDespachos tbody").empty().append(data.despachos);
-        $("#tablaObra tbody").empty().append(data.registros);
+        $("#tablaObra tbody").empty().append(data.registros);*/
+
+        $("#cpModal").addClass("active");
       },
       "json",
     );
@@ -1037,12 +1037,24 @@ $(function () {
   });
 
   // =============================================
-  // TOOLTIP PARA ALERTA
+  // CERRAR MODAL
   // =============================================
-  $(".leyenda-item.leyenda-alerta").attr(
-    "title",
-    "Atención: Este estado requiere stock disponible",
-  );
+  function cerrarModal() {
+    $("#cpModal").removeClass("active");
+    $("body").css("overflow", "");
+  }
+
+  $("#cpCerrar").on("click", cerrarModal);
+
+  // Cerrar al hacer clic fuera
+  $("#cpModal").on("click", function (e) {
+    if (e.target === this) cerrarModal();
+  });
+
+  // Cerrar con ESC
+  $(document).on("keydown", function (e) {
+    if (e.key === "Escape") cerrarModal();
+  });
 });
 
 detalles = () => {
@@ -1102,7 +1114,10 @@ detalles = () => {
       TRANSPORTE = $(this).find("td").eq(48).text(),
       OBSERVACIONES = $(this).find("td").eq(49).text(),
       SOLICITANTE = $(this).find("td").eq(50).text(),
-      DESCARGA = $(this).find("td").eq(52).text();
+      DESCARGA = $(this).find("td").eq(52).text(),
+      INDESCRIP = $(this).find("td").eq(53).text(),
+      CPUNTOENTREGA = $(this).find("td").eq(54).text(),
+      FCOMPROMISO = $(this).find("td").eq(55).text();
 
     item = {};
 
@@ -1166,6 +1181,10 @@ detalles = () => {
     item["observaciones"] = OBSERVACIONES;
     item["solicitante"] = SOLICITANTE;
     item["fecha_descarga"] = DESCARGA;
+
+    item["indescrip"] = INDESCRIP;
+    item["cPuntoEntrega"] = CPUNTOENTREGA;
+    item["fCompromiso"] = FCOMPROMISO;
 
     DATA.push(item);
   });

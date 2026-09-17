@@ -73,126 +73,179 @@
             <progress id="excelProcces" value="0">50%</progress>
         </div>
     </div>
-    <div class="modal" id="vistadocumento">
-        <div class="ventanaResumen">
-            <form method="post" id="cargoplan">
-                <div class="tituloDocumento">
-                    <div>
-                        <p class="titulo_seccion"><strong> Detalle Cargo Plan : </strong></p>
+    <div class="cp-modal-overlay" id="cpModal">
+        <div class="cp-modal-container">
+            <!-- HEADER -->
+            <div class="cp-modal-header">
+                <h3><i class="fas fa-clipboard-list"></i> Detalle Cargo Plan</h3>
+                <button class="cp-modal-close" id="cpCerrar">&times;</button>
+            </div>
+
+            <!-- BODY -->
+            <div class="cp-modal-body">
+                <!-- ===== INFO PRODUCTO ===== -->
+                <div class="cp-info-card">
+                    <div class="cp-card-title">
+                        <i class="fas fa-box"></i> Información del Producto
                     </div>
-                    <div>
-                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                    <div class="cp-grid cp-grid-producto">
+                        <div class="cp-field">
+                            <label>Código</label>
+                            <div class="cp-value" id="codigo"></div>
+                        </div>
+                        <div class="cp-field">
+                            <label>Descripción</label>
+                            <div class="cp-value" id="producto"></div>
+                        </div>
+                        <div class="cp-field">
+                            <label>Unidad</label>
+                            <div class="cp-value" id="unidad"></div>
+                        </div>
+                        <div class="cp-field">
+                            <label>Cant. Solicitada</label>
+                            <div class="cp-value" id="cantidad"></div>
+                        </div>
+                        <div class="cp-field">
+                            <label>Estado</label>
+                            <div class="cp-value">
+                                <span class="cp-badge cp-badge-30" id="estado"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <hr>
-                <div class="cuerpoDocumento">
-                    <section class="seccion1">
-                        <div>
-                            <label for="codigo">Código</label>
-                            <input type="text" name="codigo" id="codigo" readonly class="pl10">
+
+                <!-- ===== INFO PEDIDO ===== -->
+                <div class="cp-info-card">
+                    <div class="cp-card-title">
+                        <i class="fas fa-file-invoice"></i> Información del Pedido
+                    </div>
+                    <div class="cp-grid cp-grid-pedido">
+                        <div class="cp-field">
+                            <label>N° Pedido</label>
+                            <div class="cp-value" id="nropedido"></div>
                         </div>
-                        <div>
-                            <label for="producto">Descripción</label>
-                            <input type="text" name="producto" id="producto" readonly class="pl10">
+                        <div class="cp-field">
+                            <label>Tipo</label>
+                            <div class="cp-value" id="tipo_pedido"></div>
                         </div>
-                        <div>
-                            <label for="unidad">Unidad</label>
-                            <input type="text" name="unidad" id="unidad" class="drch pr10" readonly>
+                        <div class="cp-field">
+                            <label>Fecha Emisión</label>
+                            <div class="cp-value" id="emision_pedido"></div>
                         </div>
-                        <div>
-                            <label for="cantidad">Cant. </br> Solicitada</label>
-                            <input type="text" name="cantidad" id="cantidad" class="textoDerecha pr10px" readonly>
+                        <div class="cp-field">
+                            <label>Fecha Aprobación</label>
+                            <div class="cp-value" id="aprobacion_pedido"></div>
                         </div>
-                        <div>
-                            <label for="estado">Estado:</label>
-                            <input type="text" name="estado" id="estado" class="centro destino" readonly>
+                        <div class="cp-field">
+                            <label>Aprobado por</label>
+                            <div class="cp-value" id="aprobado_por"></div>
                         </div>
-                    </section>
-                    <section class="seccion2">
-                        <div>
-                            <label for="nropedido">N° Pedido:</label>
-                            <input type="text" name="nropedido" id="nropedido" class="drch pr10" readonly>
-                        </div>
-                        <div>
-                            <label for="tipo_pedido">Tipo</label>
-                            <input type="text" name="tipo_pedido" id="tipo_pedido" class="centro" readonly>
-                        </div>
-                        <div>
-                            <label for="emision_pedido">Fecha</br>Emisión</label>
-                            <input type="text" name="emision_pedido" id="emision_pedido" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_pedido">Fecha</br>Aprobación</label>
-                            <input type="text" name="aprobacion_pedido" id="aprobacion_pedido" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobado_por">Aprobado por:</label>
-                            <input type="text" name="aprobado_por" id="aprobado_por" class="pl10" readonly>
-                        </div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfpedido" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
-                    </section>
-                    <section class="seccion3">
-                        <table id="tablaOrdenes">
-                            <caption>Ordenes</caption>
-                            <thead>
+                    </div>
+                    <button class="cp-pdf-pedido" title="Ver documento del pedido">
+                        <i class="fas fa-file-pdf" id=""></i>
+                    </button>
+                </div>
+
+                <!-- ===== SECCIÓN: ORDENES ===== -->
+                <div class="cp-seccion">
+                    <div class="cp-seccion-header">
+                        <span class="cp-seccion-titulo">
+                            <i class="fas fa-shopping-cart"></i> Órdenes
+                        </span>
+                        <span class="cp-seccion-count">1</span>
+                    </div>
+                    <table class="cp-tabla">
+                        <thead>
+                            <tr>
                                 <th>Nro. Orden</th>
                                 <th>Fecha</th>
                                 <th>Proveedor</th>
                                 <th>CC</th>
-                                <th>...</th>
-                            </thead>
-                            <tbody>
-                                 
-                            </tbody>
-                        </table>
-                    </section>
-                    <section class="seccion4">
-                        <table id="tablaIngresos">
-                            <caption>Ingresos</caption>
-                            <thead>
+                                <th width="50">PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="cp-vacio">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== SECCIÓN: INGRESOS ===== -->
+                <div class="cp-seccion">
+                    <div class="cp-seccion-header">
+                        <span class="cp-seccion-titulo">
+                            <i class="fas fa-arrow-down"></i> Ingresos
+                        </span>
+                        <span class="cp-seccion-count">0</span>
+                    </div>
+                    <table class="cp-tabla">
+                        <thead>
+                            <tr>
                                 <th>Nro. Ingreso</th>
                                 <th>Fecha Ingreso</th>
-                                <th>Guia Proveedor</th>
-                                <th>...</th>
-                            </thead>
-                            <tbody>
-                                 
-                            </tbody>
-                        </table>
-                    </section>
-                    <section class="seccion5">
-                        <table id="tablaDespachos">
-                            <caption>Despachos</caption>
-                            <thead>
+                                <th>Guía Proveedor</th>
+                                <th width="50">PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="cp-vacio">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- ===== SECCIÓN: DESPACHOS ===== -->
+                <div class="cp-seccion">
+                    <div class="cp-seccion-header">
+                        <span class="cp-seccion-titulo">
+                            <i class="fas fa-truck"></i> Despachos
+                        </span>
+                        <span class="cp-seccion-count">0</span>
+                    </div>
+                    <table class="cp-tabla">
+                        <thead>
+                            <tr>
                                 <th>Nro. Salida</th>
                                 <th>Fecha Salida</th>
-                                <th>Nro. Guia</th>
+                                <th>Nro. Guía</th>
                                 <th>Nro. Referido</th>
-                                <th>...</th>
-                            </thead>
-                            <tbody>
-                                 
-                            </tbody>
-                        </table>
-                    </section>
-                    <section class="seccion5">
-                        <table id="tablaObra">
-                            <caption>Registros Obra</caption>
-                            <thead>
+                                <th width="50">PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="cp-vacio">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== SECCIÓN: REGISTROS OBRA ===== -->
+                <div class="cp-seccion">
+                    <div class="cp-seccion-header">
+                        <span class="cp-seccion-titulo">
+                            <i class="fas fa-hard-hat"></i> Registros Obra
+                        </span>
+                        <span class="cp-seccion-count">0</span>
+                    </div>
+                    <table class="cp-tabla">
+                        <thead>
+                            <tr>
                                 <th>Nro. Nota</th>
                                 <th>Fecha Ingreso</th>
-                                <th>...</th>
-                            </thead>
-                            <tbody>
-                                 
-                            </tbody>
-                        </table>
-                    </section>
+                                <th width="50">PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="cp-vacio">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
     <div class="modal" id="filtros">
@@ -252,12 +305,8 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <!-- ============================================= -->
-    <!-- MODAL DE LEYENDA -->
-    <!-- ============================================= -->
     <div class="leyenda-modal-overlay" id="leyendaModal">
         <div class="leyenda-modal-container">
-
             <!-- HEADER -->
             <div class="leyenda-modal-header">
                 <h3><i class="fas fa-palette"></i> Leyenda de Estados</h3>

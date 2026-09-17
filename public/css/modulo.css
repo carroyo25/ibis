@@ -1235,6 +1235,7 @@ thead .sticky-column {
   height: 75vh;
   margin-top: 5px;
 }
+
 .itemsCargoPlanner table,
 .itemsValorizado table {
   border-collapse: collapse;
@@ -1253,6 +1254,7 @@ thead .sticky-column {
   color: #fff;
   position: relative;
 }
+
 .itemsCargoPlanner table thead .filtro,
 .itemsValorizado table thead .filtro {
   background: #fff;
@@ -1322,6 +1324,7 @@ thead .sticky-column {
 .itemsValorizado table tbody .pointer:hover {
   background: rgba(255, 64, 43, 0.7);
 }
+
 
 .lista,
 .lista_grid {

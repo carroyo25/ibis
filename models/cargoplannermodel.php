@@ -409,12 +409,12 @@
                                         data-despacho="'.$rs['id_regalm'].'"
                                         data-porcentaje="'.$rs['ingreso_obra'].'">
                                         <td class="textoCentro">'.$counter++.'</td>
-                                        <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
+                                        <td class="textoCentro" style="padding:2px;"><span class="badge '.$estadofila.'">'.$porcentaje.'</span></td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['partida'].'</td>
                                         <td class="textoCentro ">'.$atencion.'</td>
-                                        <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
+                                        <td class="textoCentro" style="padding:2px;"><span class="badge '.$clase_operacion.'">'.$tipo_orden.'</span></td>
                                         <td class="textoCentro">'.$rs['anio_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
@@ -425,11 +425,11 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
-                                        <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
+                                        <td class="textoCentro" style="padding:2px;"><span class="badge '.$clase_operacion.'">'.$tipo_orden.'</span></td>
                                         <td class="textoCentro">'.$rs['anio_orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
-                                        <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
+                                        <td class="textoDerecha pr15px"style="padding:2px;"><span class="badge" style="background:#e8e8e8;font-weight: bold" >'.$rs['cantidad_orden'].'</span></td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$fecha_autoriza.'</td>
                                         <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
@@ -443,7 +443,7 @@
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['plazo'].'</td>
                                         <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
-                                        <td class="textoCentro '.$estadoSemaforo.'">'.$semaforo.'</td>
+                                        <td class="textoCentro " pr15px"style="padding:2px;"><span class="badge '.$estadoSemaforo.'">'.$semaforo.'</span></td>
                                         <td class="textoDerecha">'.$rs['despachos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['guiasunat'].'</td>
@@ -506,6 +506,10 @@
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
+
+                    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                    /*
                     while($rs = $sql->fetch()){
                         $salida .= '<tr>
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>
@@ -514,10 +518,13 @@
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
                                         <td class="textoDerecha"><a href="'.$rs['id_regmov'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
-                    }
+                    }*/
                 }
 
-                return $salida;
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -836,7 +843,7 @@
                 // Encabezado principal
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:AZ1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1', 'CARGO PLAN');
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AB2')->applyFromArray($estiloBase);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:BD2')->applyFromArray($estiloBase);
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
                 // Configuración de columnas (optimizado)
@@ -851,7 +858,8 @@
                     'AJ' => 14, 'AK' => 12, 'AL' => 12, 'AM' => 15, 'AN' => 15,
                     'AO' => 15, 'AP' => 15, 'AQ' => 15, 'AR' => 12, 'AS' => 15,
                     'AT' => 20, 'AU' => 15, 'AV' => 20, 'AW' => 20, 'AX' => 20,
-                    'AY' => 20, 'AZ' => 20, 'BA' => 40
+                    'AY' => 20, 'AZ' => 20, 'BA' => 40,'BB' => 40,'BC' => 40,
+                    'BD' => 40
                 ];
                 
                 foreach ($columnas as $col => $width) {
@@ -902,7 +910,8 @@
                     'Q2:V2' => '00FFFF',
                     'W2:AD2' => 'BFCDDB',
                     'AE2:AM2' => 'FFFF00',
-                    'AN2:BA2' => '127BDD'
+                    'AN2:BA2' => '127BDD',
+                    'BB2:BD2' => 'C7CBD1',
                 ];
                 
                 foreach ($coloresSecciones as $rango => $color) {
@@ -2139,7 +2148,7 @@
                 // Encabezado principal
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:AZ1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1', 'CARGO PLAN');
-                $objPHPExcel->getActiveSheet()->getStyle('A1:BA2')->applyFromArray($estiloBase);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:BD2')->applyFromArray($estiloBase);
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
         
                 // Configuración de columnas (optimizado)
