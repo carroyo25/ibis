@@ -7,6 +7,7 @@
     <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/dialogos.css">
     <title>Document</title>
     <style>
         :root {
@@ -141,7 +142,7 @@
                             <div class="cp-value" id="aprobado_por"></div>
                         </div>
                     </div>
-                    <button class="cp-pdf-pedido" title="Ver documento del pedido">
+                    <button class="cp-pdf-pedido" id="cp-pdf-pedido" title="Ver documento del pedido">
                         <i class="fas fa-file-pdf" id=""></i>
                     </button>
                 </div>
@@ -152,7 +153,7 @@
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-shopping-cart"></i> Órdenes
                         </span>
-                        <span class="cp-seccion-count">1</span>
+                        <span class="cp-seccion-count" id="orden_count">0</span>
                     </div>
                     <table class="cp-tabla">
                         <thead>
@@ -164,7 +165,7 @@
                                 <th width="50">PDF</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo_ordenes">
                             <tr>
                                 <td colspan="5" class="cp-vacio">Sin registros</td>
                             </tr>
@@ -178,7 +179,7 @@
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-arrow-down"></i> Ingresos
                         </span>
-                        <span class="cp-seccion-count">0</span>
+                        <span class="cp-seccion-count" id="ingresos_count">0</span>
                     </div>
                     <table class="cp-tabla">
                         <thead>
@@ -189,7 +190,7 @@
                                 <th width="50">PDF</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo_ingresos">
                             <tr>
                                 <td colspan="4" class="cp-vacio">Sin registros</td>
                             </tr>
@@ -202,7 +203,7 @@
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-truck"></i> Despachos
                         </span>
-                        <span class="cp-seccion-count">0</span>
+                        <span class="cp-seccion-count" id="salidas_count">0</span>
                     </div>
                     <table class="cp-tabla">
                         <thead>
@@ -214,7 +215,7 @@
                                 <th width="50">PDF</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo_despachos">
                             <tr>
                                 <td colspan="5" class="cp-vacio">Sin registros</td>
                             </tr>
@@ -228,7 +229,7 @@
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-hard-hat"></i> Registros Obra
                         </span>
-                        <span class="cp-seccion-count">0</span>
+                        <span class="cp-seccion-count" id="registros_count">0</span>
                     </div>
                     <table class="cp-tabla">
                         <thead>
@@ -238,7 +239,7 @@
                                 <th width="50">PDF</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo_registros">
                             <tr>
                                 <td colspan="3" class="cp-vacio">Sin registros</td>
                             </tr>
@@ -291,6 +292,35 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="documentosRelacionados">
+        <div class="wrap_modal">
+            <div class="adj-modal-container">
+                <!-- HEADER -->
+                <div class="adj-modal-header">
+                    <h3>
+                        <i class="fas fa-paperclip"></i> Documentos
+                        <span class="adj-badge-cantidad" id="adjContador">1</span>
+                    </h3>
+                    <button class="adj-modal-close" id="adjCerrar">&times;</button>
+                </div>
+                <!-- BODY -->
+                <div class="adj-modal-body">
+                    <!-- ===== VISOR ===== -->
+                    <div class="adj-visor-container" id="adjVisor">
+                        <!-- Visor PDF -->
+                        <iframe id="adjIframe" src=""></iframe>
+                        <!-- Visor Imagen -->
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="adj-modal-footer">
+                    <button class="adj-btn adj-btn-secondary" id="adjCerrarBtn">Cerrar</button>
+                </div>
+
+            </div>
         </div>
     </div>
     <div class="modal" id="vistaAdjuntos">

@@ -489,7 +489,7 @@
 
         private function ordenes($orden) {
             try {
-                $salida = "";
+                $result = [];
                 $sql = $this->db->connect()->prepare("SELECT
                                                             lg_ordencab.id_regmov,
                                                             LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
@@ -534,7 +534,7 @@
 
         private function ingresos($refpedi) {
             try {
-                $salida = "";
+                $result = [];
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_recepdet.niddeta,
                                                         alm_recepdet.niddetaPed,
@@ -553,17 +553,21 @@
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
-                    while($rs = $sql->fetch()){
+                    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+                    /*while($rs = $sql->fetch()){
                         $salida .= '<tr>
                                         <td class="textoCentro">'.$rs['nnronota'].'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
-                    }
+                    }*/
                 }
 
-                return $salida;
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -573,7 +577,7 @@
 
         private function despachos($refpedi) {
             try {
-                $salida = "";
+                $result = [];
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_despachodet.niddeta,
                                                         alm_despachodet.id_regalm,
@@ -595,18 +599,22 @@
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
-                    while($rs = $sql->fetch()){
+                    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                    /*while($rs = $sql->fetch()){
                         $salida .= '<tr>
                                         <td class="textoCentro">'.$rs['nnronota'].'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['nReferido'].'</td>
                                         <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
-                                    </tr>';
-                    }
+                       */
                 }
 
-                return $salida;
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -616,7 +624,7 @@
 
         private function registros($refpedi) {
             try {
-                $salida = "";
+                $result = [];
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_existencia.idregistro,
                                                         DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
@@ -631,17 +639,21 @@
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
-                    while($rs = $sql->fetch()){
+                    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                    /*while($rs = $sql->fetch()){
                         $salida .= '<tr>
                                         <td class="textoCentro">'.$rs['idregistro'].'</td>
                                         <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                         <td class="textoDerecha"><a href="'.$rs['idregistro'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
-                    }
+                    }*/
                 }
 
-                return $salida;
-
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -219,10 +219,20 @@ $(function () {
         despacho: $(this).data("despacho"),
       },
       function (data, textStatus, jqXHR) {
-        /*/$("#tablaOrdenes tbody").empty().append(data.orden);
-        $("#tablaIngresos tbody").empty().append(data.ingresos);
-        $("#tablaDespachos tbody").empty().append(data.despachos);
-        $("#tablaObra tbody").empty().append(data.registros);*/
+        $("#orden_count").text(data.orden.datos.length);
+        $("#ingresos_count").text(data.orden.length);
+        $("#salidas_count").text(data.orden.length);
+        $("#registros_count").text(data.orden.length);
+
+         // ===== DEBUG =====
+        console.log('=== RESPUESTA ===');
+        console.log('data:', data);
+        console.log('data.orden:', data.orden);
+        console.log('data.orden.datos:', data.orden.datos);
+        console.log('Es array?', Array.isArray(data.orden.datos));
+        console.log('Longitud:', data.orden.datos ? data.orden.datos.length : 0);
+
+        renderizarOrdenes(data.orden.datos);
 
         $("#cpModal").addClass("active");
       },
@@ -236,25 +246,6 @@ $(function () {
     e.preventDefault();
 
     $("#vistadocumento").fadeOut();
-
-    return false;
-  });
-
-  $("#pdfpedido").click(function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "panel/pdfPedido",
-      { pedido: idpedido },
-      function (data, textStatus, jqXHR) {
-        $(".ventanaVistaPrevia iframe")
-          .attr("src", "")
-          .attr("src", "public/documentos/temp/" + data);
-
-        $("#vistaprevia").fadeIn();
-      },
-      "text",
-    );
 
     return false;
   });
@@ -1054,6 +1045,97 @@ $(function () {
   // Cerrar con ESC
   $(document).on("keydown", function (e) {
     if (e.key === "Escape") cerrarModal();
+  });
+
+  $("#cp-pdf-pedido").click(function (e) {
+    e.preventDefault();
+
+    $.post(
+      RUTA + "panel/pdfPedido",
+      { pedido: idpedido },
+      function (data, textStatus, jqXHR) {
+        $("#documentosRelacionados iframe")
+          .attr("src", "")
+          .attr("src", "public/documentos/temp/" + data)
+          .show();
+
+        $("#documentosRelacionados").fadeIn();
+      },
+      "text",
+    );
+
+    return false;
+  });
+
+  $("#adjCerrarBtn, #adjCerrar").click(function (e) {
+    e.preventDefault();
+
+    // Intentar cargar en iframe
+    const iframe = document.getElementById("adjIframe");
+    iframe.src = "";
+
+    $("#documentosRelacionados").fadeOut();
+
+    return false;
+  });
+
+  // =============================================
+  // RENDERIZAR TABLA DE ORDENES
+  // =============================================
+  function renderizarOrdenes(data) {
+    const tbody = document.getElementById("cuerpo_ordenes");
+
+    console.log(data.orden);
+
+    // Limpiar tabla
+    tbody.innerHTML = "";
+
+    if (!data.orden || !data.orden.datos || data.orden.datos.length === 0) {
+      tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center; padding:20px; color:#5f6368;">
+                    <i class="fas fa-search" style="font-size:12px; display:block; margin-bottom:8px; color:#9aa0a6;"></i>
+                    No hay órdenes registradas
+                </td>
+            </tr>
+        `;
+      return;
+    }
+
+    data.orden.datos.forEach((element) => {
+      const tr = document.createElement("tr");
+      tr.dataset.id_orden = element.id_regmov;
+
+      tr.innerHTML = `
+            <td><strong>${element.cnumero}</strong></td>
+            <td>${element.ffechadoc}</td>
+            <td>${element.crazonsoc}</td>
+            <td>${element.ccodproy}</td>
+            <td class="text-center">
+                <button class="cp-btn-pdf" title="Ver PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </td>
+        `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // =============================================
+  // EVENTO PDF (delegación)
+  // =============================================
+  $(document).on("click", "#cuerpo_orden .cp-btn-pdf", function (e) {
+    e.stopPropagation();
+
+    const $fila = $(this).closest("tr");
+    const id = $fila.data("id_orden");
+    const numero = $fila.find("td").eq(0).text().trim();
+
+    //console.log("📄 Ver PDF:", { id, numero });
+
+    // Aquí tu lógica para mostrar el PDF
+    // window.open(RUTA + 'orden/pdf/' + id, '_blank');
   });
 });
 
