@@ -1085,12 +1085,12 @@ $(function () {
   function renderizarOrdenes(data) {
     const tbody = document.getElementById("cuerpo_ordenes");
 
-    console.log(data.orden);
+    console.log(data);
 
     // Limpiar tabla
     tbody.innerHTML = "";
 
-    if (!data.orden || !data.orden.datos || data.orden.datos.length === 0) {
+    if (!data || data.length === 0) {
       tbody.innerHTML = `
             <tr>
                 <td colspan="5" style="text-align:center; padding:20px; color:#5f6368;">
@@ -1102,7 +1102,7 @@ $(function () {
       return;
     }
 
-    data.orden.datos.forEach((element) => {
+    data.forEach((element) => {
       const tr = document.createElement("tr");
       tr.dataset.id_orden = element.id_regmov;
 
