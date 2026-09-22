@@ -217,16 +217,25 @@ $(function () {
         orden: tabla.data("orden"),
         refpedido: $(this).data("itempedido"),
         despacho: $(this).data("despacho"),
+        registro: $(this).data("registro"),
       },
       function (data, textStatus, jqXHR) {
-        $("#orden_count").text(data.orden.datos.length);
-        $("#ingresos_count").text(data.ingresos.datos.length);
-        $("#salidas_count").text(data.despachos.datos.length);
-        $("#registros_count").text(data.registros.datos.length);
+        let orden_count = data.orden.datos.length || 0;
+        let ingresos_count = data.ingresos.datos.length || 0;
+        let salidas_count = data.despachos.datos.length || 0;
+        let registros_count = data.registros.datos.length || 0;
 
-        console.log(data);
+        console.log(data.orden);
+
+        $("#orden_count").text(orden_count);
+        $("#ingresos_count").text(ingresos_count);
+        $("#salidas_count").text(salidas_count);
+        $("#registros_count").text(registros_count);
 
         renderizarOrdenes(data.orden.datos);
+        renderizarIngresos(data.ingresos.datos);
+        renderizarDespachos(data.despachos.datos);
+        renderizarRegistros(data.registros.datos);
 
         $("#cpModal").addClass("active");
       },
@@ -244,109 +253,6 @@ $(function () {
     return false;
   });
 
-  $("#tablaOrdenes").on("click", "a", function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "pedidoseg/datosOrden",
-      { id: $(this).attr("href") },
-      function (data, text, requestXHR) {
-        $(".ventanaVistaPrevia iframe").attr("src", "").attr("src", data);
-
-        $("#vistaprevia").fadeIn();
-      },
-      "text",
-    );
-
-    return false;
-  });
-
-  $("#tablaIngresos").on("click", "a", function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "cargoplanner/vistaIngreso",
-      { id: $(this).attr("href") },
-      function (data, text, requestXHR) {
-        $(".ventanaVistaPrevia iframe").attr("src", "").attr("src", data);
-
-        $("#vistaprevia").fadeIn();
-      },
-      "text",
-    );
-
-    return false;
-  });
-
-  $("#tablaDespachos").on("click", "a", function (e) {
-    e.preventDefault();
-
-    $("#vistaprevia").fadeIn();
-
-    $.post(
-      RUTA + "cargoplanner/vistaDespachos",
-      { id: $(this).attr("href") },
-      function (data, text, requestXHR) {
-        $(".ventanaVistaPrevia iframe").attr("src", "").attr("src", data);
-
-        $("#vistaprevia").fadeIn();
-      },
-      "text",
-    );
-
-    return false;
-  });
-
-  $("#tablaObra").on("click", "a", function (e) {
-    e.preventDefault();
-
-    $.post(
-      RUTA + "cargoplanner/vistaRegistros",
-      { id: $(this).attr("href"), tipo: "GA" },
-      function (data, text, requestXHR) {
-        $("#listaAdjuntos").empty().append(data.adjuntos);
-        $("#listaAdjuntos li a:nth-child(2)").hide();
-
-        $("#vistaAdjuntos").fadeIn();
-      },
-      "json",
-    );
-
-    return false;
-  });
-
-  $("#vistaAdjuntos").on("click", "a", function (e) {
-    e.preventDefault();
-
-    $(".ventanaAdjuntos iframe")
-      .attr("src", "")
-      .attr(
-        "src",
-        "public/documentos/almacen/adjuntos/" + $(this).attr("href"),
-      );
-
-    return false;
-  });
-
-  $("#closeAtach").click(function (e) {
-    e.preventDefault();
-
-    $(".ventanaAdjuntos iframe").attr("src", "");
-
-    $("#vistaAdjuntos").fadeOut();
-
-    return false;
-  });
-
-  $("#closePreview").click(function (e) {
-    e.preventDefault();
-
-    $(".ventanaVistaPrevia iframe").attr("src", "");
-
-    $("#vistaprevia").fadeOut();
-
-    return false;
-  });
 
   $(".procesos a").on("click", function (e) {
     e.preventDefault();
@@ -1078,8 +984,7 @@ $(function () {
   // =============================================
   function renderizarOrdenes(data) {
     const tbody = document.getElementById("cuerpo_ordenes");
-
-    console.log(data);
+    const contenedor = document.getElementById("cp_ordenes");
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1091,14 +996,16 @@ $(function () {
                     <i class="fas fa-search" style="font-size:12px; display:block; margin-bottom:8px; color:#9aa0a6;"></i>
                     No hay órdenes registradas
                 </td>
-            </tr>
-        `;
+            </tr>`;
+
+      contenedor.classList.add('oculto');
+
       return;
     }
 
     data.forEach((element) => {
       const tr = document.createElement("tr");
-      tr.dataset.id_orden = element.id_regmov;
+      tr.dataset.id = element.id_regmov;
 
       tr.innerHTML = `
             <td><strong>${element.cnumero}</strong></td>
@@ -1114,10 +1021,13 @@ $(function () {
 
       tbody.appendChild(tr);
     });
+
+    contenedor.classList.remove('oculto');
   }
 
   function renderizarIngresos(data) {
     const tbody = document.getElementById("cuerpo_ingresos");
+    const contenedor = document.getElementById("cp_ingresos");
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1131,12 +1041,15 @@ $(function () {
                 </td>
             </tr>
         `;
+
+      contenedor.classList.add('oculto');
+
       return;
     }
 
     data.forEach((element) => {
       const tr = document.createElement("tr");
-      tr.dataset.id_ingreso = element.id_regalm;
+      tr.dataset.id = element.id_regalm;
 
       tr.innerHTML = `<td><strong>${element.nnronota}</strong></td>
             <td>${element.ffecdoc}</td>
@@ -1150,10 +1063,14 @@ $(function () {
 
       tbody.appendChild(tr);
     });
+
+    contenedor.classList.remove('oculto');
   }
 
   function renderizarDespachos(data) {
     const tbody = document.getElementById("cuerpo_despachos");
+    const contenedor = document.getElementById("cp_despachos");
+
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1167,12 +1084,14 @@ $(function () {
                 </td>
             </tr>
         `;
+      contenedor.classList.add('oculto');
+    
       return;
     }
 
     data.forEach((element) => {
       const tr = document.createElement("tr");
-      tr.dataset.id_despacho = element.id_regalm;
+      tr.dataset.id = element.id_regalm;
 
       tr.innerHTML = `
             <td><strong>${element.nnronota}</strong></td>
@@ -1188,10 +1107,15 @@ $(function () {
 
       tbody.appendChild(tr);
     });
+
+    contenedor.classList.remove('oculto');
+
   }
 
   function renderizarRegistros(data) {
     const tbody = document.getElementById("cuerpo_registros");
+    const contenedor = document.getElementById("cp_registros");
+
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1204,12 +1128,15 @@ $(function () {
                 </td>
             </tr>
         `;
+
+      contenedor.classList.add('oculto');
+      
       return;
     }
 
     data.forEach((element) => {
       const tr = document.createElement("tr");
-      tr.dataset.id_registro = element.idreg;
+      tr.dataset.id = element.idregistro;
 
       tr.innerHTML = `
             <td><strong>${element.idregistro}</strong></td>
@@ -1223,22 +1150,80 @@ $(function () {
 
       tbody.appendChild(tr);
     });
+
+    contenedor.classList.remove('oculto');
+
   }
 
   // =============================================
   // EVENTO PDF (delegación)
   // =============================================
-  $(document).on("click", "#cuerpo_orden .cp-btn-pdf", function (e) {
+  $(document).on("click", ".cp-btn-pdf", function (e) {
     e.stopPropagation();
 
     const $fila = $(this).closest("tr");
-    const id = $fila.data("id_orden");
+    const id = $fila.data("id");
     const numero = $fila.find("td").eq(0).text().trim();
+    const origen = $(this).closest('tbody').attr('id');
 
-    //console.log("📄 Ver PDF:", { id, numero });
+    $("#documentosRelacionados").fadeIn();
 
-    // Aquí tu lógica para mostrar el PDF
-    // window.open(RUTA + 'orden/pdf/' + id, '_blank');
+    switch (origen) {
+      case 'cuerpo_ordenes':
+        $.post(RUTA+"pedidoseg/datosOrden", {'id': id},
+            function (data, text, requestXHR) {
+                $("#documentosRelacionados iframe")
+                .attr("src", "")
+                .attr("src", data)
+                .show();
+
+                $("#documentosRelacionados").fadeIn();
+            },"text"
+        );
+        break;
+    
+      case 'cuerpo_ingresos':
+        $.post(RUTA+"cargoplanner/vistaIngreso", {'id': id},
+            function (data, text, requestXHR) {
+                $("#documentosRelacionados iframe")
+                .attr("src", "")
+                .attr("src", data)
+                .show();
+
+                $("#documentosRelacionados").fadeIn();
+            },"text"
+        );
+        break;
+      
+      case 'cuerpo_despachos':
+        $.post(RUTA+"cargoplanner/vistaDespachos", {'id': id},
+            function (data, text, requestXHR) {
+                $("#documentosRelacionados iframe")
+                .attr("src", "")
+                .attr("src", data)
+                .show();
+
+                $("#documentosRelacionados").fadeIn();
+            },"text"
+        );
+        break;
+
+      case 'cuerpo_registros':
+        $.post(RUTA+"cargoplanner/vistaRegistros", {'id': id,'tipo':'GA'},
+            function (data, text, requestXHR) {
+                /*$("#documentosRelacionados iframe")
+                .attr("src", "")
+                .attr("src", data)
+                .show();
+
+                $("#documentosRelacionados").fadeIn();*/
+
+                console.log(data);
+            },"text"
+        );
+
+        break;
+    }
   });
 });
 

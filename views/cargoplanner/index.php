@@ -148,7 +148,7 @@
                 </div>
 
                 <!-- ===== SECCIÓN: ORDENES ===== -->
-                <div class="cp-seccion">
+                <div class="cp-seccion oculto" id="cp_ordenes">
                     <div class="cp-seccion-header">
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-shopping-cart"></i> Órdenes
@@ -174,7 +174,7 @@
                 </div>
 
                 <!-- ===== SECCIÓN: INGRESOS ===== -->
-                <div class="cp-seccion">
+                <div class="cp-seccion oculto" id="cp_ingresos">
                     <div class="cp-seccion-header">
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-arrow-down"></i> Ingresos
@@ -198,7 +198,7 @@
                     </table>
                 </div>
                 <!-- ===== SECCIÓN: DESPACHOS ===== -->
-                <div class="cp-seccion">
+                <div class="cp-seccion oculto" id="cp_despachos">
                     <div class="cp-seccion-header">
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-truck"></i> Despachos
@@ -224,7 +224,7 @@
                 </div>
 
                 <!-- ===== SECCIÓN: REGISTROS OBRA ===== -->
-                <div class="cp-seccion">
+                <div class="cp-seccion oculto" id="cp_registros">
                     <div class="cp-seccion-header">
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-hard-hat"></i> Registros Obra
@@ -476,7 +476,7 @@
                         </div>
                          <div>
                             <label for="anioSearch">Año : </label>
-                            <input type="text" name="anioSearch" id="anioSearch">
+                            <input type="text" name="anioSearch" id="anioSearch" value="<?php echo date("Y");?>">
                         </div>
                     </div>
                     

@@ -407,7 +407,8 @@
                                         data-producto="'.$rs['idprod'].'"
                                         data-aprueba="'.$rs['cnombres'].'"
                                         data-despacho="'.$rs['id_regalm'].'"
-                                        data-porcentaje="'.$rs['ingreso_obra'].'">
+                                        data-porcentaje ="'.$rs['ingreso_obra'].'"
+                                        data-registro ="'.$rs['nota_obra'].'">
                                         <td class="textoCentro">'.$counter++.'</td>
                                         <td class="textoCentro" style="padding:2px;"><span class="badge '.$estadofila.'">'.$porcentaje.'</span></td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
@@ -509,16 +510,6 @@
 
                     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-                    /*
-                    while($rs = $sql->fetch()){
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
-                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
-                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                        <td class="textoDerecha"><a href="'.$rs['id_regmov'].'"><i class="far fa-file-pdf"></i></a></td>
-                                    </tr>';
-                    }*/
                 }
 
                 return [
@@ -554,14 +545,6 @@
                 
                 if($rowCount > 0) {
                     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-                    /*while($rs = $sql->fetch()){
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
-                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
-                                    </tr>';
-                    }*/
                 }
 
                 return [
@@ -600,15 +583,6 @@
                 
                 if($rowCount > 0) {
                     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-                    /*while($rs = $sql->fetch()){
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
-                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                        <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
-                       */
                 }
 
                 return [
@@ -631,7 +605,7 @@
                                                         alm_existencia.idreg 
                                                     FROM
                                                         alm_existencia
-                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
                                                     WHERE
                                                         alm_existencia.idpedido = :ref_pedi 
                                                         AND alm_existencia.nflgActivo = 1");
@@ -640,14 +614,6 @@
                 
                 if($rowCount > 0) {
                     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-                    /*while($rs = $sql->fetch()){
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['idregistro'].'</td>
-                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                        <td class="textoDerecha"><a href="'.$rs['idregistro'].'"><i class="far fa-file-pdf"></i></a></td>
-                                    </tr>';
-                    }*/
                 }
 
                 return [
@@ -2937,6 +2903,27 @@
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function verGuiaRegistro($id,$tipo){
+            try {
+                $archivo = "";
+
+                $sql = $this->db->connect()->prepare("SELECT creferencia,
+                                                            cdocumento,
+                                                            id_regmov 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                        AND nflgactivo = 1
+                                                        AND cmodulo=:tipo");
+                $sql->execute(['id'=>$id,"tipo"=>$tipo]);
+                $archivo = $sql->fetchAll();
+
+                return $archivo[0]['creferencia'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }

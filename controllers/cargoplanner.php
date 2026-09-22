@@ -45,7 +45,7 @@
         }
 
         function vistaRegistros(){
-            echo json_encode($this->model->verAdjuntosDocs($_POST['id'],$_POST['tipo']));
+            echo json_encode($this->model->verGuiaRegistro($_POST['id'],$_POST['tipo']));
         }
 
         function proyectos(){

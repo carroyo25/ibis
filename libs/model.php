@@ -3564,7 +3564,7 @@
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null,$datosOrden[0]['ntipmov'],null);
+                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null,$datosOrden[0]['ntipmov'],null,null,null,null);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
