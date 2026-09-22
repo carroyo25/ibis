@@ -220,17 +220,11 @@ $(function () {
       },
       function (data, textStatus, jqXHR) {
         $("#orden_count").text(data.orden.datos.length);
-        $("#ingresos_count").text(data.orden.length);
-        $("#salidas_count").text(data.orden.length);
-        $("#registros_count").text(data.orden.length);
+        $("#ingresos_count").text(data.ingresos.datos.length);
+        $("#salidas_count").text(data.despachos.datos.length);
+        $("#registros_count").text(data.registros.datos.length);
 
-         // ===== DEBUG =====
-        console.log('=== RESPUESTA ===');
-        console.log('data:', data);
-        console.log('data.orden:', data.orden);
-        console.log('data.orden.datos:', data.orden.datos);
-        console.log('Es array?', Array.isArray(data.orden.datos));
-        console.log('Longitud:', data.orden.datos ? data.orden.datos.length : 0);
+        console.log(data);
 
         renderizarOrdenes(data.orden.datos);
 
@@ -1111,6 +1105,115 @@ $(function () {
             <td>${element.ffechadoc}</td>
             <td>${element.crazonsoc}</td>
             <td>${element.ccodproy}</td>
+            <td class="text-center">
+                <button class="cp-btn-pdf" title="Ver PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </td>
+        `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderizarIngresos(data) {
+    const tbody = document.getElementById("cuerpo_ingresos");
+
+    // Limpiar tabla
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align:center; padding:20px; color:#5f6368;">
+                    <i class="fas fa-search" style="font-size:12px; display:block; margin-bottom:8px; color:#9aa0a6;"></i>
+                    No hay órdenes registradas
+                </td>
+            </tr>
+        `;
+      return;
+    }
+
+    data.forEach((element) => {
+      const tr = document.createElement("tr");
+      tr.dataset.id_ingreso = element.id_regalm;
+
+      tr.innerHTML = `<td><strong>${element.nnronota}</strong></td>
+            <td>${element.ffecdoc}</td>
+            <td>${element.cnumguia}</td>
+            <td class="text-center">
+                <button class="cp-btn-pdf" title="Ver PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </td>
+        `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderizarDespachos(data) {
+    const tbody = document.getElementById("cuerpo_despachos");
+
+    // Limpiar tabla
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center; padding:20px; color:#5f6368;">
+                    <i class="fas fa-search" style="font-size:12px; display:block; margin-bottom:8px; color:#9aa0a6;"></i>
+                    No hay órdenes registradas
+                </td>
+            </tr>
+        `;
+      return;
+    }
+
+    data.forEach((element) => {
+      const tr = document.createElement("tr");
+      tr.dataset.id_despacho = element.id_regalm;
+
+      tr.innerHTML = `
+            <td><strong>${element.nnronota}</strong></td>
+            <td>${element.ffecdoc}</td>
+            <td>${element.cnumguia}</td>
+            <td>${element.nReferido}</td>
+            <td class="text-center">
+                <button class="cp-btn-pdf" title="Ver PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </td>
+        `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderizarRegistros(data) {
+    const tbody = document.getElementById("cuerpo_registros");
+
+    // Limpiar tabla
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr>
+                <td colspan="3" style="text-align:center; padding:20px; color:#5f6368;">
+                    <i class="fas fa-search" style="font-size:12px; display:block; margin-bottom:8px; color:#9aa0a6;"></i>
+                    No hay órdenes registradas
+                </td>
+            </tr>
+        `;
+      return;
+    }
+
+    data.forEach((element) => {
+      const tr = document.createElement("tr");
+      tr.dataset.id_registro = element.idreg;
+
+      tr.innerHTML = `
+            <td><strong>${element.idregistro}</strong></td>
+            <td>${element.ffechadoc}</td>
             <td class="text-center">
                 <button class="cp-btn-pdf" title="Ver PDF">
                     <i class="fas fa-file-pdf"></i>
