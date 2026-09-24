@@ -1232,7 +1232,7 @@ thead .sticky-column {
 .itemsCargoPlanner,
 .itemsValorizado {
   overflow: auto;
-  height: 75vh;
+  height: 70vh;
   margin-top: 5px;
 }
 

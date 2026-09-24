@@ -253,36 +253,6 @@ $(function () {
     return false;
   });
 
-
-  $(".procesos a").on("click", function (e) {
-    e.preventDefault();
-
-    $("#estado_item").val($(this).attr("href"));
-
-    let str = $("#formConsulta").serialize();
-
-    $("#esperar").css({ display: "block", opacity: "1" });
-
-    $.post(
-      RUTA + "cargoplanner/filtroCargoPlan",
-      str,
-      function (data, text, requestXHR) {
-        $(".itemsCargoPlanner table tbody").empty().append(data);
-
-        $("#esperar")
-          .fadeOut()
-          .promise()
-          .done(function () {
-            iniciarPaginador();
-          });
-
-        ("text");
-      },
-    );
-
-    return false;
-  });
-
   $(".exportReport").click(function (e) {
     e.preventDefault(e);
 
@@ -815,12 +785,44 @@ $(function () {
     $.post(
       RUTA + "cargoplanner/proyectos",
       function (data, text, requestXHR) {
-        $("#filtros").fadeIn(function () {
-          $("#costos").empty().append(data);
+        // ===== LIMPIAR LA LISTA =====
+        const lista = document.getElementById("faLista");
+        lista.innerHTML = "";
+
+        // ===== VALIDAR QUE HAYA DATOS =====
+        if (!data || !data.datos || !Array.isArray(data.datos)) {
+          lista.innerHTML = `<div style="padding:20px; text-align:center; color:#5f6368;">
+                    No hay proyectos disponibles
+                </div>`;
+          $("#faModal").addClass("active");
+          actualizarContador();
+          return;
+        }
+
+        // ===== CREAR LOS CHECKBOXES =====
+        data.datos.forEach((element) => {
+          const label = document.createElement("label");
+          label.classList.add("fa-item"); // ✅ Función, no propiedad
+
+          label.innerHTML = `
+                    <input type="checkbox" 
+                           name="${element.ncodproy}" 
+                           id="${element.ncodproy}"
+                           value="${element.ncodproy}">
+                    <span>${element.nombre}</span>
+                `;
+
+          lista.appendChild(label);
         });
+
+        $("#faModal").addClass("active");
+        actualizarContador();
       },
-      "text",
-    );
+      "json",
+    ).fail(function (xhr, status, error) {
+      console.error("Error al cargar proyectos:", error);
+      mostrarMensaje("Error al cargar los proyectos", "mensaje_error");
+    });
 
     return false;
   });
@@ -833,41 +835,67 @@ $(function () {
     return false;
   });
 
-  $("#btnAceptarFiltro").click(function (e) {
+  $("#faAceptar").click(function (e) {
     e.preventDefault();
 
-    let items = [];
-    ((indice = 0), (formData = new FormData()));
+    const items = [];
+    const formData = new FormData();
 
-    $("#costos input[type=checkbox]:checked").each(function () {
-      items[indice++] = $(this).attr("id");
+    // ===== OBTENER CHECKBOXES SELECCIONADOS =====
+    $("#faLista input[type='checkbox']:checked").each(function () {
+      items.push($(this).val());
     });
 
     try {
-      if (items.length == 0)
-        throw new Error("Debe seleccionar un centro de costos");
-      if ($("#fecha_inicio").val() == "")
-        throw new Error("Selecione una fecha de inicio");
-      if ($("#fecha_final").val() == "")
-        throw new Error("Selecione una fecha final");
+      // ===== VALIDACIONES =====
+      if (items.length === 0) {
+        throw new Error("Debe seleccionar al menos un centro de costos");
+      }
+      if (!$("#faFechaInicio").val()) {
+        throw new Error("Seleccione una fecha de inicio");
+      }
+      if (!$("#faFechaFinal").val()) {
+        throw new Error("Seleccione una fecha final");
+      }
 
+      // ===== PREPARAR DATOS =====
       formData.append("costos", JSON.stringify(items));
-      formData.append("fechaInicio", $("#fecha_inicio").val());
-      formData.append("fechaFinal", $("#fecha_final").val());
+      formData.append("fechaInicio", $("#faFechaInicio").val());
+      formData.append("fechaFinal", $("#faFechaFinal").val());
 
+      // ===== MOSTRAR LOADING =====
       $("#esperar").css({ display: "block", opacity: "1" });
 
+      // ===== ENVIAR AL BACKEND =====
       fetch(RUTA + "cargoplanner/filtroCargoPlanExporta", {
         method: "POST",
         body: formData,
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then((data) => {
           $("#esperar").css({ display: "none", opacity: "0" });
-          window.location.href = data.documento;
+
+          // ===== VALIDAR RESPUESTA =====
+          if (data && data.documento) {
+            window.location.href = data.documento;
+          } else if (data && data.mensaje) {
+            mostrarMensaje(data.mensaje, "mensaje_error");
+          } else {
+            mostrarMensaje("Error al generar el documento", "mensaje_error");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          $("#esperar").css({ display: "none", opacity: "0" });
+          mostrarMensaje("Error al generar el documento", "mensaje_error");
         });
     } catch (error) {
-      mostrarMensaje(error, "mensaje_error");
+      mostrarMensaje(error.message, "mensaje_error");
     }
 
     return false;
@@ -918,13 +946,32 @@ $(function () {
   // =============================================
   // CLICK EN UN ESTADO
   // =============================================
-  $(".leyenda-item").on("click", function () {
+  $(".leyenda-item").on("click", function (e) {
+    e.preventDefault();
+
     const estado = $(this).data("estado");
     const texto = $(this).find(".leyenda-texto").text();
 
-    console.log("Estado seleccionado:", estado, texto);
-    // Aquí puedes filtrar la tabla por ese estado
-    // filtrarPorEstado(estado);
+    let str = $("#formConsulta").serialize();
+
+    $("#esperar").css({ display: "block", opacity: "1" });
+
+    $.post(
+      RUTA + "cargoplanner/filtroCargoPlan",
+      str,
+      function (data, text, requestXHR) {
+        $(".itemsCargoPlanner table tbody").empty().append(data);
+
+        $("#esperar")
+          .fadeOut()
+          .promise()
+          .done(function () {
+            iniciarPaginador();
+          });
+
+        ("text");
+      },
+    );
   });
 
   // =============================================
@@ -998,7 +1045,7 @@ $(function () {
                 </td>
             </tr>`;
 
-      contenedor.classList.add('oculto');
+      contenedor.classList.add("oculto");
 
       return;
     }
@@ -1022,7 +1069,7 @@ $(function () {
       tbody.appendChild(tr);
     });
 
-    contenedor.classList.remove('oculto');
+    contenedor.classList.remove("oculto");
   }
 
   function renderizarIngresos(data) {
@@ -1042,7 +1089,7 @@ $(function () {
             </tr>
         `;
 
-      contenedor.classList.add('oculto');
+      contenedor.classList.add("oculto");
 
       return;
     }
@@ -1064,13 +1111,12 @@ $(function () {
       tbody.appendChild(tr);
     });
 
-    contenedor.classList.remove('oculto');
+    contenedor.classList.remove("oculto");
   }
 
   function renderizarDespachos(data) {
     const tbody = document.getElementById("cuerpo_despachos");
     const contenedor = document.getElementById("cp_despachos");
-
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1084,8 +1130,8 @@ $(function () {
                 </td>
             </tr>
         `;
-      contenedor.classList.add('oculto');
-    
+      contenedor.classList.add("oculto");
+
       return;
     }
 
@@ -1108,14 +1154,12 @@ $(function () {
       tbody.appendChild(tr);
     });
 
-    contenedor.classList.remove('oculto');
-
+    contenedor.classList.remove("oculto");
   }
 
   function renderizarRegistros(data) {
     const tbody = document.getElementById("cuerpo_registros");
     const contenedor = document.getElementById("cp_registros");
-
 
     // Limpiar tabla
     tbody.innerHTML = "";
@@ -1129,8 +1173,8 @@ $(function () {
             </tr>
         `;
 
-      contenedor.classList.add('oculto');
-      
+      contenedor.classList.add("oculto");
+
       return;
     }
 
@@ -1138,21 +1182,23 @@ $(function () {
       const tr = document.createElement("tr");
       tr.dataset.id = element.idregistro;
 
+      // ✅ Si hay archivo, muestra el botón. Si no, muestra un guión
+      let boton =
+        element.creferencia != null && element.creferencia != ""
+          ? `<button class="cp-btn-pdf" title="Ver PDF"><i class="fas fa-file-pdf"></i></button>`
+          : `<span class="cp-sin-archivo" style="color:#9aa0a6; font-size:12px;">Sin archivo</span>`;
+
       tr.innerHTML = `
-            <td><strong>${element.idregistro}</strong></td>
-            <td>${element.ffechadoc}</td>
-            <td class="text-center">
-                <button class="cp-btn-pdf" title="Ver PDF">
-                    <i class="fas fa-file-pdf"></i>
-                </button>
-            </td>
-        `;
+        <td><strong>${element.idregistro}</strong></td>
+        <td>${element.ffechadoc}</td>
+        <td class="text-center">
+            ${boton}
+        </td>`;
 
       tbody.appendChild(tr);
     });
 
-    contenedor.classList.remove('oculto');
-
+    contenedor.classList.remove("oculto");
   }
 
   // =============================================
@@ -1164,66 +1210,122 @@ $(function () {
     const $fila = $(this).closest("tr");
     const id = $fila.data("id");
     const numero = $fila.find("td").eq(0).text().trim();
-    const origen = $(this).closest('tbody').attr('id');
+    const origen = $(this).closest("tbody").attr("id");
 
     $("#documentosRelacionados").fadeIn();
 
     switch (origen) {
-      case 'cuerpo_ordenes':
-        $.post(RUTA+"pedidoseg/datosOrden", {'id': id},
-            function (data, text, requestXHR) {
-                $("#documentosRelacionados iframe")
-                .attr("src", "")
-                .attr("src", data)
-                .show();
+      case "cuerpo_ordenes":
+        $.post(
+          RUTA + "pedidoseg/datosOrden",
+          { id: id },
+          function (data, text, requestXHR) {
+            $("#documentosRelacionados iframe")
+              .attr("src", "")
+              .attr("src", data)
+              .show();
 
-                $("#documentosRelacionados").fadeIn();
-            },"text"
-        );
-        break;
-    
-      case 'cuerpo_ingresos':
-        $.post(RUTA+"cargoplanner/vistaIngreso", {'id': id},
-            function (data, text, requestXHR) {
-                $("#documentosRelacionados iframe")
-                .attr("src", "")
-                .attr("src", data)
-                .show();
-
-                $("#documentosRelacionados").fadeIn();
-            },"text"
-        );
-        break;
-      
-      case 'cuerpo_despachos':
-        $.post(RUTA+"cargoplanner/vistaDespachos", {'id': id},
-            function (data, text, requestXHR) {
-                $("#documentosRelacionados iframe")
-                .attr("src", "")
-                .attr("src", data)
-                .show();
-
-                $("#documentosRelacionados").fadeIn();
-            },"text"
+            $("#documentosRelacionados").fadeIn();
+          },
+          "text",
         );
         break;
 
-      case 'cuerpo_registros':
-        $.post(RUTA+"cargoplanner/vistaRegistros", {'id': id,'tipo':'GA'},
-            function (data, text, requestXHR) {
-                /*$("#documentosRelacionados iframe")
-                .attr("src", "")
-                .attr("src", data)
-                .show();
+      case "cuerpo_ingresos":
+        $.post(
+          RUTA + "cargoplanner/vistaIngreso",
+          { id: id },
+          function (data, text, requestXHR) {
+            $("#documentosRelacionados iframe")
+              .attr("src", "")
+              .attr("src", data)
+              .show();
 
-                $("#documentosRelacionados").fadeIn();*/
+            $("#documentosRelacionados").fadeIn();
+          },
+          "text",
+        );
+        break;
 
-                console.log(data);
-            },"text"
+      case "cuerpo_despachos":
+        $.post(
+          RUTA + "cargoplanner/vistaDespachos",
+          { id: id },
+          function (data, text, requestXHR) {
+            $("#documentosRelacionados iframe")
+              .attr("src", "")
+              .attr("src", data)
+              .show();
+
+            $("#documentosRelacionados").fadeIn();
+          },
+          "text",
+        );
+        break;
+
+      case "cuerpo_registros":
+        $.post(
+          RUTA + "cargoplanner/vistaRegistros",
+          { id: id, tipo: "GA" },
+          function (data, text, requestXHR) {
+            $("#documentosRelacionados iframe")
+              .attr("src", "")
+              .attr(
+                "src",
+                "https://sicalsepcon.net/ibis/public/documentos/almacen/adjuntos/" +
+                  data,
+              )
+              .show();
+
+            $("#documentosRelacionados").fadeIn();
+          },
+          "json",
         );
 
         break;
     }
+  });
+
+  function cerrarModalFa() {
+    $("#faModal").removeClass("active");
+  }
+
+  $("#faModal").on("click", function (e) {
+    if (e.target === this) cerrarModalFa();
+  });
+
+  $("#faCerrar, #faCancelar").on("click", cerrarModalFa);
+
+  $("#btnAbrirFiltros").on("click", function () {
+    $("#faModal").addClass("active");
+    actualizarContador();
+  });
+
+  function actualizarContador() {
+    const total = $('#faLista input[type="checkbox"]').length;
+    const seleccionados = $('#faLista input[type="checkbox"]:checked').length;
+    $("#faContador").text(seleccionados);
+    $("#faTotal").text(total);
+  }
+
+  $("#faSeleccionarTodos").on("click", function () {
+    $('#faLista input[type="checkbox"]').prop("checked", true);
+    actualizarContador();
+  });
+
+  $("#faQuitarTodos").on("click", function () {
+    $('#faLista input[type="checkbox"]').prop("checked", false);
+    actualizarContador();
+  });
+
+  $("#faLista").on("change", 'input[type="checkbox"]', actualizarContador);
+
+  $("#faAceptar").on("click", function () {
+    const seleccionados = [];
+    $('#faLista input[type="checkbox"]:checked').each(function () {
+      seleccionados.push($(this).val());
+    });
+    cerrarModalFa();
   });
 });
 

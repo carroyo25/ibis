@@ -75,156 +75,157 @@
         </div>
     </div>
     <div class="cp-modal-overlay" id="cpModal">
-        <div class="cp-modal-container">
-            <!-- HEADER -->
-            <div class="cp-modal-header">
-                <h3><i class="fas fa-clipboard-list"></i> Detalle Cargo Plan</h3>
-                <button class="cp-modal-close" id="cpCerrar">&times;</button>
-            </div>
+            <div class="cp-modal-container">
+                <!-- HEADER -->
+                <div class="cp-modal-header">
+                    <h3><i class="fas fa-clipboard-list"></i> Detalle Cargo Plan</h3>
+                    <button class="cp-modal-close" id="cpCerrar">&times;</button>
+                </div>
 
-            <!-- BODY -->
-            <div class="cp-modal-body">
-                <!-- ===== INFO PRODUCTO ===== -->
-                <div class="cp-info-card">
-                    <div class="cp-card-title">
-                        <i class="fas fa-box"></i> Información del Producto
-                    </div>
-                    <div class="cp-grid cp-grid-producto">
-                        <div class="cp-field">
-                            <label>Código</label>
-                            <div class="cp-value" id="codigo"></div>
+                <!-- BODY -->
+                <div class="cp-modal-body">
+                    <!-- ===== INFO PRODUCTO ===== -->
+                    <div class="cp-info-card">
+                        <div class="cp-card-title">
+                            <i class="fas fa-box"></i> Información del Producto
                         </div>
-                        <div class="cp-field">
-                            <label>Descripción</label>
-                            <div class="cp-value" id="producto"></div>
-                        </div>
-                        <div class="cp-field">
-                            <label>Unidad</label>
-                            <div class="cp-value" id="unidad"></div>
-                        </div>
-                        <div class="cp-field">
-                            <label>Cant. Solicitada</label>
-                            <div class="cp-value" id="cantidad"></div>
-                        </div>
-                        <div class="cp-field">
-                            <label>Estado</label>
-                            <div class="cp-value">
-                                <span class="cp-badge cp-badge-30" id="estado"></span>
+                        <div class="cp-grid cp-grid-producto">
+                            <div class="cp-field">
+                                <label>Código</label>
+                                <div class="cp-value" id="codigo"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Descripción</label>
+                                <div class="cp-value" id="producto"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Unidad</label>
+                                <div class="cp-value" id="unidad"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Cant. Solicitada</label>
+                                <div class="cp-value" id="cantidad"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Estado</label>
+                                <div class="cp-value">
+                                    <span class="cp-badge cp-badge-30" id="estado"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
 
                 <!-- ===== INFO PEDIDO ===== -->
                 <div class="cp-info-card">
-                    <div class="cp-card-title">
-                        <i class="fas fa-file-invoice"></i> Información del Pedido
-                    </div>
-                    <div class="cp-grid cp-grid-pedido">
-                        <div class="cp-field">
-                            <label>N° Pedido</label>
-                            <div class="cp-value" id="nropedido"></div>
+                        <div class="cp-card-title">
+                            <i class="fas fa-file-invoice"></i> Información del Pedido
                         </div>
-                        <div class="cp-field">
-                            <label>Tipo</label>
-                            <div class="cp-value" id="tipo_pedido"></div>
+                        <div class="cp-grid cp-grid-pedido">
+                            <div class="cp-field">
+                                <label>N° Pedido</label>
+                                <div class="cp-value" id="nropedido"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Tipo</label>
+                                <div class="cp-value" id="tipo_pedido"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Fecha Emisión</label>
+                                <div class="cp-value" id="emision_pedido"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Fecha Aprobación</label>
+                                <div class="cp-value" id="aprobacion_pedido"></div>
+                            </div>
+                            <div class="cp-field">
+                                <label>Aprobado por</label>
+                                <div class="cp-value" id="aprobado_por"></div>
+                            </div>
                         </div>
-                        <div class="cp-field">
-                            <label>Fecha Emisión</label>
-                            <div class="cp-value" id="emision_pedido"></div>
-                        </div>
-                        <div class="cp-field">
-                            <label>Fecha Aprobación</label>
-                            <div class="cp-value" id="aprobacion_pedido"></div>
-                        </div>
-                        <div class="cp-field">
-                            <label>Aprobado por</label>
-                            <div class="cp-value" id="aprobado_por"></div>
-                        </div>
-                    </div>
-                    <button class="cp-pdf-pedido" id="cp-pdf-pedido" title="Ver documento del pedido">
-                        <i class="fas fa-file-pdf" id=""></i>
-                    </button>
+                        <button class="cp-pdf-pedido" id="cp-pdf-pedido" title="Ver documento del pedido">
+                            <i class="fas fa-file-pdf" id=""></i>
+                        </button>
                 </div>
 
                 <!-- ===== SECCIÓN: ORDENES ===== -->
                 <div class="cp-seccion oculto" id="cp_ordenes">
-                    <div class="cp-seccion-header">
-                        <span class="cp-seccion-titulo">
-                            <i class="fas fa-shopping-cart"></i> Órdenes
-                        </span>
-                        <span class="cp-seccion-count" id="orden_count">0</span>
-                    </div>
-                    <table class="cp-tabla">
-                        <thead>
-                            <tr>
-                                <th>Nro. Orden</th>
-                                <th>Fecha</th>
-                                <th>Proveedor</th>
-                                <th>CC</th>
-                                <th width="50">PDF</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpo_ordenes">
-                            <tr>
-                                <td colspan="5" class="cp-vacio">Sin registros</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <div class="cp-seccion-header">
+                            <span class="cp-seccion-titulo">
+                                <i class="fas fa-shopping-cart"></i> Órdenes
+                            </span>
+                            <span class="cp-seccion-count" id="orden_count">0</span>
+                        </div>
+                        <table class="cp-tabla">
+                            <thead>
+                                <tr>
+                                    <th>Nro. Orden</th>
+                                    <th>Fecha</th>
+                                    <th>Proveedor</th>
+                                    <th>CC</th>
+                                    <th width="50">PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpo_ordenes">
+                                <tr>
+                                    <td colspan="5" class="cp-vacio">Sin registros</td>
+                                </tr>
+                            </tbody>
+                        </table>
                 </div>
 
-                <!-- ===== SECCIÓN: INGRESOS ===== -->
-                <div class="cp-seccion oculto" id="cp_ingresos">
-                    <div class="cp-seccion-header">
-                        <span class="cp-seccion-titulo">
-                            <i class="fas fa-arrow-down"></i> Ingresos
-                        </span>
-                        <span class="cp-seccion-count" id="ingresos_count">0</span>
+                    <!-- ===== SECCIÓN: INGRESOS ===== -->
+                    <div class="cp-seccion oculto" id="cp_ingresos">
+                        <div class="cp-seccion-header">
+                            <span class="cp-seccion-titulo">
+                                    <i class="fas fa-arrow-down"></i> Ingresos
+                            </span>
+                            <span class="cp-seccion-count" id="ingresos_count">0</span>
+                        </div>
+                            <table class="cp-tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nro. Ingreso</th>
+                                        <th>Fecha Ingreso</th>
+                                        <th>Guía Proveedor</th>
+                                        <th width="50">PDF</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpo_ingresos">
+                                    <tr>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
                     </div>
-                    <table class="cp-tabla">
-                        <thead>
-                            <tr>
-                                <th>Nro. Ingreso</th>
-                                <th>Fecha Ingreso</th>
-                                <th>Guía Proveedor</th>
-                                <th width="50">PDF</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpo_ingresos">
-                            <tr>
-                                <td colspan="4" class="cp-vacio">Sin registros</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- ===== SECCIÓN: DESPACHOS ===== -->
-                <div class="cp-seccion oculto" id="cp_despachos">
-                    <div class="cp-seccion-header">
-                        <span class="cp-seccion-titulo">
-                            <i class="fas fa-truck"></i> Despachos
-                        </span>
-                        <span class="cp-seccion-count" id="salidas_count">0</span>
-                    </div>
-                    <table class="cp-tabla">
-                        <thead>
-                            <tr>
-                                <th>Nro. Salida</th>
-                                <th>Fecha Salida</th>
-                                <th>Nro. Guía</th>
-                                <th>Nro. Referido</th>
-                                <th width="50">PDF</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpo_despachos">
-                            <tr>
-                                <td colspan="5" class="cp-vacio">Sin registros</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
 
-                <!-- ===== SECCIÓN: REGISTROS OBRA ===== -->
-                <div class="cp-seccion oculto" id="cp_registros">
+                    <!-- ===== SECCIÓN: DESPACHOS ===== -->
+                    <div class="cp-seccion oculto" id="cp_despachos">
+                        <div class="cp-seccion-header">
+                            <span class="cp-seccion-titulo">
+                                <i class="fas fa-truck"></i> Despachos
+                            </span>
+                            <span class="cp-seccion-count" id="salidas_count">0</span>
+                        </div>
+                        <table class="cp-tabla">
+                            <thead>
+                                <tr>
+                                    <th>Nro. Salida</th>
+                                    <th>Fecha Salida</th>
+                                    <th>Nro. Guía</th>
+                                    <th>Nro. Referido</th>
+                                    <th width="50">PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpo_despachos">
+                                <tr>
+                                    <td colspan="5" class="cp-vacio">Sin registros</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ===== SECCIÓN: REGISTROS OBRA ===== -->
+                    <div class="cp-seccion oculto" id="cp_registros">
                     <div class="cp-seccion-header">
                         <span class="cp-seccion-titulo">
                             <i class="fas fa-hard-hat"></i> Registros Obra
@@ -245,53 +246,8 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="filtros">
-        <div class="ventanaFiltros">
-            <div   div class="tituloDocumento">
-                <div>
-                    <p class="titulo_seccion"><strong> Filtros Avanzados : </strong></p>
-                </div>
-                <div>
-                    <a href="#" id="closeFilters" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <hr>
-            <div class="cuerpoDocumento">
-                <div class="proyectos">
-                    <ul class="listaCostos" id="costos">
-                        
-                    </ul>
-                </div>
-                <div class="fechas">
-                    <div>
-                        <label for="desde">Fecha Inicio:</label>
-                        <input type="date" name="fecha_inicio" id="fecha_inicio">
                     </div>
-                    <div>
-                        <label for="desde">Fecha Final:</label>
-                        <input type="date" name="fecha_final" id="fecha_final">
-                    </div>
-                </div>
-                <div class="porcentajes">
-                </div>
-                <div class="opciones">
-                    <button type="button" id="btnAceptarFiltro" class="boton5">Aceptar</button>
-                    <button type="button" id="btnCancelarFiltro" class="boton5">Cancelar</button>
-                </div>
             </div>
-        </div>
-    </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
         </div>
     </div>
     <div class="modal" id="documentosRelacionados">
@@ -323,18 +279,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="vistaAdjuntos">
-        <div class="ventanaAdjuntos">
-            <div class="tituloAdjuntos">
-                <h3>Adjuntos Orden</h3>
-                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <ul id="listaAdjuntos">
-
-            </ul>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="leyenda-modal-overlay" id="leyendaModal">
         <div class="leyenda-modal-container">
             <!-- HEADER -->
@@ -342,83 +286,118 @@
                 <h3><i class="fas fa-palette"></i> Leyenda de Estados</h3>
                 <button class="leyenda-modal-close" id="leyendaCerrar">&times;</button>
             </div>
-
             <!-- BODY -->
             <div class="leyenda-modal-body">
                 <div class="leyenda-grid" id="leyendaGrid">
-
                     <div class="leyenda-item" data-estado="0">
                         <span class="leyenda-color" style="background:#D3D3D3;"></span>
                         <span class="leyenda-texto">0% - Anulado</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="10">
                         <span class="leyenda-color" style="background:#F5DCC0;"></span>
                         <span class="leyenda-texto">10% - Creado</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="15">
                         <span class="leyenda-color" style="background:#FF0000;"></span>
                         <span class="leyenda-texto">15% - Aprob.</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="20">
                         <span class="leyenda-color" style="background:#B0C4DE;"></span>
                         <span class="leyenda-texto">20% - Stock</span>
                     </div>
-
-                    <div class="leyenda-item leyenda-alerta" data-estado="25">
+                    <div class="leyenda-item" data-estado="25">
                         <span class="leyenda-color" style="background:#FFFF00;"></span>
-                        <span class="leyenda-texto">25% - OC/OS</span>
-                        <i class="fas fa-exclamation-triangle leyenda-icono"></i>
+                        <span class="leyenda-texto">25% - Orden Generada</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="30">
                         <span class="leyenda-color" style="background:#D4E8D4;"></span>
-                        <span class="leyenda-texto">30% - Enviado</span>
+                        <span class="leyenda-texto">30% - Enviado Proveedor</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="40">
                         <span class="leyenda-color" style="background:#B4D4B4;"></span>
                         <span class="leyenda-texto">40% - Ing. Parcial</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="50">
                         <span class="leyenda-color" style="background:#96C896;"></span>
                         <span class="leyenda-texto">50% - At. Total</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="60">
                         <span class="leyenda-color" style="background:#FF00FF;"></span>
                         <span class="leyenda-texto">60% - Com. Local</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="70">
                         <span class="leyenda-color" style="background:#FFA500;"></span>
                         <span class="leyenda-texto">70% - P. Gerencia</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="75">
                         <span class="leyenda-color" style="background:#00FFFF;"></span>
                         <span class="leyenda-texto">75% - Transito</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="85">
                         <span class="leyenda-color" style="background:#F5F5DC;"></span>
                         <span class="leyenda-texto">85% - Rec. Parcial</span>
                     </div>
-
                     <div class="leyenda-item" data-estado="100">
                         <span class="leyenda-color" style="background:#00FF00;"></span>
                         <span class="leyenda-texto">100% - Obra</span>
                     </div>
+                </div>
+            </div>
+            <!-- FOOTER -->
+            <div class="leyenda-modal-footer">
+                <button class="leyenda-btn leyenda-btn-secondary" id="leyendaCerrarBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL -->
+    <div class="fa-modal-overlay" id="faModal">
+        <div class="fa-modal-container">
 
+            <!-- HEADER -->
+            <div class="fa-modal-header">
+                <h3><i class="fas fa-filter"></i> Filtros Avanzados</h3>
+                <button class="fa-modal-close" id="faCerrar">&times;</button>
+            </div>
+
+            <!-- BODY -->
+            <div class="fa-modal-body">
+
+                <!-- BARRA ACCIONES -->
+                <div class="fa-acciones">
+                    <span class="fa-contador">
+                        Seleccionados: <span id="faContador">0</span> de <span id="faTotal">0</span>
+                    </span>
+                    <div class="fa-acciones-botones">
+                        <button class="fa-btn-accion" id="faSeleccionarTodos">
+                            <i class="fas fa-check-double"></i> Seleccionar todos
+                        </button>
+                        <button class="fa-btn-accion quitar" id="faQuitarTodos">
+                            <i class="fas fa-times"></i> Quitar todos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LISTA -->
+                <div class="fa-lista" id="faLista">
+                    
+                </div>
+                <!-- FECHAS -->
+                <div class="fa-fechas">
+                    <div class="fa-fecha-item">
+                        <label>Fecha Inicio:</label>
+                        <input type="date" id="faFechaInicio" value="<?php echo date('Y-m-01'); ?>">
+                    </div>
+                    <div class="fa-fecha-item right">
+                        <label>Fecha Final:</label>
+                        <input type="date" id="faFechaFinal" value="<?php echo date('Y-m-d'); ?>">
+                    </div>
                 </div>
             </div>
 
             <!-- FOOTER -->
-            <div class="leyenda-modal-footer">
-                <button class="leyenda-btn leyenda-btn-secondary" id="leyendaCerrarBtn">Cerrar</button>
+            <div class="fa-modal-footer">
+                <button class="fa-btn fa-btn-primary" id="faAceptar">Aceptar</button>
+                <button class="fa-btn fa-btn-secondary" id="faCancelar">Cancelar</button>
             </div>
 
         </div>
@@ -430,7 +409,7 @@
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
             <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="3" id="excelJS" class="exportFast oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
-            <a href="#" id="verAyuda"><i class="far fa-question-circle"></i><p>Mostrar Ayuda</p></a> 
+            <a href="#" id="verAyuda"><i class="far fa-question-circle"></i><p>Mostrar Leyenda</p></a> 
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -554,6 +533,11 @@
                 
             </tbody>
         </table>
+    </div>
+    <div class="paginador_cp">
+        <div class="pagination">
+        
+        </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/exceljs.min.js"></script>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

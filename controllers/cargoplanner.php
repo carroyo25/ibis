@@ -49,7 +49,7 @@
         }
 
         function proyectos(){
-            echo $this->model->listarProyectosFiltro();
+            echo json_encode($this->model->listarProyectosFiltro());
         }
 
         function archivocvs(){
