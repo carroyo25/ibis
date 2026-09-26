@@ -9,26 +9,9 @@ $(function () {
   $("#btnProcesa").click(function (e) {
     e.preventDefault();
 
-    let str = $("#formConsulta").serialize();
+    $("#estado_item").val("");
 
-    $("#esperar").css({ display: "block", opacity: "1" });
-
-    $.post(
-      RUTA + "cargoplanner/filtroCargoPlan",
-      str,
-      function (data, text, requestXHR) {
-        $(".itemsCargoPlanner table tbody").empty().append(data);
-
-        $("#esperar")
-          .fadeOut()
-          .promise()
-          .done(function () {
-            iniciarPaginador();
-          });
-
-        ("text");
-      },
-    );
+    filtrarCargoPlan();
 
     return false;
   });
@@ -954,24 +937,11 @@ $(function () {
 
     let str = $("#formConsulta").serialize();
 
-    $("#esperar").css({ display: "block", opacity: "1" });
+    $("#estado_item").val(estado);
 
-    $.post(
-      RUTA + "cargoplanner/filtroCargoPlan",
-      str,
-      function (data, text, requestXHR) {
-        $(".itemsCargoPlanner table tbody").empty().append(data);
+    filtrarCargoPlan();
 
-        $("#esperar")
-          .fadeOut()
-          .promise()
-          .done(function () {
-            iniciarPaginador();
-          });
-
-        ("text");
-      },
-    );
+    return false;
   });
 
   // =============================================
@@ -1327,6 +1297,29 @@ $(function () {
     });
     cerrarModalFa();
   });
+
+  function filtrarCargoPlan() {
+    let str = $("#formConsulta").serialize();
+
+    $("#esperar").css({ display: "block", opacity: "1" });
+
+    $.post(
+      RUTA + "cargoplanner/filtroCargoPlan",
+      str,
+      function (data, text, requestXHR) {
+        $(".itemsCargoPlanner table tbody").empty().append(data);
+
+        $("#esperar")
+          .fadeOut()
+          .promise()
+          .done(function () {
+            iniciarPaginador();
+          });
+
+        ("text");
+      },
+    );
+  }
 });
 
 detalles = () => {

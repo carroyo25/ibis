@@ -289,39 +289,43 @@
             <!-- BODY -->
             <div class="leyenda-modal-body">
                 <div class="leyenda-grid" id="leyendaGrid">
-                    <div class="leyenda-item" data-estado="0">
+                    <div class="leyenda-item" data-estado="105">
                         <span class="leyenda-color" style="background:#D3D3D3;"></span>
                         <span class="leyenda-texto">0% - Anulado</span>
                     </div>
-                    <div class="leyenda-item" data-estado="10">
+                    <div class="leyenda-item" data-estado="49">
                         <span class="leyenda-color" style="background:#F5DCC0;"></span>
                         <span class="leyenda-texto">10% - Creado</span>
                     </div>
-                    <div class="leyenda-item" data-estado="15">
+                    <div class="leyenda-item" data-estado="51">
+                        <span class="leyenda-color" style="background:#d7ff67;"></span>
+                        <span class="leyenda-texto">12% - Consulta Almacen.</span>
+                    </div>
+                    <div class="leyenda-item" data-estado="54">
                         <span class="leyenda-color" style="background:#FF0000;"></span>
                         <span class="leyenda-texto">15% - Aprob.</span>
                     </div>
-                    <div class="leyenda-item" data-estado="20">
+                    <div class="leyenda-item" data-estado="52">
                         <span class="leyenda-color" style="background:#B0C4DE;"></span>
                         <span class="leyenda-texto">20% - Stock</span>
                     </div>
-                    <div class="leyenda-item" data-estado="25">
+                    <div class="leyenda-item" data-estado="84">
                         <span class="leyenda-color" style="background:#FFFF00;"></span>
                         <span class="leyenda-texto">25% - Orden Generada</span>
                     </div>
-                    <div class="leyenda-item" data-estado="30">
+                    <div class="leyenda-item" data-estado="59">
                         <span class="leyenda-color" style="background:#D4E8D4;"></span>
                         <span class="leyenda-texto">30% - Enviado Proveedor</span>
                     </div>
-                    <div class="leyenda-item" data-estado="40">
+                    <div class="leyenda-item" data-estado="60">
                         <span class="leyenda-color" style="background:#B4D4B4;"></span>
                         <span class="leyenda-texto">40% - Ing. Parcial</span>
                     </div>
-                    <div class="leyenda-item" data-estado="50">
+                    <div class="leyenda-item" data-estado="60">
                         <span class="leyenda-color" style="background:#96C896;"></span>
                         <span class="leyenda-texto">50% - At. Total</span>
                     </div>
-                    <div class="leyenda-item" data-estado="60">
+                    <div class="leyenda-item" data-estado="230">
                         <span class="leyenda-color" style="background:#FF00FF;"></span>
                         <span class="leyenda-texto">60% - Com. Local</span>
                     </div>
@@ -329,15 +333,15 @@
                         <span class="leyenda-color" style="background:#FFA500;"></span>
                         <span class="leyenda-texto">70% - P. Gerencia</span>
                     </div>
-                    <div class="leyenda-item" data-estado="75">
+                    <div class="leyenda-item" data-estado="62">
                         <span class="leyenda-color" style="background:#00FFFF;"></span>
                         <span class="leyenda-texto">75% - Transito</span>
                     </div>
-                    <div class="leyenda-item" data-estado="85">
+                    <div class="leyenda-item" data-estado="62">
                         <span class="leyenda-color" style="background:#F5F5DC;"></span>
                         <span class="leyenda-texto">85% - Rec. Parcial</span>
                     </div>
-                    <div class="leyenda-item" data-estado="100">
+                    <div class="leyenda-item" data-estado="62">
                         <span class="leyenda-color" style="background:#00FF00;"></span>
                         <span class="leyenda-texto">100% - Obra</span>
                     </div>
@@ -418,7 +422,7 @@
             <input type="hidden" name="estado_item" id="estado_item">
             <div class="variasConsultasColumna">
                 <div class="datosConsultaCargoPlan">
-                    <div class="parametrosConsulta">
+                    <div class="parametrosConsultaCargoPlan">
                         <div>
                             <label for="tipo">Tipo : </label>
                             <select name="tipoSearch" id="tipoSearch">
@@ -452,6 +456,24 @@
                         <div>
                             <label for="conceptoSearch">Concepto : </label>
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
+                        </div>
+                         <div>
+                            <label for="mes">Mes</label>
+                            <select name="mesSearch" id="mesSearch">
+                                <option value="-1">Mes</option>
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Setiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
                         </div>
                          <div>
                             <label for="anioSearch">Año : </label>

@@ -915,16 +915,27 @@ thead .sticky-column {
   -ms-flex-pack: justify;
   justify-content: space-between;
 }
+
 .barraTrabajo
   .variasConsultasColumna
   .datosConsultaCargoPlan
   .parametrosConsulta {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 5px 3fr 5px 1fr 5px 1fr 5px 1fr 5px 3fr 5px 3fr 5px 1fr;
   grid-template-columns: 1fr 3fr 1fr 1fr 1fr 3fr 3fr 1fr;
   gap: 5px;
 }
+
+.barraTrabajo
+  .variasConsultasColumna
+  .datosConsultaCargoPlan
+  .parametrosConsultaCargoPlan {
+  display: -ms-grid;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 2fr 2fr 1fr 1fr;
+  gap: 5px;
+}
+
 .barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan label {
   color: #fff;
   display: block;
@@ -4552,9 +4563,13 @@ thead .sticky-column {
   background: #e2c08d;
 }
 
-.orden,
+.orden {
+  background: #FFFF00;
+}
+
+.orden_proveedor,
 .recepcion_combustible {
-  background: #5f9ea0;
+  background: #D4E8D4;
 }
 
 .culminado {
