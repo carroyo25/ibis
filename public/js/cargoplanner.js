@@ -11,7 +11,7 @@ $(function () {
 
     $("#estado_item").val("");
 
-    filtrarCargoPlan();
+    filtrarCargoPlan(0);
 
     return false;
   });
@@ -939,7 +939,7 @@ $(function () {
 
     $("#estado_item").val(estado);
 
-    filtrarCargoPlan();
+    filtrarCargoPlan(estado);
 
     return false;
   });
@@ -1298,14 +1298,14 @@ $(function () {
     cerrarModalFa();
   });
 
-  function filtrarCargoPlan() {
+  function filtrarCargoPlan(valor) {
     let str = $("#formConsulta").serialize();
 
     $("#esperar").css({ display: "block", opacity: "1" });
 
     $.post(
       RUTA + "cargoplanner/filtroCargoPlan",
-      str,
+      {'str':str,'valor':valor},
       function (data, text, requestXHR) {
         $(".itemsCargoPlanner table tbody").empty().append(data);
 

@@ -321,7 +321,7 @@
                         <span class="leyenda-color" style="background:#B4D4B4;"></span>
                         <span class="leyenda-texto">40% - Ing. Parcial</span>
                     </div>
-                    <div class="leyenda-item" data-estado="60">
+                    <div class="leyenda-item" data-estado="60.1">
                         <span class="leyenda-color" style="background:#96C896;"></span>
                         <span class="leyenda-texto">50% - At. Total</span>
                     </div>
