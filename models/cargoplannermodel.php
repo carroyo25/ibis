@@ -13,7 +13,6 @@
 
         public function listarCargoPlan($parametros){
             try {
-
                 // ===== PARSEAR LA CADENA SERIALIZADA =====
                 if (isset($parametros['str'])) {
                     parse_str($parametros['str'], $campos);
@@ -29,65 +28,82 @@
                 $orden      = $parametros['ordenSearch']    == "" ? "%" : $parametros['ordenSearch'];
                 $pedido     = $parametros['pedidoSearch']   == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
-                $estadoItem = $parametros['estado_item']    == "" ? "%" : $parametros['estado_item'];
                 $anio       = $parametros['anioSearch']     == "" ? "%" : $parametros['anioSearch'];
                 $mes        = $parametros['mesSearch']      == "-1" ? "%" : $parametros['mesSearch'];
-                $valor      = $parametros['valor'];
+                $valor      = $parametros['valor'] ?? "";
                 $userID     = $_SESSION['iduser'];
-                
-                $salida = "No hay registros";
-                $item = 1;
 
+                $salida = "No hay registros";
+
+                // ===== SWITCH DE FILTROS ESPECIALES =====
                 switch ($valor){
                     case 105:
-                        $cadena = "AND tb_pedidodet.estadoItem = 105";
+                        $cadena = " AND tb_pedidodet.estadoItem = 105 ";
                         break;
+
                     case 49:
-                        $cadena = "AND tb_pedidodet.estadoItem = 49";
+                        $cadena = " AND tb_pedidodet.estadoItem = 49 ";
                         break;
+
                     case 230:
-                        $cadena = "AND tb_pedidodet.estadoItem = 230";
+                        $cadena = " AND tb_pedidodet.estadoItem = 230 ";
                         break;
+
                     case 54:
-                        $cadena = "AND tb_pedidodet.estadoItem = 54";
+                        $cadena = " AND tb_pedidodet.estadoItem = 54 ";
                         break;
-                     case 51:
-                        $cadena = "AND tb_pedidodet.estadoItem = 51";
+
+                    case 51:
+                        $cadena = " AND tb_pedidodet.estadoItem = 51 ";
                         break;
+
                     case 52:
-                        $cadena = "AND tb_pedidodet.estadoItem = 52
-                                   AND exi.ingreso_obra = 0";
+                        $cadena = " AND tb_pedidodet.estadoItem = 52 
+                                    AND COALESCE(exi.ingreso_obra, 0) = 0 ";
                         break;
-                     case 59:
-                        $cadena = "AND tb_pedidodet.estadoItem = 59
-                                   AND lg_ordencab.ffechades IS NOT NULL";
+
+                    case 59:
+                        $cadena = " AND tb_pedidodet.estadoItem = 59 
+                                    AND lg_ordencab.ffechades IS NOT NULL ";
                         break;
+
                     case 60:
-                        $cadena = "AND ing.ingreso > ord.cantidad_orden
-                                   AND exi.ingreso_obra = 0
-                                   AND des.despachos = 0";
+                        // Ingreso parcial: ya ingresó algo pero menos de lo ordenado
+                        $cadena = " AND COALESCE(ing.ingreso, 0) > 0 
+                                    AND COALESCE(ing.ingreso, 0) < COALESCE(ord.cantidad_orden, 0) 
+                                    AND COALESCE(exi.ingreso_obra, 0) = 0 
+                                    AND COALESCE(des.despachos, 0) = 0 ";
                         break;
-                    case 60.1:
-                        $cadena = "AND ing.ingreso = ord.cantidad_orden
-                                   AND exi.ingreso_obra = 0
-                                   AND des.despachos = 0";
+
+                    case 61:
+                        // Ingreso total: ya ingresó todo
+                        $cadena = " AND COALESCE(ing.ingreso, 0) = COALESCE(ord.cantidad_orden, 0) 
+                                    AND COALESCE(ord.cantidad_orden, 0) > 0 
+                                    AND COALESCE(exi.ingreso_obra, 0) = 0 
+                                    AND COALESCE(des.despachos, 0) = 0 ";
                         break;
+
                     case 62:
-                        $cadena = "AND tb_pedidodet.estadoItem = 62";
+                        // Con despacho pero sin ingreso en obra
+                        $cadena = " AND COALESCE(des.despachos, 0) > 0 
+                                    AND COALESCE(exi.ingreso_obra, 0) = 0 ";
                         break;
-                    case 75:
-                        $cadena = "AND tb_pedidodet.estadoItem = 62";
-                        break;
+
                     case 84:
-                        $cadena = "AND tb_pedidodet.estadoItem = 84";
+                        $cadena = " AND tb_pedidodet.estadoItem = 84 ";
                         break;
+
                     case 100:
-                        $cadena = "AND tb_pedidodet.estadoItem = 62";
+                        // Ingreso en obra completo
+                        $cadena = " AND COALESCE(exi.ingreso_obra, 0) >= COALESCE(ord.cantidad_orden, 0) 
+                                    AND COALESCE(ord.cantidad_orden, 0) > 0 ";
                         break;
+
                     default:
-                        $cadena = "";
+                        $cadena = " ";
                 }
 
+                // ===== CONSULTA =====
                 $consulta = "SELECT
                                 tb_pedidodet.iditem,
                                 tb_pedidodet.idpedido,
@@ -131,14 +147,13 @@
                                 lg_ordencab.nNivAten,
                                 LPAD(lg_ordencab.cnumero, 6, 0) AS cnumero,
                                 UPPER(cm_entidad.crazonsoc) AS proveedor,
-                                
-                                -- ✅ Subconsultas reemplazadas por JOINs
+
                                 COALESCE(ord.cantidad_orden, 0) AS cantidad_orden,
                                 COALESCE(ing.ingreso, 0) AS ingreso,
                                 COALESCE(des.despachos, 0) AS despachos,
                                 COALESCE(exi.ingreso_obra, 0) AS ingreso_obra,
                                 COALESCE(exi.ingreso_obra, 0) AS atencion_almacen,
-                                
+
                                 UPPER(asignacion.cnameuser) AS operador,
                                 DATEDIFF(lg_ordencab.ffechaent, NOW()) AS dias_atraso,
                                 transporte.cdescripcion AS transporte,
@@ -154,8 +169,7 @@
                                 DATE_ADD(lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY) AS fecha_entrega_final_anterior,
                                 alm_despachodet.id_regalm,
                                 DATE_FORMAT(alm_despachocab.ffecenvio, '%d/%m/%Y') AS salida_lurin,
-                                
-                                -- ✅ GREATEST simplificado
+
                                 DATE_FORMAT(
                                     GREATEST(
                                         COALESCE(lg_ordencab.fechaLog, '1970-01-01'),
@@ -164,7 +178,7 @@
                                     ),
                                     '%d/%m/%Y'
                                 ) AS fecha_autorizacion,
-                                
+
                                 DATE_FORMAT(
                                     DATE_ADD(
                                         GREATEST(
@@ -176,7 +190,7 @@
                                     ),
                                     '%d/%m/%Y'
                                 ) AS fecha_entrega_final,
-                                
+
                                 alm_transfercab.cnumguia AS guia_transferencia,
                                 LPAD(alm_transfercab.idreg, 6, 0) AS nota_transferencia,
                                 DATE_FORMAT(alm_transfercab.ftraslado, '%d/%m/%Y') AS fecha_traslado,
@@ -188,12 +202,10 @@
 
                             FROM tb_pedidodet
 
-                            -- ✅ Joins base
                             INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                             INNER JOIN tb_costusu ON tb_costusu.ncodproy = tb_pedidodet.idcostos
                             INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
 
-                            -- ✅ Joins de detalle
                             LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                             LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
 
@@ -202,7 +214,6 @@
                             LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
                             LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
 
-                            -- ✅ Uso de tablas derivadas (evita subconsultas correlacionadas)
                             LEFT JOIN (
                                 SELECT niddeta, SUM(ncanti) AS cantidad_orden
                                 FROM lg_ordendet
@@ -231,7 +242,6 @@
                                 GROUP BY idpedido
                             ) AS exi ON exi.idpedido = tb_pedidodet.iditem
 
-                            -- ✅ Otros joins
                             LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                             LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
                             LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
@@ -271,40 +281,40 @@
                                 AND (IFNULL(lg_ordencab.cmes, '') LIKE :mesOrden OR tb_pedidocab.mes LIKE :mesPedido)
                                 AND (IFNULL(lg_ordencab.cper, '') LIKE :anioOrden OR tb_pedidocab.anio LIKE :anioPedido)";
 
+                // ===== CONCATENAR FILTRO ESPECIAL =====
+                $consulta .= $cadena;
 
-            $consulta .= $cadena;
-
-            $consulta .= " GROUP BY tb_pedidodet.iditem
+                // ===== GROUP BY Y ORDER BY =====
+                $consulta .= " GROUP BY tb_pedidodet.iditem
                             ORDER BY tb_pedidocab.emision DESC";
 
-
+                // ===== EJECUTAR =====
                 $sql = $this->db->connect()->prepare($consulta);
-                                                                                                    
-                $sql->execute(["orden"          =>$orden,
-                               "pedido"         =>$pedido,
-                               "costo"          =>$costo,
-                               "codigo"         =>$codigo,
-                               "concepto"       =>$concepto,
-                               "tipo"           =>$tipo,
-                               "descripcion"    =>$descrip,
-                               "usr"            =>$userID,
-                               "anioOrden"      =>$anio,
-                               "anioPedido"     =>$anio,
-                               "mesOrden"       =>$mes,
-                               "mesPedido"      =>$mes]);
-                
+
+                $sql->execute([
+                    "orden"       => $orden,
+                    "pedido"      => $pedido,
+                    "costo"       => $costo,
+                    "codigo"      => $codigo,
+                    "concepto"    => $concepto,
+                    "tipo"        => $tipo,
+                    "descripcion" => $descrip,
+                    "usr"         => $userID,
+                    "anioOrden"   => $anio,
+                    "anioPedido"  => $anio,
+                    "mesOrden"    => $mes,
+                    "mesPedido"   => $mes
+                ]);
+
                 $rowCount = $sql->rowCount();
 
-                $estado = "";
+                // ===== VARIABLES =====
                 $porcentaje = 0;
                 $estadofila = 0;
-                
                 $saldoRecibir = "";
-                $saldo = "";
                 $dias_atraso = "";
                 $estado_pedido = "pendiente";
                 $clase_operacion = "";
-                $tipo_pedido = "";
                 $estado_item = "";
                 $transporte = "";
                 $itemOrden = 1;
@@ -318,192 +328,235 @@
 
                         $porcentaje = "100%";
 
-                            if ( $rs['orden'] ){
-                                if ( $nro_orden == $rs['orden'] ) {
-                                    $itemOrden++;
-                                }else{
-                                    $itemOrden = 1;
-                                }
-                            }else {
-                                $itemOrden = "";
+                        if ( $rs['orden'] ){
+                            if ( $nro_orden == $rs['orden'] ) {
+                                $itemOrden++;
+                            } else {
+                                $itemOrden = 1;
                             }
-                            
-                            $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
-                            $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
-                            
-                            $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
+                        } else {
+                            $itemOrden = "";
+                        }
 
-                            $dias_atraso  =  "";
-                            
-                            $estadoSemaforo = "";
-                            $semaforo = "";
+                        $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
+                        $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
 
-                            $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
+                        $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
 
-                            $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
-                            $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+                        $dias_atraso = "";
 
-                            $transporte = $rs['nidreg'] == 39 ? "TERRESTRE": $rs['transporte'];
+                        $estadoSemaforo = "";
+                        $semaforo = "";
 
-                            $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+                        $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'], 2);
 
-                            $aprobado=0;
+                        $estado_pedido = $rs['estadoItem'] >= 54 ? "Atendido" : "Pendiente";
+                        $estado_item = $rs['estadoItem'] >= 54 ? "Atendido" : "Pendiente";
 
-                            $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
+                        $transporte = $rs['nidreg'] == 39 ? "TERRESTRE" : $rs['transporte'];
 
+                        $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE";
+
+                        $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+
+                        $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
+
+                        if ( $aprobado_final != $rs['cantidad_aprobada'] ) {
                             $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
+                        }
 
-                            if ( $aprobado_final != $rs['cantidad_aprobada'] ) {
-                                $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
+                        if ( $aprobado_final < 0){
+                            $aprobado_final = $rs['cantidad_aprobada'];
+                        }
+
+                        // ===== ESTADOS =====
+                        if ( $rs['estadoItem'] == 105 ) {
+                            $porcentaje = "0%";
+                            $estadofila = "anulado";
+                            $estado_item = "anulado";
+                            $estado_pedido = "anulado";
+                        } else if( $rs['estadoItem'] == 49 ) {
+                            $porcentaje = "10%";
+                            $estadofila = "emitido";
+                            $estado_item = "Emitido";
+                            $estado_pedido = "emitido";
+                        } else if( $rs['estadoItem'] == 51 ) {
+                            $porcentaje = "12%";
+                            $estadofila = "consulta";
+                            $estado_item = "Consulta Stock";
+                            $estado_pedido = "En Almacen";
+                        } else if( $rs['estadoItem'] == 53 ) {
+                            $porcentaje = "10%";
+                            $estadofila = "emitido";
+                            $estado_item = "Aprobacion";
+                            $estado_pedido = "Aprobacion Pedido";
+                        } else if( $rs['estadoItem'] == 52 ) {
+                            $ingreso_obra       = floatval($rs['ingreso_obra']);
+                            $cantidad_pedido    = floatval($rs['cantidad_pedido']);
+                            $cantidad_atendida  = floatval($rs['cantidad_atendida']);
+                            // 100% - Atendido por stock
+                            if ( $ingreso_obra === $cantidad_pedido ){
+                                $porcentaje = "100%";
+                                $estadofila = "entregado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
                             } 
-
-                            if ( $aprobado_final < 0){
-                                $aprobado_final = $rs['cantidad_aprobada'];
-                            }
-
-                            $equal = round($suma_atendido,2) === round($aprobado,2) ? true : false;
-                           
-                            if ( $rs['estadoItem'] == 105 ) {
-                                $porcentaje = "0%";
-                                $estadofila = "anulado";
-                                $estado_item = "anulado";
-                                $estado_pedido = "anulado";
-                            }else if( $rs['estadoItem'] == 49 ) {
-                                $porcentaje = "10%";
-                                $estadofila = "emitido";
-                                $estado_item = "Emitido";
-                                $estado_pedido = "emitido";
-                            }else if( $rs['estadoItem'] == 51 ) {
-                                $porcentaje = "12%";
-                                $estadofila = "consulta";
-                                $estado_item = "Consulta Stock";
-                                $estado_pedido = "En Almacen";
-                            }else if( $rs['estadoItem'] == 53 ) {
-                                $porcentaje = "10%";
-                                $estadofila = "emitido";
-                                $estado_item = "Aprobacion";
-                                $estado_pedido = "Aprobacion Pedido";
-                            }else if( $rs['estadoItem'] == 52 ) {
+                            // 15% - Atendido por parcial stock
+                            else if ( $ingreso_obra <= 0 && $cantidad_pedido > $cantidad_atendida ){
+                                $porcentaje = "15%";
+                                $estadofila = "item_aprobado";
+                                $estado_item = "Compra Parcial";
+                                $estado_pedido = "Compra Parcial";
+                            } 
+                            // 20% Marcado para atender por stock
+                            else if ( $ingreso_obra <= 0 && $cantidad_pedido === $cantidad_atendida ){
                                 $porcentaje = "20%";
                                 $estadofila = "item_stock";
                                 $estado_item = "Stock";
                                 $estado_pedido = "Atencion Stock";
-                            }else if( $rs['estadoItem'] == 230 ) {
-                                $porcentaje = "100%";
-                                $estadofila = "comprado";
-                                $estado_item = "Compra Local";
-                                $estado_pedido = "Compra Local";
-                            }else if( $rs['estadoItem'] == 54) {
-                                if ( $rs['cantidad_pedido'] != $rs['cantidad_atendida']){
-                                    $porcentaje = "15%";
-                                    $estadofila = "item_aprobado";
-                                    $estado_item = "Parcial Stock";
-                                    $estado_pedido = "Parcial Stock";
-                                }else{
-                                    $porcentaje = "15%";
-                                    $estadofila = "item_aprobado";
-                                    $estado_item = "emitido";
-                                    $estado_pedido = "emitido";
-                                }
-                            }else if( $rs['estadoItem'] == 84 ) {
-                                $porcentaje = "25%";
-                                $estadofila = "orden";
-                                $estado_item = "Con Orden";
-                                $estado_pedido = "En Orden";
-                            }else if( $rs['estadoItem'] == 59 ) {
+                            }
+                        } else if( $rs['estadoItem'] == 230 ) {
+                            $porcentaje = "100%";
+                            $estadofila = "comprado";
+                            $estado_item = "Compra Local";
+                            $estado_pedido = "Compra Local";
+                        } else if( $rs['estadoItem'] == 54) {
+                            if ( $rs['cantidad_pedido'] != $rs['cantidad_atendida']){
+                                $porcentaje = "15%";
+                                $estadofila = "item_aprobado";
+                                $estado_item = "Aprobado";
+                                $estado_pedido = "Aprobado";
+                            } else {
+                                $porcentaje = "15%";
+                                $estadofila = "item_aprobado";
+                                $estado_item = "emitido";
+                                $estado_pedido = "emitido";
+                            }
+                        } else if( $rs['estadoItem'] == 84 ) {
+                            $porcentaje = "25%";
+                            $estadofila = "orden";
+                            $estado_item = "Con Orden";
+                            $estado_pedido = "En Orden";
+                        } else if( $rs['estadoItem'] == 59 ) {
+                            if ($rs['ffechades']){
                                 $porcentaje = "30%";
                                 $estadofila = "orden_proveedor";
                                 $estado_item = "Enviado Proveedor";
                                 $estado_pedido = "Orden";
-                            }else if( $rs['estadoItem'] == 60 ){
-                                if( $rs['ingreso'] == 0){
-                                    $porcentaje = "35%";
-                                    $estadofila = "orden";
-                                    $estado_item = "Espera recepcion";
-                                    $estado_pedido = "Recepcion";
-                                }
-                               
-                                if( $rs['ingreso'] < $rs['cantidad_orden'] ){
-                                    $porcentaje = "40%";
-                                    $estadofila = "item_ingreso_parcial";
-                                    $estado_item = "Recepcion Parcial";
-                                    $estado_pedido = "Recepcion";
-                                }
+                            } else {
+                                $porcentaje = "30%";
+                                $estadofila = "orden_proveedor";
+                                $estado_item = "Autorización Orden";
+                                $estado_pedido = "Orden";
+                            }
+                        } else if( $rs['estadoItem'] == 60 || $rs['estadoItem'] == 62){
 
-                                if( $rs['ingreso'] == $rs['cantidad_orden']){
-                                    $porcentaje = "50%";
-                                    $estadofila = "item_ingreso_total";
-                                    $estado_item = "Recepcion Total";
-                                    $estado_pedido = "Recepcion";
-                                } 
-                            }else if( $rs['despachos'] == 62){
+                            $ingreso        = floatval($rs['ingreso']);
+                            $despachos      = floatval($rs['despachos']);
+                            $ingreso_obra   = floatval($rs['ingreso_obra']);
+                            $cantidad_orden = floatval($rs['cantidad_orden']);
+
+                            // 35% - Sin ingreso
+                            if ( $ingreso == 0 && $cantidad_orden > 0 ) {
+                                $porcentaje = "35%";
+                                $estadofila = "item_ingreso_parcial";
+                                $estado_item = "Recepcion";
+                                $estado_pedido = "Recepcion Item";
+                            }
+                            // 40% - Ingreso parcial
+                            else if ( $ingreso > 0 && $ingreso < $cantidad_orden && $despachos == 0 && $ingreso_obra == 0 ) {
+                                $porcentaje = "40%";
+                                $estadofila = "item_ingreso_parcial";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                            }
+                            // 50% - Ingreso total
+                            else if ( $ingreso > 0 && $ingreso == $cantidad_orden && $despachos == 0 && $ingreso_obra == 0 ) {
+                                $porcentaje = "50%";
+                                $estadofila = "item_ingreso_total";
+                                $estado_item = "Atendido Proveedor";
+                                $estado_pedido = "atendido";
+                            }
+                            // 75% - En tránsito
+                            else if ( $despachos > 0 && $ingreso > 0 && $ingreso_obra == 0 ) {
                                 $porcentaje = "75%";
                                 $estadofila = "item_transito";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if( $rs['estadoItem'] == 100 ) {
+                            }
+                            // 100% - Entregado en obra
+                            else if ( $ingreso_obra > 0 && round($ingreso_obra, 2) === round($cantidad_orden, 2) ) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
-                                $estado_item = "Culminado";
-                                $estado_pedido = "Culminado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
                             }
-                            
-                            $cantidad = $rs['cantidad_pedido'];
+                        }
 
-                            $fecha_entrega = "";
-                            $fecha_descarga = "";
-                            $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
+                        $cantidad = $rs['cantidad_pedido'];
 
-                            $fecha_autoriza = "-";
-                            $fecha_entrega = "-";
+                        $fecha_autoriza = "-";
+                        $fecha_entrega = "-";
 
-                            if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
-                                $fecha_autoriza = $rs['fecha_autorizacion'];
-                                $fecha_entrega = $rs['fecha_entrega_final'];
-                            }
+                        if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
+                            $fecha_autoriza = $rs['fecha_autorizacion'];
+                            $fecha_entrega = $rs['fecha_entrega_final'];
+                        }
 
-                            if ( $rs['estadoItem'] !== 105 ) {
-                                if  ($fecha_entrega !== null){
-                                    $dias_atraso  =  $rs['dias_atraso'];
+                        // ===== SEMÁFORO =====
+                        if ( $rs['estadoItem'] !== 105 ) {
+                            if ($fecha_entrega !== null){
+                                $dias_atraso = $rs['dias_atraso'];
 
-                                    if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
-                                        $estadoSemaforo = "semaforoVerde";
-                                        $semaforo = "Entregado";
-                                        $dias_atraso  = "";
-                                    }else if ( $dias_atraso > 7 ) {
-                                        $estadoSemaforo = "semaforoVerde";
-                                        $semaforo = "Verde";
-                                        $dias_atraso  = "";
-                                    }else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
-                                        $estadoSemaforo = "semaforoNaranja";
-                                        $semaforo = "Naranja";
-                                        $dias_atraso  = "";
-                                    }else if ($dias_atraso < 0) {
-                                        $estadoSemaforo = "semaforoRojo";
-                                        $semaforo = "Rojo";
-                                        $dias_atraso  =  $rs['dias_atraso']*-1;
-                                    } 
-                                }else {
-                                    $dias_atraso  =  "";
-                                    $estadoSemaforo = "semaforoAmarillo";
-                                    $semaforo = "Procesando";
-
-                                    if ( $rs['ingreso_obra'] > 0 && $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
-                                        $estadoSemaforo = "semaforoVerde";
-                                        $semaforo = "Entregado";
-                                        $dias_atraso  = "";
-                                    }else if ( $rs['cantidad_atendida'] > 0) {
-                                        $estadoSemaforo = "semaforoVerde";
-                                        $semaforo = "Stock";
-                                        $dias_atraso  = "";
-                                    }
+                                if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
+                                    $estadoSemaforo = "semaforoVerde";
+                                    $semaforo = "Entregado";
+                                    $dias_atraso = "";
+                                } else if ( $dias_atraso > 7 ) {
+                                    $estadoSemaforo = "semaforoVerde";
+                                    $semaforo = "Verde";
+                                    $dias_atraso = "";
+                                } else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
+                                    $estadoSemaforo = "semaforoNaranja";
+                                    $semaforo = "Naranja";
+                                    $dias_atraso = "";
+                                } else if ($dias_atraso < 0) {
+                                    $estadoSemaforo = "semaforoRojo";
+                                    $semaforo = "Rojo";
+                                    $dias_atraso = $rs['dias_atraso'] * -1;
                                 }
-                            }else {
-                                $estadoSemaforo = "anulado";
-                                $semaforo = "Anulado";
-                            }
+                            } else {
+                                $dias_atraso = "";
+                                $estadoSemaforo = "semaforoAmarillo";
+                                $semaforo = "Procesando";
 
-                            $salida.='<tr class="pointer" 
+                                if ( $rs['ingreso_obra'] > 0 && $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
+                                    $estadoSemaforo = "semaforoVerde";
+                                    $semaforo = "Entregado";
+                                    $dias_atraso = "";
+                                } else if ( $rs['cantidad_atendida'] > 0) {
+                                    $estadoSemaforo = "semaforoVerde";
+                                    $semaforo = "Stock";
+                                    $dias_atraso = "";
+                                }
+                            }
+                        } else {
+                            $estadoSemaforo = "anulado";
+                            $semaforo = "Anulado";
+                        }
+
+                        // ===== FECHAS =====
+                        $aprobacion = $rs['aprobacion_pedido'] ?: '-';
+                        $fecha_orden = $rs['fecha_orden'] ?: '-';
+                        $fecha_descarga = $rs['fecha_descarga'] ?: '-';
+                        $fecha_recepcion = $rs['fecha_recepcion_proveedor'] ?: '-';
+                        $salida_lurin = $rs['salida_lurin'] ?: '-';
+                        $fecha_traslado = $rs['fecha_traslado'] ?: '-';
+                        $fecha_ingreso_obra = $rs['fecha_ingreso_almacen_obra'] ?: '-';
+                        $fCompromiso = $rs['fCompromiso'] ?: '-';
+
+                        // ===== FILA =====
+                        $salida .= '<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
                                         data-pedido="'.$rs['idpedido'].'" 
                                         data-orden="'.$rs['orden'].'"
@@ -511,53 +564,51 @@
                                         data-producto="'.$rs['idprod'].'"
                                         data-aprueba="'.$rs['cnombres'].'"
                                         data-despacho="'.$rs['id_regalm'].'"
-                                        data-porcentaje ="'.$rs['ingreso_obra'].'"
-                                        data-registro ="'.$rs['nota_obra'].'">
+                                        data-porcentaje="'.$rs['ingreso_obra'].'"
+                                        data-registro="'.$rs['nota_obra'].'">
                                         <td class="textoCentro">'.$counter++.'</td>
                                         <td class="textoCentro" style="padding:2px;"><span class="badge '.$estadofila.'">'.$porcentaje.'</span></td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['partida'].'</td>
-                                        <td class="textoCentro ">'.$atencion.'</td>
+                                        <td class="textoCentro">'.$atencion.'</td>
                                         <td class="textoCentro" style="padding:2px;"><span class="badge '.$clase_operacion.'">'.$tipo_orden.'</span></td>
                                         <td class="textoCentro">'.$rs['anio_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
-                                        <td class="textoDerecha">'.number_format($cantidad,2,'.', '').'</td>
-                                        <td class="textoDerecha">'.number_format($aprobado,2,'.', '').'</td>
-                                        <td class="textoCentro">'.number_format($aprobado_final,2,'.', '').'</td>
+                                        <td class="textoCentro">'.$aprobacion.'</td>
+                                        <td class="textoDerecha">'.number_format($cantidad, 2, '.', '').'</td>
+                                        <td class="textoDerecha">'.number_format($aprobado, 2, '.', '').'</td>
+                                        <td class="textoCentro">'.number_format($aprobado_final, 2, '.', '').'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro" style="padding:2px;"><span class="badge '.$clase_operacion.'">'.$tipo_orden.'</span></td>
                                         <td class="textoCentro">'.$rs['anio_orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_orden'].'</td>
-                                        <td class="textoDerecha pr15px"style="padding:2px;"><span class="badge" style="background:#e8e8e8;font-weight: bold" >'.$rs['cantidad_orden'].'</span></td>
+                                        <td class="textoCentro">'.$fecha_orden.'</td>
+                                        <td class="textoDerecha pr15px" style="padding:2px;"><span class="badge" style="background:#e8e8e8; font-weight:bold;">'.$rs['cantidad_orden'].'</span></td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$fecha_autoriza.'</td>
-                                        <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
+                                        <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'], 2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$fecha_entrega.'</td>
-
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_recepcion_proveedor'].'</td>
-
+                                        <td class="textoCentro">'.$fecha_recepcion.'</td>
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['plazo'].'</td>
                                         <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
-                                        <td class="textoCentro " pr15px"style="padding:2px;"><span class="badge '.$estadoSemaforo.'">'.$semaforo.'</span></td>
+                                        <td class="textoCentro pr15px" style="padding:2px;"><span class="badge '.$estadoSemaforo.'">'.$semaforo.'</span></td>
                                         <td class="textoDerecha">'.$rs['despachos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['guiasunat'].'</td>
-                                        <td class="textoCentro">'.$rs['salida_lurin'].'</td>
+                                        <td class="textoCentro">'.$salida_lurin.'</td>
                                         <td class="textoCentro">'.$rs['nota_transferencia'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_traslado'].'</td>
+                                        <td class="textoCentro">'.$fecha_traslado.'</td>
                                         <td class="textoCentro">'.$rs['nota_obra'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_ingreso_almacen_obra'].'</td>
-                                        <td class="textoDerecha">'.number_format($rs['ingreso_obra'],2).'</td>
+                                        <td class="textoCentro">'.$fecha_ingreso_obra.'</td>
+                                        <td class="textoDerecha">'.number_format($rs['ingreso_obra'], 2).'</td>
                                         <td class="textoCentro">'.$estado_pedido.'</td>
                                         <td class="textoCentro">'.$estado_item.'</td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
@@ -567,20 +618,22 @@
                                         <td class="pl10px">'.$rs['concepto'].'</td>
                                         <td class="pl10px">'.$rs['usuario'].'</td>
                                         <td class="pl10px">'.$rs['asigna'].'</td>
-                                        <td class="pl10px">'.$rs['fecha_descarga'].'</td>
+                                        <td class="pl10px">'.$fecha_descarga.'</td>
                                         <td class="pl10px">'.$rs['indescrip'].'</td>
                                         <td class="pl10px">'.$rs['cPuntoEntrega'].'</td>
-                                        <td class="textoCentro">'.$rs['fCompromiso'].'</td>
-                                </tr>';
-                                
-                                $nro_orden = $rs['orden'];
+                                        <td class="textoCentro">'.$fCompromiso.'</td>
+                                    </tr>';
+
+                        $nro_orden = $rs['orden'];
                     }
-                }else {
+                } else {
                     $salida = "Buscar el pedido";
                 }
+
                 return $salida;
+
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         } 
