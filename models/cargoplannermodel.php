@@ -62,23 +62,31 @@
                                     AND COALESCE(exi.ingreso_obra, 0) = 0 ";
                         break;
 
+                    case 84:
+                        $cadena = " AND (tb_pedidodet.estadoItem = 84 OR tb_pedidodet.estadoItem = 59)  
+                                    AND lg_ordencab.ffechades IS NULL ";
+                        break;
+
                     case 59:
-                        $cadena = " AND tb_pedidodet.estadoItem = 59 
-                                    AND lg_ordencab.ffechades IS NOT NULL ";
+                        $cadena = " AND tb_pedidodet.estadoItem = 59
+                                    AND lg_ordencab.ffechades IS NOT NULL
+                                    AND COALESCE(ing.ingreso, 0) = 0
+                                    AND COALESCE(exi.ingreso_obra, 0) = 0 
+                                    AND COALESCE(des.despachos, 0) = 0";
                         break;
 
                     case 60:
                         // Ingreso parcial: ya ingresó algo pero menos de lo ordenado
-                        $cadena = " AND COALESCE(ing.ingreso, 0) > 0 
+                        $cadena = " AND tb_pedidodet.estadoItem = 60 
                                     AND COALESCE(ing.ingreso, 0) < COALESCE(ord.cantidad_orden, 0) 
                                     AND COALESCE(exi.ingreso_obra, 0) = 0 
-                                    AND COALESCE(des.despachos, 0) = 0 ";
+                                    AND COALESCE(des.despachos, 0) = 0";
                         break;
 
-                    case 61:
+                    case 601:
                         // Ingreso total: ya ingresó todo
-                        $cadena = " AND COALESCE(ing.ingreso, 0) = COALESCE(ord.cantidad_orden, 0) 
-                                    AND COALESCE(ord.cantidad_orden, 0) > 0 
+                        $cadena = " AND (tb_pedidodet.estadoItem = 60 OR tb_pedidodet.estadoItem = 62) 
+                                    AND COALESCE(ing.ingreso, 0) = COALESCE(ord.cantidad_orden, 0) 
                                     AND COALESCE(exi.ingreso_obra, 0) = 0 
                                     AND COALESCE(des.despachos, 0) = 0 ";
                         break;
@@ -438,16 +446,16 @@
                             $estado_item = "Con Orden";
                             $estado_pedido = "En Orden";
                         } else if( $rs['estadoItem'] == 59 ) {
-                            if ($rs['ffechades']){
+                            if ( $rs['ffechades']){
                                 $porcentaje = "30%";
                                 $estadofila = "orden_proveedor";
                                 $estado_item = "Enviado Proveedor";
                                 $estado_pedido = "Orden";
                             } else {
-                                $porcentaje = "30%";
-                                $estadofila = "orden_proveedor";
-                                $estado_item = "Autorización Orden";
-                                $estado_pedido = "Orden";
+                                $porcentaje = "25%";
+                                $estadofila = "orden";
+                                $estado_item = "Con Orden";
+                                $estado_pedido = "En Orden";
                             }
                         } else if( $rs['estadoItem'] == 60 || $rs['estadoItem'] == 62){
 
@@ -627,7 +635,7 @@
                         $nro_orden = $rs['orden'];
                     }
                 } else {
-                    $salida = "Buscar el pedido";
+                    $salida = "<tr><td colspan='56'><div style='text-align:center;color:#c2c2c2;font-size:2rem'>No hay items para procesar</div></td></tr>";
                 }
 
                 return $salida;
