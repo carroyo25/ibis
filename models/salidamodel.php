@@ -36,10 +36,10 @@
                                                 WHERE
                                                     dc.nEstadoDoc = 62 
                                                     AND dc.cper = YEAR(CURRENT_DATE) 
-                                                    AND dc.cmes BETWEEN MONTH(CURRENT_DATE)-2 AND MONTH(CURRENT_DATE)
+                                                    AND dc.cmes BETWEEN MONTH(CURRENT_DATE)-3 AND MONTH(CURRENT_DATE)
                                                 ORDER BY 
                                                     dc.ffecdoc DESC;");
-                $sql->execute();
+                $sql->execute();    
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -310,7 +310,9 @@
                                 $cabecera["destinatario"],
                                 $cabecera["tipo_documento"],
                                 $cabecera['numero_guia'],
-                                $cabecera['peso'],'');
+                                $cabecera['peso'],
+                                '',
+                                );
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));
@@ -321,17 +323,19 @@
                 $lc = 0;
                 $rc = 0;
 
-                /*$qrsunat = "20504898173-09-T001-711.pdf";*/
+                /*$qrsunat = "20504898173-09-T001-711.pdf";
 
-                /*if ($_SESSION["iduser"] == '62145bbb5a092') {
+                if ($_SESSION["iduser"] == '62145bbb5a092') {
                     $pdf->Image('/public/documentos/img/diegoguias.jpg',165,210,35);
-                }*/
+                }
 
-                /*if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
                     $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
 
                     $pdf->Image($qrprint,165,210,35);
                 }*/
+
+                //aca podria sumar la orden
 
                 for($i=1;$i<=$nreg;$i++){
 
@@ -347,12 +351,12 @@
                     $lc++;
                     $rc++;
 
-                    if ($lc == 27) {
+                    if ($lc > 27) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
                 }
-
+                
                 /*$pdf->SetXY(167,237);
                 $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);*/
 
@@ -839,7 +843,7 @@
                                                     LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
-                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.cnumero
+                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
@@ -1732,7 +1736,6 @@
                                 </cac:DeliveryCustomerParty>
                                 <!-- DATOS DEL PROVEEDOR -->
                                 <!-- DATOS DEL TRASLADO -->
-                                
                                 <cac:Shipment>
                                     <!-- ID OBLIGATORIO POR UBL -->
                                     <cbc:ID>SUNAT_Envio</cbc:ID>
@@ -1750,9 +1753,6 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
-                                        <cac:LoadingTransportEvent>
-                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
-                                        </cac:LoadingTransportEvent>
                                          <!-- PLACA DEL VEHICULO -->
                                         <cac:TransportMeans>
                                             <cac:RoadTransport>
@@ -1911,6 +1911,7 @@
                                         listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">04</cbc:HandlingCode>
                                     <!-- PESO BRUTO TOTAL DE LA CARGA-->
                                     <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                                    
                                     <cac:ShipmentStage>
                                         <!-- MODALIDAD DE TRASLADO  -->
                                         <cbc:TransportModeCode listName="Modalidad de traslado" listAgencyName="PE:SUNAT" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
@@ -1918,9 +1919,6 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
-                                        <cac:LoadingTransportEvent>
-                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
-                                        </cac:LoadingTransportEvent>
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
@@ -1933,7 +1931,11 @@
                                             <cbc:CompanyID>'.$header->registro_mtc.'</cbc:CompanyID>
                                             </cac:PartyLegalEntity>
                                         </cac:CarrierParty>
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OccurrenceDate>'.$header->ftraslado.'</cbc:OccurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                     </cac:ShipmentStage>
+                                    
                                     <cac:Delivery>
                                         <!-- DIRECCION DEL PUNTO DE LLEGADA -->
                                         <cac:DeliveryAddress>
@@ -2057,6 +2059,7 @@
                                 <!-- DATOS DEL TRASLADO -->
                                 <cac:Shipment>
                                     <!-- ID OBLIGATORIO POR UBL -->
+                                    
                                     <cbc:ID>SUNAT_Envio</cbc:ID>
                                     <!-- MOTIVO DEL TRASLADO -->
                                         <cbc:HandlingCode 
@@ -2073,9 +2076,6 @@
                                         <cac:TransitPeriod>
                                             <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                         </cac:TransitPeriod>
-                                        <cac:LoadingTransportEvent>
-                                            <cbc:OcurrenceDate>'.$header->ftraslado.'</cbc:OcurrenceDate>
-                                        </cac:LoadingTransportEvent>
                                          <!-- PLACA DEL VEHICULO -->
                                         <cac:TransportMeans>
                                             <cac:RoadTransport>
@@ -2263,6 +2263,7 @@
                                                 <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
                                             </cac:IdentityDocumentReference>
                                         </cac:DriverPerson>
+                                        
                                     </cac:ShipmentStage>
                                     <cac:Delivery>
                                         <!-- DIRECCION DEL PUNTO DE LLEGADA -->
@@ -2432,6 +2433,9 @@
                                         </cac:CarrierParty>
                                         <!-- PLACA DEL VEHICULO -->
                                         <!-- CONDUCTOR PRINCIPAL -->
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OccurrenceDate>'.$header->ftraslado.'</cbc:OccurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                     </cac:ShipmentStage>
                                     <cac:Delivery>
                                         <!-- DIRECCION DEL PUNTO DE LLEGADA -->
@@ -2567,9 +2571,7 @@
                                         <!-- MODALIDAD DE TRASLADO  -->
                                         <cbc:TransportModeCode listName="Modalidad de traslado" listAgencyName="PE:SUNAT" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
                                         <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
-                                        <cac:TransitPeriod>
-                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
-                                        </cac:TransitPeriod>
+                                        
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
@@ -2582,6 +2584,9 @@
                                             <cbc:CompanyID>'.$header->registro_mtc.'</cbc:CompanyID>
                                             </cac:PartyLegalEntity>
                                         </cac:CarrierParty>
+                                        <cac:LoadingTransportEvent>
+                                            <cbc:OccurrenceDate>'.$header->ftraslado.'</cbc:OccurrenceDate>
+                                        </cac:LoadingTransportEvent>
                                         <!-- PLACA DEL VEHICULO -->
                                         <!-- CONDUCTOR PRINCIPAL -->
                                     </cac:ShipmentStage>
@@ -2809,6 +2814,24 @@
             }
         }
 
+
          //otros motivos SEPCON - otras direcciones con UBIGEO //KINTERONI //MIPAYA //MALVINAS - TRANSPORTE TERCEROS  OK
+
+        private function u($texto) {
+            if ($texto === null) return '';
+            
+            // 1. Normalizar UTF-8
+            if (!mb_check_encoding($texto, 'UTF-8')) {
+                $texto = mb_convert_encoding($texto, 'UTF-8', 'ISO-8859-1');
+            }
+            
+            // 2. Limpiar caracteres de control
+            $texto = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $texto);
+            
+            // 3. Escapar para XML
+            $texto = htmlspecialchars($texto, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+            
+            return $texto;
+        }
     } 
 ?>

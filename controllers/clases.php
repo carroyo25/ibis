@@ -42,5 +42,9 @@
         function grupos(){
             echo json_encode($this->model->grupos_listado());
         }
+
+        function siguienteClase(){
+            echo json_encode($this->model->siguiente_clase($_POST));
+        }
     }
 ?>

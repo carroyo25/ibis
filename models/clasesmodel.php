@@ -204,8 +204,7 @@
         }
 
         // Métodos auxiliares para colores e íconos
-        private function getColorGrupo($codigo)
-        {
+        private function getColorGrupo($codigo){
             $map = [
                 'B01' => 'b01',
                 'B02' => 'b02',
@@ -216,8 +215,7 @@
             return $map[$codigo] ?? 'b01';
         }
 
-        private function getIconGrupo($codigo)
-        {
+        private function getIconGrupo($codigo){
             $map = [
                 'B01' => 'fa-solid fa-pipe',
                 'B02' => 'fa-solid fa-gear',
@@ -226,6 +224,30 @@
                 'B05' => 'fa-solid fa-laptop'
             ];
             return $map[$codigo] ?? 'fa-solid fa-folder';
+        }
+
+        public function siguiente_clase(){
+            $grupo = $_POST['grupo'] ?? null;
+
+            if ($grupo === null || $grupo === '') {
+                return ['error' => 'Falta el grupo'];
+            }
+
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(CAST(ncodgrupo AS UNSIGNED)) AS max_numero
+                    FROM tb_clase
+                    WHERE ncodgrupo = 1");
+                $sql->execute(['grupo' => $grupo]);
+                $fila = $sql->fetch(PDO::FETCH_ASSOC);
+
+                 $total = (int)($fila['total'] ?? 0);
+                $nuevoNumero = $total + 1;
+
+                return [str_pad((string)$nuevoNumero, 2, "0", STR_PAD_LEFT)];
+            } catch (PDOException $th) {
+                error_log("Error al obtener siguiente clase: " . $th->getMessage());
+                return false;
+            }
         }
 
     }
