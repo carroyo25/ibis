@@ -7,7 +7,6 @@
 
         function render(){
             $this->view->listaGrupos = $this->model->obtenerGrupos();
-            //$this->view->listaClases = $this->model->listarTitulosGrupos();
             $this->view->render('clases/index');
         }
 
@@ -24,7 +23,7 @@
         }
 
         function actualizaTabla(){
-            echo $this->model->listarTitulosGrupos();
+            //echo $this->model->listarTitulosGrupos();
         }
 
         function desactivaClase(){
@@ -45,6 +44,10 @@
 
         function siguienteClase(){
             echo json_encode($this->model->siguiente_clase($_POST));
+        }
+
+        function guardaClase(){
+            echo json_encode($this->model->guardar_clase($_POST));
         }
     }
 ?>

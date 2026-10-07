@@ -426,6 +426,7 @@ $(function () {
     formData.append("nombre",   nombre);
 
     const esEdicion = !!registroEdit;
+
     if (esEdicion) {
       formData.append("accion", "actualizar");
       formData.append("id", document.getElementById("editId").value);
@@ -435,7 +436,7 @@ $(function () {
 
     $("#esperar").fadeIn();
 
-    fetch(RUTA + "clases/guardarClase", {
+    fetch(RUTA + "clases/guardaClase", {
       method: "POST",
       body: formData,
     })
@@ -443,11 +444,11 @@ $(function () {
       .then((data) => {
         $("#esperar").fadeOut();
         if (data && (data.ok || data.success)) {
-          mostrarMensaje(data.mensaje || "Guardado correctamente", "ok");
+          mostrarMensaje(data.mensaje, "mensaje_correcto");
           cerrarModal();
           consultarDatos(esEdicion ? paginaActual : 1);
         } else {
-          mostrarMensaje(data.mensaje || "No se pudo guardar", "error");
+          mostrarMensaje(data.mensaje, "mensaje_error");
         }
       })
       .catch((err) => {
@@ -502,19 +503,9 @@ $(function () {
   function abrirPregunta() {
     $("#pregunta").fadeIn();
   }
+  
   function cerrarPregunta() {
     $("#pregunta").fadeOut();
-  }
-
-  // =============================================
-  // MENSAJES
-  // =============================================
-  function mostrarMensaje(texto, tipo = "ok") {
-    const $msg = $(".mensaje");
-    $msg.find("p").text(texto);
-    $msg.removeClass("mensaje_error mensaje_ok").addClass("mensaje_" + tipo);
-    $msg.fadeIn();
-    setTimeout(() => $msg.fadeOut(), 2500);
   }
 
 
@@ -532,7 +523,8 @@ $(function () {
     })
     .then(response => response.json())
     .then(data => {
-      console.log(codigo,data);
+      $("#codigoInput").val(codigo+data[0]);
+      actualizarPreview();
     })
     return false;  
   })

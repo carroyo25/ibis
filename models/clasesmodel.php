@@ -12,30 +12,29 @@
                 $mensaje = "Error al grabar el registro";
                 $clase = "mensaje_error";
 
-                if($this->existeItem($datos['codigo'])){
-                    $respuesta = false;
+                if($this->existeItem( $datos['codclase'],$datos['nombre'] )){
+                    $ok = false;
                     $mensaje = "Código de clase duplicada";
                     $clase = "mensaje_error";
                 }else{
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_clase 
                                                             SET ncodgrupo=:grupo,ccodcata=:cod,cdescrip=:descrip,nnivclas=:niv");
                     $sql->execute(["grupo"=>$datos['codgrupo'],
-                                    "cod"=>strtoupper($datos['codigo']),
-                                    "descrip"=>strtoupper($datos['descripcion']),
+                                    "cod"=>strtoupper($datos['codclase']),
+                                    "descrip"=>strtoupper($datos['nombre']),
                                     "niv"=>2]);
                     $rowCount = $sql->rowCount();
 
                     if ($rowCount > 0) {
-                        $respuesta = false;
+                        $ok = true;
                         $mensaje = "Grupo creado";
                         $clase = "mensaje_correcto";
                     }
                 }
                 
-                $salida = array("respuesta"=>$respuesta,
+                $salida = array("ok"=>$ok,
                                  "mensaje"=>$mensaje,
-                                 "clase"=>$clase,
-                                "items"=>$this->listarTitulosGrupos());
+                                 "clase"=>$clase);
                 return $salida;
 
             } catch (PDOException $th) {
@@ -54,7 +53,7 @@
                                                       SET cdescrip=:descrip 
                                                       WHERE ncodclase=:cod");
                 $sql->execute(["cod"=>$datos['codclase'],
-                               "descrip"=>strtoupper($datos['descripcion'])]);
+                               "descrip"=>strtoupper($datos['nombre'])]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -77,17 +76,16 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_clase SET nflgactivo = 0 WHERE ncodclase=:id");
                 $sql->execute([$id]);
 
-                return $this->listarTitulosGrupos();
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             } 
         }
 
-        private function existeItem($codigo){
+        private function existeItem($codigo,$nombre){
             try {
-                $sql = $this->db->connect()->prepare("SELECT ncodclase FROM tb_clase WHERE ccodcata =:codigo");
-                $sql->execute(["codigo"=>$codigo]);
+                $sql = $this->db->connect()->prepare("SELECT ncodclase FROM tb_clase WHERE ccodcata =:codigo OR cdescrip=:nombre");
+                $sql->execute(["codigo"=>$codigo,"nombre"=>$nombre]);
                 $rowcount = $sql->rowcount();
 
                 if ($rowcount > 0) {
@@ -236,11 +234,11 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT COUNT(CAST(ncodgrupo AS UNSIGNED)) AS max_numero
                     FROM tb_clase
-                    WHERE ncodgrupo = 1");
+                    WHERE ncodgrupo = :grupo");
                 $sql->execute(['grupo' => $grupo]);
                 $fila = $sql->fetch(PDO::FETCH_ASSOC);
 
-                 $total = (int)($fila['total'] ?? 0);
+                $total = (int)($fila['max_numero'] ?? 0);
                 $nuevoNumero = $total + 1;
 
                 return [str_pad((string)$nuevoNumero, 2, "0", STR_PAD_LEFT)];
@@ -248,6 +246,16 @@
                 error_log("Error al obtener siguiente clase: " . $th->getMessage());
                 return false;
             }
+        }
+
+        public function guardar_clase(){
+            if ($_POST['accion'] == "crear"){
+                $respuesta = $this->insertar($_POST);
+            }else{
+                $respuesta = $this->modificar($_POST);
+            }
+
+            return $respuesta;
         }
 
     }
