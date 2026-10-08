@@ -155,5 +155,13 @@
                 return array("error: "=>$th->getMessage(),"success"=>false);
             }
         }
+
+        public function transferir($data){
+            try {
+                //code...
+            } catch (Exception $e) {
+                return ['success' => false, 'error' => $e->getMessage()];
+            }
+        }
     }
 ?>

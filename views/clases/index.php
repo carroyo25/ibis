@@ -82,7 +82,6 @@
                 </form>
             </div>
         </div>
-        
     </div>
     <div class="cabezaModulo">
         <h1>Catálogo Clases</h1>
