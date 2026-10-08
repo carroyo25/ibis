@@ -125,7 +125,7 @@ $(function () {
           if (data.success) {
             mostrarMensaje("✅ Traspaso registrado correctamente.", "mensaje_correcto");
             document.getElementById("modalTraspaso").classList.remove("active");
-            location.reload();
+            console.log(data.idtransfer);
           } else {
             mostrarMensaje("❌ Error: " + (data.error || "No se pudo grabar.", "mensaje_error"));
           }
@@ -255,6 +255,12 @@ $(function () {
                                                 style="text-align: right; padding-right: 10px; border: none"
                                                 placeholder="00.00">
                                             </td>
+                                            <td>
+                                              <input type="text" 
+                                              name="observaciones" 
+                                              class="observacion-item"
+                                              data-idprod="${element.id_cprod}">
+                                            </td>
                                             <td class="textoCentro">${c1}</td>
                                             <td class="textoCentro">${c2}</td>
                                             <td class="textoCentro">${c3}</td>
@@ -309,6 +315,11 @@ $(function () {
       const descprod = input.dataset.descprod;
       const saldo = parseFloat(input.dataset.saldo) || 0;
 
+      // 👇 Buscar la observación de la MISMA fila
+      const tr          = input.closest('tr');
+      const inputObs    = tr.querySelector('.observacion-item');
+      const observacion = inputObs ? inputObs.value.trim() : '';
+
       // 👇 Validación: no puede superar el saldo
       if (cantidad > saldo) {
         errores.push({
@@ -316,6 +327,7 @@ $(function () {
           descprod: descprod,
           cantidad: cantidad,
           saldo: saldo,
+          observacion:  observacion   // 👈 nuevo campo
         });
         return;
       }
@@ -326,6 +338,7 @@ $(function () {
         descprod: descprod,
         cantidad: cantidad,
         saldo: saldo,
+        observacion: observacion    // 👈 ESTA LÍNEA ES LA QUE FALTA
       });
     });
 

@@ -75,6 +75,9 @@
                     <button type="button" class="btn btn-cancel" id="closeDialogButton">
                         Cancelar
                     </button>
+                    <button type="button" class="btn btn-confirm" id="btnDocument">
+                        📑 Guia de Remision
+                    </button>
                     <button type="button" class="btn btn-confirm" id="btnConfirmarTraspaso">
                         ✅ Confirmar Traspaso
                     </button>
@@ -125,6 +128,7 @@
                     <th rowspan="2">Unidad</th>
                     <th rowspan="2">Saldo</th>
                     <th rowspan="2">Cantidad <br> Transferencia</th>
+                    <th rowspan="2">Observaciones</th>
                     <th colspan="9">Condicion</th>
                 </tr>
                 <tr>

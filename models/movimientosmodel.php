@@ -158,7 +158,102 @@
 
         public function transferir($data){
             try {
-                //code...
+                // =====================================================
+                // 1. VALIDAR DATOS DE ENTRADA
+                // =====================================================
+                $fecha       = $data['fecha']       ?? null;
+                $autorizado  = $data['autorizado']  ?? null;
+                $responsable = $data['responsable'] ?? null;
+                $ccOrigen    = $data['ccOrigen']    ?? null;
+                $ccDestino   = $data['ccDestino']   ?? null;
+                $items       = $data['items']       ?? [];
+
+                if (!$fecha || !$autorizado || !$responsable || !$ccOrigen || !$ccDestino) {
+                    return ['success' => false, 'error' => 'Faltan datos obligatorios'];
+                }
+
+                if (empty($items)) {
+                    return ['success' => false, 'error' => 'No hay ítems para traspasar'];
+                }
+
+                if ($ccOrigen == $ccDestino) {
+                    return ['success' => false, 'error' => 'CC Origen y Destino no pueden ser iguales'];
+                }
+
+                // =====================================================
+                // 2. INICIAR TRANSACCIÓN
+                // =====================================================
+                $conn = $this->db->connect();
+                $conn->beginTransaction();
+                    
+
+                try {
+                    // =================================================
+                    // 3. INSERTAR CABECERA (alm_transfercab)
+                    // =================================================
+                    $sqlCab = $conn->prepare("
+                        INSERT INTO alm_traspasocab
+                            (dfecha, cautoriza, cresponsable, idcc, idcd, nflgactivo)
+                        VALUES 
+                            (:fecha, :autoriza, :responsable, :idcc, :idcd, 1)
+                    ");
+                    $sqlCab->execute([
+                        ':fecha'       => $fecha,
+                        ':autoriza'    => $autorizado,
+                        ':responsable' => $responsable,
+                        ':idcc'        => $ccOrigen,
+                        ':idcd'        => $ccDestino
+                    ]);
+
+                    $idTransfer = $conn->lastInsertId();
+
+                    // =================================================
+                    // 4. INSERTAR DETALLE (alm_traspasodet)
+                    // =================================================
+                    $sqlDet = $conn->prepare("
+                        INSERT INTO alm_traspasodet 
+                            (idtraspaso, idcprod, ncanti, cobservacion, idcc, idcd, nflgactivo)
+                        VALUES 
+                            (:idtraspaso, :idcprod, :ncanti, :cobservacion, :idcc, :idcd, 1)
+                    ");
+
+                    foreach ($items as $item) {
+
+                        $idprod      = $item['idprod']       ?? null;
+                        $cantidad    = (float) ($item['cantidad']    ?? 0);
+                        $observacion = $item['observacion']  ?? null;
+
+                        if (!$idprod || $cantidad <= 0) {
+                            continue;   // saltar ítems inválidos
+                        }
+
+                        $sqlDet->execute([
+                            ':idtraspaso'   => $idTransfer,     // 👈 FK a la cabecera
+                            ':idcprod'      => $idprod,
+                            ':ncanti'       => $cantidad,
+                            ':cobservacion' => $observacion,
+                            ':idcc'         => $ccOrigen,        // 👈 CC origen (duplicado)
+                            ':idcd'         => $ccDestino        // 👈 CC destino (duplicado)
+                        ]);
+                    }
+
+
+                    // =================================================
+                    // 5. CONFIRMAR TRANSACCIÓN
+                    // =================================================
+                    $conn->commit();
+
+                    return [
+                        'success'      => true,
+                        'idtransfer'   => $idTransfer,
+                        'total_items'  => count($items),
+                        'mensaje'      => 'Traspaso registrado correctamente'
+                    ];
+                } catch (Exception $e) {
+                    $conn->rollBack();
+                    throw $e;
+                }
+                
             } catch (Exception $e) {
                 return ['success' => false, 'error' => $e->getMessage()];
             }
