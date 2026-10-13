@@ -40,7 +40,7 @@ $(function () {
         input.closest("tr").classList.add("fila-error");
 
         // Mensaje
-        mostrarMensaje(`⚠️ "Saldo no disponible`, "mensaje_error");
+        mostrarMensaje("⚠️ Saldo no disponible", "mensaje_error");
 
         // 👇 NO cambia de fila, se queda en el mismo input
         input.focus();
@@ -144,6 +144,14 @@ $(function () {
     return false;
   });
 
+  $("#btnDocument").click(function (e) { 
+    e.preventDefault();
+
+    $("#vistaDocumento").fadeIn();
+
+    return false;
+  });
+
   $("#transferItems").click(function (e) {
     e.preventDefault();
 
@@ -241,16 +249,16 @@ $(function () {
                                             <td class="textoCentro">${element.ccodprod}</td>
                                             <td class="pl20px">${element.cdesprod}</td>
                                             <td class="textoCentro">${element.cabrevia}</td>
-                                            <td class="textoDerecha">${saldo.toFixed(2)}</td>
+                                            <td class="textoDerecha">${element.saldo.toFixed(2)}</td>
                                             <td class="textoCentro" width="150px">
                                               <input type="number"
                                                 name="cantidad"
                                                 class="cantidad-traspaso"
                                                 data-idprod="${element.id_cprod}"
                                                 data-descprod="${element.cdesprod}"
-                                                data-saldo="${saldo}"
+                                                data-saldo="${element.saldo}"
                                                 min="0"
-                                                max="${saldo}"
+                                                max="${element.saldo}"
                                                 step="1"
                                                 style="text-align: right; padding-right: 10px; border: none"
                                                 placeholder="00.00">
@@ -269,7 +277,7 @@ $(function () {
                                             <td class="textoCentro">${c6}</td>
                                             <td class="textoCentro">${c7}</td>`;
 
-            if (saldo > 0) {
+            if (element.saldo > 0) {
               document.getElementById("cuerpoTabla").appendChild(tr);
             }
           });

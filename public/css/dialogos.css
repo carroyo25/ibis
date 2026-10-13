@@ -1370,3 +1370,423 @@
     0%, 100% { background: #ffe6e6; }
     50%      { background: #ffb3b3; }
 }
+
+/* ============================================================
+   MODAL OVERLAY
+   ============================================================ */
+.gr-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+}
+
+
+/* ============================================================
+   CONTENEDOR DEL MODAL
+   ============================================================ */
+.gr-modal-box {
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1600px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+    animation: gr-fadeIn 0.25s ease;
+}
+
+@keyframes gr-fadeIn {
+    from { transform: scale(0.97); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ============================================================
+   HEADER DEL MODAL
+   ============================================================ */
+.gr-modal-header {
+    background: linear-gradient(135deg, #1e6bb8 0%, #2a5298 100%);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.gr-modal-header h2 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.gr-doc-number {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.gr-doc-number input {
+    background: #fff;
+    border: none;
+    padding: 4px 9px;
+    border-radius: 4px;
+    font-size: 13px;
+    width: 95px;
+    font-weight: bold;
+    color: #1e6bb8;
+}
+
+.gr-header-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.gr-header-actions button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    padding: 7px 11px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.gr-header-actions button:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+/* ============================================================
+   BARRA DE FECHAS
+   ============================================================ */
+.gr-fecha-bar {
+    display: flex;
+    gap: 24px;
+    padding: 10px 24px;
+    background: #eaf3fc;
+    border-bottom: 1px solid #d0e3f5;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.gr-fecha-bar .gr-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gr-fecha-bar label {
+    font-weight: 600;
+    color: #2a5298;
+    font-size: 12px;
+}
+
+.gr-fecha-bar input,
+.gr-fecha-bar select {
+    padding: 5px 9px;
+    border: 1px solid #b8d4ee;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+}
+
+/* ============================================================
+   CUERPO DEL MODAL — 2 COLUMNAS
+   ============================================================ */
+.gr-modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ===== COLUMNA IZQUIERDA: FORMULARIO ===== */
+.gr-col-form {
+    overflow-y: auto;
+    border-right: 1px solid #e0e6ed;
+    background: #fafbfc;
+}
+
+.gr-col-form::-webkit-scrollbar {
+    width: 8px;
+}
+.gr-col-form::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.gr-col-form::-webkit-scrollbar-thumb {
+    background: #b8d4ee;
+    border-radius: 4px;
+}
+.gr-col-form::-webkit-scrollbar-thumb:hover {
+    background: #1e6bb8;
+}
+
+/* Secciones del formulario */
+.gr-section {
+    padding: 14px 20px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+}
+
+.gr-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e6bb8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #eaf3fc;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gr-section-title::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    background: #1e6bb8;
+    border-radius: 2px;
+}
+
+.gr-field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.gr-field-row label {
+    flex: 0 0 125px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    text-align: right;
+}
+
+.gr-field-row input[type="text"],
+.gr-field-row input[type="date"],
+.gr-field-row input[type="number"],
+.gr-field-row select,
+.gr-field-row textarea {
+    flex: 1;
+    padding: 6px 9px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    min-width: 0;
+}
+
+.gr-field-row input:focus,
+.gr-field-row select:focus,
+.gr-field-row textarea:focus {
+    outline: none;
+    border-color: #1e6bb8;
+    box-shadow: 0 0 0 3px rgba(30,107,184,0.15);
+}
+
+.gr-field-row input[readonly] {
+    background: #f7f9fb;
+    color: #555;
+}
+
+.gr-field-row textarea {
+    resize: vertical;
+    min-height: 45px;
+}
+
+.gr-btn-search {
+    flex: 0 0 30px;
+    height: 30px;
+    background: #1e6bb8;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.gr-btn-search:hover {
+    background: #14508c;
+}
+
+/* ===== COLUMNA DERECHA: VISOR PDF ===== */
+.gr-col-pdf {
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.gr-col-pdf-header {
+    background: #1e6bb8;
+    color: #fff;
+    padding: 9px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.gr-col-pdf-header .gr-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gr-btn-download {
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.gr-btn-download:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+.gr-col-pdf-body {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.gr-col-pdf-body iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Placeholder del PDF */
+.gr-pdf-placeholder {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+    text-align: center;
+    padding: 30px;
+}
+
+.gr-pdf-placeholder .gr-icono {
+    font-size: 60px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+
+.gr-pdf-placeholder .gr-mensaje {
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.6;
+}
+
+.gr-pdf-placeholder .gr-mensaje strong {
+    color: #6bb6ff;
+}
+
+/* ============================================================
+   FOOTER DEL MODAL
+   ============================================================ */
+.gr-modal-footer {
+    padding: 12px 24px;
+    background: #f7f9fb;
+    border-top: 1px solid #e0e6ed;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.gr-btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gr-btn-primary {
+    background: #1e6bb8;
+    color: #fff;
+}
+.gr-btn-primary:hover {
+    background: #14508c;
+}
+
+.gr-btn-success {
+    background: #28a745;
+    color: #fff;
+}
+.gr-btn-success:hover {
+    background: #1e7e34;
+}
+
+.gr-btn-secondary {
+    background: #e0e6ed;
+    color: #333;
+}
+.gr-btn-secondary:hover {
+    background: #cbd5dd;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+    .gr-modal-body {
+        grid-template-columns: 1fr;
+    }
+    .gr-col-form {
+        border-right: none;
+        border-bottom: 1px solid #e0e6ed;
+        max-height: 50vh;
+    }
+    .gr-col-pdf {
+        min-height: 300px;
+    }
+    .gr-modal-box {
+        height: 98vh;
+    }
+}
