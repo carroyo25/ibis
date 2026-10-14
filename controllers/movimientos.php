@@ -21,6 +21,14 @@
 
             echo json_encode($this->model->transferir($data));
         }
+
+        function almacen(){
+            echo json_encode($this->model->buscarAlmacen($_POST));
+        }
+
+        function opciones(){
+            
+        }
         
     }
 ?>

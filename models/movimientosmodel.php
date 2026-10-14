@@ -290,5 +290,32 @@
                 return ['success' => false, 'error' => $e->getMessage()];
             }
         }
+
+        public function buscarAlmacen($data){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    p.ccodproy,
+                                                    p.nalmacen,
+                                                    a.cdesalm nombre,
+                                                    a.ctipovia direccion
+                                                FROM
+                                                    tb_proyectos p
+                                                    LEFT JOIN tb_almacen a ON a.ncodalm = p.nalmacen
+                                                WHERE
+                                                    p.nflgactivo = 1
+                                                    AND p.nidreg = :id");
+                $sql->execute([":id"=>$data['id']]);
+
+                $datos = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                if (count($datos) > 0) {
+                    $success = true;
+                }
+
+                return ["datos" => $datos[0], "success" => $success];
+            } catch (Exception $e) {
+                return ['success' => false, 'error' => $e->getMessage()];
+            }     
+        }
     }
 ?>

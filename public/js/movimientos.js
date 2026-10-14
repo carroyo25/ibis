@@ -7,6 +7,11 @@ $(function () {
 
   document.getElementById("fechaTraspaso").value = fechaLocalISO();
 
+  /* ============================================================
+   CACHÉ DE DATOS (para no llamar dos veces al backend)
+   ============================================================ */
+  const GR_CACHE = {};
+
   /* =====================================================
    ENTER + VALIDACIÓN + SALTO DE FILA
    ===================================================== */
@@ -75,12 +80,8 @@ $(function () {
   document
     .getElementById("btnConfirmarTraspaso")
     .addEventListener("click", function () {
-      const autorizado = document
-        .getElementById("id_user")
-        .value.trim();
-      const responsable = document
-        .getElementById("id_user")
-        .value.trim();
+      const autorizado = document.getElementById("id_user").value.trim();
+      const responsable = document.getElementById("id_user").value.trim();
       const ccDestino = document.getElementById("ccDestinoTraspaso").value;
       const ccOrigen = window.ccOrigenActual;
 
@@ -98,7 +99,10 @@ $(function () {
         return;
       }
       if (ccDestino === ccOrigen) {
-        mostrarMensaje("El CC Origen y Destino no pueden ser iguales.", "mensaje_error");
+        mostrarMensaje(
+          "El CC Origen y Destino no pueden ser iguales.",
+          "mensaje_error",
+        );
         return;
       }
 
@@ -115,7 +119,7 @@ $(function () {
       console.log("Payload a enviar:", payload);
 
       // 👇 Enviar al backend
-      fetch(RUTA+"movimientos/transfiere", {
+      fetch(RUTA + "movimientos/transfiere", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -123,16 +127,25 @@ $(function () {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            mostrarMensaje("✅ Traspaso registrado correctamente.", "mensaje_correcto");
+            mostrarMensaje(
+              "✅ Traspaso registrado correctamente.",
+              "mensaje_correcto",
+            );
             document.getElementById("modalTraspaso").classList.remove("active");
             console.log(data.idtransfer);
           } else {
-            mostrarMensaje("❌ Error: " + (data.error || "No se pudo grabar.", "mensaje_error"));
+            mostrarMensaje(
+              "❌ Error: " +
+                (data.error || "No se pudo grabar.", "mensaje_error"),
+            );
           }
         })
         .catch((err) => {
           console.error(err);
-          mostrarMensaje("Error de conexión al grabar el traspaso.", "mensaje_error");
+          mostrarMensaje(
+            "Error de conexión al grabar el traspaso.",
+            "mensaje_error",
+          );
         });
     });
 
@@ -144,12 +157,32 @@ $(function () {
     return false;
   });
 
-  $("#btnDocument").click(function (e) { 
+  $("#btnDocument").click(function (e) {
     e.preventDefault();
+
+    // Nombre + dirección
+    buscarAlmacen($("#costosSearch").val(), {
+      nombre: "#grAlmacenOrigen",
+      direccion: "#grDireccionOrigen",
+    });
+
+    // Nombre + dirección + RUC (si el backend devuelve RUC)
+    buscarAlmacen($("#ccDestinoTraspaso").val(), {
+      nombre: "#grAlmacenDestino",
+      direccion: "#grDireccionDestino",
+    });
+
+    $("#grFechaEmision").val(fechaLocalISO());
 
     $("#vistaDocumento").fadeIn();
 
     return false;
+  });
+
+  $("#grCerrarModal,#grBtnCerrarModal").click(function (e) {
+    e.preventDefault();
+
+    $("#vistaDocumento").fadeOut();
   });
 
   $("#transferItems").click(function (e) {
@@ -324,9 +357,9 @@ $(function () {
       const saldo = parseFloat(input.dataset.saldo) || 0;
 
       // 👇 Buscar la observación de la MISMA fila
-      const tr          = input.closest('tr');
-      const inputObs    = tr.querySelector('.observacion-item');
-      const observacion = inputObs ? inputObs.value.trim() : '';
+      const tr = input.closest("tr");
+      const inputObs = tr.querySelector(".observacion-item");
+      const observacion = inputObs ? inputObs.value.trim() : "";
 
       // 👇 Validación: no puede superar el saldo
       if (cantidad > saldo) {
@@ -335,7 +368,7 @@ $(function () {
           descprod: descprod,
           cantidad: cantidad,
           saldo: saldo,
-          observacion:  observacion   // 👈 nuevo campo
+          observacion: observacion, // 👈 nuevo campo
         });
         return;
       }
@@ -346,7 +379,7 @@ $(function () {
         descprod: descprod,
         cantidad: cantidad,
         saldo: saldo,
-        observacion: observacion    // 👈 ESTA LÍNEA ES LA QUE FALTA
+        observacion: observacion, // 👈 ESTA LÍNEA ES LA QUE FALTA
       });
     });
 
@@ -378,7 +411,10 @@ $(function () {
 
     // 👇 Si no hay ítems seleccionados
     if (items.length === 0) {
-      mostrarMensaje("Debe ingresar al menos un ítem con cantidad mayor a cero.", "mensaje_error");
+      mostrarMensaje(
+        "Debe ingresar al menos un ítem con cantidad mayor a cero.",
+        "mensaje_error",
+      );
       return;
     }
 
@@ -397,5 +433,74 @@ $(function () {
 
     // Mostrar modal
     $("#movimientos").fadeIn();
+  }
+
+  /* ============================================================
+   BUSCAR ALMACÉN POR ID
+   - selectores: objeto con { campoJSON: "#selectorInput" }
+   ============================================================ */
+  async function buscarAlmacen(id, selectores = {}) {
+    if (!id) return null;
+
+    try {
+      const formData = new FormData();
+      formData.append("id", id);
+
+      const response = await fetch(RUTA + "movimientos/almacen", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await response.json();
+
+      // 👇 El backend devuelve { success, datos }
+      if (!json.success || !json.datos) {
+        console.warn("No se encontró el almacén con id:", id);
+        return null;
+      }
+
+      const data = json.datos;
+
+      // Escribir cada campo en su input
+      Object.keys(selectores).forEach((campo) => {
+        const selector = selectores[campo];
+        if (selector && data[campo] !== undefined) {
+          $(selector).val(data[campo] || "");
+        }
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Error al buscar almacén:", error);
+      return null;
+    }
+  }
+
+  /* ============================================================
+   PANELES DE BÚSQUEDA
+   ============================================================ */
+  function grCerrarTodosLosPaneles() {
+    document.querySelectorAll(".gr-panel-search").forEach((p) => p.remove());
+    document
+      .querySelectorAll(".gr-btn-search.gr-abierto")
+      .forEach((b) => b.classList.remove("gr-abierto"));
+  }
+
+  async function grCargarDatos(tipo) {
+    const formData = new FormData();
+    formData.append("tipo", tipo);
+
+    const response = await fetch(RUTA + "movimientos/opciones", {
+      method: "POST",
+      body: formData,
+    });
+
+    const json = await response.json();
+
+    if (json.success && Array.isArray(json.datos)) {
+      return json.datos;
+    }
+
+    return [];
   }
 });

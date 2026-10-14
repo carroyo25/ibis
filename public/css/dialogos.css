@@ -1371,15 +1371,11 @@
     50%      { background: #ffb3b3; }
 }
 
-/* ============================================================
-   MODAL OVERLAY
-   ============================================================ */
 .gr-modal-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.75);
     z-index: 9999;
     justify-content: center;
@@ -1388,11 +1384,9 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #333;
 }
+.gr-modal-overlay.gr-activo { display: flex; }
 
-
-/* ============================================================
-   CONTENEDOR DEL MODAL
-   ============================================================ */
+/* CONTENEDOR */
 .gr-modal-box {
     background: #fff;
     border-radius: 10px;
@@ -1405,15 +1399,12 @@
     box-shadow: 0 25px 70px rgba(0,0,0,0.4);
     animation: gr-fadeIn 0.25s ease;
 }
-
 @keyframes gr-fadeIn {
     from { transform: scale(0.97); opacity: 0; }
     to   { transform: scale(1);    opacity: 1; }
 }
 
-/* ============================================================
-   HEADER DEL MODAL
-   ============================================================ */
+/* HEADER */
 .gr-modal-header {
     background: linear-gradient(135deg, #1e6bb8 0%, #2a5298 100%);
     color: #fff;
@@ -1425,7 +1416,6 @@
     gap: 12px;
     flex-shrink: 0;
 }
-
 .gr-modal-header h2 {
     font-size: 18px;
     display: flex;
@@ -1433,7 +1423,6 @@
     gap: 10px;
     margin: 0;
 }
-
 .gr-doc-number {
     display: flex;
     gap: 8px;
@@ -1443,7 +1432,6 @@
     border-radius: 6px;
     font-size: 13px;
 }
-
 .gr-doc-number input {
     background: #fff;
     border: none;
@@ -1454,12 +1442,7 @@
     font-weight: bold;
     color: #1e6bb8;
 }
-
-.gr-header-actions {
-    display: flex;
-    gap: 6px;
-}
-
+.gr-header-actions { display: flex; gap: 6px; }
 .gr-header-actions button {
     background: rgba(255,255,255,0.2);
     border: none;
@@ -1470,14 +1453,9 @@
     font-size: 15px;
     transition: background 0.2s;
 }
+.gr-header-actions button:hover { background: rgba(255,255,255,0.35); }
 
-.gr-header-actions button:hover {
-    background: rgba(255,255,255,0.35);
-}
-
-/* ============================================================
-   BARRA DE FECHAS
-   ============================================================ */
+/* FECHAS */
 .gr-fecha-bar {
     display: flex;
     gap: 24px;
@@ -1487,21 +1465,9 @@
     flex-wrap: wrap;
     flex-shrink: 0;
 }
-
-.gr-fecha-bar .gr-field {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.gr-fecha-bar label {
-    font-weight: 600;
-    color: #2a5298;
-    font-size: 12px;
-}
-
-.gr-fecha-bar input,
-.gr-fecha-bar select {
+.gr-fecha-bar .gr-field { display: flex; align-items: center; gap: 8px; }
+.gr-fecha-bar label { font-weight: 600; color: #2a5298; font-size: 12px; }
+.gr-fecha-bar input, .gr-fecha-bar select {
     padding: 5px 9px;
     border: 1px solid #b8d4ee;
     border-radius: 4px;
@@ -1509,9 +1475,7 @@
     background: #fff;
 }
 
-/* ============================================================
-   CUERPO DEL MODAL — 2 COLUMNAS
-   ============================================================ */
+/* CUERPO — 2 COLUMNAS */
 .gr-modal-body {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1520,34 +1484,23 @@
     overflow: hidden;
 }
 
-/* ===== COLUMNA IZQUIERDA: FORMULARIO ===== */
+/* COLUMNA IZQUIERDA */
 .gr-col-form {
     overflow-y: auto;
     border-right: 1px solid #e0e6ed;
     background: #fafbfc;
 }
+.gr-col-form::-webkit-scrollbar { width: 8px; }
+.gr-col-form::-webkit-scrollbar-track { background: #f1f1f1; }
+.gr-col-form::-webkit-scrollbar-thumb { background: #b8d4ee; border-radius: 4px; }
+.gr-col-form::-webkit-scrollbar-thumb:hover { background: #1e6bb8; }
 
-.gr-col-form::-webkit-scrollbar {
-    width: 8px;
-}
-.gr-col-form::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-.gr-col-form::-webkit-scrollbar-thumb {
-    background: #b8d4ee;
-    border-radius: 4px;
-}
-.gr-col-form::-webkit-scrollbar-thumb:hover {
-    background: #1e6bb8;
-}
-
-/* Secciones del formulario */
+/* SECCIONES */
 .gr-section {
     padding: 14px 20px;
     border-bottom: 1px solid #eee;
     background: #fff;
 }
-
 .gr-section-title {
     font-size: 12px;
     font-weight: 700;
@@ -1561,7 +1514,6 @@
     align-items: center;
     gap: 8px;
 }
-
 .gr-section-title::before {
     content: "";
     width: 3px;
@@ -1570,13 +1522,14 @@
     border-radius: 2px;
 }
 
+/* CAMPOS */
 .gr-field-row {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
+    position: relative;
 }
-
 .gr-field-row label {
     flex: 0 0 125px;
     font-size: 12px;
@@ -1584,7 +1537,6 @@
     color: #555;
     text-align: right;
 }
-
 .gr-field-row input[type="text"],
 .gr-field-row input[type="date"],
 .gr-field-row input[type="number"],
@@ -1598,7 +1550,6 @@
     font-family: inherit;
     min-width: 0;
 }
-
 .gr-field-row input:focus,
 .gr-field-row select:focus,
 .gr-field-row textarea:focus {
@@ -1606,17 +1557,10 @@
     border-color: #1e6bb8;
     box-shadow: 0 0 0 3px rgba(30,107,184,0.15);
 }
+.gr-field-row input[readonly] { background: #f7f9fb; color: #555; }
+.gr-field-row textarea { resize: vertical; min-height: 45px; }
 
-.gr-field-row input[readonly] {
-    background: #f7f9fb;
-    color: #555;
-}
-
-.gr-field-row textarea {
-    resize: vertical;
-    min-height: 45px;
-}
-
+/* BOTÓN DE BÚSQUEDA (+) */
 .gr-btn-search {
     flex: 0 0 30px;
     height: 30px;
@@ -1631,19 +1575,99 @@
     justify-content: center;
     transition: background 0.2s;
 }
+.gr-btn-search:hover { background: #14508c; }
+.gr-btn-search.gr-abierto { background: #28a745; }
 
-.gr-btn-search:hover {
-    background: #14508c;
+/* PANEL DE BÚSQUEDA */
+.gr-panel-search {
+    position: absolute;
+    top: 100%;
+    left: 133px;
+    right: 38px;
+    background: #fff;
+    border: 1px solid #1e6bb8;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-height: 260px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: gr-slideDown 0.15s ease;
+}
+@keyframes gr-slideDown {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== COLUMNA DERECHA: VISOR PDF ===== */
+.gr-panel-search-buscar {
+    padding: 8px;
+    background: #f7f9fb;
+    border-bottom: 1px solid #e0e6ed;
+    flex-shrink: 0;
+}
+.gr-panel-search-buscar input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+}
+.gr-panel-search-buscar input:focus {
+    outline: none;
+    border-color: #1e6bb8;
+    box-shadow: 0 0 0 3px rgba(30,107,184,0.15);
+}
+
+.gr-panel-search-lista {
+    overflow-y: auto;
+    flex: 1;
+}
+.gr-panel-search-lista::-webkit-scrollbar { width: 6px; }
+.gr-panel-search-lista::-webkit-scrollbar-thumb { background: #b8d4ee; border-radius: 3px; }
+
+.gr-panel-search-item {
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+}
+.gr-panel-search-item:last-child { border-bottom: none; }
+.gr-panel-search-item:hover {
+    background: #eaf3fc;
+    color: #1e6bb8;
+}
+.gr-panel-search-item .gr-codigo {
+    font-weight: 700;
+    color: #1e6bb8;
+    min-width: 65px;
+}
+.gr-panel-search-item .gr-nombre {
+    flex: 1;
+    color: #555;
+}
+
+.gr-panel-search-vacio {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* COLUMNA DERECHA — PDF */
 .gr-col-pdf {
     background: #2a2a2a;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
-
 .gr-col-pdf-header {
     background: #1e6bb8;
     color: #fff;
@@ -1655,13 +1679,7 @@
     font-weight: 600;
     flex-shrink: 0;
 }
-
-.gr-col-pdf-header .gr-titulo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
+.gr-col-pdf-header .gr-titulo { display: flex; align-items: center; gap: 8px; }
 .gr-btn-download {
     color: #fff;
     text-decoration: none;
@@ -1671,30 +1689,14 @@
     font-size: 12px;
     transition: background 0.2s;
 }
+.gr-btn-download:hover { background: rgba(255,255,255,0.35); }
+.gr-col-pdf-body { flex: 1; position: relative; overflow: hidden; }
+.gr-col-pdf-body iframe { width: 100%; height: 100%; border: none; display: block; }
 
-.gr-btn-download:hover {
-    background: rgba(255,255,255,0.35);
-}
-
-.gr-col-pdf-body {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-}
-
-.gr-col-pdf-body iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* Placeholder del PDF */
 .gr-pdf-placeholder {
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1703,26 +1705,11 @@
     text-align: center;
     padding: 30px;
 }
+.gr-pdf-placeholder .gr-icono { font-size: 60px; margin-bottom: 16px; opacity: 0.4; }
+.gr-pdf-placeholder .gr-mensaje { font-size: 13px; color: #ccc; line-height: 1.6; }
+.gr-pdf-placeholder .gr-mensaje strong { color: #6bb6ff; }
 
-.gr-pdf-placeholder .gr-icono {
-    font-size: 60px;
-    margin-bottom: 16px;
-    opacity: 0.4;
-}
-
-.gr-pdf-placeholder .gr-mensaje {
-    font-size: 13px;
-    color: #ccc;
-    line-height: 1.6;
-}
-
-.gr-pdf-placeholder .gr-mensaje strong {
-    color: #6bb6ff;
-}
-
-/* ============================================================
-   FOOTER DEL MODAL
-   ============================================================ */
+/* FOOTER */
 .gr-modal-footer {
     padding: 12px 24px;
     background: #f7f9fb;
@@ -1733,7 +1720,6 @@
     flex-wrap: wrap;
     flex-shrink: 0;
 }
-
 .gr-btn {
     padding: 9px 20px;
     border: none;
@@ -1746,47 +1732,18 @@
     align-items: center;
     gap: 6px;
 }
+.gr-btn-primary { background: #1e6bb8; color: #fff; }
+.gr-btn-primary:hover { background: #14508c; }
+.gr-btn-success { background: #28a745; color: #fff; }
+.gr-btn-success:hover { background: #1e7e34; }
+.gr-btn-secondary { background: #e0e6ed; color: #333; }
+.gr-btn-secondary:hover { background: #cbd5dd; }
 
-.gr-btn-primary {
-    background: #1e6bb8;
-    color: #fff;
-}
-.gr-btn-primary:hover {
-    background: #14508c;
-}
-
-.gr-btn-success {
-    background: #28a745;
-    color: #fff;
-}
-.gr-btn-success:hover {
-    background: #1e7e34;
-}
-
-.gr-btn-secondary {
-    background: #e0e6ed;
-    color: #333;
-}
-.gr-btn-secondary:hover {
-    background: #cbd5dd;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* RESPONSIVE */
 @media (max-width: 900px) {
-    .gr-modal-body {
-        grid-template-columns: 1fr;
-    }
-    .gr-col-form {
-        border-right: none;
-        border-bottom: 1px solid #e0e6ed;
-        max-height: 50vh;
-    }
-    .gr-col-pdf {
-        min-height: 300px;
-    }
-    .gr-modal-box {
-        height: 98vh;
-    }
+    .gr-modal-body { grid-template-columns: 1fr; }
+    .gr-col-form { border-right: none; border-bottom: 1px solid #e0e6ed; max-height: 50vh; }
+    .gr-col-pdf { min-height: 300px; }
+    .gr-modal-box { height: 98vh; }
+    .gr-panel-search { left: 10px; right: 10px; }
 }
