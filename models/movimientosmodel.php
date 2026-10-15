@@ -317,5 +317,19 @@
                 return ['success' => false, 'error' => $e->getMessage()];
             }     
         }
+
+        public function buscarValores($tipo){
+            $tipo = $data['tipo'] ?? '';
+
+            switch ($tipo) {
+                case 'almacen':
+                    $sql= $this->db->connect()->query("SELECT ncodalm AS codigo, UPPER(cdesalm) AS nombre, UPPER(ctipovia) AS direccion
+                                                        FROM tb_almacen WHERE nflgactivo = 1 AND nflgSepcon = 1 ORDER BY cdesalm");
+                    break;
+            }
+
+            $sql->execute();
+            return ['success' => true, 'datos' => $sql->fetchAll(PDO::FETCH_ASSOC)];
+        }
     }
 ?>

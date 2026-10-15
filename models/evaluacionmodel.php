@@ -131,7 +131,7 @@
                     $r = 3;
                 }
 
-                if ($ordenEvaluada) {
+                if ( $ordenEvaluada ) {
                     $evaluar = $this->mostrarPuntajes($docData[0]["id_regmov"]);
                 }else {
                     $evaluar = $this->evaluar($r,$docData[0]["ntipmov"]);
@@ -152,7 +152,8 @@
             try {
                 $salida = "";
 
-                $rol_evalua = $tipo == 38 && $rol == 4 ? $rol_evalua = 9 : $rol_evalua = $rol;
+                $tipo_criterio  =  $tipo == 311 ? 38 : $tipo;
+                $rol_evalua = $tipo == 38 && $rol == 4 ?  9 : $rol;
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_criterios.idreg,
@@ -165,7 +166,7 @@
                                                     WHERE
                                                         (tb_criterios.nrol = :rol OR  tb_criterios.nrol = 4)
                                                         AND tb_criterios.tipo = :tipo");
-                $sql->execute(["rol"=>$rol_evalua,"tipo"=>$tipo]);
+                $sql->execute(["rol"=>$rol_evalua,"tipo"=>$tipo_criterio]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){

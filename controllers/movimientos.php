@@ -26,8 +26,8 @@
             echo json_encode($this->model->buscarAlmacen($_POST));
         }
 
-        function opciones(){
-            
+        function buscar(){
+            echo json_encode($this->model->buscarValores($_POST));
         }
         
     }

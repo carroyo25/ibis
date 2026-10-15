@@ -177,7 +177,7 @@
             </div>
             <div class="ventana">
                 <div class="cargaModulo">
-                    <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 9 || $_SESSION['rol'] == 110 || $_SESSION['rol'] == 299)
+                    <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 9 || $_SESSION['rol'] == 110 || $_SESSION['rol'] == 299 || $_SESSION['rol'] == 300)
                                 require 'views/adm.php'; 
                             else if ($_SESSION['rol'] == 5 )
                                 require 'views/aprob.php';

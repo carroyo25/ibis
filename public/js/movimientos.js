@@ -486,21 +486,205 @@ $(function () {
       .forEach((b) => b.classList.remove("gr-abierto"));
   }
 
+  /* ============================================================
+   CARGAR DATOS DEL BACKEND (sin caché)
+   Backend: { success: true, datos: [ {...}, {...} ] }
+   ============================================================ */
   async function grCargarDatos(tipo) {
-    const formData = new FormData();
-    formData.append("tipo", tipo);
+      try {
+          const formData = new FormData();
+          formData.append("tipo", tipo);
 
-    const response = await fetch(RUTA + "movimientos/opciones", {
-      method: "POST",
-      body: formData,
-    });
+          const response = await fetch(RUTA + 'movimientos/buscar', {
+              method: 'POST',
+              body: formData
+          });
 
-    const json = await response.json();
+          const json = await response.json();
 
-    if (json.success && Array.isArray(json.datos)) {
-      return json.datos;
+          // Acepta varios formatos
+          if (Array.isArray(json)) {
+              return json;
+          }
+
+          if (json.success && Array.isArray(json.datos)) {
+              return json.datos;
+          }
+
+          if (Array.isArray(json.datos)) {
+              return json.datos;
+          }
+
+          console.warn("Formato no reconocido:", tipo, json);
+          return [];
+
+      } catch (error) {
+          console.error("Error al cargar datos de tipo " + tipo + ":", error);
+          return [];
+      }
+  }
+
+  /* ============================================================
+   PANELES DE BÚSQUEDA
+   ============================================================ */
+function grCerrarTodosLosPaneles() {
+    document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
+    document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
+}
+
+async function grAbrirPanel(boton) {
+    const panelId  = boton.dataset.panel;
+    const inputId  = boton.dataset.target;
+    const tipo     = boton.dataset.tipo;
+    const fieldRow = boton.closest('.gr-field-row');
+
+    // Si ya está abierto, cerrar
+    if (boton.classList.contains('gr-abierto')) {
+        grCerrarTodosLosPaneles();
+        return;
     }
 
-    return [];
-  }
+    grCerrarTodosLosPaneles();
+    boton.classList.add('gr-abierto');
+
+    // Crear panel con "Cargando..."
+    const panel = document.createElement('div');
+    panel.className = 'gr-panel-search';
+    panel.id = panelId;
+
+    panel.innerHTML = `
+        <div class="gr-panel-search-buscar">
+            <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
+        </div>
+        <div class="gr-panel-search-lista">
+            <div class="gr-panel-search-vacio">Cargando...</div>
+        </div>
+    `;
+
+    fieldRow.appendChild(panel);
+
+    // Focus al buscador
+    setTimeout(() => panel.querySelector('input').focus(), 50);
+
+    // 👇 Traer datos del backend CADA VEZ
+    const datos = await grCargarDatos(tipo);
+
+    const lista = panel.querySelector('.gr-panel-search-lista');
+    grRenderizarLista(lista, datos, inputId, boton);
+
+    // Filtro en vivo (sobre los datos ya cargados)
+    panel.querySelector('input').addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        const filtrados = datos.filter(d =>
+            (d.nombre && d.nombre.toLowerCase().includes(q)) ||
+            (d.codigo && d.codigo.toLowerCase().includes(q))
+        );
+        grRenderizarLista(lista, filtrados, inputId, boton);
+    });
+
+    // Cerrar con ESC
+    panel.querySelector('input').addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') grCerrarTodosLosPaneles();
+    });
+}
+
+function grRenderizarLista(contenedor, datos, inputId, boton) {
+    contenedor.innerHTML = '';
+
+    if (datos.length === 0) {
+        contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
+        return;
+    }
+
+    datos.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'gr-panel-search-item';
+
+        const codigo = d.codigo || d.id || '';
+        const nombre = d.nombre || d.descripcion || '';
+
+        item.innerHTML = `
+            <span class="gr-codigo">${codigo}</span>
+            <span class="gr-nombre">${nombre}</span>
+        `;
+
+        item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
+        contenedor.appendChild(item);
+    });
+}
+
+function grSeleccionarOpcion(dato, inputId, boton) {
+    const input = document.getElementById(inputId);
+
+    const nombre = dato.nombre || dato.descripcion || '';
+
+    if (input) input.value = nombre;
+
+    // Rellenar campos relacionados
+    grRellenarCamposRelacionados(dato, inputId);
+
+    grCerrarTodosLosPaneles();
+}
+
+
+/* ============================================================
+   RELLENAR CAMPOS RELACIONADOS
+   ============================================================ */
+function grRellenarCamposRelacionados(dato, inputId) {
+
+    // Dirección (almacén / empresa)
+    const direccion = dato.direccion || '';
+    if (direccion) {
+        const inputDir = document.getElementById(
+            inputId.replace('grAlmacen', 'grDireccion')
+                   .replace('grEmpresa', 'grDireccionEmpresa')
+        );
+        if (inputDir) inputDir.value = direccion;
+    }
+
+    // RUC (empresa)
+    if (dato.ruc) {
+        const inputRuc = document.getElementById(
+            inputId.replace('grEmpresa', 'grRucEmpresa')
+        );
+        if (inputRuc) inputRuc.value = dato.ruc;
+    }
+
+    // Licencia (conductor)
+    if (dato.licencia) {
+        const inputLic = document.getElementById('grLicencia');
+        if (inputLic) inputLic.value = dato.licencia;
+    }
+
+    // Placa (vehículo)
+    if (dato.placa) {
+        const inputPlaca = document.getElementById('grPlaca');
+        if (inputPlaca) inputPlaca.value = dato.placa;
+    }
+}
+
+
+/* ============================================================
+   EVENTOS DE PANELES
+   ============================================================ */
+document.querySelectorAll('.gr-btn-search').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        grAbrirPanel(this);
+    });
+});
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.gr-field-row') && !e.target.closest('.gr-btn-search')) {
+        grCerrarTodosLosPaneles();
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        grCerrarTodosLosPaneles();
+        grCerrarModal();
+    }
+});
+
 });
