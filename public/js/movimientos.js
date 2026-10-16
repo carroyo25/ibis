@@ -7,10 +7,31 @@ $(function () {
 
   document.getElementById("fechaTraspaso").value = fechaLocalISO();
 
-  /* ============================================================
-   CACHÉ DE DATOS (para no llamar dos veces al backend)
+ /* ============================================================
+   MAPA DE RELACIONES: inputId → campos que rellena
    ============================================================ */
-  const GR_CACHE = {};
+  const GR_RELACIONES = {
+      'grEmpresaTransporte': {
+          direccion: 'grDireccionEmpresa',
+          ruc:       'grRucEmpresa'
+      },
+      'grAlmacenOrigen': {
+          direccion: 'grDireccionOrigen'
+      },
+      'grAlmacenDestino': {
+          direccion: 'grDireccionDestino'
+      },
+      'grRucDestinatario': {
+          direccion: 'grDireccionDest',
+          ruc:       'grRucDestinatario'
+      },
+      'grConductor': {
+          licencia: 'grLicencia'
+      },
+      'grMarca': {
+          placa: 'grPlaca'
+      }
+  };
 
   /* =====================================================
    ENTER + VALIDACIÓN + SALTO DE FILA
@@ -631,36 +652,19 @@ function grSeleccionarOpcion(dato, inputId, boton) {
    RELLENAR CAMPOS RELACIONADOS
    ============================================================ */
 function grRellenarCamposRelacionados(dato, inputId) {
+    const relaciones = GR_RELACIONES[inputId];
 
-    // Dirección (almacén / empresa)
-    const direccion = dato.direccion || '';
-    if (direccion) {
-        const inputDir = document.getElementById(
-            inputId.replace('grAlmacen', 'grDireccion')
-                   .replace('grEmpresa', 'grDireccionEmpresa')
-        );
-        if (inputDir) inputDir.value = direccion;
-    }
+    if (!relaciones) return;
 
-    // RUC (empresa)
-    if (dato.ruc) {
-        const inputRuc = document.getElementById(
-            inputId.replace('grEmpresa', 'grRucEmpresa')
-        );
-        if (inputRuc) inputRuc.value = dato.ruc;
-    }
+    Object.keys(relaciones).forEach(campo => {
+        const idDestino = relaciones[campo];
+        const valor     = dato[campo];
 
-    // Licencia (conductor)
-    if (dato.licencia) {
-        const inputLic = document.getElementById('grLicencia');
-        if (inputLic) inputLic.value = dato.licencia;
-    }
-
-    // Placa (vehículo)
-    if (dato.placa) {
-        const inputPlaca = document.getElementById('grPlaca');
-        if (inputPlaca) inputPlaca.value = dato.placa;
-    }
+        if (idDestino && valor !== undefined) {
+            const input = document.getElementById(idDestino);
+            if (input) input.value = valor;
+        }
+    });
 }
 
 
