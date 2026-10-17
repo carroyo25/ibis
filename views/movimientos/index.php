@@ -244,13 +244,9 @@
                         <div class="gr-section">
                             <div class="gr-section-title">Datos del Vehículo</div>
                             <div class="gr-field-row">
-                                <label>Marca:</label>
+                                <label>Nro. Placa:</label>
                                 <input type="text" id="grMarca" readonly>
                                 <button class="gr-btn-search" data-panel="grPanelVehiculo" data-target="grMarca" data-tipo="vehiculo" title="Buscar">+</button>
-                            </div>
-                            <div class="gr-field-row">
-                                <label>Nro. Placa:</label>
-                                <input type="text" id="grPlaca" readonly>
                             </div>
                         </div>
 
@@ -259,11 +255,11 @@
                             <div class="gr-section-title">Datos Adicionales</div>
                             <div class="gr-field-row">
                                 <label>Peso:</label>
-                                <input type="number" step="0.01" placeholder="0.00">
+                                <input type="number" step="0.01" placeholder="0.00" id="grPeso">
                             </div>
                             <div class="gr-field-row">
                                 <label>Nro. Bultos:</label>
-                                <input type="number" placeholder="0">
+                                <input type="number" placeholder="0" id="grBultos">
                             </div>
                         </div>
 

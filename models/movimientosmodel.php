@@ -318,18 +318,138 @@
             }     
         }
 
-        public function buscarValores($tipo){
-            $tipo = $data['tipo'] ?? '';
+        public function buscarValores($data){
+            try {
+                $tipo = $data['tipo'] ?? '';
 
-            switch ($tipo) {
-                case 'almacen':
-                    $sql= $this->db->connect()->query("SELECT ncodalm AS codigo, UPPER(cdesalm) AS nombre, UPPER(ctipovia) AS direccion
-                                                        FROM tb_almacen WHERE nflgactivo = 1 AND nflgSepcon = 1 ORDER BY cdesalm");
-                    break;
+                switch ($tipo) {
+                    case 'almacen':
+                        $sql= $this->db->connect()->query("SELECT LPAD(ncodalm,4,0) AS codigo, UPPER(cdesalm) AS nombre, UPPER(ctipovia) AS direccion
+                                                            FROM tb_almacen WHERE nflgactivo = 1 AND nflgSepcon = 1 ORDER BY cdesalm");
+                        break;
+                    case 'empresa':
+                        $sql= $this->db->connect()->query("SELECT
+                                                    LPAD(cm_entidad.id_centi,4,0) AS codigo, 
+                                                    UPPER(cm_entidad.crazonsoc) AS nombre, 
+                                                    cm_entidad.cnumdoc AS ruc,
+                                                    UPPER(cm_entidad.cviadireccion) AS direccion,
+                                                    cm_entidad.cdigcateg
+                                                FROM
+                                                    cm_entidad
+                                                WHERE
+                                                    cm_entidad.nflgactivo = 7
+                                                    AND cm_entidad.cdigcateg IS NOT NULL
+                                                ORDER BY 
+                                                    cm_entidad.crazonsoc");
+                        break;
+                    case 'modalidad':
+                        return ['success' => true, 'datos' => $this->parametros('14')]; 
+                        break;
+                    case 'tipoEnvio':
+                        return ['success' => true, 'datos' => $this->parametros('08')];
+                        break;
+                    case 'persona':
+                       $sql = $this->db->connect()->prepare("SELECT
+                                            tb_user.iduser AS codigo,
+                                            tb_user.cnombres AS nombre
+                                        FROM
+                                            tb_user 
+                                        WHERE
+                                            nrol =:rol 
+                                            AND nflgactivo = 1 
+                                            AND nestado = 7");
+                        $sql->execute([':rol'=>4]);
+                        break;
+                    case 'conductor':
+                        $sql = $this->db->connect()->query("SELECT LPAD(idreg,3,0) AS codigo ,UPPER(cnombres) AS nombre ,clicencia AS licencia,cnrodoc 
+                                                        FROM cm_conductores
+                                                        WHERE nflgactivo = 1
+                                                        ORDER BY cnombres");
+                        break;
+                    case 'vehiculo':
+                        return ['success' => true, 'datos' => $this->parametros('24')];
+                        break;
+                    default:
+                        return ['success' => false, 'error' => "Tipo '$tipo' no válido"];
+
+                }
+
+                return ['success' => true, 'datos' => $sql->fetchAll(PDO::FETCH_ASSOC)];
+            } catch (PDOException $e) {
+                return ['success' => false, 'error' => $e->getMessage()];
             }
+        }
 
-            $sql->execute();
-            return ['success' => true, 'datos' => $sql->fetchAll(PDO::FETCH_ASSOC)];
+        public function emitirGuia($data) {
+            try {
+                // ============================================================
+                // 1. VALIDACIONES BÁSICAS
+                // ============================================================
+                $faltantes = [];
+
+                if (empty($data['fechaEmision']))   $faltantes[] = 'Fecha de Emisión';
+                if (empty($data['fechaTraslado']))  $faltantes[] = 'Fecha de Traslado';
+                if (empty($data['almacenOrigen']))  $faltantes[] = 'Almacén Origen';
+                if (empty($data['almacenDestino'])) $faltantes[] = 'Almacén Destino';
+                if (empty($data['conductor']))      $faltantes[] = 'Conductor';
+                if (empty($data['placa']))          $faltantes[] = 'Placa del vehículo';
+                if (empty($data['detalles']) || !is_array($data['detalles'])) {
+                    $faltantes[] = 'Detalle de productos';
+                }
+
+                if (!empty($faltantes)) {
+                    return [
+                        'success' => false,
+                        'error'   => 'Faltan campos obligatorios: ' . implode(', ', $faltantes)
+                    ];
+                }
+
+                // ============================================================
+                // 2. INICIAR TRANSACCIÓN
+                // ============================================================
+                $conn = $this->db->connect();
+                $conn->beginTransaction();
+
+                try {
+                   
+                    $conn->commit();
+
+                    return [
+                        'success' => true,
+                        'idGuia'  => $idGuia,
+                        'mensaje' => 'Guía emitida correctamente',
+                        'total'   => count($data['detalles'])
+                    ];
+
+                } catch (Exception $e) {
+                    $conn->rollBack();
+                    throw $e;
+                }
+
+            } catch (Exception $e) {
+                return ['success' => false, 'error' => $e->getMessage()];
+            }
+        }
+
+        //llamar valores de la tabla general al pasar un parametro
+        private function parametros($clase) {
+            try {
+                $salida = "";
+                $query = $this->db->connect()->prepare("SELECT LPAD(nidreg,3,0) AS codigo, cdescripcion AS nombre 
+                                                        FROM tb_parametros
+                                                        WHERE cclase=:clase
+                                                            AND ccod != '00'
+                                                            AND ( nactivo = 1 OR nactivo IS NULL)
+                                                        ORDER BY cdescripcion");
+                $query->execute(["clase" => $clase]);
+                return $query->fetchAll(PDO::FETCH_ASSOC);
+                
+            } catch (PDOException $e) {
+                error_log("Error en parametros($clase): " . $e->getMessage());
+                return [];
+            }
         }
     }
+
 ?>
+

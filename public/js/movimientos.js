@@ -7,10 +7,31 @@ $(function () {
 
   document.getElementById("fechaTraspaso").value = fechaLocalISO();
 
-  /* ============================================================
-   CACHÉ DE DATOS (para no llamar dos veces al backend)
+ /* ============================================================
+   MAPA DE RELACIONES: inputId → campos que rellena
    ============================================================ */
-  const GR_CACHE = {};
+  const GR_RELACIONES = {
+      'grEmpresaTransporte': {
+          direccion: 'grDireccionEmpresa',
+          ruc:       'grRucEmpresa'
+      },
+      'grAlmacenOrigen': {
+          direccion: 'grDireccionOrigen'
+      },
+      'grAlmacenDestino': {
+          direccion: 'grDireccionDestino'
+      },
+      'grRucDestinatario': {
+          direccion: 'grDireccionDest',
+          ruc:       'grRucDestinatario'
+      },
+      'grConductor': {
+          licencia: 'grLicencia'
+      },
+      'grMarca': {
+          placa: 'grPlaca'
+      }
+  };
 
   /* =====================================================
    ENTER + VALIDACIÓN + SALTO DE FILA
@@ -198,6 +219,15 @@ $(function () {
 
     $("#movimientos").fadeOut();
   });
+
+  $("#grEmitirGuia").click(function(e){
+    e.preventDefault();
+
+    grEmitirGuia()
+
+
+    return false;
+  })
 
   function renderizarTabla() {
     let str = $("#formConsulta").serialize();
@@ -446,245 +476,347 @@ $(function () {
       const formData = new FormData();
       formData.append("id", id);
 
-      const response = await fetch(RUTA + "movimientos/almacen", {
-        method: "POST",
-        body: formData,
-      });
+        const response = await fetch(RUTA + "movimientos/almacen", {
+          method: "POST",
+          body: formData,
+        });
 
-      const json = await response.json();
+        const json = await response.json();
 
-      // 👇 El backend devuelve { success, datos }
-      if (!json.success || !json.datos) {
-        console.warn("No se encontró el almacén con id:", id);
+        // 👇 El backend devuelve { success, datos }
+        if (!json.success || !json.datos) {
+          console.warn("No se encontró el almacén con id:", id);
+          return null;
+        }
+
+        const data = json.datos;
+
+        // Escribir cada campo en su input
+        Object.keys(selectores).forEach((campo) => {
+          const selector = selectores[campo];
+          if (selector && data[campo] !== undefined) {
+            $(selector).val(data[campo] || "");
+          }
+        });
+
+        return data;
+      } catch (error) {
+        console.error("Error al buscar almacén:", error);
         return null;
       }
+    }
 
-      const data = json.datos;
+    /* ============================================================
+    PANELES DE BÚSQUEDA
+    ============================================================ */
+    function grCerrarTodosLosPaneles() {
+      document.querySelectorAll(".gr-panel-search").forEach((p) => p.remove());
+      document
+        .querySelectorAll(".gr-btn-search.gr-abierto")
+        .forEach((b) => b.classList.remove("gr-abierto"));
+    }
 
-      // Escribir cada campo en su input
-      Object.keys(selectores).forEach((campo) => {
-        const selector = selectores[campo];
-        if (selector && data[campo] !== undefined) {
-          $(selector).val(data[campo] || "");
+    /* ============================================================
+    CARGAR DATOS DEL BACKEND (sin caché)
+    Backend: { success: true, datos: [ {...}, {...} ] }
+    ============================================================ */
+    async function grCargarDatos(tipo) {
+        try {
+            const formData = new FormData();
+            formData.append("tipo", tipo);
+
+            const response = await fetch(RUTA + 'movimientos/buscar', {
+                method: 'POST',
+                body: formData
+            });
+
+            const json = await response.json();
+
+            // Acepta varios formatos
+            if (Array.isArray(json)) {
+                return json;
+            }
+
+            if (json.success && Array.isArray(json.datos)) {
+                return json.datos;
+            }
+
+            if (Array.isArray(json.datos)) {
+                return json.datos;
+            }
+
+            console.warn("Formato no reconocido:", tipo, json);
+            return [];
+
+        } catch (error) {
+            console.error("Error al cargar datos de tipo " + tipo + ":", error);
+            return [];
         }
+    }
+
+    /* ============================================================
+    PANELES DE BÚSQUEDA
+    ============================================================ */
+  function grCerrarTodosLosPaneles() {
+      document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
+      document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
+  }
+
+  async function grAbrirPanel(boton) {
+      const panelId  = boton.dataset.panel;
+      const inputId  = boton.dataset.target;
+      const tipo     = boton.dataset.tipo;
+      const fieldRow = boton.closest('.gr-field-row');
+
+      // Si ya está abierto, cerrar
+      if (boton.classList.contains('gr-abierto')) {
+          grCerrarTodosLosPaneles();
+          return;
+      }
+
+      grCerrarTodosLosPaneles();
+      boton.classList.add('gr-abierto');
+
+      // Crear panel con "Cargando..."
+      const panel = document.createElement('div');
+      panel.className = 'gr-panel-search';
+      panel.id = panelId;
+
+      panel.innerHTML = `
+          <div class="gr-panel-search-buscar">
+              <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
+          </div>
+          <div class="gr-panel-search-lista">
+              <div class="gr-panel-search-vacio">Cargando...</div>
+          </div>
+      `;
+
+      fieldRow.appendChild(panel);
+
+      // Focus al buscador
+      setTimeout(() => panel.querySelector('input').focus(), 50);
+
+      // 👇 Traer datos del backend CADA VEZ
+      const datos = await grCargarDatos(tipo);
+
+      const lista = panel.querySelector('.gr-panel-search-lista');
+      grRenderizarLista(lista, datos, inputId, boton);
+
+      // Filtro en vivo (sobre los datos ya cargados)
+      panel.querySelector('input').addEventListener('input', function() {
+          const q = this.value.toLowerCase().trim();
+          const filtrados = datos.filter(d =>
+              (d.nombre && d.nombre.toLowerCase().includes(q)) ||
+              (d.codigo && d.codigo.toLowerCase().includes(q))
+          );
+          grRenderizarLista(lista, filtrados, inputId, boton);
       });
 
-      return data;
-    } catch (error) {
-      console.error("Error al buscar almacén:", error);
-      return null;
-    }
+      // Cerrar con ESC
+      panel.querySelector('input').addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') grCerrarTodosLosPaneles();
+      });
   }
 
-  /* ============================================================
-   PANELES DE BÚSQUEDA
-   ============================================================ */
-  function grCerrarTodosLosPaneles() {
-    document.querySelectorAll(".gr-panel-search").forEach((p) => p.remove());
-    document
-      .querySelectorAll(".gr-btn-search.gr-abierto")
-      .forEach((b) => b.classList.remove("gr-abierto"));
+  function grRenderizarLista(contenedor, datos, inputId, boton) {
+      contenedor.innerHTML = '';
+
+      if (datos.length === 0) {
+          contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
+          return;
+      }
+
+      datos.forEach(d => {
+          const item = document.createElement('div');
+          item.className = 'gr-panel-search-item';
+
+          const codigo = d.codigo || d.id || '';
+          const nombre = d.nombre || d.descripcion || '';
+
+          item.innerHTML = `
+              <span class="gr-codigo">${codigo}</span>
+              <span class="gr-nombre">${nombre}</span>
+          `;
+
+          item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
+          contenedor.appendChild(item);
+      });
   }
 
+  function grSeleccionarOpcion(dato, inputId, boton) {
+      const input = document.getElementById(inputId);
+
+      const nombre = dato.nombre || dato.descripcion || '';
+
+      if (input) input.value = nombre;
+
+      // Rellenar campos relacionados
+      grRellenarCamposRelacionados(dato, inputId);
+
+      grCerrarTodosLosPaneles();
+  }
+
+
   /* ============================================================
-   CARGAR DATOS DEL BACKEND (sin caché)
-   Backend: { success: true, datos: [ {...}, {...} ] }
+    RELLENAR CAMPOS RELACIONADOS
+    ============================================================ */
+  function grRellenarCamposRelacionados(dato, inputId) {
+      const relaciones = GR_RELACIONES[inputId];
+
+      if (!relaciones) return;
+
+      Object.keys(relaciones).forEach(campo => {
+          const idDestino = relaciones[campo];
+          const valor     = dato[campo];
+
+          if (idDestino && valor !== undefined) {
+              const input = document.getElementById(idDestino);
+              if (input) input.value = valor;
+          }
+      });
+  }
+
+
+  /* ============================================================
+    EVENTOS DE PANELES
+    ============================================================ */
+  document.querySelectorAll('.gr-btn-search').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          grAbrirPanel(this);
+      });
+  });
+
+  document.addEventListener('click', function(e) {
+      if (!e.target.closest('.gr-field-row') && !e.target.closest('.gr-btn-search')) {
+          grCerrarTodosLosPaneles();
+      }
+  });
+
+  document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+          grCerrarTodosLosPaneles();
+          grCerrarModal();
+      }
+  });
+
+
+  /* ============================================================
+   EMITIR GUÍA — Recolecta datos y envía al backend
    ============================================================ */
-  async function grCargarDatos(tipo) {
+  async function grEmitirGuia() {
+
+      // ============ 1. RECOLECTAR CABECERA ============
+      const cabecera = {
+          tipoGuia:       document.getElementById('grTipoGuia').value,
+          fechaEmision:   document.getElementById('grFechaEmision').value,
+          fechaTraslado:  document.getElementById('grFechaTraslado').value,
+
+          rucDestinatario: document.getElementById('grRucDestinatario').value,
+          razonSocialDest: document.getElementById('grRazonSocialDest').value,
+          direccionDest:   document.getElementById('grDireccionDest').value,
+
+          almacenOrigen:   document.getElementById('grAlmacenOrigen').value,
+          direccionOrigen: document.getElementById('grDireccionOrigen').value,
+          almacenDestino:  document.getElementById('grAlmacenDestino').value,
+          direccionDestino:document.getElementById('grDireccionDestino').value,
+
+          empresaTransporte: document.getElementById('grEmpresaTransporte').value,
+          direccionEmpresa:  document.getElementById('grDireccionEmpresa').value,
+          rucEmpresa:        document.getElementById('grRucEmpresa').value,
+
+          modalidad:    document.getElementById('grModalidad').value,
+          tipoEnvio:    document.getElementById('grTipoEnvio').value,
+          autoriza:     document.getElementById('grAutoriza').value,
+          destinatario: document.getElementById('grDestinatario').value,
+          observaciones:document.getElementById('grObservaciones').value,
+
+          conductor: document.getElementById('grConductor').value,
+          licencia:  document.getElementById('grLicencia').value,
+          placa:     document.getElementById('grMarca').value,
+
+          peso:   document.getElementById('grPeso')?.value   || 0,
+          bultos: document.getElementById('grBultos')?.value || 0
+      };
+
+      // ============ 2. RECOLECTAR DETALLES (tu función) ============
+      const { items, errores } = obtenerItemsParaBackend();
+
+      // ============ 3. VALIDAR ============
+      if (errores.length > 0) {
+          let mensaje = '⚠️ Los siguientes productos superan el saldo disponible:\n\n';
+          errores.forEach(e => {
+              mensaje += `• ${e.descprod}\n   Solicitado: ${e.cantidad} | Saldo: ${e.saldo}\n\n`;
+          });
+          alert(mensaje);
+          return;
+      }
+
+      if (items.length === 0) {
+          alert('⚠️ Debe ingresar al menos un producto con cantidad mayor a cero.');
+          return;
+      }
+
+      const faltantes = [];
+      if (!cabecera.fechaEmision)   faltantes.push('Fecha de Emisión');
+      if (!cabecera.fechaTraslado)  faltantes.push('Fecha de Traslado');
+      if (!cabecera.almacenOrigen)  faltantes.push('Almacén Origen');
+      if (!cabecera.almacenDestino) faltantes.push('Almacén Destino');
+      if (!cabecera.conductor)      faltantes.push('Conductor');
+      if (!cabecera.placa)          faltantes.push('Placa del vehículo');
+
+      if (faltantes.length > 0) {
+          alert('⚠️ Complete los siguientes campos:\n\n• ' + faltantes.join('\n• '));
+          return;
+      }
+
+      if (!confirm(`¿Confirmar y emitir la guía?\n\nProductos a trasladar: ${items.length}\n\nEsta acción no se puede deshacer.`)) {
+          return;
+      }
+
+      // ============ 4. ARMAR PAYLOAD ============
+      const payload = {
+          ...cabecera,
+          detalles: items
+      };
+
+      console.log("📦 Payload a enviar:", payload);
+
+      // ============ 5. ENVIAR AL BACKEND ============
+      const btn = document.getElementById('grEmitirGuia');
+      btn.disabled = true;
+      btn.textContent = '⏳ Emitiendo...';
+
       try {
-          const formData = new FormData();
-          formData.append("tipo", tipo);
-
-          const response = await fetch(RUTA + 'movimientos/buscar', {
+          const response = await fetch(RUTA + 'movimientos/guia', {
               method: 'POST',
-              body: formData
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
           });
 
-          const json = await response.json();
+          const data = await response.json();
 
-          // Acepta varios formatos
-          if (Array.isArray(json)) {
-              return json;
+          if (data.success) {
+              alert('✅ Guía emitida correctamente.');
+
+              // Mostrar PDF en el visor
+              /*const iframe = document.getElementById('grIframePDF');
+              const urlPDF = RUTA + 'guia/pdf?id=' + data.idGuia;
+
+              iframe.src = urlPDF;
+              iframe.style.display = 'block';
+              document.getElementById('grPdfPlaceholder').style.display = 'none';
+              document.getElementById('grBtnDescargarPDF').href = urlPDF;*/
+          } else {
+              alert('❌ Error: ' + (data.error || 'No se pudo emitir.'));
           }
-
-          if (json.success && Array.isArray(json.datos)) {
-              return json.datos;
-          }
-
-          if (Array.isArray(json.datos)) {
-              return json.datos;
-          }
-
-          console.warn("Formato no reconocido:", tipo, json);
-          return [];
 
       } catch (error) {
-          console.error("Error al cargar datos de tipo " + tipo + ":", error);
-          return [];
+          console.error(error);
+          alert('Error de conexión al emitir la guía.');
+      } finally {
+          btn.disabled = false;
+          btn.textContent = '✅ Emitir Guía';
       }
   }
-
-  /* ============================================================
-   PANELES DE BÚSQUEDA
-   ============================================================ */
-function grCerrarTodosLosPaneles() {
-    document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
-    document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
-}
-
-async function grAbrirPanel(boton) {
-    const panelId  = boton.dataset.panel;
-    const inputId  = boton.dataset.target;
-    const tipo     = boton.dataset.tipo;
-    const fieldRow = boton.closest('.gr-field-row');
-
-    // Si ya está abierto, cerrar
-    if (boton.classList.contains('gr-abierto')) {
-        grCerrarTodosLosPaneles();
-        return;
-    }
-
-    grCerrarTodosLosPaneles();
-    boton.classList.add('gr-abierto');
-
-    // Crear panel con "Cargando..."
-    const panel = document.createElement('div');
-    panel.className = 'gr-panel-search';
-    panel.id = panelId;
-
-    panel.innerHTML = `
-        <div class="gr-panel-search-buscar">
-            <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
-        </div>
-        <div class="gr-panel-search-lista">
-            <div class="gr-panel-search-vacio">Cargando...</div>
-        </div>
-    `;
-
-    fieldRow.appendChild(panel);
-
-    // Focus al buscador
-    setTimeout(() => panel.querySelector('input').focus(), 50);
-
-    // 👇 Traer datos del backend CADA VEZ
-    const datos = await grCargarDatos(tipo);
-
-    const lista = panel.querySelector('.gr-panel-search-lista');
-    grRenderizarLista(lista, datos, inputId, boton);
-
-    // Filtro en vivo (sobre los datos ya cargados)
-    panel.querySelector('input').addEventListener('input', function() {
-        const q = this.value.toLowerCase().trim();
-        const filtrados = datos.filter(d =>
-            (d.nombre && d.nombre.toLowerCase().includes(q)) ||
-            (d.codigo && d.codigo.toLowerCase().includes(q))
-        );
-        grRenderizarLista(lista, filtrados, inputId, boton);
-    });
-
-    // Cerrar con ESC
-    panel.querySelector('input').addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') grCerrarTodosLosPaneles();
-    });
-}
-
-function grRenderizarLista(contenedor, datos, inputId, boton) {
-    contenedor.innerHTML = '';
-
-    if (datos.length === 0) {
-        contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
-        return;
-    }
-
-    datos.forEach(d => {
-        const item = document.createElement('div');
-        item.className = 'gr-panel-search-item';
-
-        const codigo = d.codigo || d.id || '';
-        const nombre = d.nombre || d.descripcion || '';
-
-        item.innerHTML = `
-            <span class="gr-codigo">${codigo}</span>
-            <span class="gr-nombre">${nombre}</span>
-        `;
-
-        item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
-        contenedor.appendChild(item);
-    });
-}
-
-function grSeleccionarOpcion(dato, inputId, boton) {
-    const input = document.getElementById(inputId);
-
-    const nombre = dato.nombre || dato.descripcion || '';
-
-    if (input) input.value = nombre;
-
-    // Rellenar campos relacionados
-    grRellenarCamposRelacionados(dato, inputId);
-
-    grCerrarTodosLosPaneles();
-}
-
-
-/* ============================================================
-   RELLENAR CAMPOS RELACIONADOS
-   ============================================================ */
-function grRellenarCamposRelacionados(dato, inputId) {
-
-    // Dirección (almacén / empresa)
-    const direccion = dato.direccion || '';
-    if (direccion) {
-        const inputDir = document.getElementById(
-            inputId.replace('grAlmacen', 'grDireccion')
-                   .replace('grEmpresa', 'grDireccionEmpresa')
-        );
-        if (inputDir) inputDir.value = direccion;
-    }
-
-    // RUC (empresa)
-    if (dato.ruc) {
-        const inputRuc = document.getElementById(
-            inputId.replace('grEmpresa', 'grRucEmpresa')
-        );
-        if (inputRuc) inputRuc.value = dato.ruc;
-    }
-
-    // Licencia (conductor)
-    if (dato.licencia) {
-        const inputLic = document.getElementById('grLicencia');
-        if (inputLic) inputLic.value = dato.licencia;
-    }
-
-    // Placa (vehículo)
-    if (dato.placa) {
-        const inputPlaca = document.getElementById('grPlaca');
-        if (inputPlaca) inputPlaca.value = dato.placa;
-    }
-}
-
-
-/* ============================================================
-   EVENTOS DE PANELES
-   ============================================================ */
-document.querySelectorAll('.gr-btn-search').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        grAbrirPanel(this);
-    });
-});
-
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.gr-field-row') && !e.target.closest('.gr-btn-search')) {
-        grCerrarTodosLosPaneles();
-    }
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        grCerrarTodosLosPaneles();
-        grCerrarModal();
-    }
-});
-
 });
