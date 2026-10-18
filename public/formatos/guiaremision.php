@@ -48,8 +48,6 @@
                 //cabecera
                 $this->SetFont('Arial','B',9);
                 $this->SetXY(0,5);
-                //$this->setTextColor(255,0,0);
-                //$this->Cell(190,6,"GUIA DE TRANSPORTE PROVISIONAL",0,1,"C");
                 
                 $this->setTextColor(0,0,0);
                 $this->SetFont('Arial','B',11);
@@ -76,7 +74,6 @@
                 $this->Cell(65,6,"0001 - ".$this->nguia,0,1,"C"); //pasa parametro
                 $this->SetFont('Times',"",7);
 
-
                 $this->SetXY(13,36);
                 $this->SetFont('Arial',"",7);
                 $this->Cell(10,6,"ORIGEN :",0,0);
@@ -94,49 +91,75 @@
                 $this->Cell(30,6,$this->fecha_emision,0,0);
                 $this->Cell(10,6,"Envio",0,0);
                 $this->Cell(80,6,$this->tipoEnvio,0,1);
-                //fin de cabecera
+                
+                // ============================================================
+                // RECUADRO DESTINATARIO
+                // ============================================================
                 $this->SetFont('Arial','',5);
-                $this->RoundedRect(13, 50, 92, 20, 1, '1234', 'D'); //
+                $this->RoundedRect(13, 50, 92, 22, 1, '1234', 'D'); // Aumenté la altura a 22
                 $this->SetXY(13,50);
                 $this->Cell(92,5,utf8_decode("NOMBRE O RAZÓN SOCIAL DEL DESTINATARIO"),1,0,"C",true);
-                $this->SetXY(15,57);
-                $this->MultiCell(95,2,utf8_decode($this->razondest),0,1);
+                
+                $this->SetXY(15,55);
+                $this->SetFont('Arial','',5);
+                $this->MultiCell(85, 3, utf8_decode($this->razondest), 0, 'L');
+                
                 $this->SetX(15);
-                $this->Cell(15,5,utf8_decode("DIRECCIÓN: "),0,0);
-                $this->MultiCell(60,2,utf8_decode($this->direccdest),0,1);
-                //$this->Cell(15,5,utf8_decode($this->direccdest),0,1);
+                $this->Cell(15,4,utf8_decode("DIRECCIÓN: "),0,0);
+                $this->SetX(30);
+                $this->MultiCell(70, 3, utf8_decode($this->direccdest), 0, 'L');
+                
                 $this->SetX(15);
-                $this->Cell(15,5,"R.U.C",0,0);
-                $this->Cell(15,5,$this->ruc,0,0);
-                $this->RoundedRect(108, 50, 92, 20, 1, '1234', 'D'); //
+                $this->Cell(15,4,"R.U.C",0,0);
+                $this->Cell(20,4,$this->ruc,0,1);
+
+                // ============================================================
+                // RECUADRO EMPRESA DE TRANSPORTES
+                // ============================================================
+                $this->RoundedRect(108, 50, 92, 22, 1, '1234', 'D'); // Aumenté la altura a 22
                 $this->SetXY(108,50);
                 $this->Cell(92,5,"EMPRESA DE TRANSPORTES",1,1,"C",true);
+                
                 $this->SetXY(110,55);
-                $this->Cell(25,5,utf8_decode("NOMBRE O RAZÓN SOCIAL:"),0,0);
-                $this->Cell(15,5,utf8_decode($this->raztransp),0,1);
-                $this->SetX(110);
-                $this->Cell(12,5,utf8_decode("DIRECCIÓN: "),0,0);
-                $this->MultiCell(75,2,utf8_decode($this->dirtransp),0,1);
-                $this->SetX(110);
-                $this->Cell(15,5,"R.U.C",0,0);
-                $this->Cell(15,5, $this->ructransp,0,1);
-                $this->RoundedRect(13, 72, 92, 20, 1, '1234', 'D');
-                $this->SetXY(13,72);
+                $this->Cell(25,4,utf8_decode("NOMBRE O RAZÓN SOCIAL:"),0,0);
+                $this->SetX(135);
+                $this->MultiCell(62, 3, utf8_decode($this->raztransp), 0, 'L');
+                
+                $this->SetXY(110,60);
+                $this->Cell(12,4,utf8_decode("DIRECCIÓN: "),0,0);
+                $this->SetX(122);
+                $this->MultiCell(75, 3, utf8_decode($this->dirtransp), 0, 'L');
+                
+                $this->SetXY(110,65);
+                $this->Cell(15,4,"R.U.C",0,0);
+                $this->Cell(15,4, $this->ructransp,0,1);
+
+                // ============================================================
+                // RECUADRO PUNTO DE PARTIDA
+                // ============================================================
+                $this->RoundedRect(13, 74, 92, 20, 1, '1234', 'D'); // Bajé un poco la coordenada Y (antes era 72)
+                $this->SetXY(13,74);
                 $this->SetFont('Arial','',6);
                 $this->Cell(92,5,"PUNTO DE PARTIDA",1,1,"C",true);
                 $this->SetX(15);
-                $this->MultiCell(92,5,utf8_decode($this->vianomorg),0,1);
+                $this->MultiCell(85,4,utf8_decode($this->vianomorg),0,1);
     
-                $this->RoundedRect(108, 72, 92, 20, 1, '1234', 'D');
-                $this->SetXY(108,72);
+                // ============================================================
+                // RECUADRO PUNTO DE LLEGADA
+                // ============================================================
+                $this->RoundedRect(108, 74, 92, 20, 1, '1234', 'D');
+                $this->SetXY(108,74);
                 $this->Cell(92,5,"PUNTO DE LLEGADA",1,1,"C",true);
                 $this->SetX(110);
-                $this->MultiCell(85,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
+                $this->MultiCell(85,4,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
     
-                $this->RoundedRect(13, 94, 187, 20, 1, '1234', 'D');
-                $this->SetXY(13,94);
+                // ============================================================
+                // RECUADRO UNIDAD DE TRANSPORTE Y CONDUCTOR
+                // ============================================================
+                $this->RoundedRect(13, 96, 187, 20, 1, '1234', 'D'); // Bajé la coordenada Y (antes era 94)
+                $this->SetXY(13,96);
                 $this->Cell(187,5,"UNIDAD DE TRANSPORTE Y CONDUCTOR",1,1,"C",true);
-                $this->SetXY(15,100);
+                $this->SetXY(15,102);
                 $this->Cell(35,5,utf8_decode("MARCA Y N° DE PLACA:"),0,0);
                 $this->Cell(45,5,utf8_decode($this->marca . "-" .$this->placa),0,0);
                 $this->Cell(45,5,utf8_decode("FECHA DE INICIO DEL TRASLADO:"),0,0);
@@ -156,7 +179,7 @@
                 $this->Ln(1);
                 $this->SetFillColor(0, 92, 132);
                 $this->SetTextColor(255,255,255);
-                $this->SetXY(13,116); //detalle del documento
+                $this->SetXY(13,118); // Bajar un poco la cabecera de la tabla (antes era 116)
                 $this->SetFont('Arial','',6);
                 $this->SetWidths(array(10,15,15,147));
                 $this->SetAligns(array("C","C","C","C"));
@@ -170,7 +193,7 @@
 
                 $qrsunat = "20504898173-09-T001-".$this->nguia.".png";
 
-                if ($_SESSION["iduser"] == '628c5d20e3173' || $_SESSION["iduser"] == '640b33534ec31') {
+                if (isset($_SESSION["iduser"]) && ($_SESSION["iduser"] == '628c5d20e3173' || $_SESSION["iduser"] == '640b33534ec31')) {
                     $this->Image('public/img/diegoguias.jpg',130,225,35);
                 }
 

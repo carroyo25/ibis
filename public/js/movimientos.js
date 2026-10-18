@@ -3,6 +3,8 @@ $(function () {
 
   const cuerpoTabla = document.getElementById("cuerpoTabla");
 
+  let swGrabado = false,idTransfer = 0;
+
   cuerpoTabla.innerHTML = `<tr><td colspan="13" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
 
   document.getElementById("fechaTraspaso").value = fechaLocalISO();
@@ -137,7 +139,7 @@ $(function () {
         items: window.itemsTraspaso, // 👈 array de ítems con cantidad > 0
       };
 
-      console.log("Payload a enviar:", payload);
+      //console.log("Payload a enviar:", payload);
 
       // 👇 Enviar al backend
       fetch(RUTA + "movimientos/transfiere", {
@@ -153,16 +155,20 @@ $(function () {
               "mensaje_correcto",
             );
             document.getElementById("modalTraspaso").classList.remove("active");
-            console.log(data.idtransfer);
+            //console.log(data.idtransfer);
+            swGrabado = true;
+            idTransfer = data.idtransfer;
           } else {
             mostrarMensaje(
               "❌ Error: " +
                 (data.error || "No se pudo grabar.", "mensaje_error"),
             );
+            swGrabado = true;
+            idTransfer = data.idtransfer;
           }
         })
         .catch((err) => {
-          console.error(err);
+          //console.error(err);
           mostrarMensaje(
             "Error de conexión al grabar el traspaso.",
             "mensaje_error",
@@ -181,6 +187,11 @@ $(function () {
   $("#btnDocument").click(function (e) {
     e.preventDefault();
 
+    if(idTransfer == 0){
+      mostrarMensaje('Primero debe grabar la transferencia','mensaje_error');
+      return 
+    }
+
     // Nombre + dirección
     buscarAlmacen($("#costosSearch").val(), {
       nombre: "#grAlmacenOrigen",
@@ -195,6 +206,7 @@ $(function () {
 
     $("#grFechaEmision").val(fechaLocalISO());
 
+  
     $("#vistaDocumento").fadeIn();
 
     return false;
@@ -224,7 +236,6 @@ $(function () {
     e.preventDefault();
 
     grEmitirGuia()
-
 
     return false;
   })
@@ -318,8 +329,10 @@ $(function () {
                                                 name="cantidad"
                                                 class="cantidad-traspaso"
                                                 data-idprod="${element.id_cprod}"
+                                                data-codigo="${element.ccodprod}"
                                                 data-descprod="${element.cdesprod}"
                                                 data-saldo="${element.saldo}"
+                                                data-unidad="${element.cabrevia}"
                                                 min="0"
                                                 max="${element.saldo}"
                                                 step="1"
@@ -362,148 +375,153 @@ $(function () {
     return `${year}-${month}-${day}`;
   }
 
-  /* =====================================================
-   CERRAR MODAL
-   ===================================================== */
-  function cerrarModalTraspaso() {
-    $("#movimientos").fadeOut();
-  }
+    /* =====================================================
+    CERRAR MODAL
+    ===================================================== */
+    function cerrarModalTraspaso() {
+      $("#movimientos").fadeOut();
+    }
 
-  /* =====================================================
-   RECOLECTAR ÍTEMS CON CANTIDAD > 0
-   ===================================================== */
-  function obtenerItemsParaBackend() {
-    const items = []; // ítems válidos para enviar
-    const errores = []; // ítems que superan el saldo
+    /* =====================================================
+    RECOLECTAR ÍTEMS CON CANTIDAD > 0
+    ===================================================== */
+    function obtenerItemsParaBackend() {
+      const items = []; // ítems válidos para enviar
+      const errores = []; // ítems que superan el saldo
 
-    document.querySelectorAll(".cantidad-traspaso").forEach((input) => {
-      const cantidad = parseFloat(input.value) || 0;
+      document.querySelectorAll(".cantidad-traspaso").forEach((input) => {
+        const cantidad = parseFloat(input.value) || 0;
 
-      // 👇 Solo los que tienen cantidad > 0
-      if (cantidad <= 0) return;
+        // 👇 Solo los que tienen cantidad > 0
+        if (cantidad <= 0) return;
 
-      const idprod = input.dataset.idprod;
-      const descprod = input.dataset.descprod;
-      const saldo = parseFloat(input.dataset.saldo) || 0;
+        const idprod = input.dataset.idprod;
+        const codigo = input.dataset.codigo;       // 👈 CAPTURADO
+        const unidad = input.dataset.unidad;
+        const descprod = input.dataset.descprod;
+        const saldo = parseFloat(input.dataset.saldo) || 0;
+        
 
-      // 👇 Buscar la observación de la MISMA fila
-      const tr = input.closest("tr");
-      const inputObs = tr.querySelector(".observacion-item");
-      const observacion = inputObs ? inputObs.value.trim() : "";
+        // 👇 Buscar la observación de la MISMA fila
+        const tr = input.closest("tr");
+        const inputObs = tr.querySelector(".observacion-item");
+        const observacion = inputObs ? inputObs.value.trim() : "";
 
-      // 👇 Validación: no puede superar el saldo
-      if (cantidad > saldo) {
-        errores.push({
+        // 👇 Validación: no puede superar el saldo
+        if (cantidad > saldo) {
+          errores.push({
+            idprod: idprod,
+            descprod: descprod,
+            cantidad: cantidad,
+            saldo: saldo,
+            observacion: observacion, // 👈 nuevo campo
+          });
+          return;
+        }
+
+        // 👇 Ítem válido
+        items.push({
           idprod: idprod,
           descprod: descprod,
+          codigo: codigo,         // 👈 ENVIADO AL BACKEND
+          unidad: unidad,         // 👈 ENVIADO AL BACKEND
           cantidad: cantidad,
           saldo: saldo,
-          observacion: observacion, // 👈 nuevo campo
+          observacion: observacion, // 👈 ESTA LÍNEA ES LA QUE FALTA
         });
+      });
+
+      return { items, errores };
+    }
+
+    function abrirModalTraspaso() {
+      const ccOrigen = $("#costosSearch").val();
+      if (!ccOrigen) {
+        mostrarMensaje(
+          "Debe seleccionar un Centro de Costos Origen.",
+          "mensaje_error",
+        );
         return;
       }
 
-      // 👇 Ítem válido
-      items.push({
-        idprod: idprod,
-        descprod: descprod,
-        cantidad: cantidad,
-        saldo: saldo,
-        observacion: observacion, // 👈 ESTA LÍNEA ES LA QUE FALTA
-      });
-    });
+      // 👇 Recolectar ítems
+      const { items, errores } = obtenerItemsParaBackend();
 
-    return { items, errores };
-  }
-
-  function abrirModalTraspaso() {
-    const ccOrigen = $("#costosSearch").val();
-    if (!ccOrigen) {
-      mostrarMensaje(
-        "Debe seleccionar un Centro de Costos Origen.",
-        "mensaje_error",
-      );
-      return;
-    }
-
-    // 👇 Recolectar ítems
-    const { items, errores } = obtenerItemsParaBackend();
-
-    // 👇 Si hay errores, avisar y no continuar
-    if (errores.length > 0) {
-      let mensaje = "⚠️ Los siguientes productos superan el saldo:\n\n";
-      errores.forEach((e) => {
-        mensaje += `• ${e.descprod}\n   Cantidad: ${e.cantidad} | Saldo: ${e.saldo}\n\n`;
-      });
-      mostrarMensaje(mensaje, "mensaje_error");
-      return;
-    }
-
-    // 👇 Si no hay ítems seleccionados
-    if (items.length === 0) {
-      mostrarMensaje(
-        "Debe ingresar al menos un ítem con cantidad mayor a cero.",
-        "mensaje_error",
-      );
-      return;
-    }
-
-    // 👇 Guardar y abrir el modal
-    window.itemsTraspaso = items;
-    window.ccOrigenActual = ccOrigen;
-
-    // Llenar el modal
-    document.getElementById("fechaTraspaso").value = fechaLocalISO();
-    document.getElementById("ccOrigenTraspaso").value = $(
-      "#costosSearch option:selected",
-    ).text();
-    document.getElementById("itemsTraspaso").value = items.length;
-
-    $("#autorizadoTraspaso,#responsableTraspaso").val($("#name_user").val());
-
-    // Mostrar modal
-    $("#movimientos").fadeIn();
-  }
-
-  /* ============================================================
-   BUSCAR ALMACÉN POR ID
-   - selectores: objeto con { campoJSON: "#selectorInput" }
-   ============================================================ */
-  async function buscarAlmacen(id, selectores = {}) {
-    if (!id) return null;
-
-    try {
-      const formData = new FormData();
-      formData.append("id", id);
-
-        const response = await fetch(RUTA + "movimientos/almacen", {
-          method: "POST",
-          body: formData,
+      // 👇 Si hay errores, avisar y no continuar
+      if (errores.length > 0) {
+        let mensaje = "⚠️ Los siguientes productos superan el saldo:\n\n";
+        errores.forEach((e) => {
+          mensaje += `• ${e.descprod}\n   Cantidad: ${e.cantidad} | Saldo: ${e.saldo}\n\n`;
         });
+        mostrarMensaje(mensaje, "mensaje_error");
+        return;
+      }
 
-        const json = await response.json();
+      // 👇 Si no hay ítems seleccionados
+      if (items.length === 0) {
+        mostrarMensaje(
+          "Debe ingresar al menos un ítem con cantidad mayor a cero.",
+          "mensaje_error",
+        );
+        return;
+      }
 
-        // 👇 El backend devuelve { success, datos }
-        if (!json.success || !json.datos) {
-          console.warn("No se encontró el almacén con id:", id);
+      // 👇 Guardar y abrir el modal
+      window.itemsTraspaso = items;
+      window.ccOrigenActual = ccOrigen;
+
+      // Llenar el modal
+      document.getElementById("fechaTraspaso").value = fechaLocalISO();
+      document.getElementById("ccOrigenTraspaso").value = $(
+        "#costosSearch option:selected",
+      ).text();
+      document.getElementById("itemsTraspaso").value = items.length;
+
+      $("#autorizadoTraspaso,#responsableTraspaso").val($("#name_user").val());
+
+      // Mostrar modal
+      $("#movimientos").fadeIn();
+    }
+
+    /* ============================================================
+    BUSCAR ALMACÉN POR ID
+    - selectores: objeto con { campoJSON: "#selectorInput" }
+    ============================================================ */
+    async function buscarAlmacen(id, selectores = {}) {
+      if (!id) return null;
+
+      try {
+        const formData = new FormData();
+        formData.append("id", id);
+
+          const response = await fetch(RUTA + "movimientos/almacen", {
+            method: "POST",
+            body: formData,
+          });
+
+          const json = await response.json();
+
+          // 👇 El backend devuelve { success, datos }
+          if (!json.success || !json.datos) {
+            console.warn("No se encontró el almacén con id:", id);
+            return null;
+          }
+
+          const data = json.datos;
+
+          // Escribir cada campo en su input
+          Object.keys(selectores).forEach((campo) => {
+            const selector = selectores[campo];
+            if (selector && data[campo] !== undefined) {
+              $(selector).val(data[campo] || "");
+            }
+          });
+
+          return data;
+        } catch (error) {
+          console.error("Error al buscar almacén:", error);
           return null;
         }
-
-        const data = json.datos;
-
-        // Escribir cada campo en su input
-        Object.keys(selectores).forEach((campo) => {
-          const selector = selectores[campo];
-          if (selector && data[campo] !== undefined) {
-            $(selector).val(data[campo] || "");
-          }
-        });
-
-        return data;
-      } catch (error) {
-        console.error("Error al buscar almacén:", error);
-        return null;
-      }
     }
 
     /* ============================================================
@@ -557,104 +575,104 @@ $(function () {
     /* ============================================================
     PANELES DE BÚSQUEDA
     ============================================================ */
-  function grCerrarTodosLosPaneles() {
-      document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
-      document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
-  }
+    function grCerrarTodosLosPaneles() {
+        document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
+        document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
+    }
 
-  async function grAbrirPanel(boton) {
-      const panelId  = boton.dataset.panel;
-      const inputId  = boton.dataset.target;
-      const tipo     = boton.dataset.tipo;
-      const fieldRow = boton.closest('.gr-field-row');
+    async function grAbrirPanel(boton) {
+        const panelId  = boton.dataset.panel;
+        const inputId  = boton.dataset.target;
+        const tipo     = boton.dataset.tipo;
+        const fieldRow = boton.closest('.gr-field-row');
 
-      // Si ya está abierto, cerrar
-      if (boton.classList.contains('gr-abierto')) {
-          grCerrarTodosLosPaneles();
-          return;
-      }
+        // Si ya está abierto, cerrar
+        if (boton.classList.contains('gr-abierto')) {
+            grCerrarTodosLosPaneles();
+            return;
+        }
 
-      grCerrarTodosLosPaneles();
-      boton.classList.add('gr-abierto');
+        grCerrarTodosLosPaneles();
+        boton.classList.add('gr-abierto');
 
-      // Crear panel con "Cargando..."
-      const panel = document.createElement('div');
-      panel.className = 'gr-panel-search';
-      panel.id = panelId;
+        // Crear panel con "Cargando..."
+        const panel = document.createElement('div');
+        panel.className = 'gr-panel-search';
+        panel.id = panelId;
 
-      panel.innerHTML = `
-          <div class="gr-panel-search-buscar">
-              <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
-          </div>
-          <div class="gr-panel-search-lista">
-              <div class="gr-panel-search-vacio">Cargando...</div>
-          </div>
-      `;
+        panel.innerHTML = `
+            <div class="gr-panel-search-buscar">
+                <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
+            </div>
+            <div class="gr-panel-search-lista">
+                <div class="gr-panel-search-vacio">Cargando...</div>
+            </div>
+        `;
 
-      fieldRow.appendChild(panel);
+        fieldRow.appendChild(panel);
 
-      // Focus al buscador
-      setTimeout(() => panel.querySelector('input').focus(), 50);
+        // Focus al buscador
+        setTimeout(() => panel.querySelector('input').focus(), 50);
 
-      // 👇 Traer datos del backend CADA VEZ
-      const datos = await grCargarDatos(tipo);
+        // 👇 Traer datos del backend CADA VEZ
+        const datos = await grCargarDatos(tipo);
 
-      const lista = panel.querySelector('.gr-panel-search-lista');
-      grRenderizarLista(lista, datos, inputId, boton);
+        const lista = panel.querySelector('.gr-panel-search-lista');
+        grRenderizarLista(lista, datos, inputId, boton);
 
-      // Filtro en vivo (sobre los datos ya cargados)
-      panel.querySelector('input').addEventListener('input', function() {
-          const q = this.value.toLowerCase().trim();
-          const filtrados = datos.filter(d =>
-              (d.nombre && d.nombre.toLowerCase().includes(q)) ||
-              (d.codigo && d.codigo.toLowerCase().includes(q))
-          );
-          grRenderizarLista(lista, filtrados, inputId, boton);
-      });
+        // Filtro en vivo (sobre los datos ya cargados)
+        panel.querySelector('input').addEventListener('input', function() {
+            const q = this.value.toLowerCase().trim();
+            const filtrados = datos.filter(d =>
+                (d.nombre && d.nombre.toLowerCase().includes(q)) ||
+                (d.codigo && d.codigo.toLowerCase().includes(q))
+            );
+            grRenderizarLista(lista, filtrados, inputId, boton);
+        });
 
-      // Cerrar con ESC
-      panel.querySelector('input').addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') grCerrarTodosLosPaneles();
-      });
-  }
+        // Cerrar con ESC
+        panel.querySelector('input').addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') grCerrarTodosLosPaneles();
+        });
+    }
 
-  function grRenderizarLista(contenedor, datos, inputId, boton) {
-      contenedor.innerHTML = '';
+    function grRenderizarLista(contenedor, datos, inputId, boton) {
+        contenedor.innerHTML = '';
 
-      if (datos.length === 0) {
-          contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
-          return;
-      }
+        if (datos.length === 0) {
+            contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
+            return;
+        }
 
-      datos.forEach(d => {
-          const item = document.createElement('div');
-          item.className = 'gr-panel-search-item';
+        datos.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'gr-panel-search-item';
 
-          const codigo = d.codigo || d.id || '';
-          const nombre = d.nombre || d.descripcion || '';
+            const codigo = d.codigo || d.id || '';
+            const nombre = d.nombre || d.descripcion || '';
 
-          item.innerHTML = `
-              <span class="gr-codigo">${codigo}</span>
-              <span class="gr-nombre">${nombre}</span>
-          `;
+            item.innerHTML = `
+                <span class="gr-codigo">${codigo}</span>
+                <span class="gr-nombre">${nombre}</span>
+            `;
 
-          item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
-          contenedor.appendChild(item);
-      });
-  }
+            item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
+            contenedor.appendChild(item);
+        });
+    }
 
-  function grSeleccionarOpcion(dato, inputId, boton) {
-      const input = document.getElementById(inputId);
+    function grSeleccionarOpcion(dato, inputId, boton) {
+        const input = document.getElementById(inputId);
 
-      const nombre = dato.nombre || dato.descripcion || '';
+        const nombre = dato.nombre || dato.descripcion || '';
 
-      if (input) input.value = nombre;
+        if (input) input.value = nombre;
 
-      // Rellenar campos relacionados
-      grRellenarCamposRelacionados(dato, inputId);
+        // Rellenar campos relacionados
+        grRellenarCamposRelacionados(dato, inputId);
 
-      grCerrarTodosLosPaneles();
-  }
+        grCerrarTodosLosPaneles();
+    }
 
 
   /* ============================================================
@@ -727,6 +745,7 @@ $(function () {
 
           modalidad:    document.getElementById('grModalidad').value,
           tipoEnvio:    document.getElementById('grTipoEnvio').value,
+          transporte:    document.getElementById('grTransporte').value,
           autoriza:     document.getElementById('grAutoriza').value,
           destinatario: document.getElementById('grDestinatario').value,
           observaciones:document.getElementById('grObservaciones').value,
@@ -736,7 +755,9 @@ $(function () {
           placa:     document.getElementById('grMarca').value,
 
           peso:   document.getElementById('grPeso')?.value   || 0,
-          bultos: document.getElementById('grBultos')?.value || 0
+          bultos: document.getElementById('grBultos')?.value || 0,
+
+          proyecto: document.getElementById('ccOrigenTraspaso').value
       };
 
       // ============ 2. RECOLECTAR DETALLES (tu función) ============
@@ -748,12 +769,12 @@ $(function () {
           errores.forEach(e => {
               mensaje += `• ${e.descprod}\n   Solicitado: ${e.cantidad} | Saldo: ${e.saldo}\n\n`;
           });
-          alert(mensaje);
+          mostrarMensaje(mensaje,'mensaje_error');
           return;
       }
 
       if (items.length === 0) {
-          alert('⚠️ Debe ingresar al menos un producto con cantidad mayor a cero.');
+          mostrarMensaje('⚠️ Debe ingresar al menos un producto con cantidad mayor a cero.','mensaje_error');
           return;
       }
 
@@ -762,17 +783,18 @@ $(function () {
       if (!cabecera.fechaTraslado)  faltantes.push('Fecha de Traslado');
       if (!cabecera.almacenOrigen)  faltantes.push('Almacén Origen');
       if (!cabecera.almacenDestino) faltantes.push('Almacén Destino');
-      if (!cabecera.conductor)      faltantes.push('Conductor');
-      if (!cabecera.placa)          faltantes.push('Placa del vehículo');
+      //if (!cabecera.conductor)      faltantes.push('Conductor');
+      //if (!cabecera.placa)          faltantes.push('Placa del vehículo');
 
       if (faltantes.length > 0) {
-          alert('⚠️ Complete los siguientes campos:\n\n• ' + faltantes.join('\n• '));
+          mostrarMensaje('⚠️ Complete los siguientes campos:\n\n• ' + faltantes.join('\n• '),'mensaje_error');
           return;
       }
 
-      if (!confirm(`¿Confirmar y emitir la guía?\n\nProductos a trasladar: ${items.length}\n\nEsta acción no se puede deshacer.`)) {
+      /*if (!confirm(`¿Confirmar y emitir la guía?\n\nProductos a trasladar: ${items.length}\n\nEsta acción no se puede deshacer.`)) {
           return;
-      }
+      }*/
+     
 
       // ============ 4. ARMAR PAYLOAD ============
       const payload = {
@@ -797,16 +819,18 @@ $(function () {
           const data = await response.json();
 
           if (data.success) {
-              alert('✅ Guía emitida correctamente.');
+              mostrarMensaje('✅ Guía emitida correctamente.','mensaje_correcto');
+
+              $("#grNumber").val(data.idGuia);
 
               // Mostrar PDF en el visor
-              /*const iframe = document.getElementById('grIframePDF');
+              const iframe = document.getElementById('grIframePDF');
               const urlPDF = RUTA + 'guia/pdf?id=' + data.idGuia;
 
               iframe.src = urlPDF;
               iframe.style.display = 'block';
               document.getElementById('grPdfPlaceholder').style.display = 'none';
-              document.getElementById('grBtnDescargarPDF').href = urlPDF;*/
+              document.getElementById('grBtnDescargarPDF').href = urlPDF;
           } else {
               alert('❌ Error: ' + (data.error || 'No se pudo emitir.'));
           }
@@ -823,10 +847,10 @@ $(function () {
   /* ============================================================
    PANELES DE BÚSQUEDA
    ============================================================ */
-function grCerrarTodosLosPaneles() {
-    document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
-    document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
-}
+  function grCerrarTodosLosPaneles() {
+      document.querySelectorAll('.gr-panel-search').forEach(p => p.remove());
+      document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
+  }
 
 async function grAbrirPanel(boton) {
     const panelId  = boton.dataset.panel;
@@ -921,49 +945,5 @@ function grSeleccionarOpcion(dato, inputId, boton) {
 
     grCerrarTodosLosPaneles();
 }
-
-
-/* ============================================================
-   RELLENAR CAMPOS RELACIONADOS
-   ============================================================ */
-function grRellenarCamposRelacionados(dato, inputId) {
-    const relaciones = GR_RELACIONES[inputId];
-
-    if (!relaciones) return;
-
-    Object.keys(relaciones).forEach(campo => {
-        const idDestino = relaciones[campo];
-        const valor     = dato[campo];
-
-        if (idDestino && valor !== undefined) {
-            const input = document.getElementById(idDestino);
-            if (input) input.value = valor;
-        }
-    });
-}
-
-
-/* ============================================================
-   EVENTOS DE PANELES
-   ============================================================ */
-document.querySelectorAll('.gr-btn-search').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        grAbrirPanel(this);
-    });
-});
-
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.gr-field-row') && !e.target.closest('.gr-btn-search')) {
-        grCerrarTodosLosPaneles();
-    }
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        grCerrarTodosLosPaneles();
-        grCerrarModal();
-    }
-});
 
 });

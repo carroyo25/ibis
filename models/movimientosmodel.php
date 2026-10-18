@@ -369,6 +369,9 @@
                     case 'vehiculo':
                         return ['success' => true, 'datos' => $this->parametros('24')];
                         break;
+                    case 'transporte':
+                        return ['success' => true, 'datos' => $this->parametros('23')];
+                        break;
                     default:
                         return ['success' => false, 'error' => "Tipo '$tipo' no válido"];
 
@@ -382,49 +385,34 @@
 
         public function emitirGuia($data) {
             try {
-                // ============================================================
-                // 1. VALIDACIONES BÁSICAS
-                // ============================================================
-                $faltantes = [];
-
-                if (empty($data['fechaEmision']))   $faltantes[] = 'Fecha de Emisión';
-                if (empty($data['fechaTraslado']))  $faltantes[] = 'Fecha de Traslado';
-                if (empty($data['almacenOrigen']))  $faltantes[] = 'Almacén Origen';
-                if (empty($data['almacenDestino'])) $faltantes[] = 'Almacén Destino';
-                if (empty($data['conductor']))      $faltantes[] = 'Conductor';
-                if (empty($data['placa']))          $faltantes[] = 'Placa del vehículo';
-                if (empty($data['detalles']) || !is_array($data['detalles'])) {
-                    $faltantes[] = 'Detalle de productos';
+                // 1. Validar
+                if (empty($data['fechaEmision']) || empty($data['detalles'])) {
+                    return ['success' => false, 'error' => 'Faltan datos obligatorios (fechas o detalles)'];
                 }
 
-                if (!empty($faltantes)) {
-                    return [
-                        'success' => false,
-                        'error'   => 'Faltan campos obligatorios: ' . implode(', ', $faltantes)
-                    ];
+                // 2. Obtener el número de guía y preparar datos
+                $idGuia = $this->numeroGuia();
+                $data['numero_guia_sunat'] = str_pad($idGuia, 8, '0', STR_PAD_LEFT);
+
+                // 3. Guardar en la BD (llamada a la función secundaria)
+                $guardado = $this->guardarGuiaBD($data, $idGuia);
+                if (!$guardado) {
+                    throw new Exception("No se pudo guardar el registro de la guía en la BD");
                 }
 
-                // ============================================================
-                // 2. INICIAR TRANSACCIÓN
-                // ============================================================
-                $conn = $this->db->connect();
-                $conn->beginTransaction();
-
-                try {
-                   
-                    $conn->commit();
-
-                    return [
-                        'success' => true,
-                        'idGuia'  => $idGuia,
-                        'mensaje' => 'Guía emitida correctamente',
-                        'total'   => count($data['detalles'])
-                    ];
-
-                } catch (Exception $e) {
-                    $conn->rollBack();
-                    throw $e;
+                // 4. Generar el PDF (llamada a la función secundaria)
+                $pdfResult = $this->generarGuiaPdf($data, $data['detalles'], $idGuia);
+                if (!$pdfResult) {
+                    throw new Exception("Error al generar el archivo PDF");
                 }
+
+                // 5. Retornar éxito
+                return [
+                    'success' => true,
+                    'idGuia'  => $idGuia,
+                    'mensaje' => 'Guía emitida y PDF generado correctamente',
+                    'archivo' => $pdfResult['archivo']
+                ];
 
             } catch (Exception $e) {
                 return ['success' => false, 'error' => $e->getMessage()];
@@ -447,6 +435,153 @@
             } catch (PDOException $e) {
                 error_log("Error en parametros($clase): " . $e->getMessage());
                 return [];
+            }
+        }
+
+        private function generarGuiaPdf($cabecera, $detalles, $idGuia) {
+            try {
+                require_once("public/formatos/guiaremision.php");
+                
+                $archivo = "public/documentos/guias_remision/20504898173-09-T001-" . $cabecera['numero_guia_sunat'] . ".pdf";
+                
+                $fecha_emision  = date("d/m/Y", strtotime($cabecera['fechaEmision']));
+                $fecha_traslado = !empty($cabecera['fechaTraslado']) ? date("d/m/Y", strtotime($cabecera['fechaTraslado'])) : "";
+                $anio = explode('-', $cabecera['fechaEmision']);
+
+                $pdf = new PDF(
+                    $idGuia,
+                    $fecha_emision,
+                    $cabecera['rucDestinatario'],
+                    $cabecera['razonSocialDest'],
+                    $cabecera['direccionDest'],
+                    $cabecera['empresaTransporte'],
+                    $cabecera['rucEmpresa'],
+                    $cabecera['direccionEmpresa'],
+                    $cabecera['almacenOrigen'],
+                    null, null, null,
+                    $fecha_traslado,
+                    $cabecera['tipoEnvio'],
+                    $cabecera['direccionDestino'],
+                    null, null, null, null,
+                    $cabecera['placa'] ?? '',
+                    $cabecera['conductor'] ?? '',
+                    $cabecera['licencia'] ?? '',
+                    $cabecera['tipoEnvio'],
+                    '',
+                    $cabecera['proyecto'] ?? '',
+                    $anio[0],
+                    $cabecera["observaciones"] ?? '',
+                    $cabecera["destinatario"] ?? '',
+                    null, '',
+                    $cabecera['peso'] ?? 0,
+                    ''
+                );
+                
+                $pdf->AliasNbPages();
+                $pdf->AddPage();
+                $pdf->SetWidths(array(10, 15, 15, 147));
+                $pdf->SetFillColor(255, 255, 255);
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->SetFont('Arial', '', 6);
+                
+                $lc = 0;
+                $itemNumero = 1;
+
+                foreach ($detalles as $item) {
+                    // Aseguramos que los valores no sean nulos
+                    $unidad    = strtoupper($item['unidad'] ?? 'UND'); 
+                    $cantidad  = number_format((float)$item['cantidad'], 0); // Si usas decimales, cambia el 0 por 2
+                    $codigo    = $item['codigo'] ?? '';
+                    $desc      = $item['descprod'] ?? '';
+                    
+                    // Formato: "CÓDIGO DESCRIPCIÓN"
+                    $descripcionCompleta = trim($codigo . " " . $desc);
+                    
+                    // Alineación: [R]ight para item, [R]ight para cantidad, [C]enter para unidad, [L]eft para descripción
+                    $pdf->SetX(13);
+                    $pdf->SetAligns(array("R", "R", "C", "L"));
+                    
+                    $pdf->Row(array(
+                        str_pad($itemNumero++, 3, "0", STR_PAD_LEFT), // Item
+                        $cantidad,                                    // Cantidad
+                        $unidad,                                      // Unidad
+                        $descripcionCompleta                          // Descripción
+                    ));
+
+                    $lc++;
+
+                    if ($lc == 26) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+                }
+
+                $pdf->SetXY(167, 237);
+                //$pdf->Cell(6, 20, 'NRO.GUIA INTERNA: ' . $idGuia, 0, 1);
+
+                $pdf->Ln(2);
+                $pdf->Output($archivo, 'F');
+
+                return ["archivo" => $archivo];
+
+            } catch (Exception $e) {
+                error_log("Error al generar PDF: " . $e->getMessage());
+                return false;
+            }
+        }
+
+        private function guardarGuiaBD($data, $idGuia) {
+            try {
+                $conn = $this->db->connect();
+                
+                $sql = $conn->prepare("
+                    INSERT INTO lg_guias (INSERT INTO lg_guias SET  cnumguia=:guia,
+                                                                    corigen=:origen,
+                                                                    cdirorigen=:direccion_origen,
+                                                                    cdestino=:destino,
+                                                                    cdirdest=:direccion_destino,
+                                                                    centi=:entidad,
+                                                                    centidir=:direccion_entidad,
+                                                                    centiruc=:ruc_entidad,
+                                                                    ctraslado=:traslado,
+                                                                    cenvio=:envio,
+                                                                    cautoriza=:autoriza,
+                                                                    cdestinatario=:destinatario,
+                                                                    cobserva=:observaciones,
+                                                                    cnombre=:nombres,
+                                                                    clicencia=:licencia,
+                                                                    cplaca=:placa,
+                                                                    ftraslado=:fecha_traslado,
+                                                                    fguia=:fecha_guia,
+                                                                    cserie=:serie");
+                
+                $sql->execute([
+                    ':guia'                 => $idGuia,
+                    ':origen'               => $data['almacenOrigen'],
+                    ':direccion_origen'     => $data['direccionOrigen'],
+                    ':destino'              => $data['almacenDestino'] ?? '',
+                    ':direccion_destino'    => $data['direccionDestino'] ?? '',
+                    ':entidad'              => $data['empresaTransporte'] ?? '',
+                    ':direccion_entidad'    => $data['direccionEmpresa'] ?? '',
+                    ':ruc_entidad'          => $data['rucEmpresa'] ?? '',
+                    ':traslado'             => $data['modalidad'] ?? '',
+                    ':envio'                => $data['tipoEnvio'] ?? '',
+                    ':autoriza'             => $data['autoriza'] ?? '',
+                    ':destinatario'         => $data['destinatario'] ?? '',
+                    ':observaciones'        => $data['observaciones'] ?? '',
+                    ':nombres'              => $data['conductor'] ?? 0,
+                    ':licencia'             => $data['licencia'] ?? '',
+                    ':placa'                => $data['placa'] ?? '',
+                    ':fecha_traslado'       => $data['fechaTraslado'] ?? '',
+                    ':fecha_guia'           => $data['fechaEmision'] ?? '',
+                    ':serie'                => 'T001',
+                ]);
+
+                return true;
+                
+            } catch (PDOException $e) {
+                error_log("Error al guardar Guía: " . $e->getMessage());
+                return false;
             }
         }
     }

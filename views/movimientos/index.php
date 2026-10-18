@@ -102,7 +102,7 @@
                         <span>N°</span>
                         <input type="text" value="T001" readonly>
                         <span>-</span>
-                        <input type="text" value="" readonly>
+                        <input type="text" id="grNumber" readonly>
                     </div>
                     <div class="gr-header-actions">
                         <button title="Cerrar" id="grCerrarModal">✖️</button>
@@ -204,6 +204,11 @@
                                 <label>Modalidad:</label>
                                 <input type="text" id="grModalidad" readonly>
                                 <button class="gr-btn-search" data-panel="grPanelModalidad" data-target="grModalidad" data-tipo="modalidad" title="Buscar">+</button>
+                            </div>
+                            <div class="gr-field-row">
+                                <label>Tipo Transporte:</label>
+                                <input type="text" id="grTransporte" readonly>
+                                <button class="gr-btn-search" data-panel="grPanelTransporte" data-target="grTransporte" data-tipo="transporte" title="Buscar">+</button>
                             </div>
                             <div class="gr-field-row">
                                 <label>Tipo Envío:</label>

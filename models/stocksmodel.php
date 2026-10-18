@@ -207,6 +207,8 @@
                                             <td class="textoDerecha">'.number_format($rs['consumos'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devoluciones'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['salidas_transferencia'],2).'</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
                                             <td class="textoDerecha">'.number_format($rs['ajustes'],2).'</td>
                                             <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>

@@ -368,14 +368,16 @@
                     <th rowspan="2">Codigo</th>
                     <th rowspan="2" width="50%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Cantidad<br>Ingreso</th>
-                    <th rowspan="2">Ingreso<br>Inventario</th>
-                    <th rowspan="2">Cantidad<br>Salida</th>
-                    <th rowspan="2">Cantidad<br>Devolucion</th>
+                    <th rowspan="2">Ingreso</th>
+                    <th rowspan="2">Inventario</th>
+                    <th rowspan="2">Salida</th>
+                    <th rowspan="2">Devolucion</th>
                     <th rowspan="2">Salida Transfer.</th>
+                    <th rowspan="2">Ingreso Traspado</th>    
+                    <th rowspan="2">Salida Traspaso.</th>
                     <th rowspan="2">Ajuste</th>
                     
-                    <th rowspan="2">Cantidad<br>Minima</th>
+                    <th rowspan="2">Minima</th>
                     <th rowspan="2">Saldo</th>
                     <th colspan="9">Condicion</th>
                 </tr>
