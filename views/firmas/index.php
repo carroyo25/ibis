@@ -193,7 +193,7 @@
                                     <th width="7%">Cant.</th>
                                     <th width="7%">Precio</th>
                                     <th width="7%">Total</th>
-                                    <th>Nro.</br>Parte</th>
+                                    <th>Nro.Parte / Detalles</th>
                                     <th width="7%">Pedido</th>
                                     <th width="15%">Detalles</th>
                                 </tr>

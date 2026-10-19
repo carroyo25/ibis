@@ -2759,14 +2759,6 @@
                     }
                 }
 
-                //$detalles       = $this->consultarDetallesOrden($id);
-                //$comentarios    = $this->consultarComentarios($id);
-                //$total          = $this->calculaTotalOrden($id);
-                //$ncomentarios   = $this->consultarTotalComentarios($id);
-                //$adjuntos       = $this->verAdjuntosOrden($id);
-                //$adicionales    = $this->consultarAdicionales($id);
-                //$nro_adjuntos   = $this->contarAdjuntos($id,"ORD");
-
                 return array("cabecera"         =>$docData,
                             "detalles"          =>$this->consultarDetallesOrden($id),
                             "comentarios"       =>$this->consultarComentarios($id),
@@ -2942,7 +2934,7 @@
                                             lg_ordendet.id_regmov,
                                             lg_ordendet.niddeta,
                                             lg_ordendet.nidpedi,
-                                            lg_ordendet.cobserva,
+                                            COALESCE(lg_ordendet.cobserva,'') cobserva,
                                             lg_ordendet.id_cprod,
                                             REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS ncanti,
                                             REPLACE ( FORMAT(lg_ordendet.nunitario,4), ',', '') AS nunitario,
@@ -2956,11 +2948,13 @@
                                             tb_unimed.cabrevia,
                                             FORMAT( tb_pedidodet.total, 2 ) AS total,
                                             tb_pedidodet.idpedido,
-                                            tb_pedidodet.nroparte,
+                                            COALESCE(tb_pedidodet.nroparte) nroparte,
                                             tb_pedidodet.estadoItem,
                                             monedas.cabrevia AS moneda,
                                             tb_pedidodet.total AS total_numero,
-                                            LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nro_pedido 
+                                            LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nro_pedido,
+                                            COALESCE(tb_equipmtto.cregistro,'')  cregistro,
+	                                        COALESCE(tb_equipmtto.cdescripcion,'') cdescripcion 
                                         FROM
                                             lg_ordendet
                                             INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -2968,6 +2962,7 @@
                                             INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                             INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
                                             INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg 
+                                            LEFT JOIN  tb_equipmtto ON tb_equipmtto.idreg = tb_pedidodet.nregistro
                                         WHERE
                                             lg_ordendet.id_regmov = :id 
                                             AND ISNULL(
@@ -2978,9 +2973,8 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
 
-                        $observa = $rs['cobserva'] == 'undefined' ? '' : $rs['cobserva'];
-                        $nroparte = $rs['nroparte'] == 'undefined' ? '' : $rs['nroparte'];
-
+                        $observa = $rs['cobserva'] ;
+                        $nroparte = $rs['nroparte'] .' / '. $rs['cregistro'] .' / '. $rs['cdescripcion'];
 
                         $salida.='<tr data-grabado="1" 
                                         data-total="'.$rs['ntotal'].'" 
