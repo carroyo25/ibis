@@ -113,12 +113,12 @@ $(() => {
                             const tr = document.createElement('tr');
                             tr.classList.add('pointer');
                             tr.dataset.idprod = item.id_cprod;
-                            tr.dataset.costos;
-                            tr.dataset.existencia;
-                            tr.dataset.transferencia;
-                            tr.dataset.grupo;
-                            tr.dataset.clase;
-                            tr.dataset.familia;
+                            tr.dataset.costos =  item.idreg_recepcion;
+                            tr.dataset.existencia = item.id_cprod;
+                            tr.dataset.transferencia = item.id_cprod;
+                            tr.dataset.grupo = item.grupo;
+                            tr.dataset.clase = item.clase;
+                            tr.dataset.familia = item.familia;
 
                             tr.innerHTML = ` <td class="textoCentro"><a href="${item.id_cprod}">${nro++}</a></td>
                                                 <td class="textoCentro">${item.ccodprod}</td>
