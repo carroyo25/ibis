@@ -366,7 +366,7 @@
                 <tr>
                     <th rowspan="2">Item</th>
                     <th rowspan="2">Codigo</th>
-                    <th rowspan="2" width="50%">Descripcion</th>
+                    <th rowspan="2" width="30%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
                     <th rowspan="2">Ingreso</th>
                     <th rowspan="2">Inventario</th>
@@ -391,7 +391,7 @@
                     <th>3C</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody  id="cuerpoTabla">
                 
             </tbody>
         </table>

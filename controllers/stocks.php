@@ -31,7 +31,7 @@
         }
 
         function consulta(){
-            echo $this->model->listarItems($_POST);
+            echo json_encode($this->model->listarItems($_POST));
         }
 
         function minimo(){

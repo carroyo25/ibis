@@ -48,7 +48,6 @@
                             (
                                 COALESCE(r.cantidad_obra, 0)
                             + COALESCE(inv.inventarios_cantidad, 0)
-                            + COALESCE(it.ingreso_transferencia, 0)
                             + COALESCE(cons.devoluciones, 0)
                             + COALESCE(aj.ajustes_cantidad, 0)
                             + COALESCE(te.total_traspaso_entrante, 0)
@@ -534,8 +533,7 @@
             try {
                 $conn = $this->db->connect();
                 
-                $sql = $conn->prepare("
-                    INSERT INTO lg_guias (INSERT INTO lg_guias SET  cnumguia=:guia,
+                $sql = $conn->prepare("INSERT INTO lg_guias SET  cnumguia=:guia,
                                                                     corigen=:origen,
                                                                     cdirorigen=:direccion_origen,
                                                                     cdestino=:destino,
@@ -578,8 +576,11 @@
                 ]);
 
                 return true;
+
+                
                 
             } catch (PDOException $e) {
+                var_dump($sql->errorInfo());
                 error_log("Error al guardar Guía: " . $e->getMessage());
                 return false;
             }

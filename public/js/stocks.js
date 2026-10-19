@@ -6,6 +6,10 @@ $(() => {
 
     $("#esperar").fadeOut();
 
+    const cuerpoTabla = document.getElementById('cuerpoTabla');
+    cuerpoTabla.innerHTML = `<tr><td colspan="21" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
+
+
     $(".tituloVentana").on("click","a", function (e) {
         e.preventDefault();
 
@@ -80,26 +84,73 @@ $(() => {
         e.preventDefault();
 
         let str = $("#formConsulta").serialize();
+
         
-        let registros = vueltas(str);
 
         try {
             if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
 
             $("#esperar").css("opacity","1").fadeIn();
             
-            const progreso_accion = setInterval(progreso,1000);
-        
             $.post(RUTA+"stocks/consulta",str,
                 function (data, textStatus, jqXHR) {
-                    $("#tablaPrincipal tbody")
-                        .empty()
-                        .append(data);
+                   cuerpoTabla.innerHTML = '';
+                   
+                   if (data.success) {
+                    let nro = 1;
 
-                        $("#esperar").css("opacity","0").fadeOut();
-                        clearInterval(progreso_accion);
+                    data.datos.forEach( item =>{
+                            let c1 = ( item.condicion == '1A' || item.condicion == '1.A.' ||  item.condicion  == '1.A') ? item.inventarios : '';
+                            let c2 = ( item.condicion == '1B' || item.condicion == '1.B.' ||  item.condicion  == '1.B') ? item.inventarios : '';
+                            let c3 = ( item.condicion == '2A' || item.condicion == '2.A.' ||  item.condicion  == '2.A') ? item.inventarios : '';
+                            let c4 = ( item.condicion == '2B' || item.condicion == '2.B.' ||  item.condicion  == '2.B') ? item.inventarios : '';
+                            let c5 = ( item.condicion == '3A' || item.condicion == '3.A.' ||  item.condicion  == '3.A') ? item.inventarios : '';
+                            let c6 = ( item.condicion == '3B' || item.condicion == '3.B.' ||  item.condicion  == '3.B') ? item.inventarios : '';
+                            let c7 = ( item.condicion == '3C' || item.condicion == '3.C.' ||  item.condicion  == '3.C') ? item.inventarios : '';
+
+                            let estado = item.saldo >= 0 ? "semaforoVerde":"semaforoRojo"; 
+
+                            const tr = document.createElement('tr');
+                            tr.classList.add('pointer');
+                            tr.dataset.idprod = item.id_cprod;
+                            tr.dataset.costos;
+                            tr.dataset.existencia;
+                            tr.dataset.transferencia;
+                            tr.dataset.grupo;
+                            tr.dataset.clase;
+                            tr.dataset.familia;
+
+                            tr.innerHTML = ` <td class="textoCentro"><a href="${item.id_cprod}">${nro++}</a></td>
+                                                <td class="textoCentro">${item.ccodprod}</td>
+                                                <td class="pl20px">${item.cdesprod}</td>
+                                                <td class="textoCentro">${item.cabrevia}</td>
+                                                <td class="textoDerecha">${item.ingresos_recepcion.toFixed(2)}</td>
+                                                <td class="textoDerecha">${item.ingresos_inventario.toFixed(2)}</td>
+                                                <td class="textoDerecha">${item.salidas_consumos.toFixed(2)}</td>
+                                                <td class="textoDerecha">${item.ingresos_devoluciones.toFixed(2)}</td>
+                                                <td class="textoDerecha">${item.salidas_transf_antigua.toFixed(2)}</td>
+                                                <td class="textoDerecha">${item.ingresos_traspaso_nuevo}</td>
+                                                <td class="textoDerecha">${item.salidas_traspaso_nuevo}</td>
+                                                <td class="textoDerecha">${item.ingresos_ajustes.toFixed(2)}</td>
+                                                <td class="textoDerecha"></td>
+                                                <td class="textoDerecha ${estado}">${item.saldo.toFixed(2)}</td>
+                                                <td class="textoCentro">${c1}</td>
+                                                <td class="textoCentro">${c2}</td>
+                                                <td class="textoCentro">${c3}</td>
+                                                <td class="textoCentro">${c4}</td>
+                                                <td class="textoCentro">${c5}</td>
+                                                <td class="textoCentro">${c6}</td>
+                                                <td class="textoCentro">${c7}</td>`;
+
+                            cuerpoTabla.appendChild(tr);        
+                    })
+                   }else{
+                        cuerpoTabla.innerHTML = `<tr><td colspan="21" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
+                   }
+
+                   $("#esperar").css("opacity","0").fadeOut();
                 },
-                "text"
+                "json"
             );
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");

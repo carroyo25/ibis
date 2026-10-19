@@ -240,133 +240,6 @@ $(function () {
     return false;
   })
 
-  function renderizarTabla() {
-    let str = $("#formConsulta").serialize();
-
-    try {
-      if ($("#costosSearch").val() == -1)
-        throw "Por favor elija un centro de costos para la consulta";
-
-      $("#esperar").css("opacity", "1").fadeIn();
-
-      $.post(
-        RUTA + "movimientos/consulta",
-        str,
-        function (data, textStatus, jqXHR) {
-          if (data.datos.length == 0) {
-            cuerpoTabla.innerHTML = `<tr><td colspan="13" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
-            $("#esperar").css("opacity", "0").fadeOut();
-            return;
-          }
-
-          document.getElementById("cuerpoTabla").innerHTML = "";
-
-          data.datos.forEach((element) => {
-            const tr = document.createElement("tr");
-            tr.dataset.idprod = element.id_cprod;
-            tr.dataset.costos = element.ingresos;
-            tr.dataset.existencia = element.idreg;
-            tr.dataset.transferencia = element.iditem;
-            tr.classList.add("pointer");
-
-            let saldo =
-              element["ingresos"] +
-              element["inventarios"] +
-              element["devoluciones"] -
-              (element["consumos"] + element["salidas_transferencia"]) +
-              element["ajustes"];
-
-            let c1 =
-              element["condicion"] == "1A" ||
-              element["condicion"] == "1.A." ||
-              element["condicion"] == "1.A"
-                ? element["inventarios"]
-                : "";
-            let c2 =
-              element["condicion"] == "1B" ||
-              element["condicion"] == "1.B." ||
-              element["condicion"] == "1.B"
-                ? element["inventarios"]
-                : "";
-            let c3 =
-              element["condicion"] == "2A" ||
-              element["condicion"] == "2.A." ||
-              element["condicion"] == "2.A"
-                ? element["inventarios"]
-                : "";
-            let c4 =
-              element["condicion"] == "2B" ||
-              element["condicion"] == "2.B." ||
-              element["condicion"] == "2.B"
-                ? element["inventarios"]
-                : "";
-            let c5 =
-              element["condicion"] == "3A" ||
-              element["condicion"] == "3.A." ||
-              element["condicion"] == "3.A"
-                ? element["inventarios"]
-                : "";
-            let c6 =
-              element["condicion"] == "3B" ||
-              element["condicion"] == "3.B." ||
-              element["condicion"] == "3.B"
-                ? element["inventarios"]
-                : "";
-            let c7 =
-              element["condicion"] == "3C" ||
-              element["condicion"] == "3.C." ||
-              element["condicion"] == "3.C"
-                ? element["inventarios"]
-                : "";
-
-            tr.innerHTML = `<td class="textoCentro"><input type="checkbox" name="item"></td>
-                                            <td class="textoCentro">${element.ccodprod}</td>
-                                            <td class="pl20px">${element.cdesprod}</td>
-                                            <td class="textoCentro">${element.cabrevia}</td>
-                                            <td class="textoDerecha">${element.saldo.toFixed(2)}</td>
-                                            <td class="textoCentro" width="150px">
-                                              <input type="number"
-                                                name="cantidad"
-                                                class="cantidad-traspaso"
-                                                data-idprod="${element.id_cprod}"
-                                                data-codigo="${element.ccodprod}"
-                                                data-descprod="${element.cdesprod}"
-                                                data-saldo="${element.saldo}"
-                                                data-unidad="${element.cabrevia}"
-                                                min="0"
-                                                max="${element.saldo}"
-                                                step="1"
-                                                style="text-align: right; padding-right: 10px; border: none"
-                                                placeholder="00.00">
-                                            </td>
-                                            <td>
-                                              <input type="text" 
-                                              name="observaciones" 
-                                              class="observacion-item"
-                                              data-idprod="${element.id_cprod}">
-                                            </td>
-                                            <td class="textoCentro">${c1}</td>
-                                            <td class="textoCentro">${c2}</td>
-                                            <td class="textoCentro">${c3}</td>
-                                            <td class="textoCentro">${c4}</td>
-                                            <td class="textoCentro">${c5}</td>
-                                            <td class="textoCentro">${c6}</td>
-                                            <td class="textoCentro">${c7}</td>`;
-
-            if (element.saldo > 0) {
-              document.getElementById("cuerpoTabla").appendChild(tr);
-            }
-          });
-
-          $("#esperar").css("opacity", "0").fadeOut();
-        },
-        "json",
-      );
-    } catch (error) {
-      mostrarMensaje(error, "mensaje_error");
-    }
-  }
-
   function fechaLocalISO() {
     const d = new Date();
     const year = d.getFullYear();
@@ -802,8 +675,6 @@ $(function () {
           detalles: items
       };
 
-      console.log("📦 Payload a enviar:", payload);
-
       // ============ 5. ENVIAR AL BACKEND ============
       const btn = document.getElementById('grEmitirGuia');
       btn.disabled = true;
@@ -825,7 +696,7 @@ $(function () {
 
               // Mostrar PDF en el visor
               const iframe = document.getElementById('grIframePDF');
-              const urlPDF = RUTA + 'guia/pdf?id=' + data.idGuia;
+              const urlPDF = RUTA + '/public/documentos/guias_remision/20504898173-09-T001-' + data.idGuia;
 
               iframe.src = urlPDF;
               iframe.style.display = 'block';
@@ -852,98 +723,375 @@ $(function () {
       document.querySelectorAll('.gr-btn-search.gr-abierto').forEach(b => b.classList.remove('gr-abierto'));
   }
 
-async function grAbrirPanel(boton) {
-    const panelId  = boton.dataset.panel;
-    const inputId  = boton.dataset.target;
-    const tipo     = boton.dataset.tipo;
-    const fieldRow = boton.closest('.gr-field-row');
+  async function grAbrirPanel(boton) {
+      const panelId  = boton.dataset.panel;
+      const inputId  = boton.dataset.target;
+      const tipo     = boton.dataset.tipo;
+      const fieldRow = boton.closest('.gr-field-row');
 
-    // Si ya está abierto, cerrar
-    if (boton.classList.contains('gr-abierto')) {
-        grCerrarTodosLosPaneles();
-        return;
+      // Si ya está abierto, cerrar
+      if (boton.classList.contains('gr-abierto')) {
+          grCerrarTodosLosPaneles();
+          return;
+      }
+
+      grCerrarTodosLosPaneles();
+      boton.classList.add('gr-abierto');
+
+      // Crear panel con "Cargando..."
+      const panel = document.createElement('div');
+      panel.className = 'gr-panel-search';
+      panel.id = panelId;
+
+      panel.innerHTML = `
+          <div class="gr-panel-search-buscar">
+              <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
+          </div>
+          <div class="gr-panel-search-lista">
+              <div class="gr-panel-search-vacio">Cargando...</div>
+          </div>
+      `;
+
+      fieldRow.appendChild(panel);
+
+      // Focus al buscador
+      setTimeout(() => panel.querySelector('input').focus(), 50);
+
+      // 👇 Traer datos del backend CADA VEZ
+      const datos = await grCargarDatos(tipo);
+
+      const lista = panel.querySelector('.gr-panel-search-lista');
+      grRenderizarLista(lista, datos, inputId, boton);
+
+      // Filtro en vivo (sobre los datos ya cargados)
+      panel.querySelector('input').addEventListener('input', function() {
+          const q = this.value.toLowerCase().trim();
+          const filtrados = datos.filter(d =>
+              (d.nombre && d.nombre.toLowerCase().includes(q)) ||
+              (d.codigo && d.codigo.toLowerCase().includes(q))
+          );
+          grRenderizarLista(lista, filtrados, inputId, boton);
+      });
+
+      // Cerrar con ESC
+      panel.querySelector('input').addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') grCerrarTodosLosPaneles();
+      });
+  }
+
+  function grRenderizarLista(contenedor, datos, inputId, boton) {
+      contenedor.innerHTML = '';
+
+      if (datos.length === 0) {
+          contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
+          return;
+      }
+
+      datos.forEach(d => {
+          const item = document.createElement('div');
+          item.className = 'gr-panel-search-item';
+
+          const codigo = d.codigo || d.id || '';
+          const nombre = d.nombre || d.descripcion || '';
+
+          item.innerHTML = `
+              <span class="gr-codigo">${codigo}</span>
+              <span class="gr-nombre">${nombre}</span>
+          `;
+
+          item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
+          contenedor.appendChild(item);
+      });
+  }
+
+  function grSeleccionarOpcion(dato, inputId, boton) {
+      const input = document.getElementById(inputId);
+
+      const nombre = dato.nombre || dato.descripcion || '';
+
+      if (input) input.value = nombre;
+
+      // Rellenar campos relacionados
+      grRellenarCamposRelacionados(dato, inputId);
+
+      grCerrarTodosLosPaneles();
+  }
+
+  // ============================================================
+// ESTADO GLOBAL: ítems seleccionados (persisten entre consultas)
+// ============================================================
+let itemsSeleccionados = {}; // { id_cprod: { cantidad, observacion, ... } }
+
+// ------------------------------------------------------------
+// Guarda en itemsSeleccionados lo que el usuario ya escribió en la tabla
+// ------------------------------------------------------------
+function sincronizarItemsDesdeTabla() {
+  $("#cuerpoTabla tr").each(function () {
+    const $tr = $(this);
+    const idprod = $tr.data("idprod");
+    if (!idprod) return;
+
+    const cantidad = parseFloat($tr.find(".cantidad-traspaso").val()) || 0;
+    const observacion = $tr.find(".observacion-item").val() || "";
+
+    if (cantidad > 0) {
+      itemsSeleccionados[idprod] = {
+        idprod: idprod,
+        cantidad: cantidad,
+        observacion: observacion,
+        codigo: $tr.find("td:eq(1)").text().trim(),
+        descripcion: $tr.find("td:eq(2)").text().trim(),
+        unidad: $tr.find("td:eq(3)").text().trim(),
+        saldo: parseFloat($tr.find("td:eq(4)").text()) || 0,
+        condiciones: [
+          $tr.find("td:eq(7)").text().trim(),
+          $tr.find("td:eq(8)").text().trim(),
+          $tr.find("td:eq(9)").text().trim(),
+          $tr.find("td:eq(10)").text().trim(),
+          $tr.find("td:eq(11)").text().trim(),
+          $tr.find("td:eq(12)").text().trim(),
+          $tr.find("td:eq(13)").text().trim(),
+        ],
+      };
+    } else {
+      delete itemsSeleccionados[idprod];
     }
-
-    grCerrarTodosLosPaneles();
-    boton.classList.add('gr-abierto');
-
-    // Crear panel con "Cargando..."
-    const panel = document.createElement('div');
-    panel.className = 'gr-panel-search';
-    panel.id = panelId;
-
-    panel.innerHTML = `
-        <div class="gr-panel-search-buscar">
-            <input type="text" placeholder="🔍 Buscar..." autocomplete="off">
-        </div>
-        <div class="gr-panel-search-lista">
-            <div class="gr-panel-search-vacio">Cargando...</div>
-        </div>
-    `;
-
-    fieldRow.appendChild(panel);
-
-    // Focus al buscador
-    setTimeout(() => panel.querySelector('input').focus(), 50);
-
-    // 👇 Traer datos del backend CADA VEZ
-    const datos = await grCargarDatos(tipo);
-
-    const lista = panel.querySelector('.gr-panel-search-lista');
-    grRenderizarLista(lista, datos, inputId, boton);
-
-    // Filtro en vivo (sobre los datos ya cargados)
-    panel.querySelector('input').addEventListener('input', function() {
-        const q = this.value.toLowerCase().trim();
-        const filtrados = datos.filter(d =>
-            (d.nombre && d.nombre.toLowerCase().includes(q)) ||
-            (d.codigo && d.codigo.toLowerCase().includes(q))
-        );
-        grRenderizarLista(lista, filtrados, inputId, boton);
-    });
-
-    // Cerrar con ESC
-    panel.querySelector('input').addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') grCerrarTodosLosPaneles();
-    });
+  });
 }
 
-function grRenderizarLista(contenedor, datos, inputId, boton) {
-    contenedor.innerHTML = '';
+// ------------------------------------------------------------
+// Crea el <tr> para un ítem del servidor (o guardado)
+// ------------------------------------------------------------
+function crearFila(element, guardado) {
+  const tr = document.createElement("tr");
+  tr.dataset.idprod = element.id_cprod;
+  tr.dataset.costos = element.ingresos;
+  tr.dataset.existencia = element.idreg;
+  tr.dataset.transferencia = element.iditem;
+  tr.classList.add("pointer");
 
-    if (datos.length === 0) {
-        contenedor.innerHTML = '<div class="gr-panel-search-vacio">Sin resultados</div>';
-        return;
-    }
+  // Columnas de condición (c1..c7)
+  const cond = element.condicion;
+  const esInv = (variantes) => variantes.includes(cond) ? element.inventarios : "";
+  const c1 = esInv(["1A", "1.A.", "1.A"]);
+  const c2 = esInv(["1B", "1.B.", "1.B"]);
+  const c3 = esInv(["2A", "2.A.", "2.A"]);
+  const c4 = esInv(["2B", "2.B.", "2.B"]);
+  const c5 = esInv(["3A", "3.A.", "3.A"]);
+  const c6 = esInv(["3B", "3.B.", "3.B"]);
+  const c7 = esInv(["3C", "3.C.", "3.C"]);
 
-    datos.forEach(d => {
-        const item = document.createElement('div');
-        item.className = 'gr-panel-search-item';
+  const cantVal = guardado ? guardado.cantidad : "";
+  const obsVal = guardado ? guardado.observacion : "";
 
-        const codigo = d.codigo || d.id || '';
-        const nombre = d.nombre || d.descripcion || '';
+  tr.innerHTML = `
+    <td class="textoCentro"><input type="checkbox" name="item"></td>
+    <td class="textoCentro">${element.ccodprod}</td>
+    <td class="pl20px">${element.cdesprod}</td>
+    <td class="textoCentro">${element.cabrevia}</td>
+    <td class="textoDerecha">${element.saldo.toFixed(2)}</td>
+    <td class="textoCentro" width="150px">
+      <input type="number"
+        name="cantidad"
+        class="cantidad-traspaso"
+        data-idprod="${element.id_cprod}"
+        data-codigo="${element.ccodprod}"
+        data-descprod="${element.cdesprod}"
+        data-saldo="${element.saldo}"
+        data-unidad="${element.cabrevia}"
+        min="0"
+        max="${element.saldo}"
+        step="1"
+        value="${cantVal}"
+        style="text-align: right; padding-right: 10px; border: none"
+        placeholder="00.00">
+    </td>
+    <td>
+      <input type="text"
+        name="observaciones"
+        class="observacion-item"
+        data-idprod="${element.id_cprod}"
+        value="${obsVal}">
+    </td>
+    <td class="textoCentro">${c1}</td>
+    <td class="textoCentro">${c2}</td>
+    <td class="textoCentro">${c3}</td>
+    <td class="textoCentro">${c4}</td>
+    <td class="textoCentro">${c5}</td>
+    <td class="textoCentro">${c6}</td>
+    <td class="textoCentro">${c7}</td>`;
 
-        item.innerHTML = `
-            <span class="gr-codigo">${codigo}</span>
-            <span class="gr-nombre">${nombre}</span>
-        `;
-
-        item.addEventListener('click', () => grSeleccionarOpcion(d, inputId, boton));
-        contenedor.appendChild(item);
-    });
+  return tr;
 }
 
-function grSeleccionarOpcion(dato, inputId, boton) {
-    const input = document.getElementById(inputId);
+// ------------------------------------------------------------
+// Crea el <tr> para un ítem que solo existe en itemsSeleccionados
+// (ya no vino en la nueva consulta)
+// ------------------------------------------------------------
+function crearFilaDesdeGuardado(item) {
+  const tr = document.createElement("tr");
+  tr.dataset.idprod = item.idprod;
+  tr.classList.add("pointer");
 
-    const nombre = dato.nombre || dato.descripcion || '';
+  const [c1, c2, c3, c4, c5, c6, c7] = item.condiciones || ["", "", "", "", "", "", ""];
 
-    if (input) input.value = nombre;
+  tr.innerHTML = `
+    <td class="textoCentro"><input type="checkbox" name="item"></td>
+    <td class="textoCentro">${item.codigo}</td>
+    <td class="pl20px">${item.descripcion}</td>
+    <td class="textoCentro">${item.unidad}</td>
+    <td class="textoDerecha">${item.saldo.toFixed(2)}</td>
+    <td class="textoCentro" width="150px">
+      <input type="number"
+        name="cantidad"
+        class="cantidad-traspaso"
+        data-idprod="${item.idprod}"
+        data-codigo="${item.codigo}"
+        data-descprod="${item.descripcion}"
+        data-saldo="${item.saldo}"
+        data-unidad="${item.unidad}"
+        min="0"
+        max="${item.saldo}"
+        step="1"
+        value="${item.cantidad}"
+        style="text-align: right; padding-right: 10px; border: none"
+        placeholder="00.00">
+    </td>
+    <td>
+      <input type="text"
+        name="observaciones"
+        class="observacion-item"
+        data-idprod="${item.idprod}"
+        value="${item.observacion}">
+    </td>
+    <td class="textoCentro">${c1}</td>
+    <td class="textoCentro">${c2}</td>
+    <td class="textoCentro">${c3}</td>
+    <td class="textoCentro">${c4}</td>
+    <td class="textoCentro">${c5}</td>
+    <td class="textoCentro">${c6}</td>
+    <td class="textoCentro">${c7}</td>`;
 
-    // Rellenar campos relacionados
-    grRellenarCamposRelacionados(dato, inputId);
+  return tr;
+}
 
-    grCerrarTodosLosPaneles();
+// ------------------------------------------------------------
+// RENDERIZAR TABLA (versión con persistencia)
+// ------------------------------------------------------------
+function renderizarTabla() {
+  let str = $("#formConsulta").serialize();
+
+  try {
+    if ($("#costosSearch").val() == -1)
+      throw "Por favor elija un centro de costos para la consulta";
+
+    // 1) Guardar lo que el usuario ya escribió antes de pedir datos nuevos
+    sincronizarItemsDesdeTabla();
+
+    $("#esperar").css("opacity", "1").fadeIn();
+
+    $.post(
+      RUTA + "movimientos/consulta",
+      str,
+      function (data, textStatus, jqXHR) {
+        const cuerpo = document.getElementById("cuerpoTabla");
+
+        // 2) Sin resultados: si hay items guardados, los dejamos visibles
+        if (!data.datos || data.datos.length === 0) {
+          cuerpo.innerHTML = "";
+          const guardados = Object.values(itemsSeleccionados);
+          if (guardados.length === 0) {
+            cuerpo.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y presione <b>Consultar</b></td></tr>`;
+          } else {
+            guardados.forEach((item) => cuerpo.appendChild(crearFilaDesdeGuardado(item)));
+            cuerpo.insertAdjacentHTML(
+              "beforeend",
+              `<tr><td colspan="14" style="text-align: center; color: #94a3b8; padding: 12px; font-style: italic;">Sin resultados nuevos. Se muestran los ítems ya seleccionados.</td></tr>`
+            );
+          }
+          $("#esperar").css("opacity", "0").fadeOut();
+          return;
+        }
+
+        // 3) Reconstruir la tabla desde cero
+        cuerpo.innerHTML = "";
+
+        const idsNuevaConsulta = new Set();
+
+        // 3a) Filas que vienen del servidor
+        data.datos.forEach((element) => {
+          if (element.saldo > 0) {
+            idsNuevaConsulta.add(String(element.id_cprod));
+            const guardado = itemsSeleccionados[element.id_cprod];
+            cuerpo.appendChild(crearFila(element, guardado));
+          }
+        });
+
+        // 3b) Filas guardadas que NO vinieron en esta consulta
+        Object.values(itemsSeleccionados).forEach((item) => {
+          if (!idsNuevaConsulta.has(String(item.idprod))) {
+            cuerpo.appendChild(crearFilaDesdeGuardado(item));
+          }
+        });
+
+        $("#esperar").css("opacity", "0").fadeOut();
+      },
+      "json"
+    );
+  } catch (error) {
+    mostrarMensaje(error, "mensaje_error");
+  }
+}
+
+// ------------------------------------------------------------
+// Sincronización en vivo mientras el usuario escribe
+// ------------------------------------------------------------
+$(document).on("input change", ".cantidad-traspaso", function () {
+  const $tr = $(this).closest("tr");
+  const idprod = $tr.data("idprod");
+  if (!idprod) return;
+
+  const cantidad = parseFloat($(this).val()) || 0;
+  const observacion = $tr.find(".observacion-item").val() || "";
+
+  if (cantidad > 0) {
+    itemsSeleccionados[idprod] = {
+      idprod: idprod,
+      cantidad: cantidad,
+      observacion: observacion,
+      codigo: $tr.find("td:eq(1)").text().trim(),
+      descripcion: $tr.find("td:eq(2)").text().trim(),
+      unidad: $tr.find("td:eq(3)").text().trim(),
+      saldo: parseFloat($tr.find("td:eq(4)").text()) || 0,
+      condiciones: [
+        $tr.find("td:eq(7)").text().trim(),
+        $tr.find("td:eq(8)").text().trim(),
+        $tr.find("td:eq(9)").text().trim(),
+        $tr.find("td:eq(10)").text().trim(),
+        $tr.find("td:eq(11)").text().trim(),
+        $tr.find("td:eq(12)").text().trim(),
+        $tr.find("td:eq(13)").text().trim(),
+      ],
+    };
+  } else {
+    delete itemsSeleccionados[idprod];
+  }
+});
+
+$(document).on("input change", ".observacion-item", function () {
+  const $tr = $(this).closest("tr");
+  const idprod = $tr.data("idprod");
+  if (idprod && itemsSeleccionados[idprod]) {
+    itemsSeleccionados[idprod].observacion = $(this).val() || "";
+  }
+});
+
+// ------------------------------------------------------------
+// Utilidad: limpiar todo (para un botón "Limpiar selección")
+// ------------------------------------------------------------
+function limpiarSeleccion() {
+  itemsSeleccionados = {};
+  document.getElementById("cuerpoTabla").innerHTML = "";
 }
 
 });
