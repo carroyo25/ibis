@@ -229,6 +229,10 @@ $(function () {
   $("#closeDialog,#closeDialogButton").click(function (e) {
     e.preventDefault();
 
+    if(idTransfer != 0){
+      cuerpoTabla.innerHTML = `<tr><td colspan="13" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
+    }
+
     $("#movimientos").fadeOut();
   });
 
@@ -695,8 +699,11 @@ $(function () {
               $("#grNumber").val(data.idGuia);
 
               // Mostrar PDF en el visor
+              const idGuia = String(data.idGuia).padStart(8, "0");
               const iframe = document.getElementById('grIframePDF');
-              const urlPDF = RUTA + '/public/documentos/guias_remision/20504898173-09-T001-' + data.idGuia;
+              const urlPDF = RUTA + 'public/documentos/guias_remision/'+idGuia+'.pdf';
+
+              console.log(data.idGuia,urlPDF);
 
               iframe.src = urlPDF;
               iframe.style.display = 'block';

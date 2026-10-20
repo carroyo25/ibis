@@ -34,7 +34,7 @@
                         /* ============================================================
                         MOVIMIENTOS DE ENTRADA
                         ============================================================ */
-                        COALESCE(r.cantidad_obra, 0)              AS ingresos_recepcion,
+                        COALESCE(r.cantidad_obra, '0')              AS ingresos_recepcion,
                         r.idreg                                   AS idreg_recepcion,
 
                         COALESCE(inv.inventarios_cantidad, 0)     AS ingresos_inventario,

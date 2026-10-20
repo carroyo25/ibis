@@ -441,7 +441,7 @@
             try {
                 require_once("public/formatos/guiaremision.php");
                 
-                $archivo = "public/documentos/guias_remision/20504898173-09-T001-" . $cabecera['numero_guia_sunat'] . ".pdf";
+                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia_sunat'] . ".pdf";
                 
                 $fecha_emision  = date("d/m/Y", strtotime($cabecera['fechaEmision']));
                 $fecha_traslado = !empty($cabecera['fechaTraslado']) ? date("d/m/Y", strtotime($cabecera['fechaTraslado'])) : "";
@@ -572,7 +572,7 @@
                     ':placa'                => $data['placa'] ?? '',
                     ':fecha_traslado'       => $data['fechaTraslado'] ?? '',
                     ':fecha_guia'           => $data['fechaEmision'] ?? '',
-                    ':serie'                => 'T001',
+                    ':serie'                => 'F001',
                 ]);
 
                 return true;
