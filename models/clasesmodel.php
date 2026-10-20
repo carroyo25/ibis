@@ -52,12 +52,12 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_clase 
                                                       SET cdescrip=:descrip 
                                                       WHERE ncodclase=:cod");
-                $sql->execute(["cod"=>$datos['codclase'],
+                $sql->execute(["cod"=>$datos['id'],
                                "descrip"=>strtoupper($datos['nombre'])]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-                    $respuesta = false;
+                    $respuesta = true;
                     $mensaje = "Grupo actualizado";
                     $clase = "mensaje_correcto";
                 }
@@ -100,7 +100,7 @@
         }
 
         /*NUEVA ESTRUCTURA DE DATOS*/
-        public function listarGruposConClases($parametros, $page = 1, $limit = 15){
+        public function listarGruposConClases($parametros, $page = 1, $limit = 150){
             $descripcion = $parametros['descripcion'] == '' ? '%':'%'.$parametros['descripcion'].'%';
             
             // Calcular offset
@@ -250,6 +250,7 @@
 
         public function guardar_clase(){
             if ($_POST['accion'] == "crear"){
+                $this->existeItem($_POST['codclase'],$_POST['nombre']);
                 $respuesta = $this->insertar($_POST);
             }else{
                 $respuesta = $this->modificar($_POST);

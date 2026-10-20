@@ -21,8 +21,7 @@
                 $conn->prepare("SET @idCostoObra = :id")
                     ->execute([':id' => $cc]);
 
-                $sql = $conn->prepare("
-                    SELECT *
+                $sql = $conn->prepare("SELECT *
                     FROM (
                         SELECT
                             p.id_cprod,

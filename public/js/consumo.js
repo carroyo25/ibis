@@ -10,6 +10,9 @@ $(function(){
         und = "",
         index__fila = 0;
 
+    const cuerpoTabla = document.getElementById('cuerpoRegistros');
+    cuerpoTabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay productos para mostrar, ingrese el código o la descripción y presione <b>Enter</b></td></tr>`;
+
     $("#espera").fadeOut();
 
     $("#docident").focus;
@@ -98,7 +101,7 @@ $(function(){
             if ( $("#docident").val() == "" ) throw "Indique el N° de documento";
             if ( $("#tablaPrincipal tbody tr").length == 0 ) throw "No relleno productos";
 
-            $("#pregunta").fadeIn();
+            $("#preguntaAutoriza").fadeIn();
 
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
@@ -149,7 +152,7 @@ $(function(){
                     mostrarMensaje("Hubo un error al grabar","mensaje_error");
                 }
 
-                $("#pregunta").fadeOut();
+                $("#preguntaAutoriza").fadeOut();
             },
             "text"
         );
@@ -164,7 +167,7 @@ $(function(){
         $("#costosSearch").val(-1);
         $(".ingreso").val("");
 
-        $("#pregunta").fadeOut();
+        $("#preguntaAutoriza").fadeOut();
         
         return false;
     });
@@ -530,12 +533,28 @@ $(function(){
                                                 desc:$("#descripSearch").val(),
                                                 cc:$("#costosSearch").val()},
                     function (data, textStatus, jqXHR) {
-                        $("#tabla_detalles_productos tbody")
-                            .empty()
-                            .append(data);
+                        if(data.success){
+                            cuerpoTabla.innerHTML = '';
+                            data.datos.forEach(item => {
+                                const tr = document.createElement('tr');
+                                tr.classList.add('pointer');
+                                tr.dataset.idprod = item.id_cprod;
+                                tr.dataset.ncodmed = item.ncodmed;
+                                tr.dataset.unidad = item.cabrevia;
+                                tr.innerHTML = `<td class="textoCentro">${item.ccodprod}</td>
+                                            <td class="pl20px">${item.cdesprod}</td>
+                                            <td class="textoCentro">${item.cabrevia}</td>
+                                            <td class="textoDerecha">${item.saldo}</td>`;
+
+                                cuerpoTabla.appendChild(tr);
+                            });
+                        }else{
+                            cuerpoTabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay productos para mostrar, ingrese el código o la descripción y presione <b>Enter</b></td></tr>`;
+                        }
+                        
                         $("#esperar").fadeOut();
                     },
-                    "text"
+                    "json"
                 );
         }
     });

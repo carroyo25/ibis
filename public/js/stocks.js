@@ -121,14 +121,14 @@ $(() => {
                                                 <td class="textoCentro">${item.ccodprod}</td>
                                                 <td class="pl20px">${item.cdesprod}</td>
                                                 <td class="textoCentro">${item.cabrevia}</td>
-                                                <td class="textoDerecha">${item.ingresos_recepcion}</td>
-                                                <td class="textoDerecha">${item.ingresos_inventario}</td>
-                                                <td class="textoDerecha">${item.salidas_consumos}</td>
-                                                <td class="textoDerecha">${item.ingresos_devoluciones}</td>
-                                                <td class="textoDerecha">${item.salidas_transf_antigua}</td>
+                                                <td class="textoDerecha">${financial(item.ingresos_recepcion)}</td>
+                                                <td class="textoDerecha">${financial(item.ingresos_inventario)}</td>
+                                                <td class="textoDerecha">${financial(item.salidas_consumos)}</td>
+                                                <td class="textoDerecha">${financial(item.ingresos_devoluciones)}</td>
+                                                <td class="textoDerecha">${financial(item.salidas_transf_antigua)}</td>
                                                 <td class="textoDerecha">${item.ingresos_traspaso_nuevo}</td>
                                                 <td class="textoDerecha">${item.salidas_traspaso_nuevo}</td>
-                                                <td class="textoDerecha">${item.ingresos_ajustes}</td>
+                                                <td class="textoDerecha">${financial(item.ingresos_ajustes)}</td>
                                                 <td class="textoDerecha"></td>
                                                 <td class="textoDerecha ${estado}">${item.saldo.toFixed(2)}</td>
                                                 <td class="textoCentro">${c1}</td>
@@ -555,16 +555,11 @@ progreso = () => {
     );
 }
 
-vueltas = (str) => {
-    $.post(RUTA+"stocks/vueltas",str,
-        function (data, textStatus, jqXHR) {
-            //console.log(data);
-        },
-        "text"
-    );
-}
-
- // Función para realizar paginación después de la carga de datos
+    function financial(x) {
+        return Number.parseFloat(x).toFixed(2);
+    }
+ 
+    // Función para realizar paginación después de la carga de datos
   function iniciarPaginador() {
     const content = document.querySelector(".itemsTabla");
     let itemsPerPage = 100; // Valor por defecto

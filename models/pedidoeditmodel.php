@@ -230,6 +230,7 @@
                                                         tb_pedidodet.unid,
                                                         UPPER(tb_pedidodet.observaciones) AS observaciones,
                                                         REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
+                                                        tb_pedidodet.cant_pedida AS atendido,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,
@@ -283,7 +284,7 @@
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
-                                                        value="'.$rs['cant_atend'].'">
+                                                        value="'.$rs['atendido'].'">
                                         </td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
