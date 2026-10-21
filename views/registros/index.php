@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingreso Almacen</title>
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
 </head>
 <body>
     <div class="modal" id="proceso">
@@ -323,17 +324,9 @@
             </tbody>
         </table>
     </div>
-    <div class="paginador oculto">
-        <div class="botonesPaginador">
-            <button><i class="fas fa-step-backward"></i></button>
-            <button><i class="fas fa-caret-left"></i></button>
-            <div class="paginas">
-                <?php $inicial= 0;for ($i = 1; $i < intval($this->registros/50)+1 ; $i++) { ?>
-                    <button class="boton_pagina" data-limite="<?php echo $inicial?>"><?php echo $i; ?></button>
-                <?php $inicial+=50;} ?>
-            </div>
-            <button><i class="fas fa-caret-right"></i></button>
-            <button><i class="fas fa-step-forward"></i></button>
+    <div class="paginador_cp">
+        <div class="pagination">
+        
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
