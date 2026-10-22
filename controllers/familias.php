@@ -38,6 +38,14 @@
         function codigo(){
             echo $this->model->crearCodigoClase($_POST['grupo'],$_POST['clase']);
         }
+
+        function listaJerarquia(){
+            // Le decimos al navegador que la respuesta es un JSON
+            header('Content-Type: application/json; charset=utf-8');
+            
+            // Imprimimos lo que devuelve el modelo
+            echo $this->model->listarJerarquia();
+        }
         
     }
 ?>

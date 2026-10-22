@@ -235,5 +235,74 @@
                 return false;
             }
         }
+
+        /*************21102026 */
+        public function listarJerarquia() {
+            try {
+                $resultado = [];
+                
+                // Recibimos la paginación desde JS (por defecto página 1, 10 grupos por página)
+                $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
+                $porPagina = isset($_POST['porPagina']) ? (int)$_POST['porPagina'] : 10;
+                $offset = ($page - 1) * $porPagina;
+
+                // 1. Contar total de Grupos para el paginador
+                $sqlTotal = $this->db->connect()->query("SELECT COUNT(*) as total FROM tb_grupo WHERE nflgactivo = 1");
+                $totalRegistros = $sqlTotal->fetch(PDO::FETCH_ASSOC)['total'];
+
+                // 2. Consultar Grupos paginados
+                $sqlGrupos = $this->db->connect()->prepare("SELECT ncodgrupo as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                                                        FROM tb_grupo 
+                                                        WHERE nflgactivo = 1 
+                                                        ORDER BY ccodcata ASC 
+                                                        LIMIT :limit OFFSET :offset");
+                $sqlGrupos->bindValue(':limit', $porPagina, PDO::PARAM_INT);
+                $sqlGrupos->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $sqlGrupos->execute();
+                $grupos = $sqlGrupos->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($grupos as $grupo) {
+                    $grupo['icon'] = 'fa-solid fa-folder'; 
+                    $grupo['items'] = []; 
+
+                    // 3. Consultar Clases (sin paginar, todas las del grupo)
+                    $sqlClases = $this->db->connect()->prepare("SELECT ncodclase as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                                                                FROM tb_clase 
+                                                                WHERE ncodgrupo = :grupo AND nflgactivo = 1 
+                                                                ORDER BY ccodcata ASC");
+                    $sqlClases->execute(['grupo' => $grupo['id']]);
+                    $clases = $sqlClases->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($clases as $clase) {
+                        $clase['icon'] = 'fa-solid fa-layer-group'; 
+                        $clase['items'] = []; 
+
+                        // 4. Consultar Familias (sin paginar, todas las de la clase)
+                        $sqlFamilias = $this->db->connect()->prepare("SELECT ncodfamilia as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                                                                    FROM tb_familia 
+                                                                    WHERE ncodgrupo = :grupo AND ncodclase = :clase AND nflgactivo = 1 
+                                                                    ORDER BY ccodcata ASC");
+                        $sqlFamilias->execute(['grupo' => $grupo['id'], 'clase' => $clase['id']]);
+                        $clase['items'] = $sqlFamilias->fetchAll(PDO::FETCH_ASSOC);
+
+                        $grupo['items'][] = $clase;
+                    }
+
+                    $resultado[] = $grupo;
+                }
+
+                // Devolvemos el JSON con el total de registros para que JS calcule las páginas
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'grupos' => $resultado,
+                    'total_registros' => $totalRegistros
+                ]);
+                exit;
+
+            } catch (PDOException $th) {
+                echo json_encode(['error' => $th->getMessage()]);
+                exit;
+            }
+        }
     }
 ?>

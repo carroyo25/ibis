@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/clases.css">
+
     <title>Document</title>
 </head>
 <body>

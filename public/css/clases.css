@@ -388,6 +388,267 @@ MODAL
 }
 
 /* =============================================
+   ESTILOS PARA JERARQUÍA DE 3 NIVELES
+   (Grupo -> Clase -> Familia)
+   ============================================= */
+
+/* --- NIVEL 1: GRUPO --- */
+.grupo-row td {
+  background: #ffffff;
+  padding: 12px 15px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a2634;
+  cursor: pointer;
+  border-top: 2px solid #e6ecf3;
+  border-bottom: 1px solid #e6ecf3;
+  transition: background 0.15s;
+}
+
+.grupo-row td:hover {
+  background: #f7f9fc;
+}
+
+.grupo-row .badge-grupo {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  margin-left: 10px;
+  background: #dbeafe; /* Azul claro */
+  color: #1a56db;      /* Azul oscuro */
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* --- NIVEL 2: CLASES (Sub-grupo) --- */
+.sub-grupo-row td {
+  background: #f4f7fa; /* Gris muy suave para diferenciar */
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sub-grupo-row td:hover {
+  background: #edf2f7;
+}
+
+/* Badge para las clases (un poco más discreto) */
+.sub-grupo-row .badge-grupo {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  margin-left: 10px;
+  background: #e2e8f0; 
+  color: #4a5568;      
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* --- NIVEL 3: FAMILIAS (Items finales) --- */
+.item-row {
+  border-bottom: 1px solid #f0f2f5;
+  cursor: pointer;
+  transition: 0.15s;
+  background: #ffffff;
+}
+
+.item-row:hover {
+  background: #f7f9fc;
+}
+
+.item-row td {
+  padding: 10px 15px;
+  font-size: 13px;
+  color: #4a5a6a;
+}
+
+/* Estilo para el código de la familia */
+.item-row .code {
+  font-weight: 600;
+  color: #2a7de1; /* Azul de tu proyecto */
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* Línea azul a la izquierda al pasar el mouse por la familia */
+.item-row:hover td:first-child {
+  border-left: 3px solid #2a7de1;
+}
+
+/* =============================================
+   ICONOS Y FLECHAS (Acordeón)
+   ============================================= */
+.toggle-icon-clase {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #7a8a9e;
+  transition: transform 0.3s ease;
+}
+
+/* Cuando la flecha está cerrada, apunta a la derecha */
+.toggle-icon-clase.cerrado {
+  transform: rotate(-90deg);
+}
+
+/* --- UTILIDAD: Ocultar filas --- */
+.oculto {
+  display: none !important;
+}
+
+/* =============================================
+   BOTONES DE ACCIÓN (Los 3 puntitos)
+   ============================================= */
+.btn-icon {
+  background: none;
+  border: none;
+  color: #7a8a9e;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.btn-icon:hover {
+  background: #e6ecf3;
+  color: #1a2634;
+}
+
+/* =============================================
+   CONTENEDORES DE ICONOS (Para que se vean alineados)
+   ============================================= */
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  margin-right: 10px;
+  font-size: 14px;
+  vertical-align: middle;
+  transition: transform 0.2s;
+}
+
+/* Nivel 1: Grupo (Azul oscuro) */
+.icon-grupo {
+  background: #e0e7ff; /* Fondo azul muy claro */
+  color: #1e3c72;      /* Icono azul oscuro */
+}
+
+/* Nivel 2: Clase (Azul brillante) */
+.icon-clase {
+  background: #dbeafe;
+  color: #2a7de1;
+  width: 24px; /* Un poco más pequeño para jerarquía */
+  height: 24px;
+  font-size: 12px;
+  margin-left: 10px; /* Indentación visual */
+}
+
+/* Nivel 3: Familia (Verde o gris suave) */
+.icon-familia {
+  background: #e6f4ea;
+  color: #1e8e3e;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  margin-left: 20px;
+}
+
+/* Efecto al pasar el mouse por la fila */
+.grupo-row:hover .icon-grupo,
+.sub-grupo-row:hover .icon-clase,
+.item-row:hover .icon-familia {
+  transform: scale(1.1); /* El icono crece ligeramente */
+}
+
+/* Flecha del acordeón (Mejorada) */
+.toggle-icon-clase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #5a6a7a;
+  float: right;
+  margin-top: 2px;
+  font-size: 10px;
+  transition: all 0.3s ease;
+}
+
+.toggle-icon-clase:hover {
+  background: #e2e8f0;
+}
+
+.toggle-icon-clase.cerrado {
+  transform: rotate(-90deg);
+}
+
+/* =============================================
+   PAGINADOR
+   ============================================= */
+#paginador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #ffffff;
+  border-top: 1px solid #e6ecf3;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#infoPaginador {
+  font-size: 13px;
+  color: #5a6a7a;
+}
+
+#botonesPaginador {
+  display: flex;
+  gap: 5px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid #e6ecf3;
+  background: #ffffff;
+  color: #5a6a7a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f0f2f5;
+  color: #1a2634;
+  border-color: #d0d7e0;
+}
+
+.page-btn.active {
+  background: #2a7de1;
+  color: #ffffff;
+  border-color: #2a7de1;
+  font-weight: 600;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 600px) {
