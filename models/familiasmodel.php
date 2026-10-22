@@ -12,24 +12,24 @@
                 $mensaje = "Error al grabar el registro";
                 $clase = "mensaje_error";
 
-                if($this->existeItem($datos['codigo'])){
+                if($this->existeItem($datos['nombre'])){
                     $respuesta = false;
-                    $mensaje = "Código de familia duplicada";
+                    $mensaje = "🚧 El nombre de familia ya existe";
                     $clase = "mensaje_error";
                 }else{
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_familia 
-                                                            SET ncodgrupo=:grupo,ncodclase=:clase,ccodcata=:cod,
-                                                                cdescrip=:descrip,nnivclas=:niv");
-                    $sql->execute(["grupo"=>$datos['codgrupo'],
-                                    "clase" => $datos['codclase'],
+                                                            SET ncodgrupo=:grupo,ncodclase=:clase,ccodcata=:codigo,
+                                                                cdescrip=:nombre,nnivclas=:niv");
+                    $sql->execute(["grupo"=>$datos['grupoId'],
+                                    "clase" => $datos['claseId'],
                                     "cod"=>strtoupper($datos['codigo']),
-                                    "descrip"=>strtoupper($datos['descripcion']),
+                                    "descrip"=>strtoupper($datos['nombre']),
                                     "niv"=>3]);
                     $rowCount = $sql->rowCount();
 
                     if ($rowCount > 0) {
-                        $respuesta = false;
-                        $mensaje = "Grupo creado";
+                        $respuesta = true;
+                        $mensaje = "😀 Familia registrada";
                         $clase = "mensaje_correcto";
                     }
                 }
@@ -163,10 +163,10 @@
             } 
         }
 
-        private function existeItem($codigo){
+        private function existeItem($nombre){
             try {
-                $sql = $this->db->connect()->prepare("SELECT ncodfamilia FROM tb_familia WHERE ccodcata =:codigo");
-                $sql->execute(["codigo"=>$codigo]);
+                $sql = $this->db->connect()->prepare("SELECT ncodfamilia FROM tb_familia WHERE cdescrip =:nombre");
+                $sql->execute(["nombre"=>$nombre]);
                 $rowcount = $sql->rowcount();
 
                 if ($rowcount > 0) {
@@ -302,6 +302,56 @@
             } catch (PDOException $th) {
                 echo json_encode(['error' => $th->getMessage()]);
                 exit;
+            }
+        }
+
+        public function clasesPorGrupo() {
+            try {
+                // Recibimos el ID del grupo desde el fetch
+                $grupoId = isset($_POST['grupo']) ? (int)$_POST['grupo'] : 0;
+                
+                $sql = $this->db->connect()->prepare("SELECT ncodclase as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                                                    FROM tb_clase 
+                                                    WHERE ncodgrupo = :grupo AND nflgactivo = 1 
+                                                    ORDER BY ccodcata ASC");
+                $sql->execute(['grupo' => $grupoId]);
+                $clases = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                header('Content-Type: application/json');
+                return json_encode(['datos' => $clases]);
+                exit;
+            } catch (PDOException $th) {
+                return json_encode(['error' => $th->getMessage()]);
+            }
+        }
+
+        public function generarCodigoFamilia(){
+            try {
+                $grupo = $_POST['grupo'] ?? null;
+                $clase = $_POST['clase'] ?? null;
+
+                if ($grupo === null || $grupo === '') {
+                    return ['error' => 'Falta el grupo'];
+                }
+
+                if ($clase === null || $clase === '') {
+                    return ['error' => 'Falta el clase'];
+                }
+
+                $sql = $this->db->connect()->prepare("SELECT COUNT(CAST(ncodgrupo AS UNSIGNED)) AS max_numero
+                                                        FROM tb_familia
+                                                        WHERE ncodgrupo = :grupo
+                                                        AND ncodclase = :clase");
+                $sql->execute(['grupo' => $grupo,'clase' => $clase]);
+                $fila = $sql->fetch(PDO::FETCH_ASSOC);
+
+                $total = (int)($fila['max_numero'] ?? 0);
+                $nuevoNumero = $total + 1;
+
+                return [str_pad((string)$nuevoNumero, 4, "0", STR_PAD_LEFT)];
+
+            } catch (PDOException $th) {
+                return json_encode(['error' => $th->getMessage()]);
             }
         }
     }

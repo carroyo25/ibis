@@ -99,28 +99,41 @@
                     <h2 id="modalTitulo">
                         <i class="fas fa-plus-circle"></i> Agregar Clase
                     </h2>
-                    <button class="cerrar" onclick="cerrarModal()">&times;</button>
+                    <button class="cerrar" id="lnkCerrarModal">&times;</button>
                 </div>
                 <form id="formClase" onsubmit="guardarClase(event)">
                     <!-- Campo oculto para ID en edición -->
                     <input type="hidden" id="editId" value="">
                     <input type="hidden" name="codgrupo" id="codgrupo">
                     <input type="hidden" name="codclase" id="codclase">
+                    <input type="hidden" name="codfamilia" id="codfamilia">
+                    <input type="hidden" name="codigo_clase_catalogo" id="codigo_clase_catalogo">
                     
-                    <!-- Grupo -->
-                    <label class="obligatorio">Grupo</label>
-                    <select id="grupoSelect" required>
-                        <option value="">Seleccione...</option>
-                    </select>
+                    <div>
+                        <label class="obligatorio" for="grupoSelect">Grupo</label>
+                        <select id="grupoSelect" name="grupo" class="form-control">
+                            <option value="">Seleccione...</option>
+                            <!-- Se llena con JS -->
+                        </select>
+                    </div>
+
+                    <!-- Select de Clase -->
+                    <div>
+                        <label class="obligatorio" for="claseSelect">Clase</label>
+                        <select id="claseSelect" name="clase" class="form-control">
+                            <option value="">Seleccione...</option>
+                            <!-- Se llena con JS -->
+                        </select>
+                    </div>
                     
-                    <!-- Código Clase -->
-                    <label class="obligatorio">Código Clase</label>
-                    <input type="text" id="codigoInput" placeholder="Ej: B0104" required oninput="validarCodigo(this)">
-                    <span class="helper">Formato: Letra + 4 dígitos (ej: B0104)</span>
+                    <!-- Código Familia -->
+                    <label class="obligatorio">Código Familia</label>
+                    <input type="text" id="codigoFamilia" placeholder="Ej: B0104001" required readonly>
+                    <span class="helper">Formato: Letra + 4 dígitos (ej: B0104001)</span>
                     
                     <!-- Nombre Clase -->
                     <label class="obligatorio">Nombre</label>
-                    <input type="text" id="nombreInput" placeholder="Nombre de la clase" required>
+                    <input type="text" id="nombreInput" placeholder="Nombre de la familia" required>
                     
                     <!-- Vista previa -->
                     <div style="background:#f0f7ff; border:2px dashed #2a7de1; border-radius:8px; padding:8px 15px; margin:10px 0;">
@@ -135,7 +148,7 @@
                         <button type="button" class="btn btn-danger" id="btnEliminar" style="display:none;" onclick="eliminarClase()">
                             <i class="fas fa-trash"></i> Eliminar
                         </button>
-                        <button type="button" class="btn btn-cancel" onclick="cerrarModal()">
+                        <button type="button" class="btn btn-cancel" id="btnCerrarModal">
                             Cancelar
                         </button>
                         <button type="submit" class="btn btn-primary" id="btnGuardar">

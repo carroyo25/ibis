@@ -374,6 +374,7 @@ $(function () {
   function cerrarModal() {
     $("#proceso").fadeOut();
   }
+  
   window.cerrarModal = cerrarModal; // Para el onclick del HTML
 
   // =============================================

@@ -16,11 +16,11 @@
         }
 
         function nuevaFamilia() {
-            echo json_encode($this->model->insertarFamilia($_POST['datos']));
+            echo json_encode($this->model->insertarFamilia());
         }
 
         function modificaFamilia() {
-            echo json_encode($this->model->modificarFamilia($_POST['datos']));
+            echo json_encode($this->model->modificarFamilia());
         }
 
         function familiaId(){
@@ -45,6 +45,17 @@
             
             // Imprimimos lo que devuelve el modelo
             echo $this->model->listarJerarquia();
+        }
+
+        function clasesGrupo(){
+            // Le decimos al navegador que la respuesta es un JSON
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo $this->model->clasesPorGrupo();
+        }
+
+        function nuevoCodigo(){
+            echo json_encode($this->model->generarCodigoFamilia());
         }
         
     }
