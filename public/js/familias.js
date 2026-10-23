@@ -42,8 +42,6 @@ $(function () {
 
     if (!grupoId) return;
 
-    console.log("🔄 Buscando clases para el grupo ID:", grupoId);
-
     const formData = new FormData();
     formData.append("grupo", grupoId);
 
@@ -56,8 +54,6 @@ $(function () {
         return r.json();
       })
       .then((data) => {
-        console.log("✅ Respuesta del servidor:", data);
-
         if (data.error) {
           mostrarMensaje("❌ Error del backend:", mensaje_error);
           claseSelect.html('<option value="">Error al cargar</option>');
@@ -156,7 +152,7 @@ $(function () {
     const grupoId = $("#grupoSelect").val();
     const claseId = $("#claseSelect").val();
     const codigo = $("#codigoFamilia").val();
-    const nombre = $("#nombreFamilia").val();
+    const nombre = $("#nombreInput").val();
 
     if (!grupoId || !claseId || !codigo || !nombre) {
         mostrarMensaje("Por favor, complete todos los campos obligatorios", "mensaje_error");
@@ -187,18 +183,17 @@ $(function () {
     })
     .then(r => r.json())
     .then(data => {
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        
-        mostrarMensaje("Registro guardado con éxito", "success");
-        $("#proceso").fadeOut(); // Cerrar modal
-        consultarDatos(paginaActual); // Recargar tabla
-        
+        if (data.respuesta) {
+          mostrarMensaje(data.mensaje, "mensaje_correcto");
+          consultarDatos(1); // Recargar tabla
+          $("#nombreInput").val(''); // limpiar para un nuevo registro con el mismo grupo y clase
+          $("#proceso").fadeOut(); // Cerrar modal
+        }else{
+          mostrarMensaje(data.mensaje, "mensaje_error");
+        } 
     })
     .catch(error => {
-        console.error("Error:", error);
-        mostrarMensaje("Error al guardar: " + error.message, "error");
+        mostrarMensaje("Error al guardar: " + error.message, "mensaje_error");
     });
 });
 
@@ -328,7 +323,8 @@ $(function () {
 
         // --- NIVEL 3: FAMILIAS ---
         (clase.items || []).forEach((familia) => {
-          html += `<tr class="item-row oculto c-${idClase}">
+          const key = `${familia.idGrupo}|${familia.idClase}|${familia.id}|${familia.codigo}`;
+          html += `<tr class="item-row oculto c-${idClase}" data-key="${key}">
             <td style="padding-left: 30px;">
                 <!-- Aquí FORZAMOS el icono de etiqueta para las familias -->
                 <span class="icon-wrapper icon-familia">
@@ -338,7 +334,7 @@ $(function () {
             </td>
             <td>${familia.nombre}</td>
             <td style="text-align:center;">
-                <button type="button" class="btn-icon" title="Editar">
+                <button type="button" class="btn-icon" title="Editar" onclick="editarDesdeTabla('${key}')">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
             </td>
@@ -473,4 +469,11 @@ $(function () {
     $("#codfamilia").val('');
     $("#nombreInput").val('');
   }
+
+  // Exponer al window para los onclick inline
+  window.editarDesdeTabla = function (key) {
+    $("#proceso").fadeIn();
+    console.log(key);
+  };
+
 });

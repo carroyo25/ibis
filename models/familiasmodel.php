@@ -18,12 +18,15 @@
                     $clase = "mensaje_error";
                 }else{
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_familia 
-                                                            SET ncodgrupo=:grupo,ncodclase=:clase,ccodcata=:codigo,
-                                                                cdescrip=:nombre,nnivclas=:niv");
-                    $sql->execute(["grupo"=>$datos['grupoId'],
-                                    "clase" => $datos['claseId'],
-                                    "cod"=>strtoupper($datos['codigo']),
-                                    "descrip"=>strtoupper($datos['nombre']),
+                                                            SET ncodgrupo=:grupo,
+                                                                ncodclase=:clase,
+                                                                ccodcata=:codigo,
+                                                                cdescrip=:nombre,
+                                                                nnivclas=:niv");
+                    $sql->execute(["grupo"=>$datos['grupo'],
+                                    "clase" => $datos['clase'],
+                                    "codigo"=>strtoupper($datos['codigo']),
+                                    "nombre"=>strtoupper($datos['nombre']),
                                     "niv"=>3]);
                     $rowCount = $sql->rowCount();
 
@@ -36,9 +39,8 @@
                 
                 $salida = array("respuesta"=>$respuesta,
                                  "mensaje"=>$mensaje,
-                                 "clase"=>$clase,
-                                 "items"=>$this->listarGrupos(),
-                                 "numero"=>$this->crearCodigoClase($datos['codgrupo'],$datos['codclase']));
+                                 "clase"=>$clase);
+                                 
                 return $salida;
 
             } catch (PDOException $th) {
@@ -266,7 +268,11 @@
                     $grupo['items'] = []; 
 
                     // 3. Consultar Clases (sin paginar, todas las del grupo)
-                    $sqlClases = $this->db->connect()->prepare("SELECT ncodclase as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                    $sqlClases = $this->db->connect()->prepare("SELECT ncodclase as id, 
+                                                                        ccodcata as codigo, 
+                                                                        UPPER(cdescrip) as nombre,
+                                                                        ncodgrupo as idGrupo, 
+                                                                        ncodclase as idClase
                                                                 FROM tb_clase 
                                                                 WHERE ncodgrupo = :grupo AND nflgactivo = 1 
                                                                 ORDER BY ccodcata ASC");
@@ -278,7 +284,9 @@
                         $clase['items'] = []; 
 
                         // 4. Consultar Familias (sin paginar, todas las de la clase)
-                        $sqlFamilias = $this->db->connect()->prepare("SELECT ncodfamilia as id, ccodcata as codigo, UPPER(cdescrip) as nombre 
+                        $sqlFamilias = $this->db->connect()->prepare("SELECT ncodfamilia as id, 
+                                                                            ccodcata as codigo, 
+                                                                            UPPER(cdescrip) as nombre 
                                                                     FROM tb_familia 
                                                                     WHERE ncodgrupo = :grupo AND ncodclase = :clase AND nflgactivo = 1 
                                                                     ORDER BY ccodcata ASC");

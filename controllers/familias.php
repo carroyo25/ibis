@@ -16,7 +16,7 @@
         }
 
         function nuevaFamilia() {
-            echo json_encode($this->model->insertarFamilia());
+            echo json_encode($this->model->insertarFamilia($_POST));
         }
 
         function modificaFamilia() {

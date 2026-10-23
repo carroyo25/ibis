@@ -284,7 +284,7 @@
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
-                                                        value="'.$rs['atendido'].'">
+                                                        value="'.$rs['cant_atend'].'">
                                         </td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
