@@ -51,7 +51,7 @@
         }
         
         function llamarStocks(){
-            echo json_encode($this->model->buscarProductosStocks($_POST['cc'],$_POST['desc'],$_POST['cod']));
+            echo json_encode($this->model->buscarProductosStocks($_POST['cc'],null,null));
         }
 
         function actualiza() {

@@ -71,114 +71,137 @@
     </div>
     <div class="modal" id="dialogo_registro">
         <div class="modalWrap">
-            <div class="rc-modal-container">
-            
-                <!-- Header -->
-                <div class="rc-modal-header">
-                    <h2 class="rc-modal-title">Registrar Consumo</h2>
-                    <button class="rc-btn-close" id="btnCerrarModal">&times;</button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="header-title">
+                        <div class="header-icon">📄</div>
+                        <div>
+                            <h2>Registrar Consumo</h2>
+                            <p>Seleccione productos, especifique cantidad y confirme para añadir al Kardex</p>
+                        </div>
+                    </div>
+                    <button class="btn-close">✕</button>
                 </div>
-
-                <!-- Body -->
-                <div class="rc-modal-body">
-                    
-                    <!-- Búsqueda -->
-                    <div class="rc-search-section">
-                        <div class="rc-form-group">
-                            <label class="rc-label" for="codigoSearch">Codigo</label>
-                            <input type="text" name="codigoSearch" class="rc-input" id="codigoSearch" placeholder="Ingrese codigo">
-                        </div>
-                        <div class="rc-form-group">
-                            <label class="rc-label" for="descripSearch">Descripcion</label>
-                            <input type="text" name="descripSearch" class="rc-input" id="descripSearch" placeholder="Ingrese Descripcion">
-                            <input type="hidden" name="maximo_stock" id="maximo_stock">
-                        </div>
-                    </div>
-
-                    <!-- Tabla -->
-                    <div class="rc-table-wrapper">
-                        <table id="tabla_detalles_productos" class="rc-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 25%;">Código</th>
-                                    <th style="width: 50%;">Descripción</th>
-                                    <th style="width: 10%; text-align: center;">Und</th>
-                                    <th style="width: 15%; text-align: right;">Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cuerpoRegistros">
-                                
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Formulario Grid -->
-                    <div class="rc-form-grid">
+                <div class="modal-body">
+                    <div class="column-left">
+                        <div class="section-title">1. CATALOGO DE PRODUCTOS <span id="count-disponibles" style="font-weight:normal; color:#64748b;">8 disponibles</span></div>
                         
-                        <!-- Fila 1 -->
-                        <div class="rc-form-group">
-                            <label>Patrimonio</label>
-                            <div class="rc-checkbox-container">
-                                <input type="checkbox" id="patrimonio">
-                                <label for="patrimonio">¿Es Patrimonio?</label>
+                        <!-- FILTROS: Búsqueda General, Orden de Compra y N° Pedido -->
+                        <div class="filters-container">
+                            <div class="input-group" style="flex: 2;">
+                                <input type="text" id="filtroTexto" class="form-control" placeholder="🔍 Código o descripción...">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <input type="text" id="filtroOrdenCompra" class="form-control" placeholder="Orden Compra...">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <input type="text" id="filtroPedido" class="form-control" placeholder="N° Pedido...">
                             </div>
                         </div>
-                        <div class="rc-form-group">
-                            <label class="rc-label">Motivo de Cambio</label>
-                            <select class="rc-select" name="cambio_epp" id="cambio_epp">
-                                <option value="-1">Seleccione una opcion</option>
-                                <option value="239">PRIMERA ENTREGA </option>
-                                <option value="240">CAMBIO EPP</option>
-                                <option value="241">ROTURA</option>
-                                <option value="242">PERDIDA</option>
-                                <option value="243">DEFORMADO</option>
-                                <option value="244">FALTA PARTES</option>
-                                <option value="245">DESGASTE POR PROPIO USO</option>
-                                <option value="246">OTROS</option>
-                            </select>
+
+                        <div class="table-container">
+                            <table id="tablaProductos">
+                                <thead>
+                                    <tr>
+                                        <th>CÓDIGO <span class="sort-icon">▼</span></th>
+                                        <th>DESCRIPCIÓN <span class="sort-icon">▼</span></th>
+                                        <th>ORDEN</th>
+                                        <th>PEDIDO</th>
+                                        <th>UND</th>
+                                        <th>STOCK <span class="sort-icon">▼</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-productos">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="column-right">
+                        <div class="section-title" style="margin-top: 0;">2. PRODUCTO SELECCIONADO <span style="background:#dcfce7; color:#166534; padding:2px 8px; border-radius:4px; font-size:10px;">Disponible para entrega</span></div>
+                        
+                        <div class="product-card-selected" id="cardProductoSeleccionado">
+                            <div class="product-icon">📦</div>
+                            <div class="product-info">
+                                <span id="cardCodigo" style="background:#fef3c7; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">B170100060004</span>
+                                <h4 id="cardDescripcion">LENTE GOGGLE CLARO STEELPRO TURBINE</h4>
+                            </div>
+                            <div class="badge-stock">Stock actual: <span id="cardStock">52</span> UND</div>
                         </div>
 
-                        <!-- Fila 2 -->
-                        <div class="rc-form-group">
-                            <label class="rc-label">Cantidad</label>
-                            <input class="rc-input" name="cantidad_dialogo" id="cantidad_dialogo" type="number" placeholder="0.00" min="1">
-                        </div>
-                        <div class="rc-form-group">
-                            <label class="rc-label">N° Serie</label>
-                            <input class="rc-input" type="text" placeholder="Ingrese Serie" name="serie_dialogo" id="serie_dialogo">
+                        <div class="section-card">
+                            <div class="section-title">3. DATOS DEL MOVIMIENTO</div>
+                            
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label style="color:#0f172a; font-weight:bold;">Cantidad a Registrar *</label>
+                                    <input type="number" id="inputCantidad" class="form-control input-cantidad-destacado" value="1" min="1">
+                                </div>
+                                <div class="input-group">
+                                    <label>Motivo de Cambio</label>
+                                    <select id="inputMotivo" class="form-control">
+                                        <option>PRIMERA ENTREGA</option>
+                                        <option>REPOSICIÓN</option>
+                                        <option>DAÑO</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label>N° Serie</label>
+                                    <input type="text" id="inputSerie" class="form-control" placeholder="Ej: SN-90210">
+                                </div>
+                                <div class="input-group">
+                                    <label>Estado</label>
+                                    <input type="text" id="inputEstado" class="form-control" placeholder="Ej: 1A|1B|2B..">
+                                </div>
+
+                                <div class="input-group">
+                                    <label>N° Hoja</label>
+                                    <input type="text" id="inputHoja" class="form-control" placeholder="N° Hoja">
+                                </div>
+                                <div class="input-group" style="display:flex; align-items:center; margin-top:15px;">
+                                    <input type="checkbox" id="patrimonio" style="margin-right:8px;">
+                                    <label for="patrimonio" style="margin:0;">¿Es Patrimonio?</label>
+                                </div>
+
+                                <div class="input-group" style="grid-column: span 2;">
+                                    <label>Isométrico</label>
+                                    <input type="text" id="inputIsometrico" class="form-control" placeholder="Isométrico">
+                                </div>
+
+                                <!-- TEXTAREA DE OBSERVACIONES -->
+                                <div class="input-group" style="grid-column: span 2;">
+                                    <label>Observaciones</label>
+                                    <textarea id="inputObservaciones" class="form-control" placeholder="Ingrese observaciones adicionales aquí..."></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn-add" onclick="agregarItem()">+ Añadir a la Lista de Consumos de la Sesión</button>
                         </div>
 
-                        <!-- Fila 3 -->
-                        <div class="rc-form-group">
-                            <label class="rc-label">N° Hoja</label>
-                            <input class="rc-input" type="text" placeholder="Ingrese N° Hoja" name="nhoja_dialogo" id="nhoja_dialogo">
+                        <div class="section-card" style="border-color:#fcd34d; background:#fffdf5;">
+                            <div class="section-title">
+                                4. CONSUMOS AGREGADOS EN ESTA SESIÓN 
+                                <span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:10px;" id="contador-items">0 items por guardar</span>
+                            </div>
+                            <div class="items-added-box" id="lista-items">
+                                Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".
+                            </div>
                         </div>
-                        <div class="rc-form-group">
-                            <label class="rc-label">Isométrico</label>
-                            <input class="rc-input" type="text" placeholder="Ingrese Isométrico" name="isometricos_dialogo" id="isometricos_dialogo">
-                        </div>
-
-                        <!-- Fila 4 -->
-                        <div class="rc-form-group">
-                            <label for="estado_dialogo" class="rc-label">Estado</label>
-                            <input class="rc-input" type="text" placeholder="Ingrese Estado" name="estado_dialogo" id="estado_dialogo">
-                        </div>
-
-                        <div></div> <!-- Espacio vacío para mantener la simetría -->
-
-                        <!-- Fila 5 -->
-                        <div class="rc-form-group rc-full">
-                            <label class="rc-label" for="observaciones_dialogo">Observaciones</label>
-                            <textarea class="rc-textarea" placeholder="Ingrese observaciones adicionales aquí..." name="observaciones_dialogo" id="observaciones_dialogo"></textarea>
-                        </div>
-
                     </div>
                 </div>
-
-                <!-- Footer -->
-                <div class="rc-modal-footer">
-                    <button class="rc-btn rc-btn-primary" id="btnAceptarDialogoKardex">Aceptar</button>
-                    <button class="rc-btn rc-btn-secondary" id="btnCancelarDialogoKardex">Cancelar</button>
+                <div class="modal-footer">
+                    <div class="footer-note">
+                        <span style="color:#22c55e; font-size:16px;">✔</span> Haga clic en "Guardar Consumo Final" para impactar en el Kardex.
+                    </div>
+                    <div class="footer-actions">
+                        <!-- NUEVO BOTÓN DE CONSUMO INICIAL -->
+                        <button class="btn-inicial" id="btnConsumoInicial">📦 Consumo Inicial</button>
+                        
+                        <button class="btn-cancel">Cancelar</button>
+                        <button class="btn-save" id="btnGuardarFinal">💾 Guardar Consumo Final (0)</button>
+                    </div>
                 </div>
             </div>
         </div>

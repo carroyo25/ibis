@@ -1,55 +1,67 @@
-$(function(){
-    $("#esperar").fadeOut();
-    
-    let fila = "",
-        registro = 0,
-        sw = 0,
-        codigo="",
-        idprod="",
-        descripcion="",
-        und = "",
-        index__fila = 0;
+$(function () {
+  $("#esperar").fadeOut();
 
-    const cuerpoTabla = document.getElementById('cuerpoRegistros');
-    cuerpoTabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay productos para mostrar, ingrese el código o la descripción y presione <b>Enter</b></td></tr>`;
+  let fila = "",
+    registro = 0,
+    sw = 0,
+    codigo = "",
+    idprod = "",
+    descripcion = "",
+    und = "",
+    index__fila = 0;
 
-    $("#espera").fadeOut();
+  let itemsAgregados = 0;
+  let productoActual = null;
+  let ordenActual = { columna: -1, ascendente: true };
+  let carrito = [];
+  let centroCostos = '';
 
-    $("#docident").focus;
+  $("#espera").fadeOut();
 
-    $("#docident").keypress(function (e) { 
-        if(e.which == 13) { 
-            $.post(RUTA+"consumo/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
-                function (data, textStatus, jqXHR) {
-                    if (data.registrado) {
-                        $("#nombre").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres);
-                        $("#cargo").val(data.datos[0].cargo.toUpperCase());
-                        $("#cut").val(data.datos[0].cut);
-                        $("#correo").val(data.datos[0].correo);
+  $("#docident").focus;
 
-                        $("#tablaPrincipal tbody")
-                            .empty()
-                            .append(data.anteriores);
-
-                        $("#codeRead").focus();
-                    }else{
-                        mostrarMensaje("Trabajador no registrado","mensaje_error");
-                        $("#nombre, #cargo, #cut, #correo").val("");
-                    }
-                },
-                "json"
+  $("#docident").keypress(function (e) {
+    if (e.which == 13) {
+      centroCostos = $("#costosSearch").val();
+      $.post(  
+        RUTA + "consumo/datosapi",
+        { documento: $(this).val(), costos: $("#costosSearch").val() },
+        function (data, textStatus, jqXHR) {
+          if (data.registrado) {
+            $("#nombre").val(
+              data.datos[0].paterno +
+                " " +
+                data.datos[0].materno +
+                " " +
+                data.datos[0].nombres,
             );
-        }
-    });
+            $("#cargo").val(data.datos[0].cargo.toUpperCase());
+            $("#cut").val(data.datos[0].cut);
+            $("#correo").val(data.datos[0].correo);
 
-    $("#codeRead").keypress(function (e) { 
-        if(e.which == 13) {
-            $.post(RUTA+"consumo/productos", {codigo:$(this).val()},
-                function (data, textStatus, jqXHR) {
-                    let fecha = fechaActual();
-                    let nfilas = $("#tablaPrincipal tr").length;
+            $("#tablaPrincipal tbody").empty().append(data.anteriores);
 
-                    let row = `<tr data-registrado=0 class="pointer" data-idprod="${data.idprod}">
+            $("#codeRead").focus();
+          } else {
+            mostrarMensaje("Trabajador no registrado", "mensaje_error");
+            $("#nombre, #cargo, #cut, #correo").val("");
+          }
+        },
+        "json",
+      );
+    }
+  });
+
+  $("#codeRead").keypress(function (e) {
+    if (e.which == 13) {
+      $.post(
+        RUTA + "consumo/productos",
+        { codigo: $(this).val() },
+        function (data, textStatus, jqXHR) {
+          let fecha = fechaActual();
+          let nfilas = $("#tablaPrincipal tr").length;
+
+          let row = `<tr data-registrado=0 class="pointer" data-idprod="${data.idprod}">
                                 <td class="textoDerecha">${nfilas}</td>
                                 <td class="textoCentro">${data.codigo}</td>
                                 <td class="pl20px">${data.descripcion}</td>
@@ -75,146 +87,163 @@ $(function(){
                                 <td class="textoCentro"><a href=""><i class="fas fa-pencil"></i></a></td>
                         </tr>`;
 
-                    if (data.registrado) {
-                        if ( $("#tablaPrincipal tbody tr").length == 0)  {
-                            $("#tablaPrincipal tbody").append(row);
-                            $('#tablaPrincipal tbody tr:last').find('td').eq(4).children().focus();
-                        }
-                        else {
-                            $(row).insertBefore("#tablaPrincipal tbody tr:first");
-                            $('#tablaPrincipal tbody tr:first').find('td').eq(4).children().focus();
-                        }   
-                    }
-
-                    $("#codeRead").val('').focus();
-                },
-                "json"
-            );
-         }
-    });
-
-    $("#btnGrabarKardex").click(function(e){
-        e.preventDefault();
-
-        try {
-            if ( $("#costosSearch").val() == -1 ) throw "Elija el centro de costos";
-            if ( $("#docident").val() == "" ) throw "Indique el N° de documento";
-            if ( $("#tablaPrincipal tbody tr").length == 0 ) throw "No relleno productos";
-
-            $("#preguntaAutoriza").fadeIn();
-
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-
-        return false
-    });
-
-    $("#tablaPrincipal tbody").on("keypress",".entrada", function (e) {
-        if(e.which == 13) {
-            
-            if ($(this).val() != "") {
-                $("#codeRead")
-                    .val("")
-                    .focus();
-
-                //$("#codeRead").focus();
+          if (data.registrado) {
+            if ($("#tablaPrincipal tbody tr").length == 0) {
+              $("#tablaPrincipal tbody").append(row);
+              $("#tablaPrincipal tbody tr:last")
+                .find("td")
+                .eq(4)
+                .children()
+                .focus();
+            } else {
+              $(row).insertBefore("#tablaPrincipal tbody tr:first");
+              $("#tablaPrincipal tbody tr:first")
+                .find("td")
+                .eq(4)
+                .children()
+                .focus();
             }
+          }
+
+          $("#codeRead").val("").focus();
+        },
+        "json",
+      );
+    }
+  });
+
+  $("#btnGrabarKardex").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if ($("#costosSearch").val() == -1) throw "Elija el centro de costos";
+      if ($("#docident").val() == "") throw "Indique el N° de documento";
+      if ($("#tablaPrincipal tbody tr").length == 0)
+        throw "No relleno productos";
+
+      $("#preguntaAutoriza").fadeIn();
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#tablaPrincipal tbody").on("keypress", ".entrada", function (e) {
+    if (e.which == 13) {
+      if ($(this).val() != "") {
+        $("#codeRead").val("").focus();
+
+        //$("#codeRead").focus();
+      }
+    }
+  });
+
+  $("#btnAceptarGrabar").click(function (e) {
+    e.preventDefault();
+
+    //para desactivar el doble click de mouse
+    let boton = $(this);
+
+    boton.css("pointer-events", "none");
+
+    let canvas = document.getElementById("cnv");
+
+    $.post(
+      RUTA + "consumo/firma",
+      {
+        img: canvas.toDataURL(),
+        detalles: JSON.stringify(detalles()),
+        correo: $("#correo").val(),
+        nombre: $("#nombre").val(),
+        cc: $("#costosSearch option:selected").text(),
+      },
+      function (data, textStatus, jqXHR) {
+        if (data) {
+          mostrarMensaje("Consumo registrado", "mensaje_correcto");
+
+          $("#tablaPrincipal tbody").empty();
+          $("#costosSearch").val(-1);
+          $(".ingreso").val("");
+
+          boton.css("pointer-events", "all");
+        } else {
+          mostrarMensaje("Hubo un error al grabar", "mensaje_error");
         }
-    });
-
-    $("#btnAceptarGrabar").click(function (e) { 
-        e.preventDefault();
-
-        //para desactivar el doble click de mouse
-        let boton = $(this);
-        
-        boton.css("pointer-events","none");
-
-        let canvas = document.getElementById("cnv");
-
-        $.post(RUTA+'consumo/firma', {img:canvas.toDataURL(),
-                                      detalles:JSON.stringify(detalles()),
-                                      correo:$("#correo").val(),
-                                      nombre:$("#nombre").val(),
-                                      cc:$("#costosSearch option:selected").text()},
-            function (data, textStatus, jqXHR) {
-                if (data) {
-                    mostrarMensaje("Consumo registrado","mensaje_correcto");
-                    
-                    $("#tablaPrincipal tbody").empty();
-                    $("#costosSearch").val(-1);
-                    $(".ingreso").val("");
-
-                    boton.css("pointer-events","all");
-                    
-                }else {
-                    mostrarMensaje("Hubo un error al grabar","mensaje_error");
-                }
-
-                $("#preguntaAutoriza").fadeOut();
-            },
-            "text"
-        );
-        
-        return false;
-    });
-
-    $("#btnCancelarGrabar").click(function (e) { 
-        e.preventDefault();
-
-        $("#tablaPrincipal tbody").empty();
-        $("#costosSearch").val(-1);
-        $(".ingreso").val("");
 
         $("#preguntaAutoriza").fadeOut();
-        
-        return false;
-    });
+      },
+      "text",
+    );
 
-    $("#btnBuscar").click(function (e) { 
-        e.preventDefault();
+    return false;
+  });
 
-        try {
-            if ( $("#costosSearch").val() == -1 ) throw "Elija el centro de costos";
-            if ( $("#docident").val() == "" ) throw "Indique el N° de documento";
-            if ( $("#tablaPrincipal tbody tr").length == 0 ) throw "No relleno productos";  
-            
-            $("#dialogo").fadeIn();
+  $("#btnCancelarGrabar").click(function (e) {
+    e.preventDefault();
 
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-        
-        return false;
-    });
+    $("#tablaPrincipal tbody").empty();
+    $("#costosSearch").val(-1);
+    $(".ingreso").val("");
 
-    $("#btnAceptarDialogoKardex").click(function (e) { 
-        e.preventDefault();
+    $("#preguntaAutoriza").fadeOut();
 
-        try {
-            if(idprod === "") throw new Error("Elija un producto para registrar");
-            if($("#cantidad_dialogo").val() =="") throw new Error("Ingrese una cantidad para registrar");
-            if(parseFloat($("#cantidad_dialogo").val()) > parseFloat($("#maximo_stock").val())) throw new Error("Verificar la cantidad para registrar");
+    return false;
+  });
 
-            let 
-                cant            = $("#cantidad_dialogo").val(),
-                fsalida         = fechaActual(),
-                nhoja           = $("#nhoja_dialogo").val(),
-                isometricos     = $("#isometricos_dialogo").val(),
-                observaciones   = $("#observaciones_dialogo").val(),
-                serie           = $("#serie_dialogo").val(),
-                patrimonio      = $("#patrimonio").prop('checked'),
-                cambio          = $("#cambio_epp").val(),
-                nfilas          = $("#tablaPrincipal tr").length,
-                estado          = $("#estado_dialogo").val(),
-                textoSelect     = "",
-                pat             = "";
+  $("#btnBuscar").click(function (e) {
+    e.preventDefault();
 
-                pat = patrimonio === true ? '<i class="far fa-check-square"></i>' : '<i class="far fa-square"></i>';
-                textoSelect = cambio !== "-1" ? $('select[name="cambio_epp"] option:selected').text() : "";
+    try {
+      if ($("#costosSearch").val() == -1) throw "Elija el centro de costos";
+      if ($("#docident").val() == "") throw "Indique el N° de documento";
+      if ($("#tablaPrincipal tbody tr").length == 0)
+        throw "No relleno productos";
 
-            let row = `<tr data-registrado=0 class="pointer" data-idprod="${idprod}" data-cambio="${cambio}" data-patrimonio="${patrimonio}">
+      $("#dialogo").fadeIn();
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#btnAceptarDialogoKardex").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if (idprod === "") throw new Error("Elija un producto para registrar");
+      if ($("#cantidad_dialogo").val() == "")
+        throw new Error("Ingrese una cantidad para registrar");
+      if (
+        parseFloat($("#cantidad_dialogo").val()) >
+        parseFloat($("#maximo_stock").val())
+      )
+        throw new Error("Verificar la cantidad para registrar");
+
+      let cant = $("#cantidad_dialogo").val(),
+        fsalida = fechaActual(),
+        nhoja = $("#nhoja_dialogo").val(),
+        isometricos = $("#isometricos_dialogo").val(),
+        observaciones = $("#observaciones_dialogo").val(),
+        serie = $("#serie_dialogo").val(),
+        patrimonio = $("#patrimonio").prop("checked"),
+        cambio = $("#cambio_epp").val(),
+        nfilas = $("#tablaPrincipal tr").length,
+        estado = $("#estado_dialogo").val(),
+        textoSelect = "",
+        pat = "";
+
+      pat =
+        patrimonio === true
+          ? '<i class="far fa-check-square"></i>'
+          : '<i class="far fa-square"></i>';
+      textoSelect =
+        cambio !== "-1"
+          ? $('select[name="cambio_epp"] option:selected').text()
+          : "";
+
+      let row = `<tr data-registrado=0 class="pointer" data-idprod="${idprod}" data-cambio="${cambio}" data-patrimonio="${patrimonio}">
                             <td class="textoDerecha">${nfilas}</td>
                             <td class="textoCentro">${codigo}</td>
                             <td class="pl20px">${descripcion}</td>
@@ -222,7 +251,7 @@ $(function(){
                             <td class=""><input type="text" value="${cant}"></td>
                             <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fsalida}"></td>
                             <td class=""><input type="text" class="entrada" value="${nhoja}"></td>
-                            <td class=""><input type="text" class="entrada" value='${isometricos.replace('"','¨')}'></td>
+                            <td class=""><input type="text" class="entrada" value='${isometricos.replace('"', "¨")}'></td>
                             <td class=""><input type="text" class="entrada" value="${observaciones}"></td>
                             <td class=""><input type="text" class="entrada" value="${serie}"></td>
                             <td class="textoCentro">${pat}</td>
@@ -232,500 +261,971 @@ $(function(){
                             <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
 
-            //codigos para mantenimiento        
-            let arraymtto = ['B05010002','B05010006'],
-                codmmtto = codigo.substring(0,9),
-                formData = new FormData(),
-                search = arraymtto.includes(codmmtto);
+      //codigos para mantenimiento
+      let arraymtto = ["B05010002", "B05010006"],
+        codmmtto = codigo.substring(0, 9),
+        formData = new FormData(),
+        search = arraymtto.includes(codmmtto);
 
-                formData.append('codigo',idprod);
-                formData.append('serie',serie);
-                formData.append('documento',$("#docident").val());
-                formData.append("costos",$("#costosSearch").val());
-                
-            if ( search ) {
-                fetch(RUTA+'consumo/mantenimientos',{
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data=>{
-                   console.log(data.respuesta);
-                })
-            }
+      formData.append("codigo", idprod);
+      formData.append("serie", serie);
+      formData.append("documento", $("#docident").val());
+      formData.append("costos", $("#costosSearch").val());
 
-            //$(row).insertBefore("#tablaPrincipal tbody tr:first");
+      if (search) {
+        fetch(RUTA + "consumo/mantenimientos", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data.respuesta);
+          });
+      }
 
-            if ( $("#tablaPrincipal tbody tr").length == 0)  {
-                $("#tablaPrincipal tbody").append(row);
-            }
-            else {
-                $(row).insertBefore("#tablaPrincipal tbody tr:first");
-            } 
+      //$(row).insertBefore("#tablaPrincipal tbody tr:first");
 
-            cleanDialogControls();
-            idprod="";
-           
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
-        }
+      if ($("#tablaPrincipal tbody tr").length == 0) {
+        $("#tablaPrincipal tbody").append(row);
+      } else {
+        $(row).insertBefore("#tablaPrincipal tbody tr:first");
+      }
 
+      cleanDialogControls();
+      idprod = "";
+    } catch (error) {
+      mostrarMensaje(error.message, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#btnCancelarDialogoKardex").click(function (e) {
+    e.preventDefault();
+
+    $("#dialogo_registro").fadeOut();
+
+    cleanDialogControls();
+
+    idprod = "";
+
+    return false;
+  });
+
+  $("#tablaPrincipal tbody").on("click", ".hideItem", function (e) {
+    e.preventDefault();
+
+    filaAnula = $(this).parent();
+
+    try {
+      if ($("#tablaPrincipal tbody > tr").length <= 1)
+        throw new Error("Error al eliminar");
+
+      $.post(
+        RUTA + "consumo/anulaItem",
+        { item: $(this).data("idreg") },
+        function (data, textStatus, jqXHR) {
+          if (data) {
+            filaAnula.remove();
+          }
+        },
+        "text",
+      );
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#tablaPrincipal tbody").on("click", "a", function (e) {
+    e.preventDefault();
+
+    //console.log($(this).closest('tr').data('registrado'));
+
+    if ($(this).closest("tr").data("registrado") == "0") {
+      $(this).closest("tr").remove();
+    } else {
+      if ($("#rol_user").val() == 2 || $("#rol_user").val() == 4) {
+        $("#cambiarFila").fadeIn();
+
+        fila = $(this).parent().parent();
+        index__fila = $(this).parent().parent().attr("id");
+        sw = fila.data("registrado");
+        registro = $(this).attr("href");
+
+        $("#codigo__cambio").val($(this).data("codigo"));
+        $("#cantidad__cambio").val($(this).data("cantidad"));
+        $("#patrimonio__cambio").prop("checked", $(this).data("patrimonio"));
+        $("#hoja__cambio").val($(this).data("hoja"));
+        $("#serie__cambio").val($(this).data("serie"));
         return false;
-    });
-
-    $("#btnCancelarDialogoKardex").click(function (e) { 
-        e.preventDefault();
-
-        $("#dialogo_registro").fadeOut();
-        
-        cleanDialogControls();
-        
-        idprod="";
-        
+      } else {
+        mostrarMensaje("No se puede realizar esta acción", "mensaje_error");
         return false;
-    });
+      }
+    }
+  });
 
-    $("#tablaPrincipal tbody").on("click",".hideItem", function (e) {
-        e.preventDefault();
+  $("#btnAceptarModificar").click(function (e) {
+    e.preventDefault();
 
-        filaAnula = $(this).parent();
+    try {
+      if ($("#rol_user").val() === 2)
+        throw new Error("No puede realizar esta acción");
 
-        try {
+      let formData = new FormData();
+      formData.append("id", registro);
+      formData.append("codigo", $("#codigo__cambio").val());
+      formData.append("cantidad", $("#cantidad__cambio").val());
+      formData.append(
+        "patrimonio",
+        $("#patrimonio__cambio").prop("checked") ? 1 : 0,
+      );
+      formData.append("hoja", $("#hoja__cambio").val());
+      formData.append("serie", $("#serie__cambio").val());
 
-            if ( $("#tablaPrincipal tbody > tr").length <= 1) throw new Error ("Error al eliminar");
+      fetch(RUTA + "consumo/actualiza", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.respuesta) {
+            mostrarMensaje(data.mensaje, "mensaje_correcto");
+            $("#" + index__fila)
+              .find("td")
+              .eq("1")
+              .text($("#codigo__cambio").val());
+            $("#" + index__fila)
+              .find("td")
+              .eq("2")
+              .text(data.datos["cdesprod"]);
+            $("#" + index__fila)
+              .find("td")
+              .eq("3")
+              .text(data.datos["cabrevia"]);
+            $("#" + index__fila)
+              .find("td")
+              .eq("4")
+              .text($("#cantidad__cambio").val());
+            $("#" + index__fila)
+              .find("td")
+              .eq("6")
+              .text($("#hoja__cambio").val());
+            $("#" + index__fila)
+              .find("td")
+              .eq("9")
+              .text($("#serie__cambio").val());
+            $("#" + index__fila)
+              .find("td")
+              .eq("10")
+              .children()
+              .prop("checked", $("#patrimonio__cambio").prop("checked"));
+          } else {
+            mostrarMensaje(data.mensaje, "mensaje_error");
+          }
+        });
+    } catch (error) {
+      mostrarMensaje(error.message, "mensaje_error");
+    }
 
-            $.post(RUTA+"consumo/anulaItem",{item:$(this).data('idreg')},
-                function (data, textStatus, jqXHR) {
+    $("#cambiarFila").fadeOut();
 
-                    if (data) {
-                        filaAnula.remove();
-                    }
-                    
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
+    return false;
+  });
 
-        
-        return false;
-    });
+  $("#btnEliminarRegistro").click(function (e) {
+    e.preventDefault();
 
-    $("#tablaPrincipal tbody").on("click","a", function (e) {
-        e.preventDefault();
+    if (sw == 1) {
+      try {
+        if ($("#rol_user").val() !== "2")
+          throw new Error("No puede realizar esta acción");
 
-        //console.log($(this).closest('tr').data('registrado'));
+        let formData = new FormData();
+        formData.append("id", registro);
 
-        if (  $(this).closest('tr').data('registrado') == '0' ){
-            $(this).closest('tr').remove();
-        }else{
-            if ( $("#rol_user").val() == 2 || $("#rol_user").val() == 4) {
-                $("#cambiarFila").fadeIn();
-
-                fila = $(this).parent().parent();
-                index__fila = $(this).parent().parent().attr("id");
-                sw = fila.data("registrado");
-                registro = $(this).attr("href");
-
-                $("#codigo__cambio").val($(this).data('codigo'));
-                $("#cantidad__cambio").val($(this).data('cantidad'));
-                $("#patrimonio__cambio").prop("checked",$(this).data('patrimonio'));
-                $("#hoja__cambio").val($(this).data('hoja'));
-                $("#serie__cambio").val($(this).data('serie'));
-                return false;
-            }else{
-                mostrarMensaje('No se puede realizar esta acción','mensaje_error');
-                return false;
-            }
-        }
-    });
-
-    $("#btnAceptarModificar").click(function (e) { 
-        e.preventDefault();
-        
-        try {
-            if ( $("#rol_user").val() === 2 ) throw new Error('No puede realizar esta acción');
-
-            let formData = new FormData();
-            formData.append('id',registro);
-            formData.append('codigo',$("#codigo__cambio").val());
-            formData.append('cantidad',$("#cantidad__cambio").val());   
-            formData.append('patrimonio',$("#patrimonio__cambio").prop('checked') ? 1:0);   
-            formData.append('hoja',$("#hoja__cambio").val());   
-            formData.append('serie',$("#serie__cambio").val());
-            
-            fetch(RUTA+'consumo/actualiza',{
-                method:'POST',
-                body:formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.respuesta) {
-
-                    mostrarMensaje(data.mensaje,'mensaje_correcto');
-                    $('#'+index__fila).find('td').eq('1').text($("#codigo__cambio").val());
-                    $('#'+index__fila).find('td').eq('2').text(data.datos['cdesprod']);
-                    $('#'+index__fila).find('td').eq('3').text(data.datos['cabrevia']);
-                    $('#'+index__fila).find('td').eq('4').text($("#cantidad__cambio").val());
-                    $('#'+index__fila).find('td').eq('6').text($("#hoja__cambio").val());
-                    $('#'+index__fila).find('td').eq('9').text($("#serie__cambio").val());
-                    $('#'+index__fila).find('td').eq('10').children().prop('checked',$("#patrimonio__cambio").prop('checked'));
-                }else{
-                    mostrarMensaje(data.mensaje,'mensaje_error');
-                }
-                
-            })
-
-        } catch (error) {
-            mostrarMensaje(error.message,'mensaje_error')
-        }
-        
-        $("#cambiarFila").fadeOut();
- 
-        return false;
-    });
-
-    $("#btnEliminarRegistro").click(function(e){
-        e.preventDefault();
-
-        if(sw == 1){
-            try {
-                if ($("#rol_user").val() !== "2") throw new Error('No puede realizar esta acción');
-
-                let formData = new FormData();
-                formData.append('id',registro);
-
-                fetch(RUTA+'consumo/borraFila',{
-                    method:'POST',
-                    body:formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    mostrarMensaje('Registro Eliminado','mensaje_correcto');
-                    fila.remove();
-                    $("#cambiarFila").fadeOut();
-                })
-
-                fila.remove();
-                $("#cambiarFila").fadeOut();
-
-            } catch (error) {
-                mostrarMensaje(error.message,'mensaje_error');
-            }
-        }else{
+        fetch(RUTA + "consumo/borraFila", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            mostrarMensaje("Registro Eliminado", "mensaje_correcto");
             fila.remove();
             $("#cambiarFila").fadeOut();
-        }
+          });
 
-        return false;
-    });
-
-    $("#btnCancelarModificar").click(function (e) { 
-        e.preventDefault();
-
+        fila.remove();
         $("#cambiarFila").fadeOut();
-        
-        return false;
+      } catch (error) {
+        mostrarMensaje(error.message, "mensaje_error");
+      }
+    } else {
+      fila.remove();
+      $("#cambiarFila").fadeOut();
+    }
+
+    return false;
+  });
+
+  $("#btnCancelarModificar").click(function (e) {
+    e.preventDefault();
+
+    $("#cambiarFila").fadeOut();
+
+    return false;
+  });
+
+  $("#excelFile").click(function (e) {
+    e.preventDefault();
+
+    $("#exporta").fadeIn();
+
+    return false;
+  });
+
+  $("#btnCancelarExport").click(function (e) {
+    e.preventDefault();
+
+    console.log($("#form_actualizar").serialize());
+
+    $("#exporta").fadeOut();
+
+    return false;
+  });
+
+  $("#btnDescarga").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if ($("#costosExport").val() == -1) throw "Elija un centro de costos";
+
+      $("#esperar").css("opacity", "1").fadeIn();
+
+      $.post(
+        RUTA + "consumo/reporte",
+        { cc: $("#costosExport").val() },
+        function (data, textStatus, jqXHR) {
+          $("#esperar").css("opacity", "0").fadeOut();
+          window.location.href = data.documento;
+        },
+        "json",
+      );
+    } catch (error) {
+      mostrarMensaje(
+        "Elija el centro de costos/Sede/Proyecto",
+        "mensaje_error",
+      );
+    }
+
+    return false;
+  });
+
+  $("#btnKardex").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if ($("#costosSearch").val() == -1)
+        throw new Error("Elija centro de costos");
+      if ($("#docident").val() == "") throw new Error("Elija centro de costos");
+
+      $.post(
+        RUTA + "consumo/kardex",
+        {
+          nombre: $("#nombre").val(),
+          doc: $("#docident").val(),
+          cargo: $("#cargo").val(),
+          cc: $("#costosSearch option:selected").text(),
+          detalles: JSON.stringify(detallesHoja()),
+        },
+        function (data, textStatus, jqXHR) {
+          $(".ventanaVistaPrevia iframe")
+            .attr("src", "")
+            .attr("src", "public/documentos/kardex/" + data);
+
+          $("#hojakardex").fadeIn();
+        },
+        "text",
+      );
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#closePreview").click(function (e) {
+    e.preventDefault();
+
+    $("#hojakardex").fadeOut();
+
+    $(".ventanaVistaPrevia iframe").attr("src", "");
+
+    return false;
+  });
+
+  $("#btnRegister").click(function (e) {
+    e.preventDefault();
+
+    try {
+      if ($("#costosSearch").val() == " ")
+        throw new Error("Elija el centro de costos");
+
+      vincularEventosModal();
+      consultarDatos();
+
+      $("#dialogo_registro").fadeIn();
+
+      return false;
+    } catch (error) {
+      mostrarMensaje(e.message, "mensaje_error");
+    }
+
+    return false;
+  });
+
+  
+
+  /*** EVENTOS NUEVO MODAL */
+  // ESTA ES LA FUNCIÓN CLAVE
+  function vincularEventosModal() {
+    // 1. Botones de cerrar y cancelar
+    document.querySelectorAll(".btn-close, .btn-cancel").forEach((btn) => {
+      btn.addEventListener("click", cerrarModal);
     });
 
-    $("#excelFile").click(function (e) { 
-        e.preventDefault();
+    // 2. Botón de añadir
+    const btnAdd = document.querySelector(".btn-add");
+    if (btnAdd) {
+      btnAdd.removeAttribute("onclick"); // Quitamos el onclick por seguridad
+      btnAdd.addEventListener("click", agregarItem);
+    }
 
-        $("#exporta").fadeIn();
+    // 3. Botón de guardar final
+    const btnSave = document.querySelector(".btn-save");
+    if (btnSave) {
+      btnSave.removeAttribute("onclick");
+      btnSave.addEventListener("click", guardarConsumo);
+    }
 
-        return false;
+    // 3.5 Botón de Consumo Inicial
+    const btnInicial = document.getElementById("btnConsumoInicial");
+    if (btnInicial) {
+      btnInicial.addEventListener("click", agregarConsumoInicial);
+    }
+
+    // 4. Inputs de filtro
+    ["filtroTexto", "filtroOrdenCompra", "filtroPedido"].forEach((id) => {
+      const input = document.getElementById(id);
+      if (input) input.addEventListener("keyup", aplicarFiltros);
     });
 
-    $("#btnCancelarExport").click(function (e) { 
-        e.preventDefault();
-
-        console.log($("#form_actualizar").serialize());
-
-        $("#exporta").fadeOut();
-
-        return false;
+    // 5. CABECERAS DE LA TABLA (AUTOMÁTICO)
+    // Buscamos todas las cabeceras que tengan el icono de ordenamiento
+    document.querySelectorAll("#tablaProductos th").forEach((th, index) => {
+      if (th.querySelector(".sort-icon")) {
+        th.style.cursor = "pointer"; // Aseguramos que se vea clickeable
+        th.addEventListener("click", () => ordenarTabla(index));
+      }
     });
 
-    $("#btnDescarga").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            if ( $("#costosExport").val() == -1) throw "Elija un centro de costos";
-
-            $("#esperar").css("opacity","1").fadeIn();
-
-            $.post(RUTA+"consumo/reporte",{cc:$("#costosExport").val()},
-                function (data, textStatus, jqXHR) {
-                    $("#esperar").css("opacity","0").fadeOut();
-                    window.location.href = data.documento;
-                },
-                "json"
-            );
-        } catch (error) {
-            mostrarMensaje("Elija el centro de costos/Sede/Proyecto","mensaje_error");
+    // 6. Input de cantidad para agregar con Enter
+    const inputCantidad = document.getElementById("inputCantidad");
+    if (inputCantidad) {
+      inputCantidad.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault(); // Evita que se recargue la página
+          agregarItem();
         }
+      });
+    }
+
+    // 7. Filas de la tabla
+    asignarEventosFilas();
+  }
+
+  // ==========================================
+  // LÓGICA DEL MODAL
+  // ==========================================
+  function seleccionarFila(row) {
+    document
+      .querySelectorAll("#tabla-productos tr")
+      .forEach((r) => r.classList.remove("selected-row"));
+    row.classList.add("selected-row");
+
+    const celdas = row.querySelectorAll("td");
+    const codigo = celdas[0].innerText;
+    const descripcion = celdas[1].innerText;
+    const stock = celdas[5].innerText;
+
+    document.getElementById("cardCodigo").innerText = codigo;
+    document.getElementById("cardDescripcion").innerText = descripcion;
+    document.getElementById("cardStock").innerText = stock;
+
+    productoActual = { codigo, descripcion, stock: parseInt(stock) };
+
+    const inputCant = document.getElementById("inputCantidad");
+    if (inputCant) {
+      inputCant.focus();
+      inputCant.select();
+    }
+  }
+
+  function asignarEventosFilas() {
+    document.querySelectorAll("#tabla-productos tr").forEach((row) => {
+      // Quitamos el onclick si lo hubiera y usamos addEventListener
+      row.onclick = function () {
+        seleccionarFila(this);
+      };
+    });
+  }
+
+  function aplicarFiltros() {
+    const filtroTexto = document
+      .getElementById("filtroTexto")
+      .value.toLowerCase();
+    const filtroOrden = document
+      .getElementById("filtroOrdenCompra")
+      .value.toLowerCase();
+    const filtroPedido = document
+      .getElementById("filtroPedido")
+      .value.toLowerCase();
+
+    const filas = document.querySelectorAll("#tabla-productos tr");
+    let visibles = 0;
+
+    filas.forEach((fila) => {
+      const codigo = fila.cells[0].innerText.toLowerCase();
+      const descripcion = fila.cells[1].innerText.toLowerCase();
+      const ordenCompra = fila.cells[2].innerText.toLowerCase();
+      const numeroPedido = fila.cells[3].innerText.toLowerCase();
+
+      const coincideTexto =
+        codigo.includes(filtroTexto) || descripcion.includes(filtroTexto);
+      const coincideOrden = ordenCompra.includes(filtroOrden);
+      const coincidePedido = numeroPedido.includes(filtroPedido);
+
+      if (coincideTexto && coincideOrden && coincidePedido) {
+        fila.style.display = "";
+        visibles++;
+      } else {
+        fila.style.display = "none";
+      }
+    });
+    document.getElementById("count-disponibles").innerText =
+      visibles + " disponibles";
+  }
+
+  function ordenarTabla(columna) {
+    const tbody = document.getElementById("tabla-productos");
+    if (!tbody) return;
+
+    const filas = Array.from(tbody.querySelectorAll("tr"));
+    if (filas.length === 0) return;
+
+    // 1. Determinar dirección
+    if (ordenActual.columna === columna) {
+      ordenActual.ascendente = !ordenActual.ascendente;
+    } else {
+      ordenActual.columna = columna;
+      ordenActual.ascendente = true;
+    }
+
+    // 2. Detectar automáticamente si la columna es numérica
+    // Tomamos la primera fila visible para ver qué tipo de dato tiene
+    let esNumerico = false;
+    const primeraFilaVisible = filas.find((f) => f.style.display !== "none");
+    if (primeraFilaVisible) {
+      const valorMuestra = primeraFilaVisible.cells[columna].innerText.trim();
+      // Si el valor solo contiene números (o puntos/guiones para decimales), es numérico
+      if (
+        /^\d+(\.\d+)?$/.test(valorMuestra) ||
+        (valorMuestra.includes("UND") === false &&
+          !isNaN(parseFloat(valorMuestra)))
+      ) {
+        esNumerico = true;
+      }
+    }
+
+    // 3. Ordenar
+    filas.sort((a, b) => {
+      let valA = a.cells[columna].innerText.trim();
+      let valB = b.cells[columna].innerText.trim();
+
+      if (esNumerico) {
+        // Limpiamos el string por si tiene letras como "52 UND" -> "52"
+        valA = parseFloat(valA.replace(/[^\d.-]/g, "")) || 0;
+        valB = parseFloat(valB.replace(/[^\d.-]/g, "")) || 0;
+      } else {
+        valA = valA.toLowerCase();
+        valB = valB.toLowerCase();
+      }
+
+      if (valA < valB) return ordenActual.ascendente ? -1 : 1;
+      if (valA > valB) return ordenActual.ascendente ? 1 : -1;
+      return 0;
+    });
+
+    // 4. Reinsertar filas
+    tbody.innerHTML = "";
+    filas.forEach((fila) => tbody.appendChild(fila));
+
+    // 5. Actualizar iconos
+    actualizarIconosOrden(columna);
+  }
+
+  function actualizarIconosOrden(columna) {
+    // Limpiamos todos los iconos
+    document
+      .querySelectorAll("#tablaProductos th .sort-icon")
+      .forEach((icon) => {
+        icon.innerHTML = "▼";
+        icon.style.opacity = "0.3";
+      });
+
+    // Buscamos el th de la columna clickeada
+    const ths = document.querySelectorAll("#tablaProductos th");
+    if (ths[columna]) {
+      const icon = ths[columna].querySelector(".sort-icon");
+      if (icon) {
+        icon.innerHTML = ordenActual.ascendente ? "▲" : "▼";
+        icon.style.opacity = "1";
+      }
+    }
+  }
+
+  // ESTA FUNCIÓN YA NO SE LLAMA DESDE EL HTML, SINO DESDE addEventListener
+  function agregarItem() {
+    if (!productoActual) {
+      alert("Por favor, seleccione un producto de la tabla primero.");
+      return;
+    }
+
+    const inputCant = document.getElementById("inputCantidad");
+    const cantidad = parseInt(inputCant.value);
+
+    if (isNaN(cantidad) || cantidad < 1) {
+      alert("Ingrese una cantidad válida mayor a 0.");
+      inputCant.focus();
+      return;
+    }
+
+    if (cantidad > productoActual.stock) {
+      alert(
+        "La cantidad a registrar (" +
+          cantidad +
+          ") supera el stock disponible (" +
+          productoActual.stock +
+          ").",
+      );
+      inputCant.focus();
+      return;
+    }
+
+    const motivo = document.getElementById("inputMotivo").value;
+    const serie = document.getElementById("inputSerie").value;
+    const estado = document.getElementById("inputEstado").value;
+    const observaciones = document.getElementById("inputObservaciones").value;
+
+    // Guardamos en el carrito lógico
+    carrito.push({
+      producto: productoActual,
+      cantidad: cantidad,
+      motivo: motivo,
+      serie: serie,
+      estado: estado,
+      observaciones: observaciones,
+      esInicial: false,
+    });
+
+    itemsAgregados++;
+
+    document.getElementById("contador-items").innerText =
+      itemsAgregados + " items por guardar";
+    document.getElementById("btnGuardarFinal").innerHTML =
+      `💾 Guardar Consumo Final (${itemsAgregados})`;
+
+    const lista = document.getElementById("lista-items");
+    if (itemsAgregados === 1) {
+      lista.innerHTML = "";
+      lista.style.textAlign = "left";
+      lista.style.fontStyle = "normal";
+      lista.style.color = "#333";
+    }
+
+    // NUEVA ESTRUCTURA VISUAL (TARJETA)
+    const nuevoItem = document.createElement("div");
+    nuevoItem.className = "item-card";
+    nuevoItem.innerHTML = `
+        <div>
+            <span class="item-title">${productoActual.descripcion}</span>
+            <div class="item-details">
+                <span>Cód: ${productoActual.codigo}</span>
+                <span>Cant: <strong>${cantidad}</strong></span>
+                <span class="badge-estado">${estado}</span>
+            </div>
+        </div>
+        <button class="btn-eliminar-item">✖</button>
+    `;
+
+    // Vinculamos el botón de eliminar de esta tarjeta específica
+    const btnEliminar = nuevoItem.querySelector(".btn-eliminar-item");
+    btnEliminar.addEventListener("click", () =>
+      eliminarItem(nuevoItem, itemsAgregados - 1),
+    );
+
+    lista.appendChild(nuevoItem);
+
+    // Limpiamos los campos para el siguiente producto
+    inputCant.value = 1;
+    document.getElementById("inputObservaciones").value = "";
+  }
+
+  function eliminarItem(elemento, index) {
+    elemento.remove();
+    carrito.splice(index, 1);
+    itemsAgregados--;
+    actualizarContadores();
+  }
+
+  function actualizarContadores() {
+    document.getElementById("contador-items").innerText =
+      itemsAgregados + " items por guardar";
+    document.getElementById("btnGuardarFinal").innerHTML =
+      `💾 Guardar Consumo Final (${itemsAgregados})`;
+
+    if (itemsAgregados === 0) {
+      const lista = document.getElementById("lista-items");
+      lista.innerHTML =
+        'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
+      lista.style.textAlign = "center";
+      lista.style.fontStyle = "italic";
+      lista.style.color = "#94a3b8";
+      carrito = [];
+    }
+  }
+
+  function guardarConsumo() {
+    if (itemsAgregados === 0) {
+      alert("No hay items para guardar. Agregue al menos uno.");
+      return;
+    }
+
+    console.log("Datos a enviar al backend:", carrito);
+    alert(`Simulación: Guardando ${itemsAgregados} items en el Kardex...`);
+
+    // LLAMAMOS A LA FUNCIÓN MÁGICA
+    limpiarFormulario();
+
+    // Opcional: Si quieres que se cierre después de guardar, descomenta esto:
+    // cerrarModal();
+  }
+
+  function cerrarModal() {
+    limpiarFormulario()
+    $("#dialogo_registro").fadeOut();
+  }
+
+  // ==========================================
+  // 4. LÓGICA DE CONSUMO INICIAL
+  // ==========================================
+  function agregarConsumoInicial() {
+    if (!productoActual) {
+      alert("Por favor, seleccione un producto de la tabla primero.");
+      return;
+    }
+
+    const inputCant = document.getElementById("inputCantidad");
+    const cantidad = parseInt(inputCant.value);
+
+    if (isNaN(cantidad) || cantidad < 1) {
+      alert("Ingrese una cantidad válida mayor a 0.");
+      inputCant.focus();
+      return;
+    }
+
+    // NOTA: Aquí NO validamos contra el stock, porque es un consumo inicial.
+
+    const estado = document.getElementById("inputEstado").value;
+    const observaciones = document.getElementById("inputObservaciones").value;
+
+    // Guardamos en el carrito lógico con la bandera de inicial
+    carrito.push({
+      producto: productoActual,
+      cantidad: cantidad,
+      motivo: "CONSUMO INICIAL",
+      serie: "-",
+      estado: estado,
+      observaciones: observaciones,
+      esInicial: true,
+    });
+
+    itemsAgregados++;
+
+    document.getElementById("contador-items").innerText =
+      itemsAgregados + " items por guardar";
+    document.getElementById("btnGuardarFinal").innerHTML =
+      `💾 Guardar Consumo Final (${itemsAgregados})`;
+
+    const lista = document.getElementById("lista-items");
+    if (itemsAgregados === 1) {
+      lista.innerHTML = "";
+      lista.style.textAlign = "left";
+      lista.style.fontStyle = "normal";
+      lista.style.color = "#333";
+    }
+
+    // NUEVA ESTRUCTURA VISUAL (TARJETA AZUL)
+    const nuevoItem = document.createElement("div");
+    nuevoItem.className = "item-card item-inicial"; // Clase extra para el color azul
+    nuevoItem.innerHTML = `
+        <div>
+            <span class="item-title" style="color: #0284c7;">📦 [INICIAL] ${productoActual.descripcion}</span>
+            <div class="item-details">
+                <span>Cód: ${productoActual.codigo}</span>
+                <span>Cant: <strong>${cantidad}</strong></span>
+            </div>
+        </div>
+        <button class="btn-eliminar-item">✖</button>
+    `;
+
+    const btnEliminar = nuevoItem.querySelector(".btn-eliminar-item");
+    btnEliminar.addEventListener("click", () =>
+      eliminarItem(nuevoItem, itemsAgregados - 1),
+    );
+
+    lista.appendChild(nuevoItem);
+
+    // Limpiamos los campos
+    inputCant.value = 1;
+    document.getElementById("inputObservaciones").value = "";
+  }
+
+  function limpiarFormulario() {
+    // 1. Reseteamos las variables globales de la lógica
+    itemsAgregados = 0;
+    carrito = [];
+    productoActual = null;
+    ordenActual = { columna: -1, ascendente: true };
+
+    // 2. Limpiamos los contadores y textos del footer
+    const contador = document.getElementById("contador-items");
+    const btnGuardar = document.getElementById("btnGuardarFinal");
+    if (contador) contador.innerText = "0 items por guardar";
+    if (btnGuardar) btnGuardar.innerHTML = "💾 Guardar Consumo Final (0)";
+
+    // 3. Limpiamos la lista visual de consumos agregados
+    const lista = document.getElementById("lista-items");
+    if (lista) {
+      lista.innerHTML =
+        'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
+      lista.style.textAlign = "center";
+      lista.style.fontStyle = "italic";
+      lista.style.color = "#94a3b8";
+    }
+
+    // 4. Limpiamos los inputs del formulario
+    const inputCant = document.getElementById("inputCantidad");
+    const inputSerie = document.getElementById("inputSerie");
+    const inputHoja = document.getElementById("inputHoja");
+    const inputIsometrico = document.getElementById("inputIsometrico");
+    const inputObs = document.getElementById("inputObservaciones");
+    const inputPatrimonio = document.getElementById("patrimonio");
+    const inputMotivo = document.getElementById("inputMotivo");
+    const inputEstado = document.getElementById("inputEstado");
+
+    if (inputCant) inputCant.value = 1;
+    if (inputSerie) inputSerie.value = "";
+    if (inputHoja) inputHoja.value = "";
+    if (inputIsometrico) inputIsometrico.value = "";
+    if (inputObs) inputObs.value = "";
+    if (inputPatrimonio) inputPatrimonio.checked = false;
+    if (inputMotivo) inputMotivo.selectedIndex = 0; // Vuelve a "PRIMERA ENTREGA"
+    if (inputEstado) inputEstado.selectedIndex = 0; // Vuelve a "NUEVO"
+
+    // 5. Restauramos la tarjeta del producto seleccionado a su estado inicial
+    const cardCodigo = document.getElementById("cardCodigo");
+    const cardDescripcion = document.getElementById("cardDescripcion");
+    const cardStock = document.getElementById("cardStock");
+    if (cardCodigo) cardCodigo.innerText = "-";
+    if (cardDescripcion)
+      cardDescripcion.innerText = "Ningún producto seleccionado";
+    if (cardStock) cardStock.innerText = "0";
+  }
+
+  function consultarDatos(){
+    try {
+        const formData = new FormData();
+        formData.append("cc",document.getElementById("costosSearch").value);
+
+        const tbody = document.getElementById('tabla-productos');
+
+        fetch(RUTA + "consumo/llamarStocks",{
+            method:'POST',
+            body:formData
+        })
+        .then(response => response.json())
+        .then(data=> {
+            tbody.innerHTML = '';
+            console.log(data);
+        })
+    } catch (error) {
         
-        
-        return false;
-    });
-
-    $("#btnKardex").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            if ( $("#costosSearch").val() == -1 ) throw new Error("Elija centro de costos");
-            if ($("#docident").val() == "") throw new Error("Elija centro de costos");
-
-            $.post(RUTA+"consumo/kardex",{nombre:$("#nombre").val(),
-                                           doc:$("#docident").val(),
-                                           cargo:$("#cargo").val(),
-                                           cc:$("#costosSearch option:selected").text(),
-                                           detalles:JSON.stringify(detallesHoja())},
-                function (data, textStatus, jqXHR) {
-                    $(".ventanaVistaPrevia iframe")
-                    .attr("src","")
-                    .attr("src","public/documentos/kardex/"+data);
-                
-                    $("#hojakardex").fadeIn();
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-
-        return false;
-    });
-
-    $("#closePreview").click(function (e) { 
-        e.preventDefault();
-        
-        $("#hojakardex").fadeOut();
-
-        $(".ventanaVistaPrevia iframe").attr("src","");
-
-        return false;
-    });
-
-    $("#btnRegister").click(function(e){
-        e.preventDefault();
-
-        try {
-            if ($("#costosSearch").val() == " ") throw new Error("Elija el centro de costos");
-
-            $("#dialogo_registro").fadeIn();
-
-            return false
-        } catch (error) {
-            mostrarMensaje(e.message,"mensaje_error");
-        }
-
-        return false;
-    });
-
-    //filtrar Item del pedido
-    $("#codigoSearch, #descripSearch").on("keypress", function (e) {
-        if(e.which == 13) {
-            $("#esperar").fadeIn();
-            
-            $.post(RUTA+"consumo/llamarStocks", {cod:$("#codigoSearch").val(),
-                                                desc:$("#descripSearch").val(),
-                                                cc:$("#costosSearch").val()},
-                    function (data, textStatus, jqXHR) {
-                        if(data.success){
-                            cuerpoTabla.innerHTML = '';
-                            data.datos.forEach(item => {
-                                const tr = document.createElement('tr');
-                                tr.classList.add('pointer');
-                                tr.dataset.idprod = item.id_cprod;
-                                tr.dataset.ncodmed = item.ncodmed;
-                                tr.dataset.unidad = item.cabrevia;
-                                tr.innerHTML = `<td class="textoCentro">${item.ccodprod}</td>
-                                            <td class="pl20px">${item.cdesprod}</td>
-                                            <td class="textoCentro">${item.cabrevia}</td>
-                                            <td class="textoDerecha">${item.saldo}</td>`;
-
-                                cuerpoTabla.appendChild(tr);
-                            });
-                        }else{
-                            cuerpoTabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay productos para mostrar, ingrese el código o la descripción y presione <b>Enter</b></td></tr>`;
-                        }
-                        
-                        $("#esperar").fadeOut();
-                    },
-                    "json"
-                );
-        }
-    });
-
-    $("#tabla_detalles_productos tbody").on('click','tr', function(e) {
-        e.preventDefault();
-
-        idprod = $(this).data("idprod");
-        codigo = $(this).find('td').eq(0).text();
-        descripcion = $(this).find('td').eq(1).text();
-        und = $(this).find('td').eq(2).text();
-
-        $("#maximo_stock").val($(this).find('td').eq(3).text());
-
-        $(this).toggleClass('semaforoNaranja');
-
-        return false;
-    });
-})
+    }
+  }
+});
 
 detalles = () => {
-    DATA = [];
-    let TABLA = $("#tablaPrincipal tbody >tr");
+  DATA = [];
+  let TABLA = $("#tablaPrincipal tbody >tr");
 
-    TABLA.each(function(){
-        let ITEM        = $(this).find('td').eq(0).text(),
-            IDPROD      = $(this).data("idprod"),
-            GRABADO     = $(this).data("grabado"),
-            CODIGO      = $(this).find('td').eq(1).text(),
-            DESCRIPCION = $(this).find('td').eq(2).text(),
-            UNIDAD      = $(this).find('td').eq(3).text(),
-            CANTIDAD    = $(this).find('td').eq(4).children().val(),
-            FECHA       = $(this).find('td').eq(5).children().val(),
-            HOJA        = $(this).find('td').eq(6).children().val(),
-            ISOMETRICO  = $(this).find('td').eq(7).children().val(),
-            OBSERVAC    = $(this).find('td').eq(8).children().val(),
-            SERIE       = $(this).find('td').eq(9).children().val(),
-            //PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
-            //ESTADO      = $(this).find('td').eq(11).children().val(),
-            ESTADO      = $(this).find('td').eq(12).text(),
-            COSTOS      = $("#costosSearch").val(),
-            NRODOC      = $("#docident").val(),
-            PATRIMONIO  = $(this).data("patrimonio"),
-            CAMBIO      = $(this).data("cambio");
+  TABLA.each(function () {
+    let ITEM = $(this).find("td").eq(0).text(),
+      IDPROD = $(this).data("idprod"),
+      GRABADO = $(this).data("grabado"),
+      CODIGO = $(this).find("td").eq(1).text(),
+      DESCRIPCION = $(this).find("td").eq(2).text(),
+      UNIDAD = $(this).find("td").eq(3).text(),
+      CANTIDAD = $(this).find("td").eq(4).children().val(),
+      FECHA = $(this).find("td").eq(5).children().val(),
+      HOJA = $(this).find("td").eq(6).children().val(),
+      ISOMETRICO = $(this).find("td").eq(7).children().val(),
+      OBSERVAC = $(this).find("td").eq(8).children().val(),
+      SERIE = $(this).find("td").eq(9).children().val(),
+      //PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
+      //ESTADO      = $(this).find('td').eq(11).children().val(),
+      ESTADO = $(this).find("td").eq(12).text(),
+      COSTOS = $("#costosSearch").val(),
+      NRODOC = $("#docident").val(),
+      PATRIMONIO = $(this).data("patrimonio"),
+      CAMBIO = $(this).data("cambio");
 
+    item = {};
 
-        item = {};
-        
-        if (!GRABADO) {
-            item['item']        = ITEM;
-            item['codigo']      = CODIGO;
-            item['descripcion'] = DESCRIPCION;
-            item['unidad']      = UNIDAD;
-            item['cantidad']    = CANTIDAD;
-            item['fecha']       = FECHA;
-            item['hoja']        = HOJA;
-            item['isometrico']  = ISOMETRICO;
-            item['observac']    = OBSERVAC;
-            item['patrimonio']  = PATRIMONIO;
-            item['estado']      = ESTADO;
-            item['costos']      = COSTOS;
-            item['nrodoc']      = NRODOC;
-            item['idprod']      = IDPROD;
-            item['serie']       = SERIE;
-            item['cambio']      = CAMBIO;
+    if (!GRABADO) {
+      item["item"] = ITEM;
+      item["codigo"] = CODIGO;
+      item["descripcion"] = DESCRIPCION;
+      item["unidad"] = UNIDAD;
+      item["cantidad"] = CANTIDAD;
+      item["fecha"] = FECHA;
+      item["hoja"] = HOJA;
+      item["isometrico"] = ISOMETRICO;
+      item["observac"] = OBSERVAC;
+      item["patrimonio"] = PATRIMONIO;
+      item["estado"] = ESTADO;
+      item["costos"] = COSTOS;
+      item["nrodoc"] = NRODOC;
+      item["idprod"] = IDPROD;
+      item["serie"] = SERIE;
+      item["cambio"] = CAMBIO;
 
-            DATA.push(item);
-        }
-    })
+      DATA.push(item);
+    }
+  });
 
-    return DATA;
-}
+  return DATA;
+};
 
 detallesHoja = () => {
-    DATA = [];
-    let TABLA = $("#tablaPrincipal tbody >tr");
+  DATA = [];
+  let TABLA = $("#tablaPrincipal tbody >tr");
 
-    TABLA.each(function(){
-        let ITEM        = $(this).find('td').eq(0).text(),
-            IDPROD      = $(this).data("idprod"),
-            GRABADO     = $(this).data("grabado"),
-            CODIGO      = $(this).find('td').eq(1).text(),
-            DESCRIPCION = $(this).find('td').eq(2).text(),
-            UNIDAD      = $(this).find('td').eq(3).text(),
-            CANTIDAD    = $(this).find('td').eq(4).text(),
-            FECHA       = $(this).find('td').eq(5).text(),
-            HOJA        = $(this).find('td').eq(6).children().val(),
-            ISOMETRICO  = $(this).find('td').eq(7).children().val(),
-            OBSERVAC    = $(this).find('td').eq(8).children().val(),
-            SERIE       = $(this).find('td').eq(9).children().val(),
-            PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
-            ESTADO      = $(this).find('td').eq(11).children().val(),
-            COSTOS      = $("#costosSearch").val(),
-            NRODOC      = $("#docident").val(),
-            FIRMA       = $(this).data('firma'),
-            KARDEX      = $(this).data('kardex'),
-            DEVOLUCION  = $(this).data('devolucion'),
-            FIRMADELVOL = $(this).data('firmadevolucion');
+  TABLA.each(function () {
+    let ITEM = $(this).find("td").eq(0).text(),
+      IDPROD = $(this).data("idprod"),
+      GRABADO = $(this).data("grabado"),
+      CODIGO = $(this).find("td").eq(1).text(),
+      DESCRIPCION = $(this).find("td").eq(2).text(),
+      UNIDAD = $(this).find("td").eq(3).text(),
+      CANTIDAD = $(this).find("td").eq(4).text(),
+      FECHA = $(this).find("td").eq(5).text(),
+      HOJA = $(this).find("td").eq(6).children().val(),
+      ISOMETRICO = $(this).find("td").eq(7).children().val(),
+      OBSERVAC = $(this).find("td").eq(8).children().val(),
+      SERIE = $(this).find("td").eq(9).children().val(),
+      PATRIMONIO = $(this).find("td").eq(10).children().prop("checked"),
+      ESTADO = $(this).find("td").eq(11).children().val(),
+      COSTOS = $("#costosSearch").val(),
+      NRODOC = $("#docident").val(),
+      FIRMA = $(this).data("firma"),
+      KARDEX = $(this).data("kardex"),
+      DEVOLUCION = $(this).data("devolucion"),
+      FIRMADELVOL = $(this).data("firmadevolucion");
 
+    item = {};
 
-        item = {};
-        
-        item['item']        = ITEM;
-        item['codigo']      = CODIGO;
-        item['descripcion'] = DESCRIPCION;
-        item['unidad']      = UNIDAD;
-        item['cantidad']    = CANTIDAD;
-        item['fecha']       = FECHA;
-        item['hoja']        = HOJA;
-        item['isometrico']  = ISOMETRICO;
-        item['observac']    = OBSERVAC;
-        item['patrimonio']  = PATRIMONIO;
-        item['estado']      = ESTADO;
-        item['costos']      = COSTOS;
-        item['nrodoc']      = NRODOC;
-        item['idprod']      = IDPROD;
-        item['serie']       = SERIE;
-        item['kardex']      = KARDEX;
-        item['firma']       = FIRMA;
-        item['devolucion']  = DEVOLUCION;
-        item['fdevolucion']  = FIRMADELVOL;
+    item["item"] = ITEM;
+    item["codigo"] = CODIGO;
+    item["descripcion"] = DESCRIPCION;
+    item["unidad"] = UNIDAD;
+    item["cantidad"] = CANTIDAD;
+    item["fecha"] = FECHA;
+    item["hoja"] = HOJA;
+    item["isometrico"] = ISOMETRICO;
+    item["observac"] = OBSERVAC;
+    item["patrimonio"] = PATRIMONIO;
+    item["estado"] = ESTADO;
+    item["costos"] = COSTOS;
+    item["nrodoc"] = NRODOC;
+    item["idprod"] = IDPROD;
+    item["serie"] = SERIE;
+    item["kardex"] = KARDEX;
+    item["firma"] = FIRMA;
+    item["devolucion"] = DEVOLUCION;
+    item["fdevolucion"] = FIRMADELVOL;
 
-        DATA.push(item);
-    })
+    DATA.push(item);
+  });
 
-    return DATA;
-}
+  return DATA;
+};
 
 function render() {
-    pdf.getPage(1).then(page => {
-        var myCanvas = document.getElementById("pdfCanvas");
-        var context = myCanvas.getContext("2d");
-        var viewport = page.getViewport({ scale: 1 });
-        
-        myCanvas.width = 600;
-        myCanvas.height = 700;
-        
+  pdf.getPage(1).then((page) => {
+    var myCanvas = document.getElementById("pdfCanvas");
+    var context = myCanvas.getContext("2d");
+    var viewport = page.getViewport({ scale: 1 });
 
-        // Render PDF page into canvas context
-        let renderContext = {
-            canvasContext: context,
-            viewport: viewport
-        };
+    myCanvas.width = 600;
+    myCanvas.height = 700;
 
-        let renderTask = page.render(renderContext);
-        
-        renderTask.promise.then(function () {
-            const canvas = document.getElementById('pdfCanvas');
-            const imagen = document.getElementById('vistafirma');
+    // Render PDF page into canvas context
+    let renderContext = {
+      canvasContext: context,
+      viewport: viewport,
+    };
 
-            let imageContentRaw = canvas.getContext('2d').getImageData(50,450,220,110);
-            let canvasImg = document.createElement('canvas');
+    let renderTask = page.render(renderContext);
 
-            canvasImg.width = 220;
-            canvasImg.height = 110;
-            canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
+    renderTask.promise.then(function () {
+      const canvas = document.getElementById("pdfCanvas");
+      const imagen = document.getElementById("vistafirma");
 
-            imagen.src = canvasImg.toDataURL("image/jpeg", 1.0)
-        });
+      let imageContentRaw = canvas
+        .getContext("2d")
+        .getImageData(50, 450, 220, 110);
+      let canvasImg = document.createElement("canvas");
+
+      canvasImg.width = 220;
+      canvasImg.height = 110;
+      canvasImg.getContext("2d").putImageData(imageContentRaw, 0, 0);
+
+      imagen.src = canvasImg.toDataURL("image/jpeg", 1.0);
     });
+  });
 }
 
 cleanDialogControls = () => {
-    $("#codigoSearch").val("");
-    $("#descripSearch").val("");
-    $("#patrimonio").prop("checked", false);
-    $("#cambio_epp").val(-1);
-    $("#cantidad_dialogo").val("");
-    $("#serie_dialogo").val("");
-    $("#nhoja_dialogo").val("");
-    $("#isometricos_dialogo").val("");
-    $("#observaciones_dialogo").val("");
-}
-
+  $("#codigoSearch").val("");
+  $("#descripSearch").val("");
+  $("#patrimonio").prop("checked", false);
+  $("#cambio_epp").val(-1);
+  $("#cantidad_dialogo").val("");
+  $("#serie_dialogo").val("");
+  $("#nhoja_dialogo").val("");
+  $("#isometricos_dialogo").val("");
+  $("#observaciones_dialogo").val("");
+};
