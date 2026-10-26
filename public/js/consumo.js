@@ -14,7 +14,10 @@ $(function () {
   let productoActual = null;
   let ordenActual = { columna: -1, ascendente: true };
   let carrito = [];
-  let centroCostos = '';
+  let centroCostos = "";
+
+  let cacheProductos = null; // Aquí guardaremos los datos una vez consultados
+  let consultando = false; // Para evitar que se hagan dos peticiones al mismo tiempo
 
   $("#espera").fadeOut();
 
@@ -23,7 +26,7 @@ $(function () {
   $("#docident").keypress(function (e) {
     if (e.which == 13) {
       centroCostos = $("#costosSearch").val();
-      $.post(  
+      $.post(
         RUTA + "consumo/datosapi",
         { documento: $(this).val(), costos: $("#costosSearch").val() },
         function (data, textStatus, jqXHR) {
@@ -586,8 +589,6 @@ $(function () {
     return false;
   });
 
-  
-
   /*** EVENTOS NUEVO MODAL */
   // ESTA ES LA FUNCIÓN CLAVE
   function vincularEventosModal() {
@@ -617,7 +618,7 @@ $(function () {
     }
 
     // 4. Inputs de filtro
-    ["filtroTexto", "filtroOrdenCompra", "filtroPedido"].forEach((id) => {
+    ["filtroTexto"].forEach((id) => {
       const input = document.getElementById(id);
       if (input) input.addEventListener("keyup", aplicarFiltros);
     });
@@ -907,24 +908,116 @@ $(function () {
     }
   }
 
-  function guardarConsumo() {
+function guardarConsumo() {
     if (itemsAgregados === 0) {
-      alert("No hay items para guardar. Agregue al menos uno.");
-      return;
+        alert("No hay items para guardar. Agregue al menos uno.");
+        return;
     }
+    
+    // 1. Preparamos los datos para enviar
+    const payload = {
+        consumo: carrito
+    };
 
-    console.log("Datos a enviar al backend:", carrito);
-    alert(`Simulación: Guardando ${itemsAgregados} items en el Kardex...`);
+    // 2. Enviamos al servidor (Aquí debes poner tu ruta real)
+    fetch(RUTA + "consumo/guardarConsumo", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // ---------------------------------------------------------
+        // CASO A: TODO SALIÓ BIEN (El PHP validó y guardó)
+        // ---------------------------------------------------------
+        if (data.status === 'success') {
+            
+            // Actualización optimista visual (restamos del caché para que se vea rápido)
+            if (cacheProductos) {
+                carrito.forEach(itemConsumido => {
+                    const prodEnCache = cacheProductos.find(p => p.id_cprod === itemConsumido.producto.id_cprod); 
+                    if (prodEnCache) {
+                        const cantidad = parseInt(itemConsumido.cantidad);
+                        if (itemConsumido.esInicial) {
+                            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) + cantidad;
+                        } else {
+                            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) - cantidad;
+                        }
+                    }
+                });
+                pintarTabla(cacheProductos);
+            }
 
-    // LLAMAMOS A LA FUNCIÓN MÁGICA
-    limpiarFormulario();
+            // Limpiamos solo el formulario visual, NO la caché
+            limpiarFormularioVisual();
+            
+            // Mostramos un mensaje bonito (puedes usar un toast o alert)
+            alert("¡Consumo registrado exitosamente!");
+            
+        } 
+        // ---------------------------------------------------------
+        // CASO B: ERROR DE STOCK (Alguien más consumió antes)
+        // ---------------------------------------------------------
+        else if (data.status === 'error_stock') {
+            alert("⚠️ " + data.mensaje + "\nSe actualizará la tabla con el stock real.");
+            
+            // Forzamos la recarga desde el servidor
+            cacheProductos = null; 
+            
+            // Cerramos el modal actual (o lo dejamos abierto)
+            // Recomiendo cerrarlo y abrirlo de nuevo para que el usuario vea la tabla actualizada
+            cerrarModal();
+            
+            // Esperamos un momento y volvemos a abrir para consultar datos frescos
+            setTimeout(() => {
+                abrirModal();
+            }, 500);
+        }
+        // ---------------------------------------------------------
+        // CASO C: OTROS ERRORES
+        // ---------------------------------------------------------
+        else {
+            alert("Error: " + (data.mensaje || "No se pudo guardar el consumo."));
+        }
+    })
+    .catch(error => {
+        console.error("Error de red:", error);
+        alert("Error de conexión con el servidor. Intente de nuevo.");
+    });
+}
 
-    // Opcional: Si quieres que se cierre después de guardar, descomenta esto:
-    // cerrarModal();
-  }
+// Función auxiliar para no repetir código de limpieza
+function limpiarFormularioVisual() {
+    itemsAgregados = 0;
+    carrito = [];
+    productoActual = null;
+    
+    const lista = document.getElementById('lista-items');
+    if (lista) {
+        lista.innerHTML = 'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
+        lista.style.textAlign = 'center';
+        lista.style.fontStyle = 'italic';
+        lista.style.color = '#94a3b8';
+    }
+    
+    // Limpiar inputs
+    if (document.getElementById('inputCantidad')) document.getElementById('inputCantidad').value = 1;
+    if (document.getElementById('inputObservaciones')) document.getElementById('inputObservaciones').value = '';
+    if (document.getElementById('inputSerie')) document.getElementById('inputSerie').value = '';
+    if (document.getElementById('inputHoja')) document.getElementById('inputHoja').value = '';
+    if (document.getElementById('inputIsometrico')) document.getElementById('inputIsometrico').value = '';
+    if (document.getElementById('patrimonio')) document.getElementById('patrimonio').checked = false;
+
+    document.getElementById('contador-items').innerText = '0 items por guardar';
+    document.getElementById('btnGuardarFinal').innerHTML = '💾 Guardar Consumo Final (0)';
+    
+    document.querySelectorAll('#tabla-productos tr').forEach(r => r.classList.remove('selected-row'));
+}
 
   function cerrarModal() {
-    limpiarFormulario()
+    limpiarFormulario();
     $("#dialogo_registro").fadeOut();
   }
 
@@ -1055,25 +1148,91 @@ $(function () {
     if (cardStock) cardStock.innerText = "0";
   }
 
-  function consultarDatos(){
-    try {
-        const formData = new FormData();
-        formData.append("cc",document.getElementById("costosSearch").value);
+  function consultarDatos() {
+    const tbody = document.getElementById("tabla-productos");
+    const selectCc = document.getElementById("costosSearch");
 
-        const tbody = document.getElementById('tabla-productos');
+    if (!selectCc) return;
 
-        fetch(RUTA + "consumo/llamarStocks",{
-            method:'POST',
-            body:formData
-        })
-        .then(response => response.json())
-        .then(data=> {
-            tbody.innerHTML = '';
-            console.log(data);
-        })
-    } catch (error) {
-        
+    // 1. SI YA TENEMOS LOS DATOS EN CACHÉ, LOS MOSTRAMOS AL INSTANTE
+    if (cacheProductos !== null) {
+      pintarTabla(cacheProductos);
+      return;
     }
+
+    // 2. SI NO HAY CACHÉ, HACEMOS LA CONSULTA AL SERVIDOR
+    if (consultando) return; // Evita doble clic
+    consultando = true;
+
+    const formData = new FormData();
+    formData.append("cc", selectCc.value);
+
+    // Mostramos el spinner
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="6" style="border: none; padding: 0;">
+                <div class="loader-tabla">
+                    <div class="spinner"></div>
+                    <span>Cargando productos...</span>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    fetch(RUTA + "consumo/llamarStocks", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        consultando = false;
+        tbody.innerHTML = "";
+
+        // Guardamos los datos en la caché
+        cacheProductos = data.datos;
+
+        // Los pintamos en la tabla
+        pintarTabla(cacheProductos);
+      })
+      .catch((error) => {
+        consultando = false;
+        console.error("Error:", error);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 20px;">Error al cargar datos.</td></tr>`;
+      });
+  }
+
+  // Función auxiliar para pintar la tabla (así no repetimos código)
+  function pintarTabla(datos) {
+    const tbody = document.getElementById("tabla-productos");
+    tbody.innerHTML = "";
+
+    // Actualizamos el contador de la cabecera
+    const countSpan = document.getElementById("count-disponibles");
+    if (countSpan) countSpan.innerText = datos.length + " disponibles";
+
+    if (datos.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding: 20px;">No se encontraron productos.</td></tr>`;
+      return;
+    }
+
+    datos.forEach((item) => {
+      const tr = document.createElement("tr");
+      tr.dataset.idprod = item.id_cprod;
+
+      // Ajustamos las columnas para que coincidan con tu HTML
+      tr.innerHTML = `
+            <td>${item.ccodprod}</td>
+            <td>${item.cdesprod}</td>
+            <td>${item.orden || ""}</td>
+            <td>${item.pedido || ""}</td>
+            <td>${item.cabrevia}</td>
+            <td>${item.saldo}</td>
+        `;
+      tbody.appendChild(tr);
+    });
+
+    // Reactivamos los clics
+    asignarEventosFilas();
   }
 });
 

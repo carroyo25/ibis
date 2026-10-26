@@ -159,16 +159,18 @@
 }
 
 .table-container {
-  max-height: 350px;
+  max-height: 665px;
   overflow-y: auto;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
 }
+
 th {
   background-color: #0f172a;
   color: #fff;
@@ -179,6 +181,7 @@ th {
   cursor: pointer;
   user-select: none;
 }
+
 th:hover {
   background-color: #1e293b;
 }
@@ -463,6 +466,35 @@ textarea.form-control {
 
 .btn-inicial:hover {
     background-color: #bae6fd;
+}
+
+/* =========================================
+   SPINNER DE CARGA PARA LA TABLA
+   ========================================= */
+.loader-tabla {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #e2e8f0; /* Color gris claro de fondo */
+    border-top: 3px solid #f59e0b; /* Color naranja de tu marca */
+    border-radius: 50%;
+    animation: girar 0.8s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes girar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {

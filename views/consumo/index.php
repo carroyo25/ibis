@@ -84,7 +84,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="column-left">
-                        <div class="section-title">1. CATALOGO DE PRODUCTOS <span id="count-disponibles" style="font-weight:normal; color:#64748b;">8 disponibles</span></div>
+                        <div class="section-title">1. CATALOGO DE PRODUCTOS <span id="count-disponibles" style="font-weight:normal; color:#64748b;">- disponibles</span></div>
                         
                         <!-- FILTROS: Búsqueda General, Orden de Compra y N° Pedido -->
                         <div class="filters-container">
