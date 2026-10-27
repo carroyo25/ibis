@@ -92,10 +92,7 @@
                                 <input type="text" id="filtroTexto" class="form-control" placeholder="🔍 Código o descripción...">
                             </div>
                             <div class="input-group" style="flex: 1;">
-                                <input type="text" id="filtroOrdenCompra" class="form-control" placeholder="Orden Compra...">
-                            </div>
-                            <div class="input-group" style="flex: 1;">
-                                <input type="text" id="filtroPedido" class="form-control" placeholder="N° Pedido...">
+                                <input type="text" id="filtroOrdenCompra" class="form-control" placeholder="Nota Ingreso">
                             </div>
                         </div>
 
@@ -124,10 +121,10 @@
                         <div class="product-card-selected" id="cardProductoSeleccionado">
                             <div class="product-icon">📦</div>
                             <div class="product-info">
-                                <span id="cardCodigo" style="background:#fef3c7; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">B170100060004</span>
-                                <h4 id="cardDescripcion">LENTE GOGGLE CLARO STEELPRO TURBINE</h4>
+                                <span id="cardCodigo" style="background:#fef3c7; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;"></span>
+                                <h4 id="cardDescripcion"></h4>
                             </div>
-                            <div class="badge-stock">Stock actual: <span id="cardStock">52</span> UND</div>
+                            <div class="badge-stock">Stock actual: <span id="cardStock">-</span> -</div>
                         </div>
 
                         <div class="section-card">
@@ -141,9 +138,14 @@
                                 <div class="input-group">
                                     <label>Motivo de Cambio</label>
                                     <select id="inputMotivo" class="form-control">
-                                        <option>PRIMERA ENTREGA</option>
-                                        <option>REPOSICIÓN</option>
-                                        <option>DAÑO</option>
+                                        <option value="239">PRIMERA ENTREGA </option>
+                                        <option value="240">CAMBIO EPP</option>
+                                        <option value="241">ROTURA</option>
+                                        <option value="242">PERDIDA</option>
+                                        <option value="243">DEFORMADO</option>
+                                        <option value="244">FALTA PARTES</option>
+                                        <option value="245">DESGASTE POR PROPIO USO</option>
+                                        <option value="246">OTROS</option>
                                     </select>
                                 </div>
                                 
@@ -334,7 +336,7 @@
                     <th>...</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="cuerpoTablaPrincipal">
                 
             </tbody>
         </table>

@@ -632,17 +632,6 @@ $(function () {
       }
     });
 
-    // 6. Input de cantidad para agregar con Enter
-    const inputCantidad = document.getElementById("inputCantidad");
-    if (inputCantidad) {
-      inputCantidad.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") {
-          e.preventDefault(); // Evita que se recargue la página
-          agregarItem();
-        }
-      });
-    }
-
     // 7. Filas de la tabla
     asignarEventosFilas();
   }
@@ -659,13 +648,24 @@ $(function () {
     const celdas = row.querySelectorAll("td");
     const codigo = celdas[0].innerText;
     const descripcion = celdas[1].innerText;
+    const unidad = celdas[4].innerText;
     const stock = celdas[5].innerText;
+    const idprod = row.dataset.idprod;
 
     document.getElementById("cardCodigo").innerText = codigo;
     document.getElementById("cardDescripcion").innerText = descripcion;
     document.getElementById("cardStock").innerText = stock;
 
-    productoActual = { codigo, descripcion, stock: parseInt(stock) };
+    productoActual = {
+      itemId: idprod,
+      codigo,
+      descripcion,
+      unidad,
+      stock: parseInt(stock),
+    };
+
+    // ✅ AQUÍ LLAMAMOS A LA LIMPIEZA
+    limpiarCamposEspecificos();
 
     const inputCant = document.getElementById("inputCantidad");
     if (inputCant) {
@@ -687,12 +687,6 @@ $(function () {
     const filtroTexto = document
       .getElementById("filtroTexto")
       .value.toLowerCase();
-    const filtroOrden = document
-      .getElementById("filtroOrdenCompra")
-      .value.toLowerCase();
-    const filtroPedido = document
-      .getElementById("filtroPedido")
-      .value.toLowerCase();
 
     const filas = document.querySelectorAll("#tabla-productos tr");
     let visibles = 0;
@@ -703,12 +697,10 @@ $(function () {
       const ordenCompra = fila.cells[2].innerText.toLowerCase();
       const numeroPedido = fila.cells[3].innerText.toLowerCase();
 
-      const coincideTexto =
-        codigo.includes(filtroTexto) || descripcion.includes(filtroTexto);
-      const coincideOrden = ordenCompra.includes(filtroOrden);
-      const coincidePedido = numeroPedido.includes(filtroPedido);
+      const coincideTexto = codigo.includes(filtroTexto) || descripcion.includes(filtroTexto);
 
-      if (coincideTexto && coincideOrden && coincidePedido) {
+
+      if (coincideTexto) {
         fila.style.display = "";
         visibles++;
       } else {
@@ -825,20 +817,36 @@ $(function () {
       return;
     }
 
-    const motivo = document.getElementById("inputMotivo").value;
+    const selectMotivo = document.getElementById("inputMotivo");
     const serie = document.getElementById("inputSerie").value;
     const estado = document.getElementById("inputEstado").value;
+    const hoja = document.getElementById("inputHoja").value;
+    const isometrico = document.getElementById("inputIsometrico").value;
     const observaciones = document.getElementById("inputObservaciones").value;
+    const proyecto = document.getElementById("costosSearch").value;
+    const documento = document.getElementById("docident").value;
+    const esPatrimonio = document.getElementById("patrimonio").checked;
+    const motivoId = selectMotivo.value; // Ej: "239"
+    const motivoTexto = selectMotivo.options[selectMotivo.selectedIndex].text;
 
-    // Guardamos en el carrito lógico
+    // Guardamos en el carrito lógico (TODO PLANO)
     carrito.push({
-      producto: productoActual,
+      itemId: productoActual.itemId, // <-- SOLO EL ID
+      codigo: productoActual.codigo, // <-- CÓDIGO PLANO
+      descripcion: productoActual.descripcion, // <-- DESCRIPCIÓN PLANA
+      unidad: productoActual.unidad, // <-- DESCRIPCIÓN PLANA
       cantidad: cantidad,
-      motivo: motivo,
       serie: serie,
+      hoja:hoja,
+      isometrico:isometrico,
       estado: estado,
       observaciones: observaciones,
       esInicial: false,
+      proyecto: proyecto,
+      documento: documento,
+      esPatrimonio: esPatrimonio,
+      motivoId: motivoId, // <-- Guardamos el ID para el backend
+      motivoTexto: motivoTexto, // <-- Guardamos el texto para mostrar
     });
 
     itemsAgregados++;
@@ -866,10 +874,12 @@ $(function () {
                 <span>Cód: ${productoActual.codigo}</span>
                 <span>Cant: <strong>${cantidad}</strong></span>
                 <span class="badge-estado">${estado}</span>
+                <span style="font-size:10px; color:#64748b; display:block; margin-top:4px;">
+                    Motivo: ${motivoTexto}
+                </span>
             </div>
         </div>
-        <button class="btn-eliminar-item">✖</button>
-    `;
+        <button class="btn-eliminar-item">✖</button>`;
 
     // Vinculamos el botón de eliminar de esta tarjeta específica
     const btnEliminar = nuevoItem.querySelector(".btn-eliminar-item");
@@ -908,113 +918,120 @@ $(function () {
     }
   }
 
-function guardarConsumo() {
+  function guardarConsumo() {
     if (itemsAgregados === 0) {
-        alert("No hay items para guardar. Agregue al menos uno.");
-        return;
+      alert("No hay items para guardar. Agregue al menos uno.");
+      return;
     }
+
+    // 1. Mostrar el JSON limpio en la consola
+    const payload = { consumo: carrito };
+
+    console.log("=== DATOS PARA EL BIOMÉTRICO (TOPAZ) ===");
+    // 1. Declaramos la variable vacía AFUERA del bucle
+    let filasHTML = '';
+
+    const datos_finales = JSON.stringify(payload, null, 2);
+    const cuerpoTablaPrincipal = document.getElementById("cuerpoTablaPrincipal");
+    const nfilas = $("#tablaPrincipal tr").length;
+    // Esta línea obtiene la fecha actual en formato YYYY-MM-DD
+    const fechaHoy = obtenerFechaLocal();
+
     
-    // 1. Preparamos los datos para enviar
-    const payload = {
-        consumo: carrito
-    };
 
-    // 2. Enviamos al servidor (Aquí debes poner tu ruta real)
-    fetch(RUTA + "consumo/guardarConsumo", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // ---------------------------------------------------------
-        // CASO A: TODO SALIÓ BIEN (El PHP validó y guardó)
-        // ---------------------------------------------------------
-        if (data.status === 'success') {
-            
-            // Actualización optimista visual (restamos del caché para que se vea rápido)
-            if (cacheProductos) {
-                carrito.forEach(itemConsumido => {
-                    const prodEnCache = cacheProductos.find(p => p.id_cprod === itemConsumido.producto.id_cprod); 
-                    if (prodEnCache) {
-                        const cantidad = parseInt(itemConsumido.cantidad);
-                        if (itemConsumido.esInicial) {
-                            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) + cantidad;
-                        } else {
-                            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) - cantidad;
-                        }
-                    }
-                });
-                pintarTabla(cacheProductos);
-            }
-
-            // Limpiamos solo el formulario visual, NO la caché
-            limpiarFormularioVisual();
-            
-            // Mostramos un mensaje bonito (puedes usar un toast o alert)
-            alert("¡Consumo registrado exitosamente!");
-            
-        } 
-        // ---------------------------------------------------------
-        // CASO B: ERROR DE STOCK (Alguien más consumió antes)
-        // ---------------------------------------------------------
-        else if (data.status === 'error_stock') {
-            alert("⚠️ " + data.mensaje + "\nSe actualizará la tabla con el stock real.");
-            
-            // Forzamos la recarga desde el servidor
-            cacheProductos = null; 
-            
-            // Cerramos el modal actual (o lo dejamos abierto)
-            // Recomiendo cerrarlo y abrirlo de nuevo para que el usuario vea la tabla actualizada
-            cerrarModal();
-            
-            // Esperamos un momento y volvemos a abrir para consultar datos frescos
-            setTimeout(() => {
-                abrirModal();
-            }, 500);
-        }
-        // ---------------------------------------------------------
-        // CASO C: OTROS ERRORES
-        // ---------------------------------------------------------
-        else {
-            alert("Error: " + (data.mensaje || "No se pudo guardar el consumo."));
-        }
-    })
-    .catch(error => {
-        console.error("Error de red:", error);
-        alert("Error de conexión con el servidor. Intente de nuevo.");
+    carrito.forEach((item) => {
+       filasHTML += `<tr data-registrado="0" class="pointer" data-idprod="${item.itemId}" data-cambio="${item.motivoId || ''}" data-patrimonio="${item.esPatrimonio || false}">
+                    <td class="textoDerecha">${nfilas}</td>
+                    <td class="textoCentro">${item.codigo}</td>
+                    <td class="pl20px">${item.descripcion}</td>
+                    <td class="textoCentro">${item.cabrevia || 'UND'}</td>
+                    <td class=""><input type="text" value="${item.cantidad}" readonly></td>
+                    <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fechaHoy || ''}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.hoja || ''}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.isometrico || ''}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.observaciones || ''}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.serie || ''}"></td>
+                    <td class="textoCentro"> <input type="checkbox" class="entrada" ${item.esPatrimonio ? 'checked' : ''} disabled> </td>
+                    <td class="">${item.motivoTexto || item.motivo}</td>
+                    <td class="">${item.estado}</td>
+                    <td class=""></td>
+                    <td class="textoCentro"><a href="#" class="btn-eliminar-fila"><i class="far fa-trash-alt"></i></a></td>
+                </tr>`;
     });
-}
 
-// Función auxiliar para no repetir código de limpieza
-function limpiarFormularioVisual() {
+     // Insertamos todas las filas de golpe (súper rápido)
+    cuerpoTablaPrincipal.insertAdjacentHTML('afterbegin', filasHTML);
+
+    console.log("========================================");
+
+    // 2. Actualización optimista (restar del caché)
+    if (cacheProductos) {
+      carrito.forEach((itemConsumido) => {
+        // Buscamos directamente por el itemId (ya no está anidado)
+        const prodEnCache = cacheProductos.find(
+          (p) => String(p.id_cprod) === String(itemConsumido.itemId),
+        );
+
+        if (prodEnCache) {
+          const cantidad = parseInt(itemConsumido.cantidad);
+
+          if (itemConsumido.esInicial) {
+            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) + cantidad;
+          } else {
+            prodEnCache.saldo = (parseInt(prodEnCache.saldo) || 0) - cantidad;
+          }
+
+          if (prodEnCache.saldo < 0) prodEnCache.saldo = 0;
+        }
+      });
+
+      pintarTabla(cacheProductos);
+    }
+
+    // 3. Simulamos el éxito
+    //alert(`Se prepararon ${itemsAgregados} items para firma biométrica.\nRevisa la consola para ver el JSON.`);
+    $("#dialogo_registro").fadeOut();
+    // 4. Limpiamos SOLO el formulario visual, manteniendo la caché viva
+    limpiarFormularioVisual();
+  }
+
+  // Función auxiliar para no repetir código de limpieza
+  function limpiarFormularioVisual() {
     itemsAgregados = 0;
     carrito = [];
     productoActual = null;
-    
-    const lista = document.getElementById('lista-items');
-    if (lista) {
-        lista.innerHTML = 'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
-        lista.style.textAlign = 'center';
-        lista.style.fontStyle = 'italic';
-        lista.style.color = '#94a3b8';
-    }
-    
-    // Limpiar inputs
-    if (document.getElementById('inputCantidad')) document.getElementById('inputCantidad').value = 1;
-    if (document.getElementById('inputObservaciones')) document.getElementById('inputObservaciones').value = '';
-    if (document.getElementById('inputSerie')) document.getElementById('inputSerie').value = '';
-    if (document.getElementById('inputHoja')) document.getElementById('inputHoja').value = '';
-    if (document.getElementById('inputIsometrico')) document.getElementById('inputIsometrico').value = '';
-    if (document.getElementById('patrimonio')) document.getElementById('patrimonio').checked = false;
 
-    document.getElementById('contador-items').innerText = '0 items por guardar';
-    document.getElementById('btnGuardarFinal').innerHTML = '💾 Guardar Consumo Final (0)';
-    
-    document.querySelectorAll('#tabla-productos tr').forEach(r => r.classList.remove('selected-row'));
-}
+    const lista = document.getElementById("lista-items");
+    if (lista) {
+      lista.innerHTML =
+        'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
+      lista.style.textAlign = "center";
+      lista.style.fontStyle = "italic";
+      lista.style.color = "#94a3b8";
+    }
+
+    // Limpiar inputs
+    if (document.getElementById("inputCantidad"))
+      document.getElementById("inputCantidad").value = 1;
+    if (document.getElementById("inputObservaciones"))
+      document.getElementById("inputObservaciones").value = "";
+    if (document.getElementById("inputSerie"))
+      document.getElementById("inputSerie").value = "";
+    if (document.getElementById("inputHoja"))
+      document.getElementById("inputHoja").value = "";
+    if (document.getElementById("inputIsometrico"))
+      document.getElementById("inputIsometrico").value = "";
+    if (document.getElementById("patrimonio"))
+      document.getElementById("patrimonio").checked = false;
+
+    document.getElementById("contador-items").innerText = "0 items por guardar";
+    document.getElementById("btnGuardarFinal").innerHTML =
+      "💾 Guardar Consumo Final (0)";
+
+    document
+      .querySelectorAll("#tabla-productos tr")
+      .forEach((r) => r.classList.remove("selected-row"));
+  }
 
   function cerrarModal() {
     limpiarFormulario();
@@ -1039,20 +1056,32 @@ function limpiarFormularioVisual() {
       return;
     }
 
-    // NOTA: Aquí NO validamos contra el stock, porque es un consumo inicial.
-
+    const selectMotivo = document.getElementById("inputMotivo");
+    const serie = document.getElementById("inputSerie").value;
     const estado = document.getElementById("inputEstado").value;
     const observaciones = document.getElementById("inputObservaciones").value;
+    const proyecto = document.getElementById("costosSearch").value;
+    const documento = document.getElementById("docident").value;
+    const esPatrimonio = document.getElementById("patrimonio").checked;
+    const motivoId = selectMotivo.value; // Ej: "239"
+    const motivoTexto = selectMotivo.options[selectMotivo.selectedIndex].text;
 
-    // Guardamos en el carrito lógico con la bandera de inicial
+    // Guardamos en el carrito lógico (TODO PLANO)
     carrito.push({
-      producto: productoActual,
+      itemId: productoActual.itemId, // <-- SOLO EL ID
+      codigo: productoActual.codigo, // <-- CÓDIGO PLANO
+      codigo: productoActual.unidad, // <-- CÓDIGO PLANO
+      descripcion: productoActual.descripcion, // <-- DESCRIPCIÓN PLANA
       cantidad: cantidad,
-      motivo: "CONSUMO INICIAL",
-      serie: "-",
+      serie: serie,
       estado: estado,
       observaciones: observaciones,
-      esInicial: true,
+      esInicial: false,
+      proyecto: proyecto,
+      documento: documento,
+      esPatrimonio: esPatrimonio,
+      motivoId: motivoId, // <-- Guardamos el ID para el backend
+      motivoTexto: motivoTexto, // <-- Guardamos el texto para mostrar
     });
 
     itemsAgregados++;
@@ -1094,58 +1123,6 @@ function limpiarFormularioVisual() {
     // Limpiamos los campos
     inputCant.value = 1;
     document.getElementById("inputObservaciones").value = "";
-  }
-
-  function limpiarFormulario() {
-    // 1. Reseteamos las variables globales de la lógica
-    itemsAgregados = 0;
-    carrito = [];
-    productoActual = null;
-    ordenActual = { columna: -1, ascendente: true };
-
-    // 2. Limpiamos los contadores y textos del footer
-    const contador = document.getElementById("contador-items");
-    const btnGuardar = document.getElementById("btnGuardarFinal");
-    if (contador) contador.innerText = "0 items por guardar";
-    if (btnGuardar) btnGuardar.innerHTML = "💾 Guardar Consumo Final (0)";
-
-    // 3. Limpiamos la lista visual de consumos agregados
-    const lista = document.getElementById("lista-items");
-    if (lista) {
-      lista.innerHTML =
-        'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
-      lista.style.textAlign = "center";
-      lista.style.fontStyle = "italic";
-      lista.style.color = "#94a3b8";
-    }
-
-    // 4. Limpiamos los inputs del formulario
-    const inputCant = document.getElementById("inputCantidad");
-    const inputSerie = document.getElementById("inputSerie");
-    const inputHoja = document.getElementById("inputHoja");
-    const inputIsometrico = document.getElementById("inputIsometrico");
-    const inputObs = document.getElementById("inputObservaciones");
-    const inputPatrimonio = document.getElementById("patrimonio");
-    const inputMotivo = document.getElementById("inputMotivo");
-    const inputEstado = document.getElementById("inputEstado");
-
-    if (inputCant) inputCant.value = 1;
-    if (inputSerie) inputSerie.value = "";
-    if (inputHoja) inputHoja.value = "";
-    if (inputIsometrico) inputIsometrico.value = "";
-    if (inputObs) inputObs.value = "";
-    if (inputPatrimonio) inputPatrimonio.checked = false;
-    if (inputMotivo) inputMotivo.selectedIndex = 0; // Vuelve a "PRIMERA ENTREGA"
-    if (inputEstado) inputEstado.selectedIndex = 0; // Vuelve a "NUEVO"
-
-    // 5. Restauramos la tarjeta del producto seleccionado a su estado inicial
-    const cardCodigo = document.getElementById("cardCodigo");
-    const cardDescripcion = document.getElementById("cardDescripcion");
-    const cardStock = document.getElementById("cardStock");
-    if (cardCodigo) cardCodigo.innerText = "-";
-    if (cardDescripcion)
-      cardDescripcion.innerText = "Ningún producto seleccionado";
-    if (cardStock) cardStock.innerText = "0";
   }
 
   function consultarDatos() {
@@ -1233,6 +1210,135 @@ function limpiarFormularioVisual() {
 
     // Reactivamos los clics
     asignarEventosFilas();
+  }
+
+  function limpiarCamposEspecificos() {
+    // 1. Limpiar N° Serie
+    const inputSerie = document.getElementById("inputSerie");
+    if (inputSerie) inputSerie.value = "";
+
+    // 2. Limpiar N° Hoja
+    const inputHoja = document.getElementById("inputHoja");
+    if (inputHoja) inputHoja.value = "";
+
+    // 3. Limpiar Isométrico
+    const inputIsometrico = document.getElementById("inputIsometrico");
+    if (inputIsometrico) inputIsometrico.value = "";
+
+    // 4. Limpiar Observaciones (opcional, a veces se quiere mantener)
+    const inputObs = document.getElementById("inputObservaciones");
+    if (inputObs) inputObs.value = "";
+
+    // 5. Desmarcar el checkbox de Patrimonio
+    const inputPatrimonio = document.getElementById("patrimonio");
+    if (inputPatrimonio) inputPatrimonio.checked = false;
+
+    // 6. Resetear el Estado a "NUEVO"
+    const inputEstado = document.getElementById("inputEstado");
+    if (inputEstado) inputEstado.selectedIndex = 0;
+
+    // 7. Resetear el Motivo a "PRIMERA ENTREGA"
+    const inputMotivo = document.getElementById("inputMotivo");
+    if (inputMotivo) inputMotivo.selectedIndex = 0;
+
+    // 8. Resetear la cantidad a 1
+    const inputCant = document.getElementById("inputCantidad");
+    if (inputCant) inputCant.value = 1;
+  }
+
+  function limpiarFormulario() {
+    const formulario = document.getElementById("formProceso");
+
+    // ✅ VALIDACIÓN: Si el formulario ya no existe en el DOM, salimos
+    if (!formulario) {
+      console.warn(
+        "El formulario ya no existe en el DOM, no se puede limpiar.",
+      );
+      return;
+    }
+
+    // 1. Limpiar todos los inputs (texto, número, fecha, checkbox)
+    formulario
+      .querySelectorAll("input:not([type='button']):not([type='submit'])")
+      .forEach((input) => {
+        // Respetamos los campos globales que no queremos borrar
+        if (input.id === "costosSearch" || input.id === "docident") {
+          return;
+        }
+
+        if (input.type === "checkbox") {
+          input.checked = false;
+        } else {
+          input.value = "";
+        }
+      });
+
+    // 2. Limpiar los Selects (Motivo, Estado, etc.)
+    formulario.querySelectorAll("select").forEach((select) => {
+      // Si el select no es global, lo devolvemos a la primera opción (índice 0)
+      if (select.id !== "costosSearch") {
+        select.selectedIndex = 0;
+      }
+    });
+
+    // 3. Limpiar los Textareas (Observaciones, etc.)
+    formulario.querySelectorAll("textarea").forEach((textarea) => {
+      textarea.value = "";
+    });
+
+    // 4. Resetear variables lógicas del carrito y la tabla
+    // (Asumiendo que estas variables son globales en tu archivo)
+    if (typeof itemsAgregados !== "undefined") itemsAgregados = 0;
+    if (typeof carrito !== "undefined") carrito = [];
+    if (typeof productoActual !== "undefined") productoActual = null;
+
+    // 5. Limpiar los contadores visuales y la lista de ítems agregados
+    const contador = document.getElementById("contador-items");
+    const btnGuardar = document.getElementById("btnGuardarFinal");
+    const lista = document.getElementById("lista-items");
+
+    if (contador) contador.innerText = "0 items por guardar";
+    if (btnGuardar) btnGuardar.innerHTML = "💾 Guardar Consumo Final (0)";
+
+    if (lista) {
+      lista.innerHTML =
+        'Aún no ha añadido ítems. Complete la cantidad y presione "+ Añadir a la Lista".';
+      lista.style.textAlign = "center";
+      lista.style.fontStyle = "italic";
+      lista.style.color = "#94a3b8";
+    }
+
+    // 6. Quitar la selección amarilla de la tabla de productos
+    document
+      .querySelectorAll("#tabla-productos tr")
+      .forEach((r) => r.classList.remove("selected-row"));
+
+    // 7. Restaurar la tarjeta del "Producto Seleccionado" a su estado inicial
+    const cardCodigo = document.getElementById("cardCodigo");
+    const cardDescripcion = document.getElementById("cardDescripcion");
+    const cardStock = document.getElementById("cardStock");
+    if (cardCodigo) cardCodigo.innerText = "-";
+    if (cardDescripcion)
+      cardDescripcion.innerText = "Ningún producto seleccionado";
+    if (cardStock) cardStock.innerText = "0";
+  }
+
+  function escaparHTML(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+  }
+
+  function obtenerFechaLocal() {
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
   }
 });
 
