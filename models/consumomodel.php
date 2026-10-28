@@ -894,6 +894,39 @@
             } 
         }
 
+        public function buscarCodigosTalla(){
+            try {
+                $cc = isset($_POST['cc']) ? $_POST['cc'] : '';
+                $tallasJSON = isset($_POST['tallas']) ? $_POST['tallas'] : '';
+                
+                // 🪄 DECODIFICAMOS EL JSON QUE VIENE DEL FRONTEND
+                $tallas = json_decode($tallasJSON, true);
+                
+                if (!$tallas || !isset($tallas['success'])) {
+                    echo json_encode(['success' => false, 'error' => 'Datos de tallas inválidos']);
+                    return;
+                }
+
+                return array("datos"=>$tallas,"cc"=>$cc);
+
+                foreach($tallas as $talla){
+                    $sexo = $talla['genero'] === 'M' ? 'VARON' : 'MUJER';
+                    $descripcion = 'CAMISA%'.$sexo.'%'.$talla['camisa'];
+
+                    //$this->buscarProductosStocks($cc,'',$descripcion);
+                }
+                
+                echo json_encode([
+                    'success' => true,
+                    'mensaje' => 'Tallas recibidas correctamente',
+                    'tallas_recibidas' => $tallas // Solo para verificar
+                ]);
+
+            } catch (PDOException $th) {
+                return array("error"=>$th->getMessage());
+            }
+        }
+
         private function buscarCodigoCambio($codigo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT

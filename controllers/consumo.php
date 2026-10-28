@@ -51,11 +51,15 @@
         }
         
         function llamarStocks(){
-            echo json_encode($this->model->buscarProductosStocks($_POST['cc'],null,null));
+            echo json_encode($this->model->buscarProductosStocks($_POST['cc'],$_POST['codigo'],$_POST['descripcion']));
         }
 
         function actualiza() {
             echo json_encode($this->model->actualizar($_POST));
+        }
+
+        function tallasPersonal(){
+             echo json_encode($this->model->buscarCodigosTalla($_POST));
         }
     }
 ?>

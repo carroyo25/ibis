@@ -294,7 +294,7 @@
             </div>
             <div>
                 <label for="docident">N°. Documento </label>
-                <input type="text" id="docident" name="docident" class="ingreso">
+                <input type="text" id="docident" name="docident" class="ingreso" value="74753589">
             </div>
             <div>
                 <label for="nombre">Nombre</label>

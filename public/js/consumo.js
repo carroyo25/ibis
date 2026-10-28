@@ -19,6 +19,13 @@ $(function () {
   let cacheProductos = null; // Aquí guardaremos los datos una vez consultados
   let consultando = false; // Para evitar que se hagan dos peticiones al mismo tiempo
 
+  // Definimos la URL base de tu API (cámbiala por la tuya real)
+const URL_API = "https://rrhhperu.sepcon.net/api/";
+
+// Variable global para guardar el token y no pedirlo cada vez
+let tokenActual = null;
+let tokenExpira = 0;
+
   $("#espera").fadeOut();
 
   $("#docident").focus;
@@ -1038,92 +1045,114 @@ $(function () {
     $("#dialogo_registro").fadeOut();
   }
 
-  // ==========================================
+   // ==========================================
   // 4. LÓGICA DE CONSUMO INICIAL
   // ==========================================
-  function agregarConsumoInicial() {
-    if (!productoActual) {
-      alert("Por favor, seleccione un producto de la tabla primero.");
-      return;
+  async function agregarConsumoInicial() {
+    // 1. Capturamos el DNI del input
+    const dni = $("#docident").val();
+
+    if (!dni) {
+        alert("Por favor, ingrese un documento de identidad.");
+        return;
     }
 
-    const inputCant = document.getElementById("inputCantidad");
-    const cantidad = parseInt(inputCant.value);
+    try {
+        // 2. Esperamos a que la consulta termine (usando await)
+        const tallasIniciales = await consultarTallas(dni);
 
-    if (isNaN(cantidad) || cantidad < 1) {
-      alert("Ingrese una cantidad válida mayor a 0.");
-      inputCant.focus();
-      return;
+        // 3. Verificamos si realmente obtuvimos datos
+        if (tallasIniciales && tallasIniciales.success) {
+            console.log("✅ Tallas del trabajador:", tallasIniciales);
+            
+            let formData = new FormData();
+            formData.append("cc", $("#costosSearch").val());
+            formData.append("tallas",JSON.stringify(tallasIniciales));
+
+            fetch(RUTA+'consumo/tallasPersonal',{
+              method:'POST',
+              body:formData
+            })
+            .then(response=>response.json())
+            .then(data=>{
+              console.log(data);
+            })
+            
+        } else {
+            mostrarMensaje("🧨 No se encontraron tallas para este trabajador.","mensaje_error");
+        }
+
+    } catch (error) {
+        console.error("Error al consultar tallas:", error);
     }
-
-    const selectMotivo = document.getElementById("inputMotivo");
-    const serie = document.getElementById("inputSerie").value;
-    const estado = document.getElementById("inputEstado").value;
-    const observaciones = document.getElementById("inputObservaciones").value;
-    const proyecto = document.getElementById("costosSearch").value;
-    const documento = document.getElementById("docident").value;
-    const esPatrimonio = document.getElementById("patrimonio").checked;
-    const motivoId = selectMotivo.value; // Ej: "239"
-    const motivoTexto = selectMotivo.options[selectMotivo.selectedIndex].text;
-
-    // Guardamos en el carrito lógico (TODO PLANO)
-    carrito.push({
-      itemId: productoActual.itemId, // <-- SOLO EL ID
-      codigo: productoActual.codigo, // <-- CÓDIGO PLANO
-      codigo: productoActual.unidad, // <-- CÓDIGO PLANO
-      descripcion: productoActual.descripcion, // <-- DESCRIPCIÓN PLANA
-      cantidad: cantidad,
-      serie: serie,
-      estado: estado,
-      observaciones: observaciones,
-      esInicial: false,
-      proyecto: proyecto,
-      documento: documento,
-      esPatrimonio: esPatrimonio,
-      motivoId: motivoId, // <-- Guardamos el ID para el backend
-      motivoTexto: motivoTexto, // <-- Guardamos el texto para mostrar
-    });
-
-    itemsAgregados++;
-
-    document.getElementById("contador-items").innerText =
-      itemsAgregados + " items por guardar";
-    document.getElementById("btnGuardarFinal").innerHTML =
-      `💾 Guardar Consumo Final (${itemsAgregados})`;
-
-    const lista = document.getElementById("lista-items");
-    if (itemsAgregados === 1) {
-      lista.innerHTML = "";
-      lista.style.textAlign = "left";
-      lista.style.fontStyle = "normal";
-      lista.style.color = "#333";
-    }
-
-    // NUEVA ESTRUCTURA VISUAL (TARJETA AZUL)
-    const nuevoItem = document.createElement("div");
-    nuevoItem.className = "item-card item-inicial"; // Clase extra para el color azul
-    nuevoItem.innerHTML = `
-        <div>
-            <span class="item-title" style="color: #0284c7;">📦 [INICIAL] ${productoActual.descripcion}</span>
-            <div class="item-details">
-                <span>Cód: ${productoActual.codigo}</span>
-                <span>Cant: <strong>${cantidad}</strong></span>
-            </div>
-        </div>
-        <button class="btn-eliminar-item">✖</button>
-    `;
-
-    const btnEliminar = nuevoItem.querySelector(".btn-eliminar-item");
-    btnEliminar.addEventListener("click", () =>
-      eliminarItem(nuevoItem, itemsAgregados - 1),
-    );
-
-    lista.appendChild(nuevoItem);
-
-    // Limpiamos los campos
-    inputCant.value = 1;
-    document.getElementById("inputObservaciones").value = "";
   }
+
+  // Variable global para controlar el bloqueo
+let consultandoTalla = false;
+
+// Agregamos un parámetro para saber si ya reintentamos
+async function consultarTallas(dni, esReintento = false) {
+    if (consultandoTalla) {
+        console.log("⏳ Ya hay una consulta en curso...");
+        return;
+    }
+    consultandoTalla = true;
+
+    try {
+        const ahora = Math.floor(Date.now() / 1000);
+        
+        // Si no hay token o expiró, lo pedimos
+        if (!tokenActual || ahora > (tokenExpira - 60)) {
+            console.log("Pidiendo nuevo token...");
+            const resToken = await fetch(`${URL_API}generar_token.php`);
+            const dataToken = await resToken.json();
+            
+            if (!dataToken.success) throw new Error("No se pudo obtener el token.");
+            tokenActual = dataToken.token;
+            tokenExpira = dataToken.expira_en;
+        }
+
+        console.log("Consultando tallas para el DNI:", dni);
+        const resTallas = await fetch(`${URL_API}tallasApi.php?doc=${dni}&token=${tokenActual}`, {
+            method: 'GET'
+        });
+
+        // 🛑 SI DA 401, SOLO REINTENTAMOS UNA VEZ
+        if (resTallas.status === 401) {
+            if (esReintento) {
+                console.error("❌ El servidor rechazó el token por segunda vez. Deteniendo bucle.");
+                alert("Error de seguridad: El servidor rechaza el token. Contacte a soporte.");
+                return; // Detenemos todo
+            }
+            
+            console.warn("El token expiró. Reintentando por única vez...");
+            tokenActual = null; 
+            consultandoTalla = false;
+            return await consultarTallas(dni, true); // Enviamos true para avisar que ya reintentamos
+        }
+
+        const data = await resTallas.json();
+
+        if (data.success) {
+            console.log("✅ Tallas encontradas:", data);
+            const inputPantalon = document.getElementById('inputPantalon');
+            const inputCamisa = document.getElementById('inputCamisa');
+            const inputZapato = document.getElementById('inputZapato');
+            if (inputPantalon) inputPantalon.value = data.pantalon;
+            if (inputCamisa) inputCamisa.value = data.camisa;
+            if (inputZapato) inputZapato.value = data.zapato;
+
+            return data; // 👈 ESTA ES LA LÍNEA MÁGICA QUE FALTA
+        } else {
+            console.warn("⚠️", data.error);
+        }
+
+    } catch (error) {
+        console.error("❌ Error:", error.message);
+    } finally {
+        consultandoTalla = false; 
+    }
+}
 
   function consultarDatos() {
     const tbody = document.getElementById("tabla-productos");
@@ -1143,6 +1172,8 @@ $(function () {
 
     const formData = new FormData();
     formData.append("cc", selectCc.value);
+    formData.append("codigo", '');
+    formData.append("descripcion", '');
 
     // Mostramos el spinner
     tbody.innerHTML = `
