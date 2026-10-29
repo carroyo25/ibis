@@ -8,7 +8,7 @@
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
-                                    $procura,$finanzas,$operaciones,$tipo,$prioridad,$ientrega,$pentrega,$fcompromiso)
+                                    $procura,$finanzas,$operaciones,$tipo,$prioridad)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -40,9 +40,6 @@
             $this->operaciones      = $operaciones;
             $this->tipo             = $tipo;
             $this->prioridad        = $prioridad;
-            $this->ientrega        = $ientrega;
-            $this->pentrega        = $pentrega;
-            $this->fcompromiso     = $fcompromiso;
         }
 
         function header(){
@@ -73,7 +70,7 @@
 			$this->SetTextColor(0,0,0);
 	 		$this->SetFillColor(229, 229, 229);
 	        $this->Cell(190,7,utf8_decode($this->titulo),0,1,'C'); //envia de parametro
-	        $this->SetFont('Arial','B',7);
+	        $this->SetFont('Arial','B',6);
             $this->Cell(190,6,utf8_decode($this->info),0,1,'C'); //envia proyecto
             
             if ($this->prioridad == "46" && $this->condicion != 0) {
@@ -134,7 +131,7 @@
             
             $this->Line(200,50,200,80); //Lineas de caja
             $this->Line(10,50,10,80); //Lineas de caja
-            $this->Line(123,50,123,72); //Lineas de caja*/
+            $this->Line(123,50,123,80); //Lineas de caja*/
 
 
             $this->SetY(61);
@@ -152,7 +149,9 @@
             $this->Cell(13,3,utf8_decode("E-mail :"),"BL",0);
             $this->Cell(100,3,utf8_decode($this->correo),"B",0); //envia de parametro
             $this->Cell(15,3,utf8_decode("Fecha Entrega :"),"BL",0);
-            $this->Cell(15,3,date("d/m/Y", strtotime($this->fentrega)),"B",0); //envia de parametro
+            // Si $this->fentrega es null o no existe, usa '' (vacío). Si existe, usa la fecha formateada.
+            $fechaEntrega = !empty($this->fentrega) ? date("d/m/Y", strtotime($this->fentrega)) : '';
+            $this->Cell(15, 3, $fechaEntrega, "B", 0);
             $this->Cell(20,3,utf8_decode("Plazo de entrega :"),"B",0);
             $this->Cell(27,3,utf8_decode($this->plazo),"BR",1); //envia de parametro
             
@@ -179,32 +178,18 @@
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"L",0);
             $this->Cell(10,3,utf8_decode("E-mail :"),0,0);
-            $this->Cell(84,3,utf8_decode($this->cor_contacto),0,1); //envia de parametro
-
-            $this->SetFont('Arial','',6);
-            $this->Cell(32,5,utf8_decode("INCOTERM"),1,0);
-            $this->SetFont('Arial','',5);
-            $this->Cell(32,5,utf8_decode($this->ientrega),1,0);
-            $this->SetFont('Arial','',6);
-            $this->Cell(25,5,utf8_decode("Punto entrega pactado"),1,0);
-            $this->SetFont('Arial','',5);
-            $this->Cell(54,5,utf8_decode($this->pentrega),1,0);
-            $this->SetFont('Arial','',6);
-            $this->Cell(32,5,utf8_decode("Fecha compromiso en punto"),1,0);
-            $this->SetFont('Arial','',5);
-            $this->Cell(15,5,date("d/m/Y", strtotime($this->fcompromiso)),1,0);
-
-            $this->SetFont('Arial','',6);
-            $this->Cell(77,3,utf8_decode(""),"LR",0);
+            $this->Cell(84,3,utf8_decode($this->cor_contacto),0,0); //envia de parametro
+            //$this->Cell(77,3,utf8_decode(""),"LR",1);
 
         	$this->SetFillColor(229, 229, 229);
 
 	        // Salto de línea
     		$this->Ln(5);
-            $this->Rect(10,77,190,6,"F"); //fondo de mensaje
+            $this->Rect(10,74,190,6,"F"); //fondo de mensaje
     		$this->SetWidths(array(10,15,15,10,93,17,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C"));
-    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));      
+    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
+                    
         }
 
         function footer(){

@@ -20,11 +20,11 @@ $(function () {
   let consultando = false; // Para evitar que se hagan dos peticiones al mismo tiempo
 
   // Definimos la URL base de tu API (cámbiala por la tuya real)
-const URL_API = "https://rrhhperu.sepcon.net/api/";
+  const URL_API = "https://rrhhperu.sepcon.net/api/";
 
-// Variable global para guardar el token y no pedirlo cada vez
-let tokenActual = null;
-let tokenExpira = 0;
+  // Variable global para guardar el token y no pedirlo cada vez
+  let tokenActual = null;
+  let tokenExpira = 0;
 
   $("#espera").fadeOut();
 
@@ -704,8 +704,8 @@ let tokenExpira = 0;
       const ordenCompra = fila.cells[2].innerText.toLowerCase();
       const numeroPedido = fila.cells[3].innerText.toLowerCase();
 
-      const coincideTexto = codigo.includes(filtroTexto) || descripcion.includes(filtroTexto);
-
+      const coincideTexto =
+        codigo.includes(filtroTexto) || descripcion.includes(filtroTexto);
 
       if (coincideTexto) {
         fila.style.display = "";
@@ -844,8 +844,8 @@ let tokenExpira = 0;
       unidad: productoActual.unidad, // <-- DESCRIPCIÓN PLANA
       cantidad: cantidad,
       serie: serie,
-      hoja:hoja,
-      isometrico:isometrico,
+      hoja: hoja,
+      isometrico: isometrico,
       estado: estado,
       observaciones: observaciones,
       esInicial: false,
@@ -936,29 +936,29 @@ let tokenExpira = 0;
 
     console.log("=== DATOS PARA EL BIOMÉTRICO (TOPAZ) ===");
     // 1. Declaramos la variable vacía AFUERA del bucle
-    let filasHTML = '';
+    let filasHTML = "";
 
     const datos_finales = JSON.stringify(payload, null, 2);
-    const cuerpoTablaPrincipal = document.getElementById("cuerpoTablaPrincipal");
+    const cuerpoTablaPrincipal = document.getElementById(
+      "cuerpoTablaPrincipal",
+    );
     const nfilas = $("#tablaPrincipal tr").length;
     // Esta línea obtiene la fecha actual en formato YYYY-MM-DD
     const fechaHoy = obtenerFechaLocal();
 
-    
-
     carrito.forEach((item) => {
-       filasHTML += `<tr data-registrado="0" class="pointer" data-idprod="${item.itemId}" data-cambio="${item.motivoId || ''}" data-patrimonio="${item.esPatrimonio || false}">
+      filasHTML += `<tr data-registrado="0" class="pointer" data-idprod="${item.itemId}" data-cambio="${item.motivoId || ""}" data-patrimonio="${item.esPatrimonio || false}">
                     <td class="textoDerecha">${nfilas}</td>
                     <td class="textoCentro">${item.codigo}</td>
                     <td class="pl20px">${item.descripcion}</td>
-                    <td class="textoCentro">${item.cabrevia || 'UND'}</td>
+                    <td class="textoCentro">${item.cabrevia || "UND"}</td>
                     <td class=""><input type="text" value="${item.cantidad}" readonly></td>
-                    <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fechaHoy || ''}"></td>
-                    <td class=""><input type="text" class="entrada" value="${item.hoja || ''}"></td>
-                    <td class=""><input type="text" class="entrada" value="${item.isometrico || ''}"></td>
-                    <td class=""><input type="text" class="entrada" value="${item.observaciones || ''}"></td>
-                    <td class=""><input type="text" class="entrada" value="${item.serie || ''}"></td>
-                    <td class="textoCentro"> <input type="checkbox" class="entrada" ${item.esPatrimonio ? 'checked' : ''} disabled> </td>
+                    <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fechaHoy || ""}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.hoja || ""}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.isometrico || ""}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.observaciones || ""}"></td>
+                    <td class=""><input type="text" class="entrada" value="${item.serie || ""}"></td>
+                    <td class="textoCentro"> <input type="checkbox" class="entrada" ${item.esPatrimonio ? "checked" : ""} disabled> </td>
                     <td class="">${item.motivoTexto || item.motivo}</td>
                     <td class="">${item.estado}</td>
                     <td class=""></td>
@@ -966,8 +966,8 @@ let tokenExpira = 0;
                 </tr>`;
     });
 
-     // Insertamos todas las filas de golpe (súper rápido)
-    cuerpoTablaPrincipal.insertAdjacentHTML('afterbegin', filasHTML);
+    // Insertamos todas las filas de golpe (súper rápido)
+    cuerpoTablaPrincipal.insertAdjacentHTML("afterbegin", filasHTML);
 
     console.log("========================================");
 
@@ -1045,114 +1045,197 @@ let tokenExpira = 0;
     $("#dialogo_registro").fadeOut();
   }
 
-   // ==========================================
+  // ==========================================
   // 4. LÓGICA DE CONSUMO INICIAL
   // ==========================================
   async function agregarConsumoInicial() {
-    // 1. Capturamos el DNI del input
+    // 1. Capturamos el DNI
     const dni = $("#docident").val();
 
     if (!dni) {
-        alert("Por favor, ingrese un documento de identidad.");
-        return;
+      mostrarMensaje(
+        "🧨 Por favor, ingrese un documento de identidad.",
+        "mensaje_error",
+      );
+      return;
     }
 
     try {
-        // 2. Esperamos a que la consulta termine (usando await)
-        const tallasIniciales = await consultarTallas(dni);
+      // 2. Consultamos las tallas a la API externa
+      const tallasIniciales = await consultarTallas(dni);
 
-        // 3. Verificamos si realmente obtuvimos datos
-        if (tallasIniciales && tallasIniciales.success) {
-            console.log("✅ Tallas del trabajador:", tallasIniciales);
-            
-            let formData = new FormData();
-            formData.append("cc", $("#costosSearch").val());
-            formData.append("tallas",JSON.stringify(tallasIniciales));
+      // 3. Verificamos si obtuvimos respuesta exitosa
+      if (tallasIniciales && tallasIniciales.success) {
+        console.log("✅ Tallas del trabajador:", tallasIniciales);
 
-            fetch(RUTA+'consumo/tallasPersonal',{
-              method:'POST',
-              body:formData
-            })
-            .then(response=>response.json())
-            .then(data=>{
-              console.log(data);
-            })
-            
-        } else {
-            mostrarMensaje("🧨 No se encontraron tallas para este trabajador.","mensaje_error");
-        }
+        // 4. Preparamos los datos para enviar a tu backend local
+        let formData = new FormData();
+        formData.append("cc", $("#costosSearch").val());
+        formData.append("tallas", JSON.stringify(tallasIniciales));
 
+        // 5. Hacemos la petición a tu controlador
+        fetch(RUTA + "consumo/tallasPersonal", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              console.warn(
+                "⚠️ El servidor respondió con estado HTTP:",
+                response.status,
+              );
+            }
+            return response.text();
+          })
+          .then((textoCrudo) => {
+            console.log("🕵️‍♂️ RESPUESTA CRUDA:", textoCrudo);
+
+            // Limpiamos cualquier basura invisible (espacios, saltos de línea, null)
+            const textoLimpio = textoCrudo.trim();
+
+            try {
+              const data = JSON.parse(textoLimpio);
+
+              if (data.success) {
+                // Convertimos el objeto { camisa: {...}, pantalon: {...} } a un Array
+                const productosEncontrados = Object.values(data.productos);
+
+                if (productosEncontrados.length > 0) {
+                  // 6. LIMPIEZA TOTAL DE LA TABLA Y CACHÉ
+                  const tbody = document.getElementById("tabla-productos");
+                  if (tbody) tbody.innerHTML = ""; // Vaciamos la tabla visual
+
+                  cacheProductos = []; // Vaciamos la caché anterior
+
+                  // 7. LLENAMOS LA CACHÉ CON LOS NUEVOS PRODUCTOS
+                  cacheProductos = productosEncontrados;
+
+                  // 8. PINTAMOS LA TABLA
+                  if (typeof pintarTabla === "function") {
+                    pintarTabla(cacheProductos);
+                  } else {
+                    console.error(
+                      "❌ La función pintarTabla no está definida.",
+                    );
+                  }
+
+                  mostrarMensaje(
+                    "✅ Productos encontrados por talla. Seleccione para agregar.",
+                    "mensaje_exito",
+                  );
+                } else {
+                  mostrarMensaje(
+                    "🧨 No se encontraron productos con stock.",
+                    "mensaje_error",
+                  );
+                }
+              } else {
+                mostrarMensaje(
+                  "🧨 " + (data.error || "Error del servidor."),
+                  "mensaje_error",
+                );
+              }
+            } catch (errorJson) {
+              console.error("❌ Error parseando JSON:", errorJson.message);
+              console.error("Texto que intentó parsear:", textoLimpio);
+              mostrarMensaje(
+                "🧨 Error interno al leer los datos.",
+                "mensaje_error",
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error en la petición de stock:", error);
+            mostrarMensaje(
+              "🧨 Error de conexión al buscar stock.",
+              "mensaje_error",
+            );
+          });
+      } else {
+        // La API externa no encontró tallas
+        mostrarMensaje(
+          "🧨 No se encontraron tallas para este trabajador.",
+          "mensaje_error",
+        );
+      }
     } catch (error) {
-        console.error("Error al consultar tallas:", error);
+      console.error("Error al consultar tallas:", error);
+      mostrarMensaje("🧨 Error al consultar las tallas.", "mensaje_error");
     }
   }
 
   // Variable global para controlar el bloqueo
-let consultandoTalla = false;
+  let consultandoTalla = false;
 
-// Agregamos un parámetro para saber si ya reintentamos
-async function consultarTallas(dni, esReintento = false) {
+  // Agregamos un parámetro para saber si ya reintentamos
+  async function consultarTallas(dni, esReintento = false) {
     if (consultandoTalla) {
-        console.log("⏳ Ya hay una consulta en curso...");
-        return;
+      console.log("⏳ Ya hay una consulta en curso...");
+      return;
     }
     consultandoTalla = true;
 
     try {
-        const ahora = Math.floor(Date.now() / 1000);
-        
-        // Si no hay token o expiró, lo pedimos
-        if (!tokenActual || ahora > (tokenExpira - 60)) {
-            console.log("Pidiendo nuevo token...");
-            const resToken = await fetch(`${URL_API}generar_token.php`);
-            const dataToken = await resToken.json();
-            
-            if (!dataToken.success) throw new Error("No se pudo obtener el token.");
-            tokenActual = dataToken.token;
-            tokenExpira = dataToken.expira_en;
+      const ahora = Math.floor(Date.now() / 1000);
+
+      // Si no hay token o expiró, lo pedimos
+      if (!tokenActual || ahora > tokenExpira - 60) {
+        console.log("Pidiendo nuevo token...");
+        const resToken = await fetch(`${URL_API}generar_token.php`);
+        const dataToken = await resToken.json();
+
+        if (!dataToken.success) throw new Error("No se pudo obtener el token.");
+        tokenActual = dataToken.token;
+        tokenExpira = dataToken.expira_en;
+      }
+
+      console.log("Consultando tallas para el DNI:", dni);
+      const resTallas = await fetch(
+        `${URL_API}tallasApi.php?doc=${dni}&token=${tokenActual}`,
+        {
+          method: "GET",
+        },
+      );
+
+      // 🛑 SI DA 401, SOLO REINTENTAMOS UNA VEZ
+      if (resTallas.status === 401) {
+        if (esReintento) {
+          console.error(
+            "❌ El servidor rechazó el token por segunda vez. Deteniendo bucle.",
+          );
+          alert(
+            "Error de seguridad: El servidor rechaza el token. Contacte a soporte.",
+          );
+          return; // Detenemos todo
         }
 
-        console.log("Consultando tallas para el DNI:", dni);
-        const resTallas = await fetch(`${URL_API}tallasApi.php?doc=${dni}&token=${tokenActual}`, {
-            method: 'GET'
-        });
+        console.warn("El token expiró. Reintentando por única vez...");
+        tokenActual = null;
+        consultandoTalla = false;
+        return await consultarTallas(dni, true); // Enviamos true para avisar que ya reintentamos
+      }
 
-        // 🛑 SI DA 401, SOLO REINTENTAMOS UNA VEZ
-        if (resTallas.status === 401) {
-            if (esReintento) {
-                console.error("❌ El servidor rechazó el token por segunda vez. Deteniendo bucle.");
-                alert("Error de seguridad: El servidor rechaza el token. Contacte a soporte.");
-                return; // Detenemos todo
-            }
-            
-            console.warn("El token expiró. Reintentando por única vez...");
-            tokenActual = null; 
-            consultandoTalla = false;
-            return await consultarTallas(dni, true); // Enviamos true para avisar que ya reintentamos
-        }
+      const data = await resTallas.json();
 
-        const data = await resTallas.json();
+      if (data.success) {
+        console.log("✅ Tallas encontradas:", data);
+        const inputPantalon = document.getElementById("inputPantalon");
+        const inputCamisa = document.getElementById("inputCamisa");
+        const inputZapato = document.getElementById("inputZapato");
+        if (inputPantalon) inputPantalon.value = data.pantalon;
+        if (inputCamisa) inputCamisa.value = data.camisa;
+        if (inputZapato) inputZapato.value = data.zapato;
 
-        if (data.success) {
-            console.log("✅ Tallas encontradas:", data);
-            const inputPantalon = document.getElementById('inputPantalon');
-            const inputCamisa = document.getElementById('inputCamisa');
-            const inputZapato = document.getElementById('inputZapato');
-            if (inputPantalon) inputPantalon.value = data.pantalon;
-            if (inputCamisa) inputCamisa.value = data.camisa;
-            if (inputZapato) inputZapato.value = data.zapato;
-
-            return data; // 👈 ESTA ES LA LÍNEA MÁGICA QUE FALTA
-        } else {
-            console.warn("⚠️", data.error);
-        }
-
+        return data; // 👈 ESTA ES LA LÍNEA MÁGICA QUE FALTA
+      } else {
+        console.warn("⚠️", data.error);
+      }
     } catch (error) {
-        console.error("❌ Error:", error.message);
+      console.error("❌ Error:", error.message);
     } finally {
-        consultandoTalla = false; 
+      consultandoTalla = false;
     }
-}
+  }
 
   function consultarDatos() {
     const tbody = document.getElementById("tabla-productos");
@@ -1172,8 +1255,8 @@ async function consultarTallas(dni, esReintento = false) {
 
     const formData = new FormData();
     formData.append("cc", selectCc.value);
-    formData.append("codigo", '');
-    formData.append("descripcion", '');
+    formData.append("codigo", "");
+    formData.append("descripcion", "");
 
     // Mostramos el spinner
     tbody.innerHTML = `
@@ -1355,20 +1438,20 @@ async function consultarTallas(dni, esReintento = false) {
   }
 
   function escaparHTML(str) {
-    if (!str) return '';
+    if (!str) return "";
     return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
   function obtenerFechaLocal() {
     const hoy = new Date();
     const anio = hoy.getFullYear();
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
-    const dia = String(hoy.getDate()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Mes empieza en 0
+    const dia = String(hoy.getDate()).padStart(2, "0");
     return `${anio}-${mes}-${dia}`;
   }
 });

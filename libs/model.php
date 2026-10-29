@@ -3553,16 +3553,16 @@
 
             $condicion = 1;
 
-            $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],$datosOrden[0]['nplazo'],
-                            $datosOrden[0]['cdesalm'],$datosOrden[0]['cnumcot'],$datosOrden[0]['ffechaent'],$datosOrden[0]['pagos'],"",
-                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
-                            $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
-                            $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null,$datosOrden[0]['ntipmov'],null,null,null,null);
+            $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],null,
+                            $datosOrden[0]['cdesalm'],null,null,null,"",
+                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],null,
+                            null,null,null,null,$datosOrden[0]['nagenret'],
+                            null,null,null,
+                            $datosOrden[0]['direccion'],null,null,null,null,$datosOrden[0]['ntipmov'],null,null,null,null);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
+            $pdf->SetWidths(array(10,15,15,10,93,17,15,15));
             $pdf->SetFont('Arial','',4);
             $lc = 0;
             $rc = 0;

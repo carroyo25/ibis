@@ -206,7 +206,6 @@
                     AND p.cdesprod  LIKE :descripcion
 
                 ) AS t
-                WHERE t.saldo > 0
                 ORDER BY t.cdesprod ASC;");
 
                 $sql->execute([

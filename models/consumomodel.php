@@ -889,41 +889,86 @@
 
                 
             } catch (PDOException $th) {
-                echo $th->getMessage();
+                error_log("Error en buscarProductosStocks: " . $th->getMessage());
                 return false;
             } 
         }
 
-        public function buscarCodigosTalla(){
+        public function buscarCodigosTalla() {
             try {
                 $cc = isset($_POST['cc']) ? $_POST['cc'] : '';
                 $tallasJSON = isset($_POST['tallas']) ? $_POST['tallas'] : '';
                 
-                // 🪄 DECODIFICAMOS EL JSON QUE VIENE DEL FRONTEND
                 $tallas = json_decode($tallasJSON, true);
                 
                 if (!$tallas || !isset($tallas['success'])) {
                     echo json_encode(['success' => false, 'error' => 'Datos de tallas inválidos']);
-                    return;
+                    exit;
                 }
 
-                return array("datos"=>$tallas,"cc"=>$cc);
+                $sexo = ($tallas['genero'] === 'MA') ? 'VARON' : 'MUJER';
+                $productosEncontrados = [];
+                $descripcionesBuscadas = [];
 
-                foreach($tallas as $talla){
-                    $sexo = $talla['genero'] === 'M' ? 'VARON' : 'MUJER';
-                    $descripcion = 'CAMISA%'.$sexo.'%'.$talla['camisa'];
+                $prendas = ['pantalon', 'camisa', 'zapato', 'polo', 'capotin', 'chaleco', 'casco', 'lentes', 'guantes'];
 
-                    //$this->buscarProductosStocks($cc,'',$descripcion);
+                foreach ($prendas as $tipoPrenda) {
+                    if (!isset($tallas[$tipoPrenda]) || empty($tallas[$tipoPrenda])) {
+                        continue;
+                    }
+                    
+                    $talla = $tallas[$tipoPrenda];
+
+                    // 🥾 LÓGICA ESPECIAL PARA CALZADO
+                    if ($tipoPrenda === 'zapato' || $tipoPrenda === 'calzado' || $tipoPrenda === 'bota') {
+                        $palabrasClave = ['ZAPATO', 'BOTA', 'CALZADO', 'ZAPATILLA'];
+                        
+                        foreach ($palabrasClave as $palabra) {
+                            $descripcion = $palabra . '%' . $talla;
+                            $descripcionesBuscadas[] = $descripcion;
+                            
+                            $resultadoTemp = @$this->buscarProductosStocks($cc, $descripcion, '');
+                            
+                            if (is_array($resultadoTemp) && isset($resultadoTemp['success']) && $resultadoTemp['success'] && count($resultadoTemp['datos']) > 0) {
+                                // Guardamos el primero que encuentre y rompemos el bucle
+                                $productosEncontrados[$tipoPrenda] = $resultadoTemp['datos'][0];
+                                break; 
+                            }
+                        }
+                    } 
+                    // 👕 LÓGICA PARA ROPA
+                    else {
+                        $descripcion = strtoupper($tipoPrenda) . '%' . $sexo . '%' . $talla;
+                        $descripcionesBuscadas[] = $descripcion;
+                        
+                        $resultado = @$this->buscarProductosStocks($cc, $descripcion, '');
+                        
+                        if (is_array($resultado) && isset($resultado['success']) && $resultado['success'] && count($resultado['datos']) > 0) {
+                            $productosEncontrados[$tipoPrenda] = $resultado['datos'][0];
+                        }
+                    }
                 }
-                
-                echo json_encode([
-                    'success' => true,
-                    'mensaje' => 'Tallas recibidas correctamente',
-                    'tallas_recibidas' => $tallas // Solo para verificar
-                ]);
+
+                // 🔥 LA CONDICIÓN FINAL
+                if (count($productosEncontrados) > 0) {
+                    echo json_encode([
+                        'success' => true,
+                        'productos' => $productosEncontrados,
+                        'debug_descripciones' => $descripcionesBuscadas 
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'No se encontró stock para ninguna de las tallas.',
+                        'debug_descripciones' => $descripcionesBuscadas,
+                        'tallas_recibidas' => $tallas 
+                    ]);
+                }
+                exit;
 
             } catch (PDOException $th) {
-                return array("error"=>$th->getMessage());
+                echo json_encode(['success' => false, 'error' => $th->getMessage()]);
+                exit;
             }
         }
 
