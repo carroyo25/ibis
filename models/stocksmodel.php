@@ -20,52 +20,46 @@
                 $conn->prepare("SET @idCostoObra = :id")
                     ->execute([':id' => $cc]);
 
-                $sql = $conn->prepare("SELECT *
-                FROM (
+                $sql = $conn->prepare("SELECT  *
+                FROM
+                    (
                     SELECT
                         p.id_cprod,
                         p.ccodprod,
-                        UPPER(p.cdesprod)                         AS cdesprod,
+                        UPPER(p.cdesprod) AS cdesprod,
                         um.cabrevia,
-                        UPPER(g.cdescrip)                         AS grupo,
-                        UPPER(c.cdescrip)                         AS clase,
-                        UPPER(f.cdescrip)                         AS familia,
+                        UPPER(g.cdescrip) AS grupo,
+                        UPPER(c.cdescrip) AS clase,
+                        UPPER(f.cdescrip) AS familia,
 
-                        /* ============================================================
-                        MOVIMIENTOS DE ENTRADA
-                        ============================================================ */
-                        COALESCE(r.cantidad_obra, '0')              AS ingresos_recepcion,
-                        r.idreg                                   AS idreg_recepcion,
+                /* ============================================================
+                MOVIMIENTOS DE ENTRADA
+                ============================================================ */
+                        COALESCE(r.cantidad_obra, 0)            AS ingresos_recepcion,
+                        r.idreg                                 AS idreg_recepcion,
+                        COALESCE(inv.inventarios_cantidad, 0)   AS ingresos_inventario,
+                        inv.condicion                           AS condicion_inventario,
+                        COALESCE(it.ingreso_transferencia, 0)   AS ingresos_transf_antigua,
+                        COALESCE(te.total_traspaso_entrante, 0) AS ingresos_traspaso_nuevo,
+                        COALESCE(cons.devoluciones, 0)          AS ingresos_devoluciones,
+                        COALESCE(aj.ajustes_cantidad, 0)        AS ingresos_ajustes,
 
-                        COALESCE(inv.inventarios_cantidad, 0)     AS ingresos_inventario,
-                        inv.condicion                             AS condicion_inventario,
+                /* ============================================================
+                MOVIMIENTOS DE SALIDA
+                ============================================================ */
+                        COALESCE(cons.consumos, 0)              AS salidas_consumos,
+                        COALESCE(st.salida_transferencia, 0)    AS salidas_transf_antigua,
+                        st.iditem                               AS iditem_transf_antigua,
+                        COALESCE(ts.total_traspaso_saliente, 0) AS salidas_traspaso_nuevo,
 
-                        COALESCE(it.ingreso_transferencia, 0)     AS ingresos_transf_antigua,
+                /* ============================================================
+                STOCK MÍNIMO
+                ============================================================ */
+                        min_.cantidad_minima                    AS minimo,
 
-                        COALESCE(te.total_traspaso_entrante, 0)   AS ingresos_traspaso_nuevo,
-
-                        COALESCE(cons.devoluciones, 0)            AS ingresos_devoluciones,
-
-                        COALESCE(aj.ajustes_cantidad, 0)          AS ingresos_ajustes,
-
-                        /* ============================================================
-                        MOVIMIENTOS DE SALIDA
-                        ============================================================ */
-                        COALESCE(cons.consumos, 0)                AS salidas_consumos,
-
-                        COALESCE(st.salida_transferencia, 0)      AS salidas_transf_antigua,
-                        st.iditem                                 AS iditem_transf_antigua,
-
-                        COALESCE(ts.total_traspaso_saliente, 0)   AS salidas_traspaso_nuevo,
-
-                        /* ============================================================
-                        STOCK MÍNIMO
-                        ============================================================ */
-                        min_.cantidad_minima                      AS minimo,
-
-                        /* ============================================================
-                        TOTALES
-                        ============================================================ */
+                /* ============================================================
+                TOTALES
+                ============================================================ */
                         (
                             COALESCE(r.cantidad_obra, 0)
                         + COALESCE(inv.inventarios_cantidad, 0)
@@ -81,132 +75,177 @@
                         + COALESCE(ts.total_traspaso_saliente, 0)
                         ) AS total_salidas,
 
-                        /* ============================================================
-                        SALDO FINAL
-                        ============================================================ */
+                /* ============================================================
+                SALDO FINAL
+                ============================================================ */
                         (
                             COALESCE(r.cantidad_obra, 0)
                         + COALESCE(inv.inventarios_cantidad, 0)
+                        + COALESCE(it.ingreso_transferencia, 0)
                         + COALESCE(te.total_traspaso_entrante, 0)
                         + COALESCE(cons.devoluciones, 0)
                         + COALESCE(aj.ajustes_cantidad, 0)
-                        ) - (
+                        )
+                        -
+                        (
                             COALESCE(cons.consumos, 0)
                         + COALESCE(st.salida_transferencia, 0)
                         + COALESCE(ts.total_traspaso_saliente, 0)
                         ) AS saldo,
+
                         aj.condicion
-                    FROM cm_producto p
-                    LEFT JOIN tb_unimed  um ON um.ncodmed    = p.nund
-                    LEFT JOIN tb_grupo   g  ON g.ncodgrupo   = p.ngrupo
-                    LEFT JOIN tb_clase   c  ON c.ncodclase   = p.nclase
-                    LEFT JOIN tb_familia f  ON f.ncodfamilia = p.nfam
+
+                    FROM
+                        cm_producto p
+                        LEFT JOIN tb_unimed   um ON um.ncodmed    = p.nund
+                        LEFT JOIN tb_grupo    g  ON g.ncodgrupo   = p.ngrupo
+                        LEFT JOIN tb_clase    c  ON c.ncodclase   = p.nclase
+                        LEFT JOIN tb_familia  f  ON f.ncodfamilia = p.nfam
 
                     /* 1. RECEPCIÓN */
                     LEFT JOIN (
-                        SELECT e.codprod,
+                        SELECT
+                            e.codprod,
                             SUM(e.cant_ingr) AS cantidad_obra,
                             MAX(e.idreg)     AS idreg
                         FROM alm_existencia e
                         INNER JOIN alm_cabexist cb ON cb.idreg = e.idregistro
                         WHERE e.nflgActivo = 1
-                        AND cb.idcostos  = @idCostoObra
+                        AND cb.idcostos = @idCostoObra
                         GROUP BY e.codprod
                     ) r ON r.codprod = p.id_cprod
 
                     /* 2. INVENTARIO */
                     LEFT JOIN (
-                        SELECT d.codprod,
+                        SELECT
+                            d.codprod,
                             SUM(d.cant_ingr) AS inventarios_cantidad,
                             MAX(d.condicion) AS condicion
                         FROM alm_inventariodet d
                         INNER JOIN alm_inventariocab cb ON cb.idreg = d.idregistro
                         WHERE d.nflgActivo = 1
-                        AND cb.idcostos  = @idCostoObra
+                        AND cb.idcostos = @idCostoObra
                         GROUP BY d.codprod
                     ) inv ON inv.codprod = p.id_cprod
 
                     /* 3. CONSUMOS Y DEVOLUCIONES */
                     LEFT JOIN (
-                        SELECT idprod,
+                        SELECT
+                            idprod,
                             SUM(cantsalida)     AS consumos,
                             SUM(cantdevolucion) AS devoluciones
                         FROM alm_consumo
-                        WHERE ncostos   = @idCostoObra
+                        WHERE ncostos = @idCostoObra
                         AND flgactivo = 1
                         GROUP BY idprod
                     ) cons ON cons.idprod = p.id_cprod
 
                     /* 4. TRANSFERENCIAS ANTIGUAS SALIENTES */
                     LEFT JOIN (
-                        SELECT d.idcprod,
+                        SELECT
+                            d.idcprod,
                             SUM(d.ncanti) AS salida_transferencia,
                             MAX(d.iditem) AS iditem
                         FROM alm_transferdet d
                         INNER JOIN alm_transfercab cb ON cb.idreg = d.idtransfer
                         WHERE d.nflgactivo = 1
-                        AND cb.idcc       = @idCostoObra
+                        AND cb.idcc = @idCostoObra
                         GROUP BY d.idcprod
                     ) st ON st.idcprod = p.id_cprod
 
                     /* 5. TRANSFERENCIAS ANTIGUAS ENTRANTES */
                     LEFT JOIN (
-                        SELECT d.idcprod, SUM(d.ncanti) AS ingreso_transferencia
+                        SELECT
+                            d.idcprod,
+                            SUM(d.ncanti) AS ingreso_transferencia
                         FROM alm_transferdet d
                         INNER JOIN alm_transfercab cb ON cb.idreg = d.idtransfer
                         WHERE d.nflgactivo = 1
-                        AND cb.idcd       = @idCostoObra
+                        AND cb.idcd = @idCostoObra
                         GROUP BY d.idcprod
                     ) it ON it.idcprod = p.id_cprod
 
                     /* 6. STOCK MÍNIMO */
                     LEFT JOIN (
-                        SELECT idprod, MAX(ncantidad) AS cantidad_minima
+                        SELECT
+                            idprod,
+                            MAX(ncantidad) AS cantidad_minima
                         FROM alm_minimo
                         WHERE ncostos = @idCostoObra
                         GROUP BY idprod
                     ) min_ ON min_.idprod = p.id_cprod
 
-                    /* 7. AJUSTES */
+                    /* 7. AJUSTES  (d.condicion con MAX para GROUP BY válido) */
                     LEFT JOIN (
-                        SELECT d.codprod, SUM(d.cant_ingr) AS ajustes_cantidad, d.condicion
+                        SELECT
+                            d.codprod,
+                            SUM(d.cant_ingr) AS ajustes_cantidad,
+                            MAX(d.condicion) AS condicion
+                            /*
+                            Alternativa si los ajustes pueden ser de salida:
+                            SUM(CASE
+                                    WHEN d.condicion = 'I' THEN  d.cant_ingr
+                                    WHEN d.condicion = 'S' THEN -d.cant_ingr
+                                    ELSE 0
+                                END) AS ajustes_cantidad,
+                            MAX(d.condicion) AS condicion
+                            */
                         FROM alm_ajustedet d
                         INNER JOIN alm_ajustecab cb ON cb.idreg = d.idregistro
                         WHERE d.nflgActivo = 1
-                        AND cb.idcostos  = @idCostoObra
+                        AND cb.idcostos = @idCostoObra
                         AND cb.idrecepciona IS NOT NULL
                         GROUP BY d.codprod
                     ) aj ON aj.codprod = p.id_cprod
 
                     /* 8. TRASPASOS NUEVOS SALIENTES */
                     LEFT JOIN (
-                        SELECT d.idcprod, SUM(d.ncanti) AS total_traspaso_saliente
+                        SELECT
+                            d.idcprod,
+                            SUM(d.ncanti) AS total_traspaso_saliente
                         FROM alm_traspasodet d
                         INNER JOIN alm_traspasocab c ON c.idreg = d.idtraspaso
                         WHERE d.nflgactivo = 1
                         AND c.nflgactivo = 1
-                        AND d.idcc       = @idCostoObra
+                        AND d.idcc = @idCostoObra
                         GROUP BY d.idcprod
                     ) ts ON ts.idcprod = p.id_cprod
 
                     /* 9. TRASPASOS NUEVOS ENTRANTES */
                     LEFT JOIN (
-                        SELECT d.idcprod, SUM(d.ncanti) AS total_traspaso_entrante
+                        SELECT
+                            d.idcprod,
+                            SUM(d.ncanti) AS total_traspaso_entrante
                         FROM alm_traspasodet d
                         INNER JOIN alm_traspasocab c ON c.idreg = d.idtraspaso
                         WHERE d.nflgactivo = 1
                         AND c.nflgactivo = 1
-                        AND d.idcd       = @idCostoObra
+                        AND d.idcd = @idCostoObra
                         GROUP BY d.idcprod
                     ) te ON te.idcprod = p.id_cprod
 
-                    WHERE p.flgActivo = 1
-                    AND p.ntipo     = 37
-                    AND p.ccodprod  LIKE :codigo
-                    AND p.cdesprod  LIKE :descripcion
-
-                ) AS t
-                ORDER BY t.cdesprod ASC;");
+                    WHERE
+                        p.flgActivo = 1
+                        AND p.ntipo = 37
+                        AND p.ccodprod LIKE :codigo
+                        AND p.cdesprod LIKE  :descripcion
+                    ) AS t
+                WHERE
+                /* ============================================================
+                SOLO PRODUCTOS CON MOVIMIENTO EN CUALQUIER CONCEPTO
+                (sin importar si el saldo final es positivo, cero o negativo)
+                ============================================================ */
+                    COALESCE(t.ingresos_recepcion, 0)          <> 0
+                    OR COALESCE(t.ingresos_inventario, 0)         <> 0
+                    OR COALESCE(t.ingresos_transf_antigua, 0)     <> 0
+                    OR COALESCE(t.ingresos_traspaso_nuevo, 0)     <> 0
+                    OR COALESCE(t.ingresos_devoluciones, 0)       <> 0
+                    OR COALESCE(t.ingresos_ajustes, 0)            <> 0
+                    OR COALESCE(t.salidas_consumos, 0)            <> 0
+                    OR COALESCE(t.salidas_transf_antigua, 0)      <> 0
+                    OR COALESCE(t.salidas_traspaso_nuevo, 0)      <> 0
+                ORDER BY
+                    t.cdesprod ASC;");
 
                 $sql->execute([
                     ":codigo"      => $cp,
@@ -215,7 +254,7 @@
 
                 $datos = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-                if (count($datos) > 0) {
+                if (count($datos) != 0) {
                     $success = true;
                 }
 

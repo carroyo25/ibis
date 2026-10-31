@@ -3520,6 +3520,8 @@
         /*para generar la vista de los previas*/
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
+            // Asegúrate de que esta ruta sea la correcta
+            require_once $_SERVER['DOCUMENT_ROOT'] . '/ibis/public/phpqrcode/qrlib.php';
 
             $datosOrden         = $this->cabeceraOrden($id);
             $detalles           = $this->detallesOrden($id);
@@ -3552,6 +3554,17 @@
             $file = uniqid().".pdf";
 
             $condicion = 1;
+
+            // =====================================================================
+            // 1. CONSULTA A LA BASE DE DATOS 
+            // =====================================================================
+            $numeroBuscar = intval($datosOrden[0]['nrodoc']);
+            
+            
+            $stmt = $this->db->connect()->prepare("SELECT url FROM qaqc_enlaces WHERE orden LIKE ? LIMIT 1");
+            $stmt->execute(["%" . $numeroBuscar . "%"]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            // =====================================================================
 
             $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],null,
                             $datosOrden[0]['cdesalm'],null,null,null,"",
@@ -3646,14 +3659,57 @@
 
             $pdf->SetFont('Arial',"B","8");
 
+            // =====================================================================
+            // 2. GENERACIÓN E INSERCIÓN DEL CÓDIGO QR (CON DEBUG)
+            // =====================================================================
+            
+            // Guardamos la posición actual del cursor
+            $x_actual = $pdf->GetX();
+            $y_actual = $pdf->GetY();
+
+            if ($resultado && !empty($resultado['url'])) {
+                $nextcloudUrl = $resultado['url'];
+                
+                // Escribimos la URL en el PDF para ver si la está leyendo bien
+                $pdf->SetXY(10, 200);
+                $pdf->SetFont('Arial', '', 8);
+                $pdf->Cell(0, 5, "DEBUG URL ENCONTRADA: " . $nextcloudUrl, 0, 1);
+
+                // Ruta absoluta para guardar el QR
+                $qrFile = $_SERVER['DOCUMENT_ROOT'] . '/ibis/public/documentos/ordenes/qr/qr_' . uniqid() . '.png';
+                
+                // Generar la imagen del QR
+                QRcode::png($nextcloudUrl, $qrFile, QR_ECLEVEL_L, 4);
+                
+                // Verificamos si la imagen se creó y la insertamos
+                if (file_exists($qrFile)) {
+                    $pdf->Image($qrFile, 150, 245, 30, 30, 'PNG');
+                    $pdf->SetXY(145, 276);
+                    $pdf->SetFont('Arial', '', 6);
+                    $pdf->Cell(40, 4, 'Escanear para ver documentos', 0, 0, 'C');
+                } else {
+                    $pdf->SetXY(10, 210);
+                    $pdf->SetFont('Arial', '', 8);
+                    $pdf->Cell(0, 5, "DEBUG: La imagen QR no se creo en: " . $qrFile, 0, 1);
+                }
+            } else {
+                $pdf->SetXY(10, 200);
+                $pdf->SetFont('Arial', '', 8);
+                $pdf->Cell(0, 5, "DEBUG: NO SE ENCONTRO URL PARA LA ORDEN: " . $numeroBuscar, 0, 1);
+            }
+            
+            // Devolvemos el cursor a su lugar
+            $pdf->SetXY($x_actual, $y_actual);
+            // =====================================================================
             
             $filename = "public/documentos/ordenes/vistaprevia/".$file;
 
             $pdf->Output($filename,'F');
 
-            return $filename;
+            return $filename . $datosOrden[0]['nrodoc'];
         }
 
+        
         /*para generar la vista de los previas*/
         public function generarDescargaOrden($id){
            require_once("public/formatos/ordenes.php");
