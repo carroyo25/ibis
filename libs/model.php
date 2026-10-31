@@ -3526,6 +3526,7 @@
             $datosOrden         = $this->cabeceraOrden($id);
             $detalles           = $this->detallesOrden($id);
 
+
             if ($datosOrden[0]['ntipmov'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
 
@@ -3558,11 +3559,11 @@
             // =====================================================================
             // 1. CONSULTA A LA BASE DE DATOS 
             // =====================================================================
-            $numeroBuscar = intval($datosOrden[0]['nrodoc']);
+            $numeroBuscar = '%'.$datosOrden[0]['cnumero'].'%';
             
             
             $stmt = $this->db->connect()->prepare("SELECT url FROM qaqc_enlaces WHERE orden LIKE ? LIMIT 1");
-            $stmt->execute(["%" . $numeroBuscar . "%"]);
+            $stmt->execute([$numeroBuscar]);
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             // =====================================================================
 
@@ -3673,7 +3674,6 @@
                 // Escribimos la URL en el PDF para ver si la está leyendo bien
                 $pdf->SetXY(10, 200);
                 $pdf->SetFont('Arial', '', 8);
-                $pdf->Cell(0, 5, "DEBUG URL ENCONTRADA: " . $nextcloudUrl, 0, 1);
 
                 // Ruta absoluta para guardar el QR
                 $qrFile = $_SERVER['DOCUMENT_ROOT'] . '/ibis/public/documentos/ordenes/qr/qr_' . uniqid() . '.png';
@@ -3683,20 +3683,15 @@
                 
                 // Verificamos si la imagen se creó y la insertamos
                 if (file_exists($qrFile)) {
-                    $pdf->Image($qrFile, 150, 245, 30, 30, 'PNG');
+                    $pdf->Image($qrFile, 178, 49.5, 17, 17, 'PNG');
                     $pdf->SetXY(145, 276);
                     $pdf->SetFont('Arial', '', 6);
-                    $pdf->Cell(40, 4, 'Escanear para ver documentos', 0, 0, 'C');
                 } else {
                     $pdf->SetXY(10, 210);
                     $pdf->SetFont('Arial', '', 8);
                     $pdf->Cell(0, 5, "DEBUG: La imagen QR no se creo en: " . $qrFile, 0, 1);
                 }
-            } else {
-                $pdf->SetXY(10, 200);
-                $pdf->SetFont('Arial', '', 8);
-                $pdf->Cell(0, 5, "DEBUG: NO SE ENCONTRO URL PARA LA ORDEN: " . $numeroBuscar, 0, 1);
-            }
+            } 
             
             // Devolvemos el cursor a su lugar
             $pdf->SetXY($x_actual, $y_actual);
@@ -3706,7 +3701,7 @@
 
             $pdf->Output($filename,'F');
 
-            return $filename . $datosOrden[0]['nrodoc'];
+            return $filename.' ';
         }
 
         
