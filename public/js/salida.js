@@ -75,15 +75,16 @@ $(function() {
                     $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
                     $("#almacen_destino").val(data.guias[0].cdestino);
                     $("#almacen_destino_direccion").val(data.guias[0].cdirdest);
-                    $("#empresa_transporte_razon").val(data.guias[0].centi);
-                    $("#direccion_proveedor").val(data.guias[0].centidir);
-                    $("#ruc_proveedor").val(data.guias[0].centiruc);
+                    $("#empresa_transporte_razon").val(data.guias[0].crazonsoc);
+                    $("#direccion_proveedor").val(data.guias[0].cviadireccion);
+                    $("#ruc_proveedor").val(data.guias[0].cnumdoc);
+                    $("#tipo_transporte").val(data.guias[0].transporte);
                     $("#modalidad_traslado").val(data.guias[0].ctraslado);
                     $("#tipo_envio").val(data.guias[0].cenvio);
                     $("#autoriza").val(data.guias[0].cautoriza);
                     $("#destinatario").val(data.guias[0].cdestinatario);
                     $("#observaciones").val(data.guias[0].cobserva);
-                    $("#nombre_conductor").val(data.guias[0].cnombre);
+                    $("#nombre_conductor").val(data.guias[0].cnrodoc);
                     $("#licencia_conducir").val(data.guias[0].clicencia);
                     $("#marca").val(data.guias[0].cmarca);
                     $("#placa").val(data.guias[0].cplaca);
@@ -94,6 +95,8 @@ $(function() {
                     $("#peso").val(data.guias[0].nPeso);
                     $("#registro_mtc").val(data.guias[0].cdigcateg);
                     $("#conductor_dni").val(data.guias[0].cnrodoc);
+                    $("#bultos").val(data.guias[0].nBultos);
+                    $("#dimensiones").val(data.guias[0].cDimensiones);
                 }
                 
                 $("#estado")
@@ -170,17 +173,6 @@ $(function() {
         try {
 
             $("#busqueda").fadeIn();
-
-            /*$.post(RUTA+"salida/ordenes",
-            function (data, textStatus, jqXHR) {
-                $("#ordenes tbody")
-                    .empty()
-                    .append(data);
-
-                
-            },
-            "text"
-            );*/
             
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');

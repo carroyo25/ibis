@@ -3518,6 +3518,7 @@
         }
 
         /*para generar la vista de los previas*/
+        /*ESTO DEBO ACTUALIZAR PARA QAQC*/
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
             // Asegúrate de que esta ruta sea la correcta

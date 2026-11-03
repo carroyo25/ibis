@@ -323,24 +323,10 @@
                 $lc = 0;
                 $rc = 0;
 
-                /*$qrsunat = "20504898173-09-T001-711.pdf";
-
-                if ($_SESSION["iduser"] == '62145bbb5a092') {
-                    $pdf->Image('/public/documentos/img/diegoguias.jpg',165,210,35);
-                }
-
-                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
-                    $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
-
-                    $pdf->Image($qrprint,165,210,35);
-                }*/
-
-                //aca podria sumar la orden
 
                 for($i=1;$i<=$nreg;$i++){
 
                     $pdf->SetX(13);
-                    //$pdf->SetCellHeight(1);
                     $pdf->SetFont('Arial','',6);
 
                     $pdf->SetAligns(array("R","R","C","L"));
@@ -390,10 +376,8 @@
                 if ( $guia == "" ) {
                     $guia = $this->numeroGuia();
                     $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado,$guia);
-                    //$guia = $cabeceraGuia['numero_guia'];
-                    
                 }else {
-                    $salida = $this->modificarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado);
+                    $salida = $this->modificarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado,$guia);
                     $guia = $cabeceraGuia['numero_guia'];
                 }
 
@@ -402,6 +386,77 @@
 
             return array("mensaje"=>$salida,"guia"=>$guia);    
                 
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function grabarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado,$nroguia){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,
+                                                                                cnumguia=:guia,
+                                                                                corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,
+                                                                                cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,
+                                                                                centi=:entidad,
+                                                                                centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,
+                                                                                ctraslado=:traslado,
+                                                                                cenvio=:envio,
+                                                                                cautoriza=:autoriza,
+                                                                                cdestinatario=:destinatario,
+                                                                                cobserva=:observaciones,
+                                                                                cnombre=:nombres,
+                                                                                cmarca=:marca,
+                                                                                clicencia=:licencia,
+                                                                                cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,
+                                                                                fguia=:fecha_guia,
+                                                                                cserie=:serie,
+                                                                                nPeso=:peso,
+                                                                                nBultos=:bultos,
+                                                                                cDimensiones=:dimensiones,
+                                                                                identi=:codigo_entidad,
+                                                                                tipotranspo=:tipo_transporte");
+
+                $sql->execute([ "despacho"=>$despacho,
+                                "guia"=>$nroguia,
+                                "origen"=>$cabeceraGuia['almacen_origen'],
+                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                "destino"=>$cabeceraGuia['almacen_destino'],
+                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                "envio"=>$cabeceraGuia['tipo_envio'],
+                                "autoriza"=>$cabeceraGuia['autoriza'],
+                                "destinatario"=>$cabeceraGuia['destinatario'],
+                                "observaciones"=>$cabeceraGuia['observaciones'],
+                                "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                "marca"=>$cabeceraGuia['marca'],
+                                "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                "placa"=>$cabeceraGuia['placa'],
+                                "fecha_traslado"=>$traslado,
+                                "fecha_guia"=>$emision,
+                                "serie"=>'F001',
+                                "peso"=>$cabeceraGuia['peso'],
+                                "bultos"=>$cabeceraGuia['bultos'],
+                                "dimensiones"=>$cabeceraGuia['dimensiones'],
+                                "codigo_entidad"=>$cabeceraGuia['codigo_entidad_transporte'],
+                                "tipo_transporte"=>$cabeceraGuia['codigo_transporte']]);
+                
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $mensaje = "Registro grabado";
+                }else {
+                    $mensaje = "Error al crear el registro";
+                }
+
+                return $mensaje;                
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -1085,52 +1140,7 @@
             }
         }
 
-        public function grabarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado,$nroguia){
-            try {
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
-                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
-                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
-                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
-                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
-                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie");
-
-                $sql->execute([ "despacho"=>$despacho,
-                                "guia"=>$nroguia,
-                                "origen"=>$cabeceraGuia['almacen_origen'],
-                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
-                                "destino"=>$cabeceraGuia['almacen_destino'],
-                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
-                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
-                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
-                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
-                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
-                                "envio"=>$cabeceraGuia['tipo_envio'],
-                                "autoriza"=>$cabeceraGuia['autoriza'],
-                                "destinatario"=>$cabeceraGuia['destinatario'],
-                                "observaciones"=>$cabeceraGuia['observaciones'],
-                                "nombres"=>$cabeceraGuia['nombre_conductor'],
-                                "marca"=>$cabeceraGuia['marca'],
-                                "licencia"=>$cabeceraGuia['licencia_conducir'],
-                                "placa"=>$cabeceraGuia['placa'],
-                                "fecha_traslado"=>$traslado,
-                                "fecha_guia"=>$emision,
-                                "serie"=>'F001']);
-                
-                $rowCount = $sql->rowcount();
-
-                if ($rowCount > 0) {
-                    $mensaje = "Registro grabado";
-                }else {
-                    $mensaje = "Error al crear el registro";
-                }
-
-                return $mensaje;                
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
+        
 
         public function modificarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado){
             try {
@@ -1140,7 +1150,7 @@
                                                                           centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
                                                                           cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
                                                                           cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                          ftraslado=:fecha_traslado,fguia=:fecha_guia
+                                                                          ftraslado=:fecha_traslado,fguia=:fecha_guia,nPeso=:peso,nBultos=:bultos,cDimensiones=:dimensiones
                                                                     WHERE idreg =:idguia");
 
                 $sql->execute([ "idguia"=>$cabeceraGuia['id_guia'],
@@ -1162,7 +1172,10 @@
                                 "licencia"=>$cabeceraGuia['licencia_conducir'],
                                 "placa"=>$cabeceraGuia['placa'],
                                 "fecha_traslado"=>$cabeceraGuia['ftraslado'],
-                                "fecha_guia"=>$cabeceraGuia['fgemision']]);
+                                "fecha_guia"=>$cabeceraGuia['fgemision'],
+                                "peso"=>$cabeceraGuia['peso'],
+                                "bultos"=>$cabeceraGuia['bultos'],
+                                "dimensiones"=>$cabeceraGuia['dimensiones']]);
 
                 $rowCount = $sql->rowcount();
 
@@ -1209,12 +1222,23 @@
                                                     lg_guias.ticketsunat,
                                                     lg_guias.estadoSunat,
                                                     lg_guias.nPeso,
+                                                    lg_guias.nBultos,
+                                                    lg_guias.cDimensiones,
                                                     cm_entidad.cdigcateg,
-                                                    cm_conductores.cnrodoc 
+                                                    cm_conductores.cnrodoc,
+                                                    cm_entidad.cnumdoc, 
+                                                    UPPER(cm_entidad.crazonsoc) crazonsoc, 
+                                                    UPPER(cm_entidad.cviadireccion) cviadireccion,
+                                                    t.nidreg idtransporte,
+                                                    t.cdescripcion transporte,
+                                                    m.cdescripcion tipomovil,
+                                                    m.nidreg idtipomovil
                                                 FROM
                                                     lg_guias
-                                                    LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
-                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin 
+                                                    LEFT JOIN cm_entidad ON lg_guias.identi = cm_entidad.id_centi
+                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin
+                                                    LEFT JOIN tb_parametros t ON t.nidreg = lg_guias.tipotranspo
+	                                                LEFT JOIN tb_parametros m ON m.nidreg = lg_guias.tipomovil
                                                 WHERE
                                                     lg_guias.id_regalm = :despacho 
                                                 GROUP BY
