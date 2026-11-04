@@ -67,6 +67,13 @@ $(function() {
 
                 $("#numero_guia_sunat").val(data.cabecera[0].guiasunat);
 
+                const cDim = data?.guias?.[0]?.cDimensiones?.trim();
+                const dimensiones = cDim ? cDim.split("-") : [];
+
+                $("#dimensiones1").val(dimensiones[0] ?? '');
+                $("#dimensiones2").val(dimensiones[1] ?? '');
+                $("#dimensiones3").val(dimensiones[2] ?? '');
+
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
@@ -119,21 +126,6 @@ $(function() {
         $(".primeraBarra").css("background","#0078D4");
         $(".primeraBarra span").text("Datos Generales");
 
-        /*$.post(RUTA+"salida/actualizaDespachos",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                $("#proceso").fadeOut();
-                $("#codigo_costos").val("");
-
-                document.getElementById("formProceso").reset();
-                document.getElementById("guiaremision").reset();
-               
-            },
-            "text"
-        );*/
 
         return false;
     });

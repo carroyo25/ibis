@@ -444,7 +444,7 @@
                                 "serie"=>'F001',
                                 "peso"=>$cabeceraGuia['peso'],
                                 "bultos"=>$cabeceraGuia['bultos'],
-                                "dimensiones"=>$cabeceraGuia['dimensiones'],
+                                "dimensiones"=>$cabeceraGuia['dimensiones1'].'-'.$cabeceraGuia['dimensiones2'].'-'.$cabeceraGuia['dimensiones3'],
                                 "codigo_entidad"=>$cabeceraGuia['codigo_entidad_transporte'],
                                 "tipo_transporte"=>$cabeceraGuia['codigo_transporte']]);
                 

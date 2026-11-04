@@ -79,7 +79,7 @@
                                 <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaOrigenCabecera">
                                    <ul>
-                                       <?php echo $this->listaEntidad?>
+                                       <?php echo $this->listaAlmacen?>
                                    </ul> 
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaDestinoCabecera">
                                    <ul>
-                                       <?php echo $this->listaEntidad?>
+                                       <?php echo $this->listaAlmacen?>
                                    </ul> 
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
                                 </div>
                                 <label for="almacen_origen_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_origen_direccion" id="almacen_origen_direccion">
-                                <br/>
+                                <div></div>
                                 <label for="ubigeo_origen">Ubigeo :</label>
                                 <input type="text" name="ubigeo_origen_guia" id="ubigeo_origen_guia">
                                 <button type="button" class="btnCallDialog boton3" id="ubigeoBtnOrigen">+</button>
@@ -256,7 +256,7 @@
                                 </div>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
-                                <br/>
+                                <div></div>
                                 <label for="ubigeo_destino">Ubigeo :</label>
                                 <input type="text" name="ubigeo_destino_guia" id="ubigeo_destino_guia">
                                 <button type="button" class="btnCallDialog boton3" id="ubigeoBtnDestino">+</button>
@@ -368,8 +368,15 @@
                             <label for="marca">Peso :</label>
                             <input type="text" name="peso" id="peso">
                             <span></span>
-                            <label for="bultos" class="oculto">Nro. Bultos :</label>
-                            <input type="text" name="bultos" id="bultos" class="oculto">
+                            <label for="bultos">Nro. Bulto :</label>
+                            <input type="text" name="bultos" id="bultos">
+                            <span></span>
+                            <label for="dimensiones1">Dimensiones :</label>
+                            <div style="display:flex;gap:20px">
+                                <input type="text" name="dimensiones1" id="dimensiones1" style="width:45%"> 
+                                <input type="text" name="dimensiones2" id="dimensiones2" style="width:45%"> 
+                                <input type="text" name="dimensiones3" id="dimensiones3" style="width:45%"> 
+                            </div>
                         </div>
                     </div>
                 </div>

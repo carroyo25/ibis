@@ -415,8 +415,12 @@
                             <label for="bultos">Nro. Bulto :</label>
                             <input type="text" name="bultos" id="bultos">
                             <span></span>
-                            <label for="dimensiones">Dimensiones :</label>
-                            <input type="text" name="dimensiones" id="dimensiones"> 
+                            <label for="dimensiones1">Dimensiones :</label>
+                            <div style="display:flex;gap:20px">
+                                <input type="text" name="dimensiones1" id="dimensiones1" style="width:45%"> 
+                                <input type="text" name="dimensiones2" id="dimensiones2" style="width:45%"> 
+                                <input type="text" name="dimensiones3" id="dimensiones3" style="width:45%"> 
+                            </div>
                         </div>
                     </div>
                 </div>

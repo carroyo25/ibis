@@ -6,13 +6,11 @@
             parent::__construct();
         }
 
-        public function listarGuiasManuales($g,$c,$a,$limite){
+        public function listarGuiasManuales($g, $c, $a){
             try {
-                $salida = ""; 
+                $salida = "";
 
-                $guia = $g == null ? "%" : "%".$g."%";
-                $costo = $c == -1  ? "%" : "%".$g."%";
-                $anio = $a == "" ? 2026 : $a;
+                $guia = $g == null ? "%" : "%" . $g . "%";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_desplibrescab.id_regalm,
@@ -20,10 +18,10 @@
                                                         alm_desplibrescab.cnumguia,
                                                         entidad_origen.id_centi AS id_origen,
                                                         entidad_origen.cviadireccion,
-                                                        UPPER( entidad_destino.crazonsoc ) AS razon_destino,
+                                                        UPPER(entidad_destino.crazonsoc) AS razon_destino,
                                                         entidad_destino.cnumdoc AS ruc_destino,
                                                         entidad_origen.cnumdoc AS ruc_origen,
-                                                        UPPER( entidad_origen.crazonsoc ) AS razon_origen,
+                                                        UPPER(entidad_origen.crazonsoc) AS razon_origen,
                                                         entidad_destino.id_centi AS id_destino,
                                                         UPPER(tb_proyectos.cdesproy) AS costos,
                                                         tb_proyectos.ccodproy,
@@ -31,54 +29,52 @@
                                                         lg_guias.guiasunat,
                                                         lg_guias.estadoSunat,
                                                         lg_guias.corigen,
-                                                        lg_guias.cdestino  
-                                                    FROM
-                                                        alm_desplibrescab
-                                                        LEFT JOIN cm_entidad AS entidad_origen ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
-                                                        LEFT JOIN cm_entidad AS entidad_destino ON alm_desplibrescab.ncodalm2 = entidad_destino.id_centi
-                                                        LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
-                                                        LEFT JOIN lg_guias ON alm_desplibrescab.cnumguia = lg_guias.cnumguia  
-                                                    WHERE
-                                                        alm_desplibrescab.nflgactivo != 0
-                                                        AND alm_desplibrescab.cnumguia LIKE :guia
-                                                        AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
+                                                        lg_guias.cdestino
+                                                    FROM alm_desplibrescab
+                                                    LEFT JOIN cm_entidad AS entidad_origen  ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
+                                                    LEFT JOIN cm_entidad AS entidad_destino ON alm_desplibrescab.ncodalm2 = entidad_destino.id_centi
+                                                    LEFT JOIN tb_proyectos                   ON alm_desplibrescab.ncodpry  = tb_proyectos.nidreg
+                                                    LEFT JOIN lg_guias                       ON alm_desplibrescab.cnumguia = lg_guias.cnumguia
+                                                    WHERE alm_desplibrescab.nflgactivo != 0
+                                                    AND alm_desplibrescab.cnumguia LIKE :guia
+                                                    AND YEAR(alm_desplibrescab.ffecdoc) = :anio
                                                     ORDER BY alm_desplibrescab.ffecdoc DESC");
 
-                $sql->execute(["guia"=>$guia,"anio"=>2025]);
+                $sql->execute(["guia" => $guia, "anio" => date('Y')]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-                
-                    while ($rs = $sql->fetch()){
+                    while ($rs = $sql->fetch()) {
                         $icono = null;
                         $color = null;
 
-                        if ( $rs['estadoSunat'] === 0 ) {
+                        if ($rs['estadoSunat'] == 0) {
                             $icono = '<i class="far fa-check-circle"></i>';
                             $color = 'green';
-                        }else if ($rs['estadoSunat'] === 98){
+                        } else if ($rs['estadoSunat'] == 98) {
                             $icono = '<i class="far fa-clock"></i>';
                             $color = 'gold';
-                        }else if ($rs['estadoSunat'] === 99) {
+                        } else if ($rs['estadoSunat'] == 99) {
                             $icono = '<i class="fas fa-wrench"></i>';
                             $color = 'red';
                         }
-                        
-                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" data-guia="cnumguia" class="pointer">
-                                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['fechaDocumento'].'</td>
-                                        <td class="textoCentro">'.$rs['razon_origen'].'</td>
-                                        <td class="pl20px">'.$rs['razon_destino'].'</td>
-                                        <td class="pl20px">'.$rs['costos'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
+
+                        $salida .= '<tr data-indice="' . $rs['id_regalm'] . '" data-guia="' . $rs['cnumguia'] . '" class="pointer">
+                                        <td class="textoCentro">' . str_pad($rs['id_regalm'], 6, 0, STR_PAD_LEFT) . '</td>
+                                        <td class="textoCentro">' . $rs['fechaDocumento'] . '</td>
+                                        <td class="textoCentro">' . $rs['razon_origen'] . '</td>
+                                        <td class="pl20px">' . $rs['razon_destino'] . '</td>
+                                        <td class="pl20px">' . $rs['costos'] . '</td>
+                                        <td class="textoCentro">' . $rs['cnumguia'] . '</td>
+                                        <td class="textoCentro" style="color:' . $color . ';font-weight: bolder;font-size: 1rem;vertical-align: middle;">' . $icono . '</td>
                                     </tr>';
                     }
                 }
 
                 return $salida;
+
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }
@@ -210,13 +206,32 @@
 
         public function grabarDatosGuia($guiaCab,$formCab,$nroguia){
             try {
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
-                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
-                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
-                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
-                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
-                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie");
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,
+                                                                                cnumguia=:guia,
+                                                                                corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,
+                                                                                cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,
+                                                                                centi=:entidad,
+                                                                                centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,
+                                                                                ctraslado=:traslado,
+                                                                                cenvio=:envio,
+                                                                                cautoriza=:autoriza,
+                                                                                cdestinatario=:destinatario,
+                                                                                cobserva=:observaciones,
+                                                                                cnombre=:nombres,
+                                                                                cmarca=:marca,
+                                                                                clicencia=:licencia,
+                                                                                cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,
+                                                                                fguia=:fecha_guia,
+                                                                                cserie=:serie,
+                                                                                nPeso=:peso,
+                                                                                nBultos=:bultos,
+                                                                                cDimensiones=:dimensiones,
+                                                                                identi=:codigo_entidad,
+                                                                                tipotranspo=:tipo_transporte");
 
                 $sql->execute([ "despacho"=>null,
                                 "guia"=>$nroguia,
@@ -238,7 +253,12 @@
                                 "placa"=>$guiaCab['placa'],
                                 "fecha_traslado"=>$guiaCab['ftraslado'],
                                 "fecha_guia"=>$guiaCab['fgemision'],
-                                "serie"=>'F001']);
+                                "serie"=>'F001',
+                                "peso"=>$guiaCab['peso'],
+                                "bultos"=>$guiaCab['bultos'],
+                                "dimensiones"=>$guiaCab['dimensiones1'].'-'.$guiaCab['dimensiones2'].'-'.$guiaCab['dimensiones3'],
+                                "codigo_entidad"=>$guiaCab['codigo_entidad_transporte'],
+                                "tipo_transporte"=>$guiaCab['codigo_transporte']]);
                 
                 $rowCount = $sql->rowcount();
 
@@ -398,6 +418,7 @@
                                                     lg_guias.nDniConductor,
                                                     lg_guias.nPeso,
                                                     lg_guias.nBultos,
+                                                    lg_guias.cDimensiones,
                                                     lg_guias.ticketsunat,
                                                     lg_guias.guiasunat,
                                                     lg_guias.estadoSunat, 

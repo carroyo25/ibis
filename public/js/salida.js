@@ -21,7 +21,8 @@ $(function() {
             function (data, textStatus, jqXHR) {
 
                 let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia,
-                    numero = $.strPad(data.cabecera[0].id_regalm,6);
+                    numero = $.strPad(data.cabecera[0].id_regalm,6),
+                    dimensiones = 0;
                 
                 $("#codigo_salida").val(data.cabecera[0].id_regalm);
                 $("#id_guia").val(data.cabecera[0].id_regalm);
@@ -96,7 +97,14 @@ $(function() {
                     $("#registro_mtc").val(data.guias[0].cdigcateg);
                     $("#conductor_dni").val(data.guias[0].cnrodoc);
                     $("#bultos").val(data.guias[0].nBultos);
-                    $("#dimensiones").val(data.guias[0].cDimensiones);
+
+                    if ( data.guias[0].cDimensiones ) {
+                        dimensiones =  data.guias[0].cDimensiones.split("-");
+
+                        $("#dimensiones1").val(dimensiones[0] || '');
+                        $("#dimensiones2").val(dimensiones[1] || '');
+                        $("#dimensiones3").val(dimensiones[2] || '');
+                    }
                 }
                 
                 $("#estado")
