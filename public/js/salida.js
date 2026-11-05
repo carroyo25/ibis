@@ -156,7 +156,6 @@ $(function() {
         tipoVista = null;
 
         $(".primeraBarra").css("background","#0078D4");
-        $(".primeraBarra span").text("Datos Generales");
 
         return false;
     });

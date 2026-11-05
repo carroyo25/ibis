@@ -242,9 +242,9 @@
                     // =================================================
                     $sqlDet = $conn->prepare("
                         INSERT INTO alm_traspasodet 
-                            (idtraspaso, idcprod, ncanti, cobservacion, idcc, idcd, nflgactivo)
+                            (idtraspaso, idcprod, ncanti, cobservacion, idcc, idcd,cCondicion, nflgactivo)
                         VALUES 
-                            (:idtraspaso, :idcprod, :ncanti, :cobservacion, :idcc, :idcd, 1)
+                            (:idtraspaso, :idcprod, :ncanti, :cobservacion, :idcc, :condicion, :idcd, 1)
                     ");
 
                     foreach ($items as $item) {
@@ -252,6 +252,7 @@
                         $idprod      = $item['idprod']       ?? null;
                         $cantidad    = (float) ($item['cantidad']    ?? 0);
                         $observacion = $item['observacion']  ?? null;
+                        $condicion   = $item['condicion']  ?? null;
 
                         if (!$idprod || $cantidad <= 0) {
                             continue;   // saltar ítems inválidos

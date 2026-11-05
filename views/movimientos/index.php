@@ -341,23 +341,14 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2">Item</th>
-                    <th rowspan="2">Codigo</th>
-                    <th rowspan="2" width="50%">Descripcion</th>
-                    <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Saldo</th>
-                    <th rowspan="2">Cantidad <br> Transferencia</th>
-                    <th rowspan="2">Observaciones</th>
-                    <th colspan="9">Condicion</th>
-                </tr>
-                <tr>
-                    <th>1A</th>
-                    <th>1B</th>
-                    <th>2A</th>
-                    <th>2B</th>
-                    <th>3A</th>
-                    <th>3B</th>
-                    <th>3C</th>
+                    <th>Item</th>
+                    <th>Codigo</th>
+                    <th width="50%">Descripcion</th>
+                    <th>Unidad</th>
+                    <th>Saldo</th>
+                    <th>Cantidad <br> Transferencia</th>
+                    <th>Observaciones</th>
+                    <th>Condicion</th>
                 </tr>
             </thead>
             <tbody id="cuerpoTabla">
