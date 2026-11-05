@@ -993,15 +993,15 @@
 
         public function filtrarNotasDespacho($parametros){
             try {
-
-                $mes  = date("m");
-
-                $orden  = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
-                $anio   = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
-
                 $salida = "";
+
+                // 1. Recibir y limpiar parámetros
+                $orden  = ($parametros['ordenSearch'] == "") ? "%" : "%" . $parametros['ordenSearch'] . "%";
+                $costos = ($parametros['costosSearch'] == -1 || $parametros['costosSearch'] == "") ? "%" : "%" . $parametros['costosSearch'] . "%";
+                $mes    = ($parametros['mesSearch'] == -1 || $parametros['mesSearch'] == "") ? "%" : $parametros['mesSearch'];
+                $anio   = ($parametros['anioSearch'] == "") ? "%" : $parametros['anioSearch'];
+
+                // 2. Armar el SQL con LIKE en lugar de =
                 $sql = $this->db->connect()->prepare("SELECT
                                                         d.cmes,
                                                         DATE_FORMAT(d.ffecdoc, '%d/%m/%Y') AS ffecdoc,
@@ -1030,52 +1030,58 @@
                                                     LEFT JOIN lg_guias lg ON d.id_regalm = lg.id_regalm
                                                     WHERE
                                                         d.nEstadoDoc = 62
-                                                        AND l.cnumero = :orden 
-                                                        AND d.ncodpry LIKE :costos 
-                                                        AND d.cper LIKE :anio 
-                                                        AND d.cmes LIKE :mes
                                                         AND d.nflgactivo = 1
-                                                    GROUP BY d.id_regalm");
-                
-                $sql->execute(["orden"=>$orden,
-                                "costos"=>$costos,
-                                "mes"=>$mes,
-                                "anio"=>$anio]);
+                                                        -- 👇 Usamos LIKE para que "%" funcione si no filtran nada
+                                                        AND l.cnumero LIKE :orden 
+                                                        -- 👇 Buscamos en la tabla proyectos (p) en lugar de en despachocab (d)
+                                                        AND (p.ccodproy LIKE :costos OR p.cdesproy LIKE :costos) 
+                                                        -- 👇 Filtramos por el año en la fecha, no por 'cper'
+                                                        AND YEAR(d.ffecdoc) LIKE :anio 
+                                                        AND d.cmes LIKE :mes
+                                                    GROUP BY d.id_regalm
+                                                    ORDER BY d.ffecdoc DESC
+                                                    LIMIT 300"); // Agregué límite para velocidad
 
-                $rowCount = $sql->rowcount();
-                if ($rowCount > 0){
-                    while($rs = $sql->fetch()){
-                        $icono = '';
-                        $color = '';
+                $sql->execute([
+                    "orden"  => $orden,
+                    "costos" => $costos,
+                    "mes"    => $mes,
+                    "anio"   => $anio
+                ]);
 
-                        if ( $rs['estadoSunat'] === 0 ) {
-                            $icono = '<i class="fas fa-check-circle"></i>';
-                            $color = 'green';
-                        }else if ($rs['estadoSunat'] === 98){
-                            $icono = '<i class="far fa-clock"></i>';
-                            $color = 'gold';
-                        }else if ($rs['estadoSunat'] === 99) {
-                            $icono = '<i class="fas fa-wrench"></i>';
-                            $color = 'red';
-                        }
+                while($rs = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $icono = '';
+                    $color = '';
 
-                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
-                                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
-                                        <td class="textoCentro">'.$rs['origen'].'</td>
-                                        <td class="pl20px">'.$rs['destino'].'</td>
-                                        <td class="pl20px">'.$rs['costos'].'</td>
-                                        <td class="textoCentro">'.$rs['anio'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro">'.$rs['guiasunat'].'</td>
-                                       <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
-                                    </tr>';
+                    // Nota: Usamos == en lugar de === porque PDO a veces devuelve strings
+                    if ( $rs['estadoSunat'] == 0 ) {
+                        $icono = '<i class="fas fa-check-circle"></i>';
+                        $color = 'green';
+                    }else if ($rs['estadoSunat'] == 98){
+                        $icono = '<i class="far fa-clock"></i>';
+                        $color = 'gold';
+                    }else if ($rs['estadoSunat'] == 99) {
+                        $icono = '<i class="fas fa-wrench"></i>';
+                        $color = 'red';
                     }
+
+                    $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
+                                    <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['ffecdoc'].'</td>
+                                    <td class="textoCentro">'.$rs['origen'].'</td>
+                                    <td class="pl20px">'.$rs['destino'].'</td>
+                                    <td class="pl20px">'.$rs['costos'].'</td>
+                                    <td class="textoCentro">'.$rs['anio'].'</td>
+                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                    <td class="textoCentro">'.$rs['guiasunat'].'</td>
+                                    <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
+                                </tr>';
                 }
 
                 return $salida;
+
             } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
+                error_log("Error en filtrarNotasDespacho: " . $th->getMessage());
                 return false;
             }
         }
