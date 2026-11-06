@@ -5875,6 +5875,7 @@
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
                                                     UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
                                                     tb_proyectos.veralm,
+                                                    tb_proyectos.nalmacen,
                                                     tb_costusu.ncodproy 
                                                 FROM
                                                     tb_costusu

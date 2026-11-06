@@ -78,86 +78,88 @@ $(() => {
     });
 
     $("#btnConsulta").click(function (e) { 
-        e.preventDefault();
+    e.preventDefault();
 
-        let str = $("#formConsulta").serialize();
+    let str = $("#formConsulta").serialize();
+    try {
+        if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
 
+        $("#esperar").css("opacity","1").fadeIn();
         
-
-        try {
-            if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
-
-            $("#esperar").css("opacity","1").fadeIn();
-            
-            $.post(RUTA+"stocks/consulta",str,
-                function (data, textStatus, jqXHR) {
-                   cuerpoTabla.innerHTML = '';
-                   
-                   if (data.success) {
+        $.post(RUTA + "stocks/consulta", str,
+            function (data, textStatus, jqXHR) {
+                cuerpoTabla.innerHTML = '';
+                
+                if (data.success && data.datos.length > 0) {
                     let nro = 1;
 
-                    data.datos.forEach( item =>{
-                            let c1 = ( item.condicion == '1A' || item.condicion == '1.A.' ||  item.condicion  == '1.A') ? item.inventarios : '';
-                            let c2 = ( item.condicion == '1B' || item.condicion == '1.B.' ||  item.condicion  == '1.B') ? item.inventarios : '';
-                            let c3 = ( item.condicion == '2A' || item.condicion == '2.A.' ||  item.condicion  == '2.A') ? item.inventarios : '';
-                            let c4 = ( item.condicion == '2B' || item.condicion == '2.B.' ||  item.condicion  == '2.B') ? item.inventarios : '';
-                            let c5 = ( item.condicion == '3A' || item.condicion == '3.A.' ||  item.condicion  == '3.A') ? item.inventarios : '';
-                            let c6 = ( item.condicion == '3B' || item.condicion == '3.B.' ||  item.condicion  == '3.B') ? item.inventarios : '';
-                            let c7 = ( item.condicion == '3C' || item.condicion == '3.C.' ||  item.condicion  == '3.C') ? item.inventarios : '';
+                    data.datos.forEach( item => {
+                        
+                        // 🌟 SUMAMOS: Inventario + Traspaso Entrante + Traspaso Saliente
+                        let c1 = (parseFloat(item.inv_1A) || 0) + (parseFloat(item.trs_ent_1A) || 0) + (parseFloat(item.trs_sal_1A) || 0);
+                        let c2 = (parseFloat(item.inv_1B) || 0) + (parseFloat(item.trs_ent_1B) || 0) + (parseFloat(item.trs_sal_1B) || 0);
+                        let c3 = (parseFloat(item.inv_2A) || 0) + (parseFloat(item.trs_ent_2A) || 0) + (parseFloat(item.trs_sal_2A) || 0);
+                        let c4 = (parseFloat(item.inv_2B) || 0) + (parseFloat(item.trs_ent_2B) || 0) + (parseFloat(item.trs_sal_2B) || 0);
+                        let c5 = (parseFloat(item.inv_3A) || 0) + (parseFloat(item.trs_ent_3A) || 0) + (parseFloat(item.trs_sal_3A) || 0);
+                        let c6 = (parseFloat(item.inv_3B) || 0) + (parseFloat(item.trs_ent_3B) || 0) + (parseFloat(item.trs_sal_3B) || 0);
+                        let c7 = (parseFloat(item.inv_3C) || 0) + (parseFloat(item.trs_ent_3C) || 0) + (parseFloat(item.trs_sal_3C) || 0);
 
-                            let estado = item.saldo >= 0 ? "semaforoVerde":"semaforoRojo"; 
+                        let estado = item.saldo >= 0 ? "semaforoVerde" : "semaforoRojo"; 
 
-                            const tr = document.createElement('tr');
-                            tr.classList.add('pointer');
-                            tr.dataset.idprod = item.id_cprod;
-                            tr.dataset.costos =  item.idreg_recepcion;
-                            tr.dataset.existencia = item.id_cprod;
-                            tr.dataset.transferencia = item.id_cprod;
-                            tr.dataset.grupo = item.grupo;
-                            tr.dataset.clase = item.clase;
-                            tr.dataset.familia = item.familia;
+                        const tr = document.createElement('tr');
+                        tr.classList.add('pointer');
+                        tr.dataset.idprod = item.id_cprod;
+                        tr.dataset.costos =  item.idreg_recepcion;
+                        tr.dataset.existencia = item.id_cprod;
+                        tr.dataset.transferencia = item.id_cprod;
+                        tr.dataset.grupo = item.grupo;
+                        tr.dataset.clase = item.clase;
+                        tr.dataset.familia = item.familia;
 
-                            tr.innerHTML = ` <td class="textoCentro"><a href="${item.id_cprod}">${nro++}</a></td>
-                                                <td class="textoCentro">${item.ccodprod}</td>
-                                                <td class="pl20px">${item.cdesprod}</td>
-                                                <td class="textoCentro">${item.cabrevia}</td>
-                                                <td class="textoDerecha">${item.ingresos_recepcion}</td>
-                                                <td class="textoDerecha">${financial(item.ingresos_inventario)}</td>
-                                                <td class="textoDerecha">${financial(item.salidas_consumos)}</td>
-                                                <td class="textoDerecha">${financial(item.ingresos_devoluciones)}</td>
-                                                <td class="textoDerecha">${financial(item.salidas_transf_antigua)}</td>
-                                                <td class="textoDerecha">${item.ingresos_traspaso_nuevo}</td>
-                                                <td class="textoDerecha">${item.salidas_traspaso_nuevo}</td>
-                                                <td class="textoDerecha">${financial(item.ingresos_ajustes)}</td>
-                                                <td class="textoDerecha"></td>
-                                                <td class="textoDerecha ${estado}">${item.saldo.toFixed(2)}</td>
-                                                <td class="textoCentro">${c1}</td>
-                                                <td class="textoCentro">${c2}</td>
-                                                <td class="textoCentro">${c3}</td>
-                                                <td class="textoCentro">${c4}</td>
-                                                <td class="textoCentro">${c5}</td>
-                                                <td class="textoCentro">${c6}</td>
-                                                <td class="textoCentro">${c7}</td>`;
+                        tr.innerHTML = ` <td class="textoCentro"><a href="${item.id_cprod}">${nro++}</a></td>
+                                            <td class="textoCentro">${item.ccodprod}</td>
+                                            <td class="pl20px">${item.cdesprod}</td>
+                                            <td class="textoCentro">${item.cabrevia}</td>
+                                            <td class="textoDerecha">${item.ingresos_recepcion}</td>
+                                            <td class="textoDerecha">${financial(item.ingresos_inventario)}</td>
+                                            <td class="textoDerecha">${financial(item.salidas_consumos)}</td>
+                                            <td class="textoDerecha">${financial(item.ingresos_devoluciones)}</td>
+                                            <td class="textoDerecha">${financial(item.salidas_transf_antigua)}</td>
+                                            <td class="textoDerecha">${item.ingresos_traspaso_nuevo}</td>
+                                            <td class="textoDerecha">${item.salidas_traspaso_nuevo}</td>
+                                            <td class="textoDerecha">${financial(item.ingresos_ajustes)}</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha ${estado}">${parseFloat(item.saldo).toFixed(2)}</td>
+                                            <td class="textoCentro">${financial(c1)}</td>
+                                            <td class="textoCentro">${financial(c2)}</td>
+                                            <td class="textoCentro">${financial(c3)}</td>
+                                            <td class="textoCentro">${financial(c4)}</td>
+                                            <td class="textoCentro">${financial(c5)}</td>
+                                            <td class="textoCentro">${financial(c6)}</td>
+                                            <td class="textoCentro">${financial(c7)}</td>`;
 
-                            cuerpoTabla.appendChild(tr);        
-                    })
-                   }else{
-                        cuerpoTabla.innerHTML = `<tr><td colspan="21" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar, seleccione un centro de costos y precione <b>Consultar</b></td></tr>`;
-                   }
+                        cuerpoTabla.appendChild(tr);        
+                    });
+                } else {
+                    cuerpoTabla.innerHTML = `<tr><td colspan="21" style="text-align: center; color: #94a3b8; padding: 30px;">✨ No hay registros para mostrar con los filtros seleccionados</td></tr>`;
+                }
 
-                   $("#esperar").css("opacity","0").fadeOut().promise().done(function(){
-                        iniciarPaginador();
-                   });
-                },
-                "json"
-            );
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-        
-
-        return false;
-    });
+                $("#esperar").css("opacity","0").fadeOut().promise().done(function(){
+                    iniciarPaginador();
+                });
+            },
+            "json"
+        ).fail(function(xhr, status, error) {
+            cuerpoTabla.innerHTML = `<tr><td colspan="21" style="text-align: center; color: red; padding: 30px;">❌ Error al conectar con el servidor</td></tr>`;
+            $("#esperar").css("opacity","0").fadeOut();
+            console.error("Error AJAX:", error);
+        });
+    } catch (error) {
+        mostrarMensaje(error,"mensaje_error");
+    }
+    
+    return false;
+});
 
     $("#btnAgregarMin").click(function(e){
         e.preventDefault();

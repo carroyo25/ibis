@@ -140,7 +140,7 @@ $(function () {
         items: window.itemsTraspaso, // 👈 array de ítems con cantidad > 0
       };
 
-      //console.log("Payload a enviar:", payload);
+      console.log("Payload a enviar:", payload);
 
       // 👇 Enviar al backend
       fetch(RUTA + "movimientos/transfiere", {
@@ -862,8 +862,8 @@ $(function () {
       const cantidad = parseFloat(inputCantidad.value) || 0;
 
       // Si no hay cantidad ni observación ni condición, no lo guardamos
-      const tieneCondicion =
-        inputCondicion && inputCondicion.value.trim() !== "";
+      const tieneCondicion = inputCondicion && inputCondicion.value.trim() !== "";
+
       if (cantidad <= 0 && !inputObservacion?.value.trim() && !tieneCondicion) {
         delete itemsSeleccionados[idprod];
         return;
@@ -891,6 +891,7 @@ $(function () {
     tr.dataset.costos = element.ingresos;
     tr.dataset.existencia = element.idreg;
     tr.dataset.transferencia = element.iditem;
+    tr.dataset.condicion = element.codicion;
     tr.classList.add("pointer");
 
     // Columnas de condición (c1..c7)
@@ -931,7 +932,7 @@ $(function () {
       <input type="text"
         class="condicion-item"
         data-idprod="${element.id_cprod}"
-        value="${guardado?.condicion ?? ""}">
+        value="${element.condicion ?? ""}">
     </td>`;
 
     return tr;
@@ -979,7 +980,7 @@ $(function () {
       <input type="text"
         class="condicion-item"
         data-idprod="${item.idprod}"
-        value="${item.condicion ?? ""}">
+        value="${item.condicion}">
     </td>`;
     return tr;
   }

@@ -242,10 +242,9 @@
                     // =================================================
                     $sqlDet = $conn->prepare("
                         INSERT INTO alm_traspasodet 
-                            (idtraspaso, idcprod, ncanti, cobservacion, idcc, idcd,cCondicion, nflgactivo)
+                            (idtraspaso, idcprod, ncanti, cobservacion, idcc, idcd, cCondicion, nflgactivo)
                         VALUES 
-                            (:idtraspaso, :idcprod, :ncanti, :cobservacion, :idcc, :condicion, :idcd, 1)
-                    ");
+                            (:idtraspaso, :idcprod, :ncanti, :cobservacion, :idcc,  :idcd, :condicion, 1)");
 
                     foreach ($items as $item) {
 
@@ -264,7 +263,8 @@
                             ':ncanti'       => $cantidad,
                             ':cobservacion' => $observacion,
                             ':idcc'         => $ccOrigen,        // 👈 CC origen (duplicado)
-                            ':idcd'         => $ccDestino        // 👈 CC destino (duplicado)
+                            ':idcd'         => $ccDestino,        // 👈 CC destino (duplicado)
+                            ':condicion'    => $condicion        // 👈 condicion;
                         ]);
                     }
 
