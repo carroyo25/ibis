@@ -824,89 +824,189 @@
             try {
                 $docData = [];
 
-                $costos = $parametros['costos'] == '-1' ? '%': $parametros['costos'];
-                $codigo = $parametros['codigo'] == '' ? '%': '%'.$parametros['codigo'].'%';
-                $producto = $parametros['producto'] == '' ? '%': '%'.$parametros['producto'].'%';
+                // Validación de parámetros
+                $costos = ($parametros['costos'] == '-1' || $parametros['costos'] == '') ? '%' : (int)$parametros['costos'];
+                $codigo = $parametros['codigo'] == '' ? '%' : '%' . $parametros['codigo'] . '%';
+                $producto = $parametros['producto'] == '' ? '%' : '%' . $parametros['producto'] . '%';
+                $usuario = $parametros['usuario'] ?? 0;
 
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        m.idprod,
-                                                        DATE_FORMAT(m.ffecha,'%d/%m/%Y') ffecha,
-                                                        r.ccodprod,
-                                                        UPPER( r.cdesprod ) descripcion,
-                                                        n.cabrevia,
-                                                        UPPER( p.ccodproy ) proyecto,
-                                                        m.ntotal,
-                                                        COALESCE ( ex2.total_ingresos, 0 ) AS ingresos,
-                                                        COALESCE ( s.total_salidas, 0 ) AS salidas 
-                                                    FROM
-                                                        alm_minimo m
-                                                        LEFT JOIN tb_costusu u ON m.ncostos = u.ncodproy
-                                                        LEFT JOIN tb_proyectos p ON m.ncostos = p.nidreg
-                                                        LEFT JOIN cm_producto r ON r.id_cprod = m.idprod
-                                                        LEFT JOIN tb_unimed n ON n.ccodmed = r.nund
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            ex.codprod,
-                                                            ce.idcostos,
-                                                            SUM( ex.cant_ingr ) AS total_ingresos 
-                                                        FROM
-                                                            alm_existencia ex
-                                                            LEFT JOIN alm_cabexist ce ON ce.idreg = ex.idregistro 
-                                                        WHERE
-                                                            ex.nflgActivo = 1 
-                                                        GROUP BY
-                                                            ex.codprod,
-                                                            ce.idcostos 
-                                                        ) ex2 ON ex2.codprod = m.idprod 
-                                                        AND ex2.idcostos = m.ncostos
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            c.idprod,
-                                                            c.ncostos,
-                                                            SUM( c.cantsalida ) AS total_salidas 
-                                                        FROM
-                                                            alm_consumo c 
-                                                        GROUP BY
-                                                            c.idprod,
-                                                            c.ncostos 
-                                                        ) s ON s.idprod = m.idprod 
-                                                        AND s.ncostos = m.ncostos
-                                                        INNER JOIN (
-                                                        SELECT
-                                                            m2.idprod,
-                                                            m2.ncostos,
-                                                            MAX( m2.ffecha ) AS ultima_fecha 
-                                                        FROM
-                                                            alm_minimo m2 
-                                                        WHERE
-                                                            m2.swactivo = 1 
-                                                        GROUP BY
-                                                            m2.idprod,
-                                                            m2.ncostos 
-                                                        ) ultimo ON ultimo.idprod = m.idprod 
-                                                        AND ultimo.ncostos = m.ncostos 
-                                                        AND ultimo.ultima_fecha = m.ffecha 
-                                                    WHERE
-                                                        m.swactivo = 1 
-                                                        AND u.id_cuser = :usuario 
-                                                        AND p.nflgactivo = 1 
-                                                        AND m.ncostos LIKE :costos 
-                                                        AND r.ccodprod LIKE :codigo 
-                                                        AND r.cdesprod LIKE :descripcion
-                                                    GROUP BY r.ccodprod");
-                
-                $sql->execute(["costos"=>$costos,
-                                "usuario"=>$parametros['usuario'],
-                                "codigo"=>$codigo,
-                                "descripcion"=>$producto]);
+                $db = $this->db->connect();
+
+                // Consulta optimizada con TODOS los movimientos
+                $sql = $db->prepare("
+                    SELECT
+                        m.idprod,
+                        DATE_FORMAT(m.ffecha, '%d/%m/%Y') AS ffecha,
+                        r.ccodprod,
+                        UPPER(r.cdesprod) AS cdesprod,
+                        n.cabrevia AS unidad,
+                        UPPER(p.ccodproy) AS proyecto,
+                        m.ntotal AS nminimo,
+                        m.ntotal * 0.8 AS minimo_permitido,
+                        
+                        /* ENTRADAS */
+                        COALESCE(rec.cantidad_obra, 0)             AS ingresos_recepcion,
+                        COALESCE(inv.inventarios_cantidad, 0)      AS ingresos_inventario,
+                        COALESCE(te.total_traspaso_entrante, 0)    AS ingresos_traspaso_nuevo,
+                        COALESCE(cons.devoluciones, 0)             AS ingresos_devoluciones,
+                        COALESCE(aj.ajustes_cantidad, 0)           AS ingresos_ajustes,
+
+                        /* SALIDAS */
+                        COALESCE(cons.consumos, 0)                 AS salidas_consumos,
+                        COALESCE(st.salida_transferencia, 0)       AS salidas_transf_antigua,
+                        COALESCE(ts.total_traspaso_saliente, 0)    AS salidas_traspaso_nuevo,
+
+                        /* TOTALES */
+                        (
+                            COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) +
+                            COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) +
+                            COALESCE(aj.ajustes_cantidad, 0)
+                        ) AS total_ingresos,
+
+                        (
+                            COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) +
+                            COALESCE(ts.total_traspaso_saliente, 0)
+                        ) AS total_salidas,
+
+                        (
+                            (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                            - 
+                            (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                        ) AS saldo,
+                        
+                        /* ESTADO DE STOCK CON REGLA ESTRICTA */
+                        CASE
+                            WHEN m.ntotal > 0 AND (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) <= 0 THEN 'CRÍTICO'
+                            
+                            /* REGLA ESTRICTA: Si saldo < mínimo, es CRÍTICO */
+                            WHEN m.ntotal > 0 AND (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) < m.ntotal THEN 'CRÍTICO'
+                            
+                            WHEN m.ntotal > 0 AND (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) = m.ntotal THEN 'MÍNIMO'
+                            
+                            WHEN m.ntotal = 0 AND (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) <= 0 THEN 'CRÍTICO'
+                            
+                            WHEN m.ntotal = 0 AND (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) > 0 THEN 'SIN MÍNIMO'
+                            
+                            WHEN (
+                                (COALESCE(rec.cantidad_obra, 0) + COALESCE(inv.inventarios_cantidad, 0) + COALESCE(te.total_traspaso_entrante, 0) + COALESCE(cons.devoluciones, 0) + COALESCE(aj.ajustes_cantidad, 0))
+                                - (COALESCE(cons.consumos, 0) + COALESCE(st.salida_transferencia, 0) + COALESCE(ts.total_traspaso_saliente, 0))
+                            ) > (m.ntotal * 3) THEN 'EXCESO'
+                            
+                            ELSE 'NORMAL'
+                        END AS estado_stock
+
+                    FROM alm_minimo m
+                    INNER JOIN tb_costusu u ON m.ncostos = u.ncodproy
+                    INNER JOIN tb_proyectos p ON m.ncostos = p.nidreg
+                    INNER JOIN cm_producto r ON r.id_cprod = m.idprod
+                    LEFT JOIN tb_unimed n ON n.ccodmed = r.nund
+                    
+                    /* SUBQUERIES OPTIMIZADAS */
+                    LEFT JOIN (
+                        SELECT e.codprod, cb.idcostos, SUM(e.cant_ingr) AS cantidad_obra
+                        FROM alm_existencia e
+                        INNER JOIN alm_cabexist cb ON cb.idreg = e.idregistro
+                        WHERE e.nflgActivo = 1
+                        GROUP BY e.codprod, cb.idcostos
+                    ) rec ON rec.codprod = m.idprod AND rec.idcostos = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT d.codprod, cb.idcostos, SUM(d.cant_ingr) AS inventarios_cantidad
+                        FROM alm_inventariodet d
+                        INNER JOIN alm_inventariocab cb ON cb.idreg = d.idregistro
+                        WHERE d.nflgActivo = 1
+                        GROUP BY d.codprod, cb.idcostos
+                    ) inv ON inv.codprod = m.idprod AND inv.idcostos = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT idprod, ncostos, SUM(cantsalida) AS consumos, SUM(cantdevolucion) AS devoluciones
+                        FROM alm_consumo
+                        WHERE flgactivo = 1
+                        GROUP BY idprod, ncostos
+                    ) cons ON cons.idprod = m.idprod AND cons.ncostos = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT d.idcprod, cb.idcc, SUM(d.ncanti) AS salida_transferencia
+                        FROM alm_transferdet d
+                        INNER JOIN alm_transfercab cb ON cb.idreg = d.idtransfer
+                        WHERE d.nflgactivo = 1
+                        GROUP BY d.idcprod, cb.idcc
+                    ) st ON st.idcprod = m.idprod AND st.idcc = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT d.codprod, cb.idcostos, SUM(d.cant_ingr) AS ajustes_cantidad
+                        FROM alm_ajustedet d
+                        INNER JOIN alm_ajustecab cb ON cb.idreg = d.idregistro
+                        WHERE d.nflgActivo = 1 AND cb.idrecepciona IS NOT NULL
+                        GROUP BY d.codprod, cb.idcostos
+                    ) aj ON aj.codprod = m.idprod AND aj.idcostos = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT d.idcprod, d.idcc, SUM(d.ncanti) AS total_traspaso_saliente
+                        FROM alm_traspasodet d
+                        INNER JOIN alm_traspasocab c ON c.idreg = d.idtraspaso
+                        WHERE d.nflgactivo = 1 AND c.nflgactivo = 1
+                        GROUP BY d.idcprod, d.idcc
+                    ) ts ON ts.idcprod = m.idprod AND ts.idcc = m.ncostos
+
+                    LEFT JOIN (
+                        SELECT d.idcprod, d.idcd, SUM(d.ncanti) AS total_traspaso_entrante
+                        FROM alm_traspasodet d
+                        INNER JOIN alm_traspasocab c ON c.idreg = d.idtraspaso
+                        WHERE d.nflgactivo = 1 AND c.nflgactivo = 1
+                        GROUP BY d.idcprod, d.idcd
+                    ) te ON te.idcprod = m.idprod AND te.idcd = m.ncostos
+                    
+                    INNER JOIN (
+                        SELECT idprod, ncostos, MAX(ffecha) AS ultima_fecha
+                        FROM alm_minimo
+                        WHERE swactivo = 1
+                        GROUP BY idprod, ncostos
+                    ) ultimo ON ultimo.idprod = m.idprod 
+                            AND ultimo.ncostos = m.ncostos 
+                            AND ultimo.ultima_fecha = m.ffecha
+                            
+                    WHERE m.swactivo = 1
+                    AND u.id_cuser = :usuario
+                    AND p.nflgactivo = 1
+                    AND m.ncostos LIKE :costos
+                    AND r.ccodprod LIKE :codigo
+                    AND r.cdesprod LIKE :descripcion
+                    
+                    GROUP BY m.idprod, m.ncostos, m.ffecha, m.ntotal, 
+                            r.ccodprod, r.cdesprod, n.cabrevia, p.ccodproy
+                    ORDER BY r.cdesprod ASC");
+
+                $sql->execute([
+                    "usuario"     => $usuario,
+                    "costos"      => $costos,
+                    "codigo"      => $codigo,
+                    "descripcion" => $producto
+                ]);
 
                 while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
                     $docData[] = $row;
                 }
 
-                return array("datos"=>$docData);
+                return array("datos" => $docData);
+
             } catch (PDOException $th) {
-                return array("mensaje"=>$th->getMessage());
+                return array("mensaje" => $th->getMessage());
             }
         }
     }

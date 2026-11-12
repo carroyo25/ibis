@@ -201,105 +201,83 @@ $(function () {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Limpiar tabla
         $("#tabla_minimos tbody").empty();
 
-        // Verificar si hay datos
         if (data.datos && data.datos.length > 0) {
           let row = "";
 
-          data.datos.forEach((item, index) => {
-            //console.log(`🔹 Procesando item ${index + 1}:`, item);
+          data.datos.forEach((item) => {
+            
+            // ===== MAPEO DE CAMPOS =====
+            const ccodprod = item.ccodprod || "";
+            const cdesprod = item.cdesprod || "";
+            const unidad = item.unidad || "";
+            const proyecto = item.proyecto || "";
+            
+            // Parseo seguro de números
+            const saldoReal = Number(item.saldo || 0);
+            const stockMinimo = Number(item.nminimo || 0);
+            const totalIngresos = Number(item.total_ingresos || 0);
+            const totalSalidas = Number(item.total_salidas || 0);
+            
+            // Formateador para mostrar con 2 decimales
+            const fmt = (n) => Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-            // ===== MAPEO DE CAMPOS (AJUSTA SEGÚN TU ESTRUCTURA) =====
-            const ccodprod = item.ccodprod || item.codigo || item.codprod || "";
-            const cdesprod =
-              item.cdesprod || item.descripcion || item.nombre || "";
-            const unidad = item.unidad || item.cabrevia || item.umedida || "";
-            const stockActual =
-              parseFloat(item.stock_actual || item.ingresos || "0") || 0;
-            const stockMinimo =
-              parseFloat(item.ntotal || item.ntotal || "0") || 0;
-            const ingresos = parseFloat(item.ingresos || "0") || 0;
-            const salidas = parseFloat(item.salidas || "0") || 0;
-            const stkActual = ingresos - salidas || "0";
-            const stkMin = parseInt(stockMinimo * 1.5);
+            // ===== ESTADO Y COLOR (Leído directamente del Backend) =====
+            const estado = item.estado_stock || "NORMAL";
+            let colorEstado, textoColor;
 
-            // Fecha
-            let ffecha = item.ffecha || item.fecha || "";
-            if (ffecha && ffecha.includes("-")) {
-              const parts = ffecha.split("-");
-              ffecha = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
-
-            // ===== DETERMINAR ESTADO =====
-            let estado, colorEstado, textoColor;
-            if (stockActual <= 0 && stockMinimo > 0) {
-              estado = "CRÍTICO";
-              colorEstado = "#DC3545";
-              textoColor = "white";
-            } else if (stockMinimo > 0 && stockActual <= stockMinimo) {
-              estado = "MÍNIMO";
-              colorEstado = "#FFC107";
-              textoColor = "#856404";
-            } else if (stockActual > 0 && stockActual <= 50) {
-              estado = "BAJO";
-              colorEstado = "#FD7E14";
-              textoColor = "white";
-            } else if (stockActual > 200) {
-              estado = "EXCESO";
-              colorEstado = "#17A2B8";
-              textoColor = "white";
-            } else {
-              estado = "NORMAL";
-              colorEstado = "#C6F6D5";
-              textoColor = "#2D3748";
+            switch (estado) {
+              case "CRÍTICO":
+                colorEstado = "#DC3545"; textoColor = "white"; break;
+              case "MÍNIMO":
+                colorEstado = "#FFC107"; textoColor = "#856404"; break;
+              case "EXCESO":
+                colorEstado = "#17A2B8"; textoColor = "white"; break;
+              case "SIN MÍNIMO":
+                colorEstado = "#6C757D"; textoColor = "white"; break;
+              default:
+                colorEstado = "#C6F6D5"; textoColor = "#2D3748"; break;
             }
 
             // ===== CONSTRUIR FILA =====
-            row += `<tr class="pointer" 
-                          data-costos="${item.idcostos || item.costos || ""}">
-                          <td class="textoCentro">${item.proyecto}</td>
-                          <td>${ccodprod}</td>
-                          <td>${cdesprod}</td>
-                          <td>${unidad}</td>
-                          <td class="textoCentro">
-                             <span style="background:${colorEstado}; padding:4px 10px; border-radius:12px; font-size:11px; color:${textoColor}; font-weight:bold; display:inline-block; white-space:nowrap;">
-                                  ${estado}
-                              </span>
-                          </td>
-                          <td class="textoDerecha">${item.ffecha}</td>
-                          <td class="textoDerecha">${stkMin}</td>
-                          <td class="textoDerecha">${stkActual}</td>
-                      </tr>`;
+            row += `<tr class="pointer" data-costos="${item.idcostos || item.ncostos || ""}">
+                      <td class="textoCentro">${proyecto}</td>
+                      <td class="textoCentro">${ccodprod}</td>
+                      <td class="pl20px">${cdesprod}</td>
+                      <td class="textoCentro">${unidad}</td>
+                      <td class="textoCentro">
+                         <span style="background:${colorEstado}; padding:4px 10px; border-radius:12px; font-size:11px; color:${textoColor}; font-weight:bold; display:inline-block; white-space:nowrap;">
+                              ${estado}
+                          </span>
+                      </td>
+                      <td class="textoDerecha">${item.ffecha || "-"}</td>
+                      <td class="textoDerecha">${stockMinimo > 0 ? fmt(stockMinimo) : "-"}</td>
+                      <td class="textoDerecha"><strong>${fmt(saldoReal)}</strong></td>
+                  </tr>`;
           });
 
-          // ===== INSERTAR FILAS =====
           $("#tabla_minimos tbody").empty().append(row);
-
-          // ===== MOSTRAR TOTAL DE REGISTROS =====
           $("#totalRegistros").text(data.datos.length);
         } else {
-          // No hay datos
           $("#tabla_minimos tbody").html(
-            `<tr><td colspan="10" style="text-align:center; padding:40px; color:#999;">
-                            <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
-                            No se encontraron productos con alertas de mínimo
-                        </td></tr>`,
+            `<tr><td colspan="8" style="text-align:center; padding:40px; color:#999;">
+                <i class="fas fa-inbox" style="font-size:40px; display:block; margin-bottom:10px;"></i>
+                No se encontraron productos con alertas de mínimo
+            </td></tr>`
           );
           $("#totalRegistros").text("0");
         }
 
-        // ===== MOSTRAR CONTENEDOR =====
         $("#alertaMinimos").fadeIn();
       })
       .catch((error) => {
         $("#tabla_minimos tbody").html(
-          `<tr><td colspan="10" style="text-align:center; color:red; padding:40px;">
-                          <i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:10px;"></i>
-                          Error al cargar datos: ${error.message}
-                      </td></tr>`,
+          `<tr><td colspan="8" style="text-align:center; color:red; padding:40px;">
+              <i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:10px;"></i>
+              Error al cargar datos: ${error.message}
+          </td></tr>`
         );
       });
-  }
+}
 });

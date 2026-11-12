@@ -85,15 +85,14 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead class="stickytop">
-                <tr>
-                    <th>Item</th>
-                    <th>Codigo</th>
-                    <th width="50%">Descripcion</th>
+                 <tr>
+                    <th>#</th>
+                    <th>Código</th>
+                    <th>Descripción</th>
                     <th>Unidad</th>
-                    <th>Cantidad <br>Ingreso</th>
-                    <th>Cantidad <br>Consumida</th>
-                    <th>Fecha<br> Registro</th>
-                    <th>Cantidad<br> Mínima</th>
+                    <th>Fecha Mínimo</th>
+                    <th>Stock Mínimo</th>
+                    <th>Saldo (A esa fecha)</th>
                     <th>Estado</th>
                 </tr>
             </thead>
