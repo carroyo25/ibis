@@ -3570,7 +3570,7 @@
 
             $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],null,
                             $datosOrden[0]['cdesalm'],null,null,null,"",
-                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],null,
+                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             null,null,null,null,$datosOrden[0]['nagenret'],
                             null,null,null,
                             $datosOrden[0]['direccion'],null,null,null,null,$datosOrden[0]['ntipmov'],null,null,null,null);

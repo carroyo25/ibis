@@ -147,7 +147,6 @@
 
                  return array("familia"=>$docData);
             } catch (PDOException $th) {
-            } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }

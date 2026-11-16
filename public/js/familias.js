@@ -8,219 +8,243 @@ $(function () {
 
   let paginaActual = 1;
   let totalRegistros = 0;
-  let datosGrupos = []; // Agrupados
-  let datosClases = []; // Planos (para editar)
-  let estadosGrupo = {}; // { idGrupo: true/false }
-  let registroEdit = null; // Registro que se está editando
-  let accionPregunta = null;
-  let timerBusqueda = null;
+  let registroEdit = null;
 
-  const colorMap = {
-    B01: "#2a7de1",
-    B02: "#e67e22",
-    B03: "#27ae60",
-    B04: "#8e44ad",
-    B05: "#e74c3c",
-  };
+  // Variables para los buscadores
+  let grupoBuscador = null;
+  let claseBuscador = null;
 
+  // Variables para la lógica en memoria
+  let jerarquiaCompleta = []; // Aquí se guarda toda la data: Grupos -> Clases -> Familias
+  let clasePendienteDeEdicion = null; // Para saber qué clase pintar al editar
+
+  // Inicialización
   $("#esperar").fadeOut(function () {
     consultarDatos(1);
-    llenarSelectGrupos();
+    cargarJerarquiaEnMemoria(); // Nueva función que trae todo de golpe
   });
 
   // =============================================
-  // 2. ESCUCHAR EL CAMBIO DE GRUPO (Corregido con jQuery)
+  // 1. CARGAR TODA LA JERARQUÍA EN MEMORIA
   // =============================================
-  // Usamos "on" delegado al documento para que funcione incluso si el select
-  // se crea dinámicamente al abrir el modal.
-  $(document).on("change", "#grupoSelect", function () {
-    const grupoId = $(this).val();
-    const claseSelect = $("#claseSelect");
+  function cargarJerarquiaEnMemoria() {
+    console.log("⏳ Cargando toda la jerarquía en memoria...");
 
-    // Limpiamos el select de clases
-    claseSelect.html('<option value="">Seleccione...</option>');
-
-    if (!grupoId) return;
-
-    const formData = new FormData();
-    formData.append("grupo", grupoId);
-
-    fetch(RUTA + "familias/clasesGrupo", {
-      method: "POST",
-      body: formData,
-    })
+    // IMPORTANTE: Esta ruta debe devolver los grupos con sus items (clases)
+    // Si tu ruta "familias/listaJerarquia" ya lo hace, la usamos.
+    fetch(RUTA + "familias/listaJerarquia", { method: "POST" })
       .then((r) => {
         if (!r.ok) throw new Error("Error HTTP: " + r.status);
         return r.json();
       })
       .then((data) => {
-        if (data.error) {
-          mostrarMensaje("❌ Error del backend:", mensaje_error);
-          claseSelect.html('<option value="">Error al cargar</option>');
-          return;
-        }
+        // Guardamos los datos en memoria
+        jerarquiaCompleta = data.grupos || data.datos || data || [];
+        console.log("✅ Jerarquía cargada en memoria. Grupos:", jerarquiaCompleta.length);
 
-        const clases = data.datos || data.data || data || [];
+        // Llenar el select de grupos con esta data
+        const select = document.getElementById("grupoSelect");
+        let optionsHtml = '<option value="">Seleccione...</option>';
 
-        if (clases.length === 0) {
-          claseSelect.html(
-            '<option value="">No hay clases para este grupo</option>',
-          );
-          return;
-        }
-
-        // Llenar el select
-        let opciones = '<option value="">Seleccione...</option>';
-        clases.forEach((c) => {
-          const cod = c.codigo || c.ccodcata || "";
-          const nom = c.nombre || c.cdescrip || "";
-          const val = c.id || c.ncodclase;
-          // AGREGAMOS data-codigo="${cod}"
-          opciones += `<option value="${val}" data-codigo="${cod}">${cod} - ${nom}</option>`;
+        jerarquiaCompleta.forEach((g) => {
+          const cod = g.codigo || g.codgrupo || "";
+          const nom = g.nombre || g.descripcion || "";
+          const valorSafe = String(g.id).replace(/"/g, '&quot;');
+          const textoSafe = `${cod} - ${nom}`.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          optionsHtml += `<option value="${valorSafe}">${textoSafe}</option>`;
         });
 
-        claseSelect.html(opciones);
-        console.log("✅ Clases cargadas:", clases.length);
+        select.innerHTML = optionsHtml;
+
+        // Inicializar el buscador de grupos
+        grupoBuscador = new SelectBuscador("#grupoSelect", {
+          placeholder: "Seleccione grupo...",
+          textoBuscar: "Buscar grupo..."
+        });
+
       })
       .catch((err) => {
-        console.error("❌ Error en Fetch:", err);
-        claseSelect.html('<option value="">Error de conexión</option>');
-        mostrarMensaje("Error al cargar las clases", mensaje_error);
+        console.error("❌ Error cargando jerarquía:", err);
+        mostrarMensaje("No se pudieron cargar los grupos", "error");
       });
+  }
+
+  // =============================================
+  // 2. CAMBIO DE GRUPO (Lógica en Memoria)
+  // =============================================
+  $(document).on("change", "#grupoSelect", function () {
+    const grupoId = $(this).val();
+    const claseSelect = $("#claseSelect");
+
+    console.log("🔥 Cambio de grupo. ID:", grupoId);
+
+    if (claseBuscador) {
+      claseBuscador.destruir();
+      claseBuscador = null;
+    }
+
+    claseSelect.empty().append('<option value="">Seleccione...</option>');
+
+    if (!grupoId) return;
+
+    // Buscamos el grupo en el array en memoria
+    const grupoEncontrado = jerarquiaCompleta.find(g => String(g.id) === String(grupoId));
+
+    if (grupoEncontrado && grupoEncontrado.items && grupoEncontrado.items.length > 0) {
+      let opciones = '<option value="">Seleccione...</option>';
+      
+      grupoEncontrado.items.forEach(function (c) {
+        const cod = c.codigo || "";
+        const nom = c.nombre || "";
+        const val = String(c.id).replace(/"/g, '&quot;');
+        const textoSafe = `${cod} - ${nom}`.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        opciones += `<option value="${val}">${textoSafe}</option>`;
+      });
+
+      claseSelect.html(opciones);
+
+      claseBuscador = new SelectBuscador("#claseSelect", {
+        placeholder: "Seleccione clase...",
+        textoBuscar: "Buscar clase..."
+      });
+
+      console.log("✅ Clases cargadas desde memoria. Total:", grupoEncontrado.items.length);
+
+      // Si venimos de editar, pintamos la clase AHORA MISMO
+      if (clasePendienteDeEdicion) {
+        claseSelect.val(clasePendienteDeEdicion).trigger('change');
+        let textoClase = claseSelect.find("option:selected").text();
+        claseSelect.siblings('.select-buscador-display').find('.select-buscador-texto').text(textoClase).css('color', '#333');
+        
+        clasePendienteDeEdicion = null;
+        $(".select-buscador-panel").removeClass("abierto");
+      }
+
+    } else {
+      claseSelect.append('<option value="">No hay clases para este grupo</option>');
+      claseBuscador = new SelectBuscador("#claseSelect", { placeholder: "Seleccione clase..." });
+    }
   });
 
   // =============================================
   // 3. AUTO-GENERAR CÓDIGO AL SELECCIONAR CLASE
   // =============================================
   $(document).on("change", "#claseSelect", function () {
-    // 1. Obtenemos el código del grupo seleccionado
-    // Buscamos la opción del grupo que está seleccionada y leemos su data-codigo
-    const grupoCodigo = $("#grupoSelect option:selected").data("codigo") || "";
+    const claseId = $(this).val();
 
-    // 2. Obtenemos el código de la clase seleccionada
-    const claseCodigo = $(this).find("option:selected").data("codigo") || "";
+    if (!claseId) {
+      $("#codigoFamilia").val('');
+      return;
+    }
 
-    // 3. Los unimos (Ej: B01 + B0101 = B01B0101)
-    // Nota: Según tu ejemplo, B01 es grupo y B0101 es clase, pero el resultado final es B010101.
-    // Si el código de la clase ya incluye el grupo (ej: B0101), entonces solo usamos el de la clase.
-    // Si el código de la clase es independiente (ej: 01), entonces los concatenamos.
+    if (accion === 'u' && registroEdit) return; 
 
-    // En tu caso, el código de la clase ya es B0101, así que el código final es simplemente el de la clase.
-    // Si necesitas concatenar, cambia la línea por: const codigoFinal = grupoCodigo + claseCodigo;
-
+    const claseCodigo = $(this).find("option:selected").text().split(" - ")[0]; 
     const codigoFinal = claseCodigo;
 
-    // 4. Lo asignamos al input de código (asegúrate de que el ID sea 'codigoInput')
     const formData = new FormData();
-    formData.append("grupo",$("#grupoSelect").val());
-    formData.append("clase",$("#claseSelect").val());
+    formData.append("grupo", $("#grupoSelect").val());
+    formData.append("clase", claseId);
 
-    fetch(RUTA+'familias/nuevoCodigo',{
-      method:'POST',
-      body:formData
+    fetch(RUTA + 'familias/nuevoCodigo', {
+      method: 'POST',
+      body: formData
     })
-    .then(response =>response.json())
-    .then(data => {
-      $("#codigoFamilia").val(codigoFinal+data);
+    .then(function (response) { return response.json(); })
+    .then(function (data) {
+      $("#codigoFamilia").val(codigoFinal + data);
     })
-    
-    // (Opcional) Actualizamos también el cuadro de vista previa si lo tienes
-    const preview = document.querySelector(".preview .code-display");
-    if (preview) {
-      preview.textContent = codigoFinal ? codigoFinal + "-XXXX" : "B???? - XXXXX";
-    }
+    .catch(function (err) { console.error("Error al generar código:", err); });
   });
 
+  // =============================================
+  // 4. EVENTOS DE UI
+  // =============================================
   $("#nuevoRegistro").click(function (e) {
     e.preventDefault();
-
     $("#proceso").fadeIn();
     accion = "n";
-
+    registroEdit = null;
+    bloquearCampos(false);
+    limpiarCampos();
     return false;
   });
 
   $("#consulta").keyup(function () {
     _this = this;
-    buscar(_this); // arrow function para activa el buscador
+    buscar(_this);
   });
 
-  $("#btnGuardar").click(function(e) {
+  $("#btnGuardar").click(function (e) {
     e.preventDefault();
-    
-    // 1. Validaciones básicas
+
     const grupoId = $("#grupoSelect").val();
     const claseId = $("#claseSelect").val();
     const codigo = $("#codigoFamilia").val();
     const nombre = $("#nombreInput").val();
 
     if (!grupoId || !claseId || !codigo || !nombre) {
-        mostrarMensaje("Por favor, complete todos los campos obligatorios", "mensaje_error");
-        return;
+      mostrarMensaje("Por favor, complete todos los campos obligatorios", "mensaje_error");
+      return;
     }
 
-    // 2. Determinar la URL según la acción
-    const url = (accion === 'n') 
-        ? RUTA + 'familias/nuevaFamilia' 
-        : RUTA + 'familias/modificarFamilia';
+    const url = (accion === 'n')
+      ? RUTA + 'familias/nuevaFamilia'
+      : RUTA + 'familias/modificarFamilia';
 
-    // 3. Preparar los datos
     const formData = new FormData();
     formData.append("grupo", grupoId);
     formData.append("clase", claseId);
     formData.append("codigo", codigo);
     formData.append("nombre", nombre);
-    
-    // Si estamos editando, enviamos el ID del registro
+
     if (accion === 'u' && registroEdit) {
-        formData.append("id", registroEdit.id);
+      formData.append("id", registroEdit.id);
     }
 
-    // 4. Enviar al backend
     fetch(url, {
-        method: "POST",
-        body: formData
+      method: "POST",
+      body: formData
     })
-    .then(r => r.json())
-    .then(data => {
-        if (data.respuesta) {
-          mostrarMensaje(data.mensaje, "mensaje_correcto");
-          consultarDatos(1); // Recargar tabla
-          $("#nombreInput").val(''); // limpiar para un nuevo registro con el mismo grupo y clase
-          $("#proceso").fadeOut(); // Cerrar modal
-        }else{
-          mostrarMensaje(data.mensaje, "mensaje_error");
-        } 
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.respuesta) {
+        mostrarMensaje(data.mensaje, "mensaje_correcto");
+        consultarDatos(paginaActual); 
+        $("#proceso").fadeOut();
+        
+        // Recargar la jerarquía en memoria para tener los datos frescos
+        cargarJerarquiaEnMemoria(); 
+      } else {
+        mostrarMensaje(data.mensaje, "mensaje_error");
+      }
     })
-    .catch(error => {
-        mostrarMensaje("Error al guardar: " + error.message, "mensaje_error");
+    .catch(function (error) {
+      mostrarMensaje("Error al guardar: " + error.message, "mensaje_error");
     });
-});
+  });
 
-  //filtrado en la lista de solicitante
   $(".busqueda").on("keyup", function () {
     var value = $(this).val().toLowerCase();
     $(this).next().attr("id");
-
-    //aignar a una variable el contenido
     let l = "#" + $(this).next().attr("id") + " li a";
-
     $(l).filter(function () {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
     });
   });
 
-  $("#lnkCerrarModal,#btnCerrarModal").click(function(e){
+  $("#lnkCerrarModal,#btnCerrarModal").click(function (e) {
     e.preventDefault();
-
     closeModal();
+    return false;
+  });
 
-    return false
-  })
-
+  // =============================================
+  // 5. FUNCIONES DE DATOS (Tabla y Paginación)
+  // =============================================
   function consultarDatos(page = 1) {
     try {
-      //const descripcion = document.getElementById("consulta").value;
       const tbody = document.getElementById("clasesTbody");
 
       tbody.innerHTML = `
@@ -229,7 +253,6 @@ $(function () {
             </tr>`;
 
       const formData = new FormData();
-      //formData.append("descripcion", descripcion);
       formData.append("page", page);
       formData.append("porPagina", POR_PAGINA);
 
@@ -237,44 +260,37 @@ $(function () {
         method: "POST",
         body: formData,
       })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.error) {
-            throw new Error(data.error);
-          }
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
 
-          if (data && data.grupos && data.grupos.length > 0) {
-            // Guardamos el total que viene del backend
-            totalRegistros = data.total_registros || 0;
-
-            // Renderizamos la tabla
-            renderizar(data.grupos);
-
-            // Actualizamos el paginador
-            actualizarPaginador(page);
-          } else {
-            tbody.innerHTML = `
-                    <tr class="vacio">
-                        <td colspan="3" style="text-align:center;padding:30px;color:#999;">
-                            <i class="fas fa-search" style="font-size:40px;display:block;margin-bottom:10px;"></i>
-                            No se encontraron datos
-                        </td>
-                    </tr>`;
-            totalRegistros = 0;
-            actualizarPaginador(1);
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+        if (data && data.grupos && data.grupos.length > 0) {
+          totalRegistros = data.total_registros || 0;
+          renderizar(data.grupos);
+          actualizarPaginador(page);
+        } else {
           tbody.innerHTML = `
                 <tr class="vacio">
-                    <td colspan="3" style="text-align:center;padding:30px;color:#e74c3c;">
-                        <i class="fas fa-exclamation-circle" style="font-size:40px;display:block;margin-bottom:10px;"></i>
-                        Error al cargar datos
+                    <td colspan="3" style="text-align:center;padding:30px;color:#999;">
+                        <i class="fas fa-search" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                        No se encontraron datos
                     </td>
                 </tr>`;
-          mostrarMensaje("Error al cargar datos: " + error.message, "error");
-        });
+          totalRegistros = 0;
+          actualizarPaginador(1);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        tbody.innerHTML = `
+            <tr class="vacio">
+                <td colspan="3" style="text-align:center;padding:30px;color:#e74c3c;">
+                    <i class="fas fa-exclamation-circle" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                    Error al cargar datos
+                </td>
+            </tr>`;
+        mostrarMensaje("Error al cargar datos: " + error.message, "error");
+      });
     } catch (error) {
       mostrarMensaje(error.message, "error");
     }
@@ -292,10 +308,8 @@ $(function () {
     grupos.forEach((grupo) => {
       const idGrupo = grupo.id;
 
-      // --- NIVEL 1: GRUPO ---
       html += `<tr class="grupo-row" data-target="g-${idGrupo}">
                 <td colspan="3" style="cursor:pointer;">
-                    <!-- Aquí respetamos el icono que venga del backend (grupo.icon) -->
                     <span class="icon-wrapper icon-grupo">
                         <i class="${grupo.icon || "fa-solid fa-folder"}"></i>
                     </span>
@@ -305,13 +319,11 @@ $(function () {
                 </td>
             </tr>`;
 
-      // --- NIVEL 2: CLASES ---
       (grupo.items || []).forEach((clase) => {
         const idClase = clase.id;
 
         html += `<tr class="sub-grupo-row oculto g-${idGrupo}" data-target="c-${idClase}">
         <td colspan="3" style="background:#f4f7fa; cursor:pointer; padding-left: 30px;">
-            <!-- Aquí respetamos el icono de clase que venga del backend (clase.icon) -->
             <span class="icon-wrapper icon-clase">
                 <i class="${clase.icon || "fa-solid fa-layer-group"}"></i>
             </span>
@@ -321,12 +333,9 @@ $(function () {
         </td>
     </tr>`;
 
-        // --- NIVEL 3: FAMILIAS ---
         (clase.items || []).forEach((familia) => {
-          const key = `${familia.idGrupo}|${familia.idClase}|${familia.id}|${familia.codigo}`;
-          html += `<tr class="item-row oculto c-${idClase}" data-key="${key}">
+          html += `<tr class="item-row oculto c-${idClase}">
             <td style="padding-left: 30px;">
-                <!-- Aquí FORZAMOS el icono de etiqueta para las familias -->
                 <span class="icon-wrapper icon-familia">
                     <i class="fas fa-tag"></i> 
                 </span>
@@ -334,7 +343,7 @@ $(function () {
             </td>
             <td>${familia.nombre}</td>
             <td style="text-align:center;">
-                <button type="button" class="btn-icon" title="Editar" onclick="editarDesdeTabla('${key}')">
+                <button type="button" class="btn-icon" title="Editar" onclick="editarDesdeTabla(${familia.id})">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
             </td>
@@ -345,45 +354,32 @@ $(function () {
 
     tbody.innerHTML = html;
 
-    // =============================================
-    // LISTENERS PARA EL ACORDEÓN
-    // =============================================
-
-    // Listener Grupos
     document.querySelectorAll(".grupo-row").forEach((row) => {
       row.addEventListener("click", function () {
         const target = this.dataset.target;
         const hijos = document.querySelectorAll(`.${target}`);
         const icon = this.querySelector(".toggle-icon-clase");
-
         hijos.forEach((hijo) => hijo.classList.toggle("oculto"));
         if (icon) icon.classList.toggle("cerrado");
       });
     });
 
-    // Listener Clases
     document.querySelectorAll(".sub-grupo-row").forEach((row) => {
       row.addEventListener("click", function (e) {
-        e.stopPropagation(); // Evita que se cierre el grupo padre
-
+        e.stopPropagation();
         const target = this.dataset.target;
         const hijos = document.querySelectorAll(`.${target}`);
         const icon = this.querySelector(".toggle-icon-clase");
-
         hijos.forEach((hijo) => hijo.classList.toggle("oculto"));
         if (icon) icon.classList.toggle("cerrado");
       });
     });
   }
 
-  // =============================================
-  // PAGINADOR
-  // =============================================
   function actualizarPaginador(pagina) {
     paginaActual = pagina;
     const totalPaginas = Math.ceil(totalRegistros / POR_PAGINA) || 1;
 
-    // Info de "Mostrando X - Y de Z"
     const inicio = totalRegistros > 0 ? (pagina - 1) * POR_PAGINA + 1 : 0;
     const fin = Math.min(pagina * POR_PAGINA, totalRegistros);
 
@@ -392,11 +388,9 @@ $(function () {
 
     let botones = "";
 
-    // Botón Anterior
     botones += `<button class="page-btn" data-page="${pagina - 1}" ${pagina <= 1 ? "disabled" : ""}>
         <i class="fas fa-chevron-left"></i></button>`;
 
-    // Lógica para mostrar números de página (1, 2, 3, ...)
     let inicioPag = Math.max(1, pagina - 2);
     let finPag = Math.min(totalPaginas, pagina + 2);
 
@@ -416,13 +410,11 @@ $(function () {
       botones += `<button class="page-btn" data-page="${totalPaginas}">${totalPaginas}</button>`;
     }
 
-    // Botón Siguiente
     botones += `<button class="page-btn" data-page="${pagina + 1}" ${pagina >= totalPaginas ? "disabled" : ""}>
         <i class="fas fa-chevron-right"></i></button>`;
 
     document.getElementById("botonesPaginador").innerHTML = botones;
 
-    // Agregar eventos a los botones
     document.querySelectorAll(".page-btn").forEach((btn) => {
       btn.addEventListener("click", function () {
         if (this.disabled) return;
@@ -435,45 +427,111 @@ $(function () {
   }
 
   // =============================================
-  // LLENAR SELECT DE GRUPOS
+  // 6. EDITAR REGISTRO DESDE LA TABLA
   // =============================================
-  function llenarSelectGrupos() {
-    const select = document.getElementById("grupoSelect");
-    select.innerHTML = '<option value="">Seleccione...</option>';
+  window.editarDesdeTabla = function (idFamilia) {
+    console.log("🔥 Editando ID Familia:", idFamilia);
 
-    fetch(RUTA + "clases/grupos", { method: "POST" })
-      .then((r) => r.json())
-      .then((data) => {
-        const lista = data.datos || data.data || data || [];
-        lista.forEach((g) => {
-          const cod = g.codigo || g.codgrupo || g.id;
-          const nom = g.descripcion || g.nombre || cod;
-          select.innerHTML += `<option value="${g.id ?? cod}" data-codigo="${cod}">${cod} - ${nom}</option>`;
-        });
-      })
-      .catch((err) => {
-        console.error("Error cargando grupos:", err);
-        mostrarMensaje("No se pudieron cargar los grupos", "error");
-      });
-  }
+    accion = "u"; 
+    $("#proceso").fadeIn();
+    limpiarCampos(); 
 
-  function closeModal(){
+    const formData = new FormData();
+    formData.append("id", idFamilia);
+
+    // IMPORTANTE: Esta ruta debe devolver un objeto con:
+    // ncodfamilia, ccodcata, cdescrip, ncodgrupo, ncodclase
+    fetch(RUTA + "familias/familiaId", {
+      method: "POST",
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        mostrarMensaje("Error: " + data.error, "error");
+        return;
+      }
+
+      const fam = data.familia[0];
+      registroEdit = { id: fam.ncodfamilia, codigo: fam.ccodcata };
+
+      // 1. Llenar los inputs de texto
+      $("#nombreInput").val(fam.cdescrip.trim());
+      $("#codigoFamilia").val(fam.ccodcata.trim());
+
+      // 2. Guardamos la clase pendiente para que se pinte cuando cambie el grupo
+      clasePendienteDeEdicion = fam.ncodclase;
+
+      // 3. Pintar Grupo (esto dispara el change, que busca en memoria y pinta la clase)
+      $("#grupoSelect").val(fam.ncodgrupo).trigger('change');
+      
+      let textoGrupo = $("#grupoSelect option:selected").text();
+      $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text(textoGrupo).css('color', '#333');
+
+      bloquearCampos(true);
+
+    })
+    .catch(err => {
+      console.error("❌ Error:", err);
+    });
+  };
+
+  // =============================================
+  // 7. UTILIDADES (Limpiar y Cerrar)
+  // =============================================
+  function closeModal() {
     $("#proceso").fadeOut();
     limpiarCampos();
     accion = "";
+    registroEdit = null;
   }
 
-  function limpiarCampos(){
+  function limpiarCampos() {
     $("#grupoSelect").val('');
-    $("#claseSelect").val('');
-    $("#codfamilia").val('');
+    $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text('Seleccione grupo...').css('color', '#999');
+
+    $("#claseSelect").empty().append('<option value="">Seleccione...</option>');
+    $("#claseSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text('Seleccione clase...').css('color', '#999');
+
+    $("#codigoFamilia").val('');
     $("#nombreInput").val('');
+    
+    $(".select-buscador-panel").removeClass("abierto");
   }
 
-  // Exponer al window para los onclick inline
-  window.editarDesdeTabla = function (key) {
-    $("#proceso").fadeIn();
-    console.log(key);
-  };
+    function bloquearCampos(bloquear) {
+    if (bloquear) {
+      // Deshabilitar los selects reales
+      $("#grupoSelect").prop("disabled", true);
+      $("#claseSelect").prop("disabled", true);
+      
+      // Deshabilitar el input de código
+      $("#codigoFamilia").prop("readonly", true).css("background-color", "#f3f4f6");
+      
+      // Hacer que los divs visuales del buscador parezcan deshabilitados
+      $(".select-buscador-display").css({
+        "background-color": "#f3f4f6",
+        "cursor": "not-allowed",
+        "pointer-events": "none", // Evita que se abra el panel
+        "opacity": "0.7"
+      });
+      
+    } else {
+      // Habilitar los selects reales
+      $("#grupoSelect").prop("disabled", false);
+      $("#claseSelect").prop("disabled", false);
+      
+      // Habilitar el input de código (aunque normalmente es readonly por diseño)
+      $("#codigoFamilia").prop("readonly", true).css("background-color", "");
+      
+      // Restaurar el estilo visual del buscador
+      $(".select-buscador-display").css({
+        "background-color": "#fff",
+        "cursor": "pointer",
+        "pointer-events": "auto",
+        "opacity": "1"
+      });
+    }
+  }
 
 });

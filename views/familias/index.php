@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/clases.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/select.css">
 </head>
 <body>
     <div class="mensaje">
@@ -46,6 +47,7 @@
                             </button>
                         </div>
                     </div>
+
                     <div class="dataProceso_flex_columna">
                         <div class="seccion_izquierda">
                             <div class="column2_9">
@@ -109,23 +111,16 @@
                     <input type="hidden" name="codfamilia" id="codfamilia">
                     <input type="hidden" name="codigo_clase_catalogo" id="codigo_clase_catalogo">
                     
-                    <div>
-                        <label class="obligatorio" for="grupoSelect">Grupo</label>
-                        <select id="grupoSelect" name="grupo" class="form-control">
-                            <option value="">Seleccione...</option>
-                            <!-- Se llena con JS -->
-                        </select>
+                    <div class="form-group">
+                        <label>Grupo *</label>
+                        <select id="grupoSelect" style="width: 100%;"></select>
                     </div>
 
-                    <!-- Select de Clase -->
-                    <div>
-                        <label class="obligatorio" for="claseSelect">Clase</label>
-                        <select id="claseSelect" name="clase" class="form-control">
-                            <option value="">Seleccione...</option>
-                            <!-- Se llena con JS -->
-                        </select>
+                    <div class="form-group">
+                        <label>Clase *</label>
+                        <select id="claseSelect" style="width: 100%;"></select>
                     </div>
-                    
+                        
                     <!-- Código Familia -->
                     <label class="obligatorio">Código Familia</label>
                     <input type="text" id="codigoFamilia" placeholder="Ej: B0104001" required readonly>
@@ -191,7 +186,9 @@
         <div class="info" id="infoPaginador">Mostrando <strong>0</strong> - <strong>0</strong> de <strong>0</strong></div>
         <div class="botones" id="botonesPaginador"></div>
     </div>
-    <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <!-- jQuery (Requisito de Select2) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/selectBuscador.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/familias.js?<?php echo constant('VERSION')?>"></script>
 </body>

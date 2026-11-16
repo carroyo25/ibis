@@ -1,0 +1,119 @@
+/* =========================================
+   SELECT CON BUSCADOR NATIVO - VISUAL
+   ========================================= */
+
+/* Envoltorio: mantiene el flujo del formulario */
+.select-buscador-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px; /* Ajusta según tu diseño */
+}
+
+/* Falso input: imita al select original */
+.select-buscador-display {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+    transition: border-color 0.2s;
+}
+
+.select-buscador-display:hover {
+    border-color: #999;
+}
+
+.select-buscador-display:focus {
+    outline: none;
+    border-color: #2a7de1; /* Tu azul */
+    box-shadow: 0 0 0 2px rgba(42, 125, 225, 0.2);
+}
+
+.select-buscador-texto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+
+/* Panel flotante: se posiciona debajo del falso input */
+.select-buscador-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000; /* Muy alto para que no lo tape el modal */
+    display: none;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+
+.select-buscador-panel.abierto {
+    display: block;
+}
+
+/* Input de búsqueda dentro del panel */
+.select-buscador-panel input {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+/* Lista de opciones */
+.select-buscador-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.select-buscador-panel li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #f3f4f6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.select-buscador-panel li:hover {
+    background: #2a7de1; /* Tu azul */
+    color: #fff;
+}
+
+.select-buscador-panel li.seleccionado {
+    background: #e0edff;
+    font-weight: 600;
+}
+
+.select-buscador-panel li.vacio {
+    color: #999;
+    cursor: default;
+    text-align: center;
+}
+
+.select-buscador-panel li.vacio:hover {
+    background: transparent;
+    color: #999;
+}
