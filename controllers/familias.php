@@ -20,7 +20,7 @@
         }
 
         function modificaFamilia() {
-            echo json_encode($this->model->modificarFamilia());
+            echo json_encode($this->model->modificarFamilia($_POST));
         }
 
         function familiaId(){

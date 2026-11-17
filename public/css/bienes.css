@@ -1,0 +1,471 @@
+/* =========================================
+   MÓDULO: BIENES / SERVICIOS
+   Archivo: public/css/bienes.css
+   ========================================= */
+
+/* Variables locales para el módulo */
+:root {
+    --b-primary: #2563eb;
+    --b-primary-hover: #1d4ed8;
+    --b-bg: #f3f4f6;
+    --b-surface: #ffffff;
+    --b-text: #1f2937;
+    --b-text-muted: #6b7280;
+    --b-border: #e5e7eb;
+    --b-radius: 8px;
+    --b-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --b-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Reset básico solo para esta vista (opcional, pero ayuda) */
+.bienes-wrapper * {
+    box-sizing: border-box;
+    font-family: var(--b-font);
+}
+
+/* =========================================
+   CABECERA DEL MÓDULO
+   ========================================= */
+.cabezaModulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--b-surface);
+    padding: 15px 30px;
+    border-radius: var(--b-radius);
+    box-shadow: var(--b-shadow);
+    margin: 20px 30px;
+}
+
+.cabezaModulo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--b-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.cabezaModulo h1::before {
+    content: '\f02d'; /* Icono de libro */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+.cabezaModulo div {
+    display: flex;
+    gap: 15px;
+}
+
+.cabezaModulo a {
+    text-decoration: none;
+    color: var(--b-text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.cabezaModulo a:hover {
+    color: var(--b-primary);
+}
+
+.cabezaModulo a i {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+
+/* =========================================
+   BARRA DE TRABAJO (BUSCADOR PRINCIPAL)
+   ========================================= */
+.barraTrabajo {
+    background: var(--b-surface);
+    margin: 0 30px 20px 30px;
+    padding: 15px 20px;
+    border-radius: var(--b-radius);
+    box-shadow: var(--b-shadow);
+    display: flex;
+    align-items: center;
+}
+
+.unaConsulta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.unaConsulta label {
+    font-weight: 600;
+    color: var(--b-text-muted);
+    white-space: nowrap;
+}
+
+.unaConsulta input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 15px;
+    border: 1px solid var(--b-border);
+    border-radius: var(--b-radius);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.unaConsulta input:focus {
+    outline: none;
+    border-color: var(--b-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* =========================================
+   TABLA PRINCIPAL
+   ========================================= */
+.itemsTabla {
+    background: var(--b-surface);
+    margin: 0 30px 30px 30px;
+    border-radius: var(--b-radius);
+    box-shadow: var(--b-shadow);
+    overflow: hidden; /* Para el redondeado */
+}
+
+#tablaPrincipal {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#tablaPrincipal thead th {
+    background-color: #f9fafb;
+    color: var(--b-text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--b-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#tablaPrincipal tbody td {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--b-border);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+#tablaPrincipal tbody tr {
+    transition: background-color 0.2s;
+}
+
+#tablaPrincipal tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+#tablaPrincipal tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilos de columnas específicas */
+#tablaPrincipal td:nth-child(1) { color: var(--b-text-muted); text-align: center; }
+#tablaPrincipal td:nth-child(2) { font-weight: 600; color: var(--b-primary); }
+#tablaPrincipal td:nth-child(3) { text-transform: capitalize; }
+#tablaPrincipal td:nth-child(5) { text-align: center; color: var(--b-text-muted); }
+
+/* Botón de acción en la tabla */
+#tablaPrincipal .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--b-text-muted);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+#tablaPrincipal .btn-icon:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* =========================================
+   MODALES Y VENTANAS FLOTANTES
+   ========================================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.ventanaProceso {
+    background: var(--b-surface);
+    border-radius: var(--b-radius);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    overflow: hidden;
+    animation: b-modalFadeIn 0.3s ease-out;
+}
+
+@keyframes b-modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ventanaProceso.w60por {
+    width: 60%;
+    max-width: 900px;
+    min-width: 600px;
+}
+
+/* Barra de opciones del modal */
+.barraOpciones {
+    background: #f8fafc;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--b-border);
+}
+
+.barraOpciones span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--b-text);
+}
+
+.barraOpciones div {
+    display: flex;
+    gap: 10px;
+}
+
+.barraOpciones button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: var(--b-radius);
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#grabarItem {
+    background: var(--b-primary);
+    color: white;
+}
+
+#grabarItem:hover {
+    background: var(--b-primary-hover);
+}
+
+#cerrarVentana {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+#cerrarVentana:hover {
+    background: #fecaca;
+}
+
+/* Formulario Grid */
+.dataProceso {
+    padding: 25px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.seccion_izquierda {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+.column2 {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.column2 label, .column4_7_1 label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--b-text-muted);
+}
+
+.column2 input, .column2 select, .column4_7_1 input {
+    padding: 10px 12px;
+    border: 1px solid var(--b-border);
+    border-radius: var(--b-radius);
+    font-size: 0.95rem;
+    font-family: var(--b-font);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fff;
+}
+
+.column2 input:focus, .column2 select:focus, .column4_7_1 input:focus {
+    outline: none;
+    border-color: var(--b-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.column4_7_1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Checkboxes */
+.column4_1 {
+    margin-top: 5px;
+    display: flex;
+    gap: 20px;
+}
+
+.column4_1 div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column4_1 input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--b-primary);
+}
+
+.column4_1 label {
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--b-text);
+}
+
+/* =========================================
+   CARRITO DE CÓDIGOS
+   ========================================= */
+.seccion_carrito {
+    background: #f8fafc;
+    padding: 20px;
+    border-top: 2px solid #e2e8f0;
+    margin: 0 25px 25px 25px;
+    border-radius: var(--b-radius);
+    border: 1px solid var(--b-border);
+}
+
+.seccion_carrito h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--b-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+.tabla-carrito th {
+    background: transparent;
+    color: var(--b-text-muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--b-border);
+}
+
+.tabla-carrito td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--b-border);
+    vertical-align: middle;
+}
+
+.btn-eliminar-carrito {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.btn-eliminar-carrito:hover {
+    background: #ef4444;
+    color: white;
+}
+
+#btnEnviarCorreo {
+    background: #10b981;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--b-radius);
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+#btnEnviarCorreo:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   INTEGRACIÓN CON LA LIBRERÍA SELECTBUSCADOR
+   ========================================= */
+.select-buscador-wrapper {
+    width: 100%;
+}
+
+.select-buscador-display {
+    padding: 10px 12px; /* Mismo padding que los inputs */
+    border: 1px solid var(--b-border);
+    border-radius: var(--b-radius);
+    font-size: 0.95rem;
+    min-height: 42px; /* Para que coincida con la altura del select nativo */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select-buscador-display:hover {
+    border-color: #9ca3af;
+}
+
+.select-buscador-panel {
+    border-radius: var(--b-radius);
+    border: 1px solid var(--b-border);
+    box-shadow: var(--b-shadow);
+    margin-top: 4px;
+}

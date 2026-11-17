@@ -176,23 +176,27 @@ $(function () {
     buscar(_this);
   });
 
-  $("#btnGuardar").click(function (e) {
+    $("#btnGuardar").click(function (e) {
     e.preventDefault();
 
+    // 1. Capturamos los valores actuales
     const grupoId = $("#grupoSelect").val();
     const claseId = $("#claseSelect").val();
-    const codigo = $("#codigoFamilia").val();
-    const nombre = $("#nombreInput").val();
+    const codigo = $("#codigoFamilia").val().trim();
+    const nombre = $("#nombreInput").val().trim();
 
+    // 2. Validamos
     if (!grupoId || !claseId || !codigo || !nombre) {
       mostrarMensaje("Por favor, complete todos los campos obligatorios", "mensaje_error");
       return;
     }
 
-    const url = (accion === 'n')
-      ? RUTA + 'familias/nuevaFamilia'
-      : RUTA + 'familias/modificarFamilia';
+    // 3. Determinamos la URL
+    const url = (accion === 'n') 
+        ? RUTA + 'familias/nuevaFamilia' 
+        : RUTA + 'familias/modificaFamilia';
 
+    // 4. Preparamos los datos
     const formData = new FormData();
     formData.append("grupo", grupoId);
     formData.append("clase", claseId);
@@ -200,28 +204,53 @@ $(function () {
     formData.append("nombre", nombre);
 
     if (accion === 'u' && registroEdit) {
-      formData.append("id", registroEdit.id);
+        formData.append("id", registroEdit.id);
     }
 
+    // 5. Enviamos al backend
     fetch(url, {
-      method: "POST",
-      body: formData
+        method: "POST",
+        body: formData
     })
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
-      if (data.respuesta) {
-        mostrarMensaje(data.mensaje, "mensaje_correcto");
-        consultarDatos(paginaActual); 
-        $("#proceso").fadeOut();
-        
-        // Recargar la jerarquía en memoria para tener los datos frescos
-        cargarJerarquiaEnMemoria(); 
-      } else {
-        mostrarMensaje(data.mensaje, "mensaje_error");
-      }
+    .then(r => r.json())
+    .then(data => {
+        console.log("📦 Respuesta del servidor:", data);
+
+        if (data.respuesta || data.success) {
+            mostrarMensaje(data.mensaje || "Guardado con éxito", "mensaje_correcto");
+            
+            // Refrescamos la jerarquía en memoria (por si cambió algún nombre)
+            cargarJerarquiaEnMemoria();
+            
+            // Cerramos el modal
+            $("#proceso").fadeOut();
+            
+            // Recargamos la tabla en la página actual
+            consultarDatos(paginaActual); 
+
+            // ========================================================
+            // TRUCO: Si fue edición, abrimos las carpetas automáticamente
+            // ========================================================
+            if (accion === 'u') {
+                // Esperamos un momento a que la tabla se pinte en el DOM
+                setTimeout(() => {
+                    // Hacemos clic en el grupo para desplegar
+                    $(`.grupo-row[data-target="g-${grupoId}"]`).trigger('click');
+                    
+                    // Esperamos un poquito más y hacemos clic en la clase
+                    setTimeout(() => {
+                        $(`.sub-grupo-row[data-target="c-${claseId}"]`).trigger('click');
+                    }, 150);
+                }, 500);
+            }
+
+        } else {
+            mostrarMensaje(data.mensaje || "Error al guardar", "mensaje_error");
+        }
     })
-    .catch(function (error) {
-      mostrarMensaje("Error al guardar: " + error.message, "mensaje_error");
+    .catch(error => {
+        console.error("❌ Error al guardar:", error);
+        mostrarMensaje("Error de conexión al guardar: " + error.message, "mensaje_error");
     });
   });
 
@@ -430,8 +459,6 @@ $(function () {
   // 6. EDITAR REGISTRO DESDE LA TABLA
   // =============================================
   window.editarDesdeTabla = function (idFamilia) {
-    console.log("🔥 Editando ID Familia:", idFamilia);
-
     accion = "u"; 
     $("#proceso").fadeIn();
     limpiarCampos(); 
@@ -439,36 +466,43 @@ $(function () {
     const formData = new FormData();
     formData.append("id", idFamilia);
 
-    // IMPORTANTE: Esta ruta debe devolver un objeto con:
-    // ncodfamilia, ccodcata, cdescrip, ncodgrupo, ncodclase
     fetch(RUTA + "familias/familiaId", {
       method: "POST",
       body: formData
     })
     .then(r => r.json())
     .then(data => {
-      if (data.error) {
-        mostrarMensaje("Error: " + data.error, "error");
-        return;
-      }
+      if (data.error) return;
 
       const fam = data.familia[0];
       registroEdit = { id: fam.ncodfamilia, codigo: fam.ccodcata };
 
-      // 1. Llenar los inputs de texto
+      // 1. Llenar inputs
       $("#nombreInput").val(fam.cdescrip.trim());
       $("#codigoFamilia").val(fam.ccodcata.trim());
 
-      // 2. Guardamos la clase pendiente para que se pinte cuando cambie el grupo
+      // 2. Guardar clase pendiente
       clasePendienteDeEdicion = fam.ncodclase;
 
-      // 3. Pintar Grupo (esto dispara el change, que busca en memoria y pinta la clase)
-      $("#grupoSelect").val(fam.ncodgrupo).trigger('change');
+      // 3. FORZAR EL SELECT DE GRUPO
+      const selectGrupo = document.getElementById("grupoSelect");
       
-      let textoGrupo = $("#grupoSelect option:selected").text();
-      $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text(textoGrupo).css('color', '#333');
+      // Asegurarnos de que NO esté deshabilitado antes de disparar
+      selectGrupo.disabled = false; 
+      
+      // Asignar valor
+      selectGrupo.value = fam.ncodgrupo;
 
-      bloquearCampos(true);
+      // Disparar el evento change de forma nativa y forzada
+      const event = new Event('change', { bubbles: true, cancelable: true });
+      selectGrupo.dispatchEvent(event);
+
+      // 4. Actualizar el texto visual del grupo
+      setTimeout(() => {
+        let textoGrupo = $("#grupoSelect option:selected").text();
+        $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text(textoGrupo).css('color', '#333');
+        bloquearCampos(true);
+      }, 50);
 
     })
     .catch(err => {

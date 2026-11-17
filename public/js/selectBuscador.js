@@ -90,7 +90,10 @@
 
     $(document).on("click" + ns, function (e) {
       if (!$(e.target).closest(".select-buscador-wrapper").length) {
-        self.$panel.removeClass("abierto");
+        // Validar que el panel aún exista antes de intentar quitarle la clase
+        if (self.$panel && self.$panel.length) {
+          self.$panel.removeClass("abierto");
+        }
       }
     });
 

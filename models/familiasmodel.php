@@ -57,13 +57,13 @@
             $sql = $this->db->connect()->prepare("UPDATE tb_familia 
                                                  SET cdescrip=:descrip
                                                  WHERE ncodfamilia =:familia");
-            $sql->execute(["familia"=>$datos['codfamilia'],
-                            "descrip"=>strtoupper($datos['descripcion'])]);
+            $sql->execute(["familia"=>$datos['id'],
+                            "descrip"=>strtoupper($datos['nombre'])]);
             $rowCount = $sql->rowCount();
 
             if ($rowCount > 0) {
                 $respuesta = false;
-                $mensaje = "Grupo creado";
+                $mensaje = "Descripcion modificada";
                 $clase = "mensaje_correcto";
             }
 

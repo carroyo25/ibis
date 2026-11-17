@@ -27,7 +27,7 @@
 
                     if ($rowCount > 0) {
                         $ok = true;
-                        $mensaje = "Grupo creado";
+                        $mensaje = "Clase creada";
                         $clase = "mensaje_correcto";
                     }
                 }
@@ -58,7 +58,7 @@
 
                 if ($rowCount > 0) {
                     $respuesta = true;
-                    $mensaje = "Grupo actualizado";
+                    $mensaje = "Clase actualizada";
                     $clase = "mensaje_correcto";
                 }
                 

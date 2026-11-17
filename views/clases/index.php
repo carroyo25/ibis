@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/clases.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/select.css"> <!-- Estilos del buscador -->
 
     <title>Document</title>
 </head>
@@ -47,11 +48,11 @@
                     
                     <!-- Grupo -->
                     <label class="obligatorio">Grupo</label>
-                    <select id="grupoSelect" required>
+                    <select id="grupoSelect" required style="width: 100%;">
                         <option value="">Seleccione...</option>
                     </select>
                     
-                    <!-- Código Clase -->
+                    <!-- Código Clase (Input de texto normal) -->
                     <label class="obligatorio">Código Clase</label>
                     <input type="text" id="codigoInput" placeholder="Ej: B0104" required oninput="validarCodigo(this)">
                     <span class="helper">Formato: Letra + 4 dígitos (ej: B0104)</span>
@@ -70,9 +71,6 @@
                     
                     <!-- Botones -->
                     <div class="acciones">
-                        <button type="button" class="btn btn-danger" id="btnEliminar" style="display:none;" onclick="eliminarClase()">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
                         <button type="button" class="btn btn-cancel" onclick="cerrarModal()">
                             Cancelar
                         </button>
@@ -121,8 +119,13 @@
         <div class="info" id="infoPaginador">Mostrando <strong>0</strong> - <strong>0</strong> de <strong>0</strong></div>
         <div class="botones" id="botonesPaginador"></div>
     </div>
+    
     <!-- SCRIPTS -->
-    <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Tu librería del buscador -->
+    <script src="<?php echo constant('URL');?>public/js/selectBuscador.js"></script>
+    <!-- Funciones globales y lógica de la vista -->
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/clases.js?<?php echo constant('VERSION')?>"></script>
 </body>

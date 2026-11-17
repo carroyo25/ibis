@@ -6,12 +6,13 @@ $(function () {
 
   let paginaActual    = 1;
   let totalRegistros  = 0;
-  let datosGrupos     = [];   // Agrupados
-  let datosClases     = [];   // Planos (para editar)
-  let estadosGrupo    = {};   // { idGrupo: true/false }
-  let registroEdit    = null; // Registro que se está editando
+  let datosGrupos     = [];   
+  let datosClases     = [];   
+  let estadosGrupo    = {};   
+  let registroEdit    = null; 
   let accionPregunta  = null;
   let timerBusqueda   = null;
+  let grupoBuscador   = null;
 
   const colorMap = {
     B01: "#2a7de1",
@@ -30,7 +31,7 @@ $(function () {
   });
 
   // =============================================
-  // EVENTOS
+  // EVENTOS GENERALES
   // =============================================
   $("#nuevoRegistro").click(function (e) {
     e.preventDefault();
@@ -44,23 +45,16 @@ $(function () {
     return false;
   });
 
-  // Búsqueda con debounce
   $("#consulta").on("input", function () {
     clearTimeout(timerBusqueda);
     timerBusqueda = setTimeout(() => consultarDatos(1), 350);
   });
 
-  // Vista previa dinámica
   $("#codigoInput").on("input", function () {
     validarCodigo(this);
     actualizarPreview();
   });
 
-  $("#grupoSelect").on("change", function () {
-    actualizarPreview();
-  });
-
-  // Modal de pregunta
   $("#btnAceptarPregunta").on("click", function () {
     cerrarPregunta();
     if (typeof accionPregunta === "function") accionPregunta();
@@ -72,7 +66,6 @@ $(function () {
     accionPregunta = null;
   });
 
-  // ESC cierra modales
   $(document).on("keydown", function (e) {
     if (e.key !== "Escape") return;
     if ($("#pregunta").is(":visible")) { cerrarPregunta(); accionPregunta = null; }
@@ -194,7 +187,6 @@ $(function () {
 
     document.getElementById("clasesTbody").innerHTML = html;
 
-    // Listeners de expansión
     document.querySelectorAll(".grupo-row").forEach((row) => {
       row.addEventListener("click", function () {
         toggleGrupo(this.dataset.grupo);
@@ -202,7 +194,6 @@ $(function () {
     });
   }
 
-  // Exponer al window para los onclick inline
   window.editarDesdeTabla = function (key) {
     const [idGrupo, codigo] = key.split("|");
     abrirModalEditar(idGrupo, codigo);
@@ -287,7 +278,7 @@ $(function () {
   }
 
   // =============================================
-  // LLENAR SELECT DE GRUPOS
+  // LLENAR SELECT DE GRUPOS + BUSCADOR
   // =============================================
   function llenarSelectGrupos() {
     const select = document.getElementById("grupoSelect");
@@ -297,11 +288,25 @@ $(function () {
       .then((r) => r.json())
       .then((data) => {
         const lista = data.datos || data.data || data || [];
+        
+        let html = '<option value="">Seleccione...</option>';
         lista.forEach((g) => {
           const cod = g.codigo || g.codgrupo || g.id;
           const nom = g.descripcion || g.nombre || cod;
-          select.innerHTML += `<option value="${g.id ?? cod}" data-codigo="${cod}">${cod} - ${nom}</option>`;
+          html += `<option value="${g.id ?? cod}" data-codigo="${cod}">${cod} - ${nom}</option>`;
         });
+        
+        select.innerHTML = html;
+
+        // INICIALIZAR BUSCADOR
+        if (typeof SelectBuscador !== "undefined") {
+            if (grupoBuscador) grupoBuscador.destruir();
+            grupoBuscador = new SelectBuscador("#grupoSelect", {
+                placeholder: "Seleccione grupo...",
+                textoBuscar: "Buscar grupo..."
+            });
+        }
+
       })
       .catch((err) => {
         console.error("Error cargando grupos:", err);
@@ -317,11 +322,14 @@ $(function () {
     document.getElementById("editId").value = "";
     document.getElementById("codgrupo").value = "";
     document.getElementById("codclase").value = "";
+    
     document.getElementById("grupoSelect").value = "";
+    // Usamos jQuery aquí para el .siblings()
+    $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text('Seleccione grupo...').css('color', '#999');
+
     document.getElementById("codigoInput").value = "";
     document.getElementById("nombreInput").value = "";
     document.getElementById("codigoInput").classList.remove("error");
-    document.getElementById("btnEliminar").style.display = "none";
     document.getElementById("labelGuardar").textContent = "Guardar";
     document.getElementById("modalTitulo").innerHTML =
       '<i class="fas fa-plus-circle"></i> Agregar Clase';
@@ -329,7 +337,6 @@ $(function () {
     document.getElementById("previewCodigo").textContent = "XXXX";
 
     $("#proceso").fadeIn();
-    setTimeout(() => document.getElementById("grupoSelect").focus(), 300);
   }
 
   function abrirModalEditar(idGrupo, codigo) {
@@ -349,7 +356,7 @@ $(function () {
 
     const sel = document.getElementById("grupoSelect");
     sel.value = idGrupo;
-    // Si no existe la opción aún, la agregamos
+    
     if (sel.value !== String(idGrupo)) {
       const opt = document.createElement("option");
       opt.value = idGrupo;
@@ -358,6 +365,10 @@ $(function () {
       sel.appendChild(opt);
       sel.value = idGrupo;
     }
+    
+    // Pintar visualmente con jQuery
+    let textoGrupo = sel.options[sel.selectedIndex]?.text || "Seleccione grupo...";
+    $("#grupoSelect").siblings('.select-buscador-display').find('.select-buscador-texto').text(textoGrupo).css('color', '#333');
 
     document.getElementById("codigoInput").value = registro.code || "";
     document.getElementById("nombreInput").value = registro.desc || "";
@@ -365,7 +376,6 @@ $(function () {
     document.getElementById("labelGuardar").textContent = "Actualizar";
     document.getElementById("modalTitulo").innerHTML =
       '<i class="fas fa-edit"></i> Editar Clase';
-    document.getElementById("btnEliminar").style.display = "inline-block";
 
     actualizarPreview();
     $("#proceso").fadeIn();
@@ -375,10 +385,10 @@ $(function () {
     $("#proceso").fadeOut();
   }
   
-  window.cerrarModal = cerrarModal; // Para el onclick del HTML
+  window.cerrarModal = cerrarModal;
 
   // =============================================
-  // VISTA PREVIA
+  // VISTA PREVIA Y VALIDACIÓN
   // =============================================
   function actualizarPreview() {
     const sel = document.getElementById("grupoSelect");
@@ -388,9 +398,6 @@ $(function () {
     document.getElementById("previewCodigo").textContent = codClase;
   }
 
-  // =============================================
-  // VALIDAR CÓDIGO
-  // =============================================
   function validarCodigo(input) {
     const val = input.value.toUpperCase();
     input.value = val;
@@ -403,7 +410,7 @@ $(function () {
       input.style.borderColor = "#e74c3c";
     }
   }
-  window.validarCodigo = validarCodigo; // Para el oninput del HTML
+  window.validarCodigo = validarCodigo;
 
   // =============================================
   // GUARDAR (CREAR / ACTUALIZAR)
@@ -494,39 +501,35 @@ $(function () {
           mostrarMensaje("Error al eliminar", "error");
         });
     };
-
-    abrirPregunta();
   };
 
+
   // =============================================
-  // MODAL DE PREGUNTA
+  // AUTOCOMPLETAR CÓDIGO AL CAMBIAR GRUPO (JS Puro)
   // =============================================
-  function abrirPregunta() {
-    $("#pregunta").fadeIn();
-  }
-  
-  function cerrarPregunta() {
-    $("#pregunta").fadeOut();
-  }
-
-
-  $("#grupoSelect").change(function(e){
-    e.preventDefault();
-
-    const codigo = $(this).find(":selected").data("codigo");
+  document.getElementById("grupoSelect").addEventListener("change", function() {
+    const codigo = this.options[this.selectedIndex]?.dataset.codigo;
+    
+    if (!this.value) {
+        document.getElementById("codigoInput").value = "";
+        actualizarPreview();
+        return;
+    }
 
     const formData = new FormData();
-    formData.append("grupo",$(this).find(":selected").val());
+    formData.append("grupo", this.value);
   
-    fetch(RUTA+'clases/siguienteClase',{
-      method:'POST',
-      body:formData
+    fetch(RUTA + 'clases/siguienteClase', {
+      method: 'POST',
+      body: formData
     })
     .then(response => response.json())
     .then(data => {
-      $("#codigoInput").val(codigo+data[0]);
-      actualizarPreview();
+      if (data && data[0]) {
+        document.getElementById("codigoInput").value = codigo + data[0];
+        actualizarPreview();
+      }
     })
-    return false;  
-  })
+    .catch(err => console.error("Error al generar código:", err));
+  });
 });
