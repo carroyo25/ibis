@@ -248,35 +248,52 @@ $(function () {
         $(".select-buscador-display").css({ "pointer-events": "auto", "background": "#fff", "opacity": "1" });
     }
 
-        // =============================================
+    // =============================================
     // LÓGICA PARA GUARDAR Y PASAR AL CARRITO
     // =============================================
     function procesarItem() {
-        // 1. Recopilar datos
-        let result = {};
-
-        $("#formProceso").serializeArray().forEach(item => {
-            result[item.name] = item.value;
-        });
+        // 1. Recopilar datos DIRECTAMENTE de los inputs y selects visibles
+        let result = {
+            codigo:         $("#codigo").val(), // El código autogenerado
+            codigo_tipo:    $("#tipo_item").val(),
+            codigo_grupo:   $("#grupo").val(),
+            codigo_clase:   $("#clase").val(),
+            codigo_familia: $("#familia").val(),
+            codigo_unidad:  $("#unidad").val(),
+            descripcion:    $("#descripcion").val().trim(),
+            nro_parte:      $("#nro_parte").val(),
+            cod_pat:        $("#cod_pat").val(),
+            // Checkboxes (true si están marcados, false si no)
+            serie:          $("#serie").is(":checked") ? 1 : 0,
+            detraccion:     $("#detraccion").is(":checked") ? 1 : 0,
+            actfij:         $("#actfij").is(":checked") ? 1 : 0
+        };
 
         // 2. Validaciones básicas
-        if (!result['codigo_tipo']) return mostrarMensaje("Seleccione el tipo", "mensaje_error");
-        if (!result['codigo_grupo']) return mostrarMensaje("Seleccione el grupo", "mensaje_error");
-        if (!result['codigo_clase']) return mostrarMensaje("Seleccione la clase", "mensaje_error");
-        if (!result['codigo_familia']) return mostrarMensaje("Seleccione la familia", "mensaje_error");
-        if (!result['descripcion']) return mostrarMensaje("Ingrese un nombre", "mensaje_error");
-        if (!result['codigo_unidad']) return mostrarMensaje("Seleccione la unidad", "mensaje_error");
+        if (!result.codigo_tipo) return mostrarMensaje("Seleccione el tipo", "mensaje_error");
+        if (!result.codigo_grupo) return mostrarMensaje("Seleccione el grupo", "mensaje_error");
+        if (!result.codigo_clase) return mostrarMensaje("Seleccione la clase", "mensaje_error");
+        if (!result.codigo_familia) return mostrarMensaje("Seleccione la familia", "mensaje_error");
+        if (!result.codigo_unidad) return mostrarMensaje("Seleccione la unidad", "mensaje_error");
+        if (!result.descripcion) return mostrarMensaje("Ingrese un nombre", "mensaje_error");
+        if (!result.codigo) return mostrarMensaje("El código no se ha generado", "mensaje_error");
 
-        // 3. Preparar envío al backend
+        // 3. Determinar si es edición o nuevo
         const esEdicion = (accion === "u");
         const url = esEdicion ? RUTA + "bienes/modificaItem" : RUTA + "bienes/nuevoItem";
         
+        // Si es edición, necesitamos el ID del item
+        if (esEdicion && registroEdit) {
+            result.codigo_item = registroEdit.id;
+        }
+
+        // 4. Enviar al servidor
         const formData = new FormData();
+        // Tu backend espera un string JSON en la llave 'datos'
         formData.append("datos", JSON.stringify(result));
 
         $("#esperar").fadeIn();
 
-        // 4. Enviar al servidor (aquí se verifica si el código se repite)
         fetch(url, { method: "POST", body: formData })
             .then(r => r.json())
             .then(data => {
@@ -287,13 +304,12 @@ $(function () {
 
                     if (!esEdicion) {
                         // A) AGREGAR AL CARRITO VISUAL
-                        agregarAlCarrito(result['codigo'], result['descripcion']);
+                        agregarAlCarrito(result.codigo, result.descripcion);
                         
-                        // B) LIMPIAR SOLO EL NOMBRE (mantener grupo, clase, familia)
+                        // B) LIMPIAR SOLO EL NOMBRE Y FOCO
                         $("#descripcion").val("").focus();
                         
                         // C) GENERAR EL NUEVO CÓDIGO AUTOMÁTICAMENTE
-                        // Tomamos el código de catálogo de la familia seleccionada
                         const codigoFamilia = $("#familia option:selected").data("codigo");
                         if (codigoFamilia) {
                             const formCode = new FormData();
@@ -302,7 +318,7 @@ $(function () {
                             fetch(RUTA + "bienes/codigo", { method: "POST", body: formCode })
                                 .then(res => res.text())
                                 .then(nuevoCodigo => {
-                                    $("#codigo").val(nuevoCodigo); // Actualizamos el input
+                                    $("#codigo").val(nuevoCodigo);
                                 });
                         }
 
@@ -313,9 +329,7 @@ $(function () {
                         consultarTabla(paginaActual);
                     }
                 } else {
-                    // Si el backend dice que hay error (ej: código duplicado)
                     mostrarMensaje(data.mensaje, data.clase);
-                    $("#descripcion").focus(); // Devolver el foco al nombre
                 }
             })
             .catch(err => {

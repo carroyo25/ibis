@@ -42,15 +42,6 @@
             <div class="cabezaProceso">
                 <form action="" autocomplete="off" id="formProceso">
                     
-                    <!-- Campos Ocultos -->
-                    <input type="hidden" name="codigo_item" id="codigo_item">
-                    <input type="hidden" name="codigo_tipo" id="codigo_tipo">
-                    <input type="hidden" name="codigo_grupo" id="codigo_grupo">
-                    <input type="hidden" name="codigo_clase" id="codigo_clase">
-                    <input type="hidden" name="codigo_familia" id="codigo_familia">
-                    <input type="hidden" name="codigo_catalogo" id="codigo_catalogo">
-                    <input type="hidden" name="codigo_unidad" id="codigo_unidad">
-
                     <div class="barraOpciones primeraBarra">
                         <span><i class="fas fa-edit" style="color: var(--b-primary); margin-right: 8px;"></i> Registro de Productos</span>
                         <div>
