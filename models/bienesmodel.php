@@ -6,174 +6,91 @@
             parent::__construct();
         }
 
-        public function listarItems(){
+        public function listarItemsPaginado($criterio, $page, $porPagina) {
             try {
-                $salida = "";
-                $sql = $this->db->connect()->query("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                    cm_producto.flgActivo,
-                                                    tb_parametros.cdescripcion AS tipo,
-                                                    tb_unimed.cabrevia 
-                                                FROM
-                                                    cm_producto
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
-                                                WHERE 
-                                                    cm_producto.flgVisible = 1
-                                                ORDER BY id_cprod ASC
-                                                LIMIT 1000");
-                $sql->execute();
-                $rc = $sql->rowcount();
-                $item = 1;
+                $offset = ($page - 1) * $porPagina;
+                $palabra = $criterio == "" ? "%" : "%" . $criterio . "%";
 
-                if ($rc > 0){
-                    while( $rs  = $sql->fetch()) {
-                        $icono  = $rs['flgActivo'] == 1 ? '<i class="fas fa-trash-alt"></i>':'<i class="fas fa-exchange-alt"></i>';
-                        $accion = $rs['flgActivo'] == 1 ? 'delete':'restore';
-                        $fondo   = $rs['flgActivo'] == 1 ? '#fff':'#fff';
+                // 1. Contar el total de registros para el paginador
+                $sqlCount = $this->db->connect()->prepare("SELECT COUNT(cm_producto.id_cprod) as total 
+                                                        FROM cm_producto 
+                                                        WHERE cm_producto.cdesprod LIKE :criterio 
+                                                        AND cm_producto.flgVisible = 1");
+                $sqlCount->execute(["criterio" => $palabra]);
+                $total = $sqlCount->fetch(PDO::FETCH_ASSOC)['total'];
 
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer" style="background:'.$fondo.'">
-                                        <td class="textoCentro">'.str_pad($item,5,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'" data-accion = "delete"><i class="fas fa-trash-alt"></i></a></td>
-                                    </tr>';
-                        $item++;
-                    }
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-       public function buscarItemsPalabra($criterio){
-            try {
-                $palabra = $criterio == "" ? "%" : "%".$criterio."%";
-
-                $salida = "";
+                // 2. Traer los datos de la página actual
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                    cm_producto.flgActivo,
-                                                    tb_parametros.cdescripcion AS tipo,
-                                                    tb_unimed.cabrevia 
-                                                FROM
-                                                    cm_producto
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        cm_producto.flgActivo,
+                                                        tb_parametros.cdescripcion AS tipo,
+                                                        tb_unimed.cabrevia 
+                                                    FROM cm_producto
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
-                                                WHERE
-                                                    cm_producto.cdesprod LIKE :criterio
+                                                    WHERE cm_producto.cdesprod LIKE :criterio
                                                     AND cm_producto.flgVisible = 1
-                                                    LIMIT 1000");
-                $sql->execute(["criterio"=>$palabra]);
-                $rc = $sql->rowcount();
-                $item = 1;
+                                                    ORDER BY id_cprod ASC
+                                                    LIMIT :limit OFFSET :offset");
+                
+                $sql->bindValue(':criterio', $palabra, PDO::PARAM_STR);
+                $sql->bindValue(':limit', $porPagina, PDO::PARAM_INT);
+                $sql->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $sql->execute();
+                
+                $items = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-                if ($rc > 0){
-                    while( $rs = $sql->fetch()) {
-                        $icono  = $rs['flgActivo'] == 1 ? '<i class="fas fa-trash-alt"></i>':'<i class="fas fa-exchange-alt"></i>';
-                        $accion = $rs['flgActivo'] == 1 ? 'delete':'restore';
-                        $fondo   = $rs['flgActivo'] == 1 ? '#fff':'#fff';
-
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer" style="background:'.$fondo.'">
-                                        <td class="textoCentro">'.str_pad($item,5,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'" data-accion = "delete"><i class="fas fa-trash-alt"></i></a></td>
-                                    </tr>';
-                        $item++;
-                    }
-                }
-
-                return $salida;
+                // Devolvemos el JSON estructurado
+                return array(
+                    "total" => $total,
+                    "items" => $items
+                );
 
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }
 
-        public function consultarId($id){
+        public function obtenerJerarquiaCompleta() {
             try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    cm_producto.ntipo,
-                                                    cm_producto.flgActivo,
-                                                    cm_producto.rfoto,
-                                                    cm_producto.cnparte,
-                                                    cm_producto.flgSerie, 
-	                                                cm_producto.flgDetrac,
-                                                    UPPER(CONCAT( tb_grupo.ccodcata, ' - ', tb_grupo.cdescrip )) AS grupo,
-                                                    UPPER(CONCAT( tb_clase.ccodcata, ' - ', tb_clase.cdescrip )) AS clase,
-                                                    UPPER(CONCAT( tb_familia.ccodcata, ' - ', tb_familia.cdescrip )) AS familia,
-                                                    cm_producto.ngrupo,
-                                                    cm_producto.nclase,
-                                                    cm_producto.nfam,
-                                                    cm_producto.nund,
-                                                    tb_parametros.cdescripcion AS tipo,
-                                                    UPPER(
-                                                    CONCAT( tb_unimed.ccodmed, ' - ', tb_unimed.cdesmed )) AS unidad 
-                                                FROM
-                                                    cm_producto
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
-                                                    INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                    INNER JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
-                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
-                                                WHERE
-                                                    cm_producto.id_cprod = :id");
-                 $sql->execute(["id"=>$id]);
-                 $rowCount = $sql->rowCount();
-                 
-                 if ($rowCount > 0) {
-                     $docData = array();
-                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                         $docData[] = $row;
-                     } 
-                 }
+                // 1. Traer Tipos
+                $stmt = $this->db->connect()->query("SELECT nidreg AS id, cdescripcion AS nombre, cdescripcion AS codigo 
+                                                        FROM tb_parametros 
+                                                        WHERE cclase = '07'
+                                                        AND cdescripcion IN ('BIENES', 'SERVICIOS')");
+                $tipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                 return array("item"=>$docData);
-            } catch (PDOException $th) {
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            } 
-        }
+                // 2. Traer Unidades
+                $stmt = $this->db->connect()->query("SELECT ncodmed AS id, cdesmed AS nombre, ccodmed AS codigo FROM tb_unimed");
+                $unidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        public function mostrarGrupos($id){
-            $salida = "";
-            try {
-                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ccodcata,cdescrip 
-                                                    FROM tb_grupo 
-                                                    WHERE nflgactivo=1
-                                                    AND  ntipclase =:id
-                                                    ORDER BY cdescrip ASC");
-                $sql->execute(["id"=>$id]);
-                $rowCount = $sql->rowCount();
+                // 3. Traer Grupos, Clases y Familias
+                $stmt = $this->db->connect()->query("SELECT ncodgrupo AS id, ccodcata AS codigo, cdescrip AS nombre FROM tb_grupo WHERE nflgactivo = 1");
+                $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if ($rowCount > 0) {
-                    while ( $rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodgrupo'].'" data-catalogo="'.$rs['ccodcata'] .'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                foreach ($grupos as &$grupo) {
+                    $stmtC = $this->db->connect()->prepare("SELECT ncodclase AS id, ccodcata AS codigo, cdescrip AS nombre FROM tb_clase WHERE ncodgrupo = :id");
+                    $stmtC->execute(['id' => $grupo['id']]);
+                    $grupo['clases'] = $stmtC->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($grupo['clases'] as &$clase) {
+                        $stmtF = $this->db->connect()->prepare("SELECT ncodfamilia AS id, ccodcata AS codigo, cdescrip AS nombre FROM tb_familia WHERE ncodclase = :id");
+                        $stmtF->execute(['id' => $clase['id']]);
+                        $clase['familias'] = $stmtF->fetchAll(PDO::FETCH_ASSOC);
                     }
                 }
 
-                return $salida;
+                return array(
+                    "tipos" => $tipos,
+                    "unidades" => $unidades,
+                    "grupos" => $grupos
+                );
+
             } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
+                return array("error" => $th->getMessage());
             }
         }
 
@@ -191,198 +108,6 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
-        
-        public function insertar($datos){
-            $salida = false;
-            $respuesta = false;
-            $mensaje = "Error en el registro";
-            $clase = "mensaje_error";
-
-            if(!$this->verificar($datos['codigo'])){
-                try {
-
-                    $serie = array_key_exists('serie', $datos)? 1 : 0;
-                    $detraccion = array_key_exists("detraccion",$datos)? 1 : 0;
-                    $actfij = array_key_exists("activo",$datos)? 1 : 0;
-
-                    $sql = $this->db->connect()->prepare("INSERT INTO cm_producto 
-                                                            SET ccodprod=:cod,cdesprod=:descripcion,ntipo=:tipo,ngrupo=:grupo,
-                                                                nclase=:clase,nfam=:familia,nund=:unidad,cnparte=:parte,flgSerie=:serie,
-                                                                flgDetrac=:detrac,flgActivo=:activo,iduser=:user,rfoto=:tfoto,
-                                                                flgActFij=:actfij,cCodPat=:codpat");
-                    $sql->execute(["cod"=>$datos['codigo'],
-                                    "descripcion"=>$datos['descripcion'],
-                                    "tipo"=>$datos['codigo_tipo'],
-                                    "grupo"=>$datos['codigo_grupo'],
-                                    "clase"=>$datos['codigo_clase'],
-                                    "familia"=>$datos['codigo_familia'],
-                                    "unidad"=>$datos['codigo_unidad'],
-                                    "parte"=>$datos['nro_parte'],
-                                    "serie"=>$serie,
-                                    "detrac"=>$detraccion,
-                                    "activo"=>1,
-                                    "user"=>$_SESSION['iduser'],
-                                    "tfoto"=>$datos['tipofoto'],
-                                    "actfij"=>$actfij,
-                                    "codpat"=>$datos['cod_pat']]);
-                    $rowCount = $sql->rowCount();
-
-                    if ($rowCount > 0){
-                        $respuesta = true;
-                        $mensaje = "Se registro correctamente";
-                        $clase = "mensaje_correcto";
-                    }
-                    
-                    $salida = array("respuesta"=>$respuesta,
-                                    "mensaje"=>$mensaje,
-                                    "clase"=>$clase);
-                } catch (PDOException $th) {
-                    echo $th->getMessage();
-                    return false;
-                }
-            }else{
-                $salida = array("respuesta"=>false,
-                                "mensaje"=>"Codigo duplicado",
-                                "clase"=>"mensaje_error");
-            }
-
-            return $salida;
-        }
-
-        public function modificar($datos){
-            $salida = false;
-            $respuesta = false;
-            $mensaje = "Error en el registro";
-            $clase = "mensaje_error";
-
-            try {
-
-                $serie = array_key_exists('serie', $datos)? 1 : 0;
-                $detraccion = array_key_exists("detraccion",$datos)? 1 : 0;
-                $actfij = array_key_exists("activo",$datos)? 1 : 0;
-
-
-                $sql = $this->db->connect()->prepare("UPDATE cm_producto 
-                                                        SET cdesprod=:descripcion,nund=:unidad,cnparte=:parte,
-                                                            flgSerie=:serie,flgDetrac=:detrac,iduser=:usr,rfoto=:tfoto,
-                                                            flgActFij=:actfij,cCodPat=:codpat
-                                                        WHERE id_cprod=:id");
-                $sql->execute([ "descripcion"=>$datos['descripcion'],
-                                "unidad"=>$datos['codigo_unidad'],
-                                "parte"=>$datos['nro_parte'],
-                                "serie"=>$serie,
-                                "detrac"=>$detraccion,
-                                "usr"=>$_SESSION['iduser'],
-                                "tfoto"=>$datos['tipofoto'],
-                                "id"=>$datos['codigo_item'],
-                                "actfij"=>$actfij,
-                                "codpat"=>$datos['cod_pat']]);
-                                
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0){
-                    $respuesta = true;
-                    $mensaje = "Se registro correctamente";
-                    $clase = "mensaje_correcto";
-                }
-                
-                $salida = array("respuesta"=>$respuesta,
-                                "mensaje"=>$mensaje,
-                                "clase"=>$clase);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-
-            return $salida;
-        }
-
-        private function verificar($codigo){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        COUNT( cm_producto.ccodprod ) AS numero 
-                                                    FROM
-                                                        cm_producto 
-                                                    WHERE
-                                                        cm_producto.ccodprod =:codigo");
-                $sql->execute(["codigo"=>$codigo]);
-                $result = $sql->fetchAll();
-    
-                return $result[0]['numero'];
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }  
-        }
-
-        public function subirFoto($archivo,$codigo){
-            $temporal	= $archivo['tmp_name'];
-            $type       = $archivo['type'];
-
-            
-            if ($temporal !== ""){
-                switch ($type) {
-                    case 'image/jpeg':
-                        $original = imagecreatefromjpeg($temporal);
-                        $ext = '.jpg';
-                        break;
-                    case 'image/png':
-                        $original 	= imagecreatefrompng($temporal);
-                        $ext = '.png';
-                        break;
-                    case 'image/gif':
-                        $original 	= imagecreatefromgif($temporal);
-                        $ext = '.gif';
-                        break;
-                    default:
-                        die("formato inválido");
-                }
-
-                $ancho_original	= imagesx($original);
-                $alto_original	= imagesy($original);
-    
-                //crear el lienzo vacio 520*400s
-                $ancho_nuevo 	= 520;
-                $alto_nuevo		= 400; //round($ancho_nuevo * $alto_original / $ancho_original);
-                 
-                $copia = imagecreatetruecolor($ancho_nuevo,$alto_nuevo);
-    
-                //copiar original -> copia
-                imagecopyresampled($copia, $original, 0, 0, 0, 0, $ancho_nuevo, 400, $ancho_original, $alto_original);
-    
-                //exportar guardar imagen
-                imagejpeg($copia,"public/documentos/fotos/catalogo/".$codigo.$ext,50);
-                 
-                //elimina los datos temporales
-                imagedestroy($original);
-                imagedestroy($copia);
-            }
-        }
-
-        public function eliminaItem($id){
-            try {
-                $sql = $this->db->connect()->prepare("UPDATE cm_producto SET flgVisible = 0 WHERE id_cprod=:id");
-                $sql->execute([$id]);
-
-                return $this->listarItems();
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            } 
-        }
-
-        public function activarItem($id){
-            try {
-                $sql = $this->db->connect()->prepare("UPDATE cm_producto SET flgActivo = 1 WHERE id_cprod=:id");
-                $sql->execute([$id]);
-
-                return $this->listarItems();
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            } 
         }
     }
 ?>

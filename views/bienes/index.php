@@ -2,43 +2,33 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Bienes/Servicios</title>
     
-    <!-- Fuentes e Iconos -->
+    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Estilos del Sistema -->
-    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/minimos.css">
-    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/modalcards.css">
-    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/clases.css">
+    <!-- CSS del Módulo -->
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/bienes.css">
-    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/select.css"> <!-- Estilos del buscador -->
 </head>
 <body>
-    <!-- Mensajes flotantes -->
-    <div class="mensaje">
-        <p></p>
-    </div>
-
-    <!-- Modal de espera -->
+    <div class="mensaje"><p></p></div>
     <div class="modal" id="esperar"></div>
-
-    <!-- Modales de Pregunta (Eliminar / Restaurar) -->
+    
+    <!-- MODALES DE PREGUNTA -->
     <div class="modal" id="preguntaEliminar">
         <div class="ventanaPregunta">
-            <h3>Desea desactivar el registro?</h3>
+            <h3>¿Desea desactivar el registro?</h3>
             <div>
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>
             </div>
         </div>
     </div>
-    
+
     <div class="modal" id="preguntaRestaurar">
         <div class="ventanaPregunta">
-            <h3>Desea activar el registro?</h3>
+            <h3>¿Desea activar el registro?</h3>
             <div>
                 <button type="button" id="btnAceptarActivar">Aceptar</button>
                 <button type="button" id="btnCancelarActivar">Cancelar</button>
@@ -46,11 +36,9 @@
         </div>
     </div>
 
-    <!-- ============================================= -->
-    <!-- MODAL PRINCIPAL DE REGISTRO -->
-    <!-- ============================================= -->
+    <!-- MODAL PRINCIPAL DE REGISTRO (2 COLUMNAS) -->
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w60por">
+        <div class="ventanaProceso w85por">
             <div class="cabezaProceso">
                 <form action="" autocomplete="off" id="formProceso">
                     
@@ -63,77 +51,75 @@
                     <input type="hidden" name="codigo_catalogo" id="codigo_catalogo">
                     <input type="hidden" name="codigo_unidad" id="codigo_unidad">
 
-                    <!-- Barra de Acciones -->
                     <div class="barraOpciones primeraBarra">
-                        <span>Datos Generales</span>
+                        <span><i class="fas fa-edit" style="color: var(--b-primary); margin-right: 8px;"></i> Registro de Productos</span>
                         <div>
                             <button type="button" id="grabarItem" title="Grabar Datos">
-                                <p><i class="far fa-save"></i> Grabar Registro</p> 
+                                <i class="far fa-save"></i> Grabar Registro
                             </button>
                             <button type="button" id="cerrarVentana" title="Cerrar">
-                                <i class="fas fa-window-close"></i>
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Cuerpo del Formulario -->
-                    <div class="dataProceso">
-                        <div class="seccion_izquierda">
+                    <!-- CONTENEDOR DE LAS 2 COLUMNAS -->
+                    <div class="modal-body-grid">
+                        
+                        <!-- COLUMNA IZQUIERDA: DATOS DEL PRODUCTO -->
+                        <div class="col-formulario">
+                            <div class="column1">
+                                <label for="codigo">CÓDIGO :</label>
+                                <input type="text" name="codigo" id="codigo" class="mayusculas" readonly placeholder="Autogenerado">
+                            </div>
+                            <div class="column1">
+                                <label for="tipo_item">TIPO:</label>
+                                <select id="tipo_item" name="tipo_item" required>
+                                    <option value="">Buscar tipo...</option>
+                                </select>
+                            </div>
+                            <div class="column1">
+                                <label for="grupo">GRUPO :</label>
+                                <select id="grupo" name="grupo" required>
+                                    <option value="">Buscar grupo...</option>
+                                </select>
+                            </div>
+                            <div class="column1">
+                                <label for="clase">CLASE:</label>
+                                <select id="clase" name="clase" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+                            <div class="column1">
+                                <label for="familia">FAMILIA:</label>
+                                <select id="familia" name="familia" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+                            <div class="column1">
+                                <label for="descripcion">NOMBRE :</label>
+                                <input type="text" name="descripcion" id="descripcion" class="mayusculas" required placeholder="Nombre del producto">
+                            </div>
+                            <div class="column1">
+                                <label for="unidad">UNIDAD:</label>
+                                <select id="unidad" name="unidad" required>
+                                    <option value="">Buscar unidad...</option>
+                                </select>
+                            </div>
+                            <!-- Fila de dos inputs juntos -->
+                            <div style="display: flex; gap: 15px;">
+                                <div class="column1" style="flex: 1;">
+                                    <label for="nro_parte">NRO.PARTE:</label>
+                                    <input type="text" name="nro_parte" id="nro_parte" class="mayusculas">
+                                </div>
+                                <div class="column1" style="flex: 1;">
+                                    <label for="cod_pat">CÓD. PATRIMONIAL:</label>
+                                    <input type="text" name="cod_pat" id="cod_pat" class="mayusculas">
+                                </div>
+                            </div>
                             
-                            <div class="column2">
-                                <label for="codigo">Codigo :</label>
-                                <input type="text" name="codigo" id="codigo" class="cerrarLista mayusculas w50por resaltado" readonly placeholder="Autogenerado">
-                            </div>
-
-                            <div class="column2">
-                                <label for="tipo_item">Tipo:</label>
-                                <select id="tipo_item" name="tipo_item" style="width: 100%;" required>
-                                    <option value="">Seleccione...</option>
-                                    <?php echo $this->listaTipos; ?> 
-                                </select>
-                            </div>
-
-                            <div class="column2">
-                                <label for="grupo">Grupo :</label>
-                                <select id="grupo" name="grupo" style="width: 100%;" required>
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
-
-                            <div class="column2">
-                                <label for="clase">Clase:</label>
-                                <select id="clase" name="clase" style="width: 100%;" required>
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
-
-                            <div class="column2">
-                                <label for="familia">Familia:</label>
-                                <select id="familia" name="familia" style="width: 100%;" required>
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
-
-                            <div class="column2">
-                                <label for="descripcion">Nombre :</label>
-                                <input type="text" name="descripcion" id="descripcion" class="mayusculas cerrarLista obligatorio" required placeholder="Nombre del producto">
-                            </div>
-
-                            <div class="column2">
-                                <label for="unidad">Unidad:</label>
-                                <select id="unidad" name="unidad" style="width: 100%;" required>
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
-
-                            <div class="column4_7_1">
-                                <label for="nro_parte">Nro.Parte:</label>
-                                <input type="text" name="nro_parte" id="nro_parte" class="mayusculas cerrarLista">
-                                <label for="cod_pat">Codigo Patrimonial:</label>
-                                <input type="text" name="cod_pat" id="cod_pat" class="mayusculas cerrarLista">
-                            </div>
-
-                            <div class="column4_1" style="margin-top: 15px; display: flex; gap: 20px;">
+                            <!-- Checkboxes -->
+                            <div class="checkboxes-group">
                                 <div>
                                     <input type="checkbox" name="serie" id="serie" value="1">
                                     <label for="serie">Registra Series</label>
@@ -148,49 +134,47 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- ============================================= -->
-                    <!-- CARRITO DE CÓDIGOS CREADOS -->
-                    <!-- ============================================= -->
-                    <div class="seccion_carrito">
-                        <h4 style="margin-top: 0; color: #2a7de1; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-list-ul"></i> Códigos creados en esta sesión
-                        </h4>
-                        
-                        <table class="tabla-carrito">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">Código</th>
-                                    <th style="width: 65%;">Descripción</th>
-                                    <th style="width: 15%; text-align: center;">Quitar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbodyCarrito">
-                                <tr>
-                                    <td colspan="3" style="text-align: center; padding: 15px; color: #999;">
-                                        Aún no has creado códigos en esta sesión.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <!-- COLUMNA DERECHA: CARRITO Y CORREO -->
+                        <div class="col-carrito">
+                            <h4><i class="fas fa-list-ul"></i> Códigos en esta sesión</h4>
+                            
+                            <table class="tabla-carrito">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 25%;">CÓDIGO</th>
+                                        <th style="width: 60%;">DESCRIPCIÓN</th>
+                                        <th style="width: 15%; text-align: center;">X</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyCarrito">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; padding: 20px; color: #94a3b8;">
+                                            Aún no has creado códigos.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                        <div style="text-align: right; margin-top: 15px;">
-                            <button type="button" id="btnEnviarCorreo" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i> Enviar Lista por Correo
-                            </button>
+                            <!-- Cajita para enviar el correo -->
+                            <div class="envio-correo-box">
+                                <label for="correoDestino">CORREO DE ENVÍO:</label>
+                                <div class="input-group-correo">
+                                    <input type="email" id="correoDestino" placeholder="ejemplo@correo.com" required>
+                                    <button type="button" id="btnEnviarCorreo" title="Enviar Correo">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <!-- FIN DEL CARRITO -->
 
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- ============================================= -->
-    <!-- VISTA PRINCIPAL (TABLA) -->
-    <!-- ============================================= -->
+    <!-- VISTA PRINCIPAL -->
     <div class="cabezaModulo">
         <h1>Catálogo Bienes/Servicios</h1>
         <div>
@@ -206,22 +190,28 @@
         </div>
     </div>
     
-    <div class="itemsTabla">
-        <table id="tablaPrincipal">
-            <thead class="stickytop">
-                <tr>
-                    <th width="3%">Item</th>
-                    <th width="10%">Codigo</th>
-                    <th>Tipo</th>
-                    <th>Denominación</th>
-                    <th>Unidad</th>
-                    <th width="3%">...</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyBienes">
-                <?php echo $this->listaItems;?>
-            </tbody>
-        </table>
+    <!-- CONTENEDOR DE TABLA Y PAGINADOR -->
+    <div class="tabla-wrapper">
+        <div class="itemsTabla">
+            <table id="tablaPrincipal">
+                <thead class="stickytop">
+                    <tr>
+                        <th width="8%">Item</th>
+                        <th width="18%">Codigo</th>
+                        <th width="15%">Tipo</th>
+                        <th width="40%">Denominación</th>
+                        <th width="12%">Unidad</th>
+                        <th width="7%">...</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyBienes"></tbody>
+            </table>
+        </div>
+        
+        <div class="paginador" id="paginadorBienes">
+            <div class="info" id="infoPaginador">Mostrando <strong>0</strong> - <strong>0</strong> de <strong>0</strong></div>
+            <div class="botones" id="botonesPaginador"></div>
+        </div>
     </div>
     
     <!-- SCRIPTS -->

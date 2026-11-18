@@ -1,46 +1,38 @@
 /* =========================================
-   MÓDULO: BIENES / SERVICIOS
-   Archivo: public/css/bienes.css
+   MÓDULO: BIENES / SERVICIOS (1 COLUMNA + RESPONSIVE)
    ========================================= */
 
-/* Variables locales para el módulo */
 :root {
     --b-primary: #2563eb;
     --b-primary-hover: #1d4ed8;
-    --b-bg: #f3f4f6;
+    --b-bg: #f8fafc;
     --b-surface: #ffffff;
-    --b-text: #1f2937;
-    --b-text-muted: #6b7280;
-    --b-border: #e5e7eb;
-    --b-radius: 8px;
-    --b-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --b-text: #1e293b;
+    --b-text-muted: #64748b;
+    --b-border: #e2e8f0;
+    --b-radius: 12px;
+    --b-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
     --b-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Reset básico solo para esta vista (opcional, pero ayuda) */
-.bienes-wrapper * {
-    box-sizing: border-box;
-    font-family: var(--b-font);
-}
-
 /* =========================================
-   CABECERA DEL MÓDULO
+   CABECERA Y BOTONES
    ========================================= */
 .cabezaModulo {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--b-surface);
-    padding: 15px 30px;
+    padding: 15px 25px;
     border-radius: var(--b-radius);
     box-shadow: var(--b-shadow);
-    margin: 20px 30px;
+    margin: 20px 30px 15px 30px;
 }
 
 .cabezaModulo h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--b-primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--b-text);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -48,424 +40,591 @@
 }
 
 .cabezaModulo h1::before {
-    content: '\f02d'; /* Icono de libro */
+    content: '\f02d';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
-    font-size: 1.2rem;
-}
-
-.cabezaModulo div {
-    display: flex;
-    gap: 15px;
-}
-
-.cabezaModulo a {
-    text-decoration: none;
-    color: var(--b-text-muted);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.cabezaModulo a:hover {
     color: var(--b-primary);
 }
 
-.cabezaModulo a i {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
+.cabezaModulo > div { display: flex; gap: 12px; }
+
+.cabezaModulo a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
+#nuevoRegistro { background: #ecfdf5; color: #059669; border: 1px solid #d1fae5; }
+#nuevoRegistro:hover { background: #059669; color: white; transform: translateY(-1px); }
+
+#irInicio { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+#irInicio:hover { background: #2563eb; color: white; transform: translateY(-1px); }
+
+.cabezaModulo a i { font-size: 1.1rem; margin: 0; }
+.cabezaModulo a p { margin: 0; }
+
 /* =========================================
-   BARRA DE TRABAJO (BUSCADOR PRINCIPAL)
+   BARRA DE TRABAJO (BUSCADOR)
    ========================================= */
 .barraTrabajo {
     background: var(--b-surface);
-    margin: 0 30px 20px 30px;
-    padding: 15px 20px;
+    padding: 12px 20px;
     border-radius: var(--b-radius);
     box-shadow: var(--b-shadow);
     display: flex;
     align-items: center;
+    margin: 0 30px 15px 30px;
 }
 
-.unaConsulta {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-}
-
-.unaConsulta label {
-    font-weight: 600;
-    color: var(--b-text-muted);
-    white-space: nowrap;
-}
-
+.unaConsulta { display: flex; align-items: center; gap: 15px; width: 100%; }
+.unaConsulta label { font-weight: 600; color: var(--b-text-muted); white-space: nowrap; }
 .unaConsulta input {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     padding: 10px 15px;
     border: 1px solid var(--b-border);
-    border-radius: var(--b-radius);
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
-
-.unaConsulta input:focus {
-    outline: none;
-    border-color: var(--b-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
+.unaConsulta input:focus { outline: none; border-color: var(--b-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
 
 /* =========================================
-   TABLA PRINCIPAL
+   TABLA Y PAGINADOR (CON MEDIA QUERIES)
    ========================================= */
-.itemsTabla {
+.tabla-wrapper {
     background: var(--b-surface);
-    margin: 0 30px 30px 30px;
     border-radius: var(--b-radius);
     box-shadow: var(--b-shadow);
-    overflow: hidden; /* Para el redondeado */
+    margin: 0 30px 30px 30px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-#tablaPrincipal {
+/* Altura base para monitores grandes */
+.itemsTabla {
     width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+    height: 60vh; 
+    min-height: 250px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* En pantallas de laptops (el menú ocupa más espacio) */
+@media (max-width: 1366px) {
+    .itemsTabla {
+        height: 35vh; /* Ajuste exacto para que el paginador siempre se vea */
+    }
+}
+
+/* En pantallas pequeñas (tablets) */
+@media (max-width: 992px) {
+    .itemsTabla {
+        height: 40vh;
+    }
+}
+
+#tablaPrincipal { 
+    width: 100%; 
+    border-collapse: collapse; 
+    text-align: left; 
+    table-layout: fixed;
 }
 
 #tablaPrincipal thead th {
-    background-color: #f9fafb;
-    color: var(--b-text-muted);
+    background-color: #f8fafc !important;
+    color: var(--b-text-muted) !important;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--b-border);
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--b-border);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 20;
+    white-space: nowrap;
 }
 
-#tablaPrincipal tbody td {
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--b-border);
-    font-size: 0.95rem;
-    vertical-align: middle;
+#tablaPrincipal tbody td { 
+    padding: 8px 20px; 
+    border-bottom: 1px solid var(--b-border); 
+    font-size: 0.85rem; 
+    vertical-align: middle; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
-#tablaPrincipal tbody tr {
-    transition: background-color 0.2s;
-}
+#tablaPrincipal tbody tr { transition: background-color 0.2s; }
+#tablaPrincipal tbody tr:hover { background-color: #f8fafc; }
 
-#tablaPrincipal tbody tr:hover {
-    background-color: #f8fafc;
-}
+/* Anchos de columnas */
+#tablaPrincipal th:nth-child(1), #tablaPrincipal td:nth-child(1) { width: 8%; text-align: center; color: var(--b-text-muted); }
+#tablaPrincipal th:nth-child(2), #tablaPrincipal td:nth-child(2) { width: 18%; font-weight: 600; color: var(--b-primary); }
+#tablaPrincipal th:nth-child(3), #tablaPrincipal td:nth-child(3) { width: 15%; text-align: center; }
+#tablaPrincipal th:nth-child(4), #tablaPrincipal td:nth-child(4) { width: 40%; }
+#tablaPrincipal th:nth-child(5), #tablaPrincipal td:nth-child(5) { width: 12%; text-align: center; color: var(--b-text-muted); }
+#tablaPrincipal th:nth-child(6), #tablaPrincipal td:nth-child(6) { width: 7%; text-align: center; }
 
-#tablaPrincipal tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Estilos de columnas específicas */
-#tablaPrincipal td:nth-child(1) { color: var(--b-text-muted); text-align: center; }
-#tablaPrincipal td:nth-child(2) { font-weight: 600; color: var(--b-primary); }
-#tablaPrincipal td:nth-child(3) { text-transform: capitalize; }
-#tablaPrincipal td:nth-child(5) { text-align: center; color: var(--b-text-muted); }
-
-/* Botón de acción en la tabla */
 #tablaPrincipal .btn-icon {
     background: transparent;
     border: none;
-    color: var(--b-text-muted);
+    color: #94a3b8;
     cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
     transition: all 0.2s;
 }
+#tablaPrincipal tr:hover .btn-icon { background: #e2e8f0; color: #1e293b; }
 
-#tablaPrincipal .btn-icon:hover {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-/* =========================================
-   MODALES Y VENTANAS FLOTANTES
-   ========================================= */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(17, 24, 39, 0.6);
-    backdrop-filter: blur(2px);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-}
-
-.ventanaProceso {
-    background: var(--b-surface);
-    border-radius: var(--b-radius);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-    overflow: hidden;
-    animation: b-modalFadeIn 0.3s ease-out;
-}
-
-@keyframes b-modalFadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.ventanaProceso.w60por {
-    width: 60%;
-    max-width: 900px;
-    min-width: 600px;
-}
-
-/* Barra de opciones del modal */
-.barraOpciones {
-    background: #f8fafc;
-    padding: 15px 25px;
+.paginador {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--b-border);
+    padding: 12px 20px;
+    background: var(--b-surface);
+    border-top: 1px solid var(--b-border);
+    flex-shrink: 0; /* Asegura que el paginador no se aplaste */
 }
 
-.barraOpciones span {
-    font-size: 1.1rem;
-    font-weight: 600;
+.paginador .info { font-size: 0.85rem; color: var(--b-text-muted); }
+#botonesPaginador { display: flex; gap: 5px; }
+.page-btn {
+    background: #fff;
+    border: 1px solid var(--b-border);
+    color: var(--b-text-muted);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--b-primary); color: var(--b-primary); }
+.page-btn.active { background: var(--b-primary); color: white; border-color: var(--b-primary); }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #f8fafc; }
+
+/* =========================================
+   BADGES
+   ========================================= */
+.badge-tipo {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.badge-bienes { background-color: #e0f2fe; color: #0369a1; }
+.badge-servicios { background-color: #dcfce7; color: #15803d; }
+
+/* =========================================
+   MODAL DE 2 COLUMNAS (COMPACTO Y CON COLORES)
+   ========================================= */
+
+.ventanaProceso.w85por {
+    width: 85%;
+    max-width: 1100px;
+}
+
+/* Contenedor de las 2 columnas - Menos espacio general */
+.modal-body-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 15px;
+    padding: 15px 20px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: var(--b-surface); /* Fondo blanco para el cuerpo */
+}
+
+/* --- Columna Izquierda (Formulario) --- */
+.col-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.column1 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.column1 label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+/* Inputs y selects con sus colores y bordes */
+.column1 input[type="text"],
+.column1 select,
+.select-buscador-display {
+    padding: 8px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
     color: var(--b-text);
+    min-height: 38px;
+    transition: all 0.2s ease;
+}
+
+/* Efecto de foco azul al hacer clic */
+.column1 input[type="text"]:focus,
+.column1 select:focus {
+    border-color: var(--b-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
+}
+
+/* Input bloqueado (Código) */
+.column1 input[readonly] {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Checkboxes compactos pero con fondo */
+.col-formulario .checkboxes-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--b-border);
+    margin-top: 5px;
+}
+
+.col-formulario .checkboxes-group div { display: flex; align-items: center; gap: 6px; }
+.col-formulario .checkboxes-group label { font-size: 0.75rem; margin: 0; text-transform: none; font-weight: 500; cursor: pointer; }
+.col-formulario .checkboxes-group input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--b-primary); cursor: pointer; }
+
+/* --- Columna Derecha (Carrito) --- */
+.col-carrito {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid var(--b-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.col-carrito h4 {
+    font-size: 0.9rem;
+    color: var(--b-primary); /* Título del carrito en azul */
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--b-border);
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.col-carrito .tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-bottom: auto;
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.col-carrito .tabla-carrito th { background: #f8fafc; padding: 6px 8px; color: var(--b-text-muted); border-bottom: 1px solid var(--b-border); text-align: left; }
+.col-carrito .tabla-carrito td { padding: 6px 8px; color: var(--b-text); border-bottom: 1px solid var(--b-border); }
+.col-carrito .tabla-carrito tr:last-child td { border-bottom: none; }
+
+/* --- Cajita de Enviar Correo --- */
+.envio-correo-box {
+    margin-top: 15px;
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--b-border);
+}
+
+.envio-correo-box label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #475569;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.input-group-correo {
+    display: flex;
+    gap: 8px;
+}
+
+.input-group-correo input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    min-height: 36px;
+    outline: none;
+}
+.input-group-correo input:focus { border-color: var(--b-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* Botón de enviar correo con su color verde */
+#btnEnviarCorreo {
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    min-height: 36px;
+}
+#btnEnviarCorreo:hover { background: #059669; transform: translateY(-1px); }
+
+/* =========================================
+   CORRECCIÓN DEL BUSCADOR
+   ========================================= */
+.select-buscador-wrapper { position: relative !important; width: 100% !important; }
+.select-buscador-panel {
+    position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important;
+    background: #fff !important; border: 1px solid var(--b-border) !important; border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; z-index: 99999 !important;
+    max-height: 200px !important; overflow-y: auto !important; display: none; margin-top: 4px !important;
+}
+.select-buscador-panel.abierto { display: block !important; }
+.select-buscador-panel input {
+    width: 100% !important; padding: 10px 12px !important; border: none !important; border-bottom: 1px solid var(--b-border) !important;
+    outline: none !important; box-sizing: border-box !important; font-size: 0.9rem !important; position: sticky !important; top: 0 !important; background: #fff !important;
+}
+.select-buscador-panel ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+.select-buscador-panel li { padding: 10px 12px !important; cursor: pointer !important; font-size: 0.9rem !important; border-bottom: 1px solid #f1f5f9 !important; color: var(--b-text) !important; }
+.select-buscador-panel li:hover { background: var(--b-primary) !important; color: #fff !important; }
+.select-buscador-display {
+    width: 100% !important; padding: 12px 14px !important; border: 1.5px solid #cbd5e1 !important; border-radius: 10px !important;
+    font-size: 0.9rem !important; min-height: 42px !important; background: #fff !important;
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    cursor: pointer !important; box-sizing: border-box !important;
+}
+
+/* =========================================
+   ESTILOS PARA LOS BOTONES DE LA CABECERA (MODAL)
+   ========================================= */
+
+/* Quitamos el borde gris que venía por defecto y ajustamos la barra */
+.barraOpciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #ffffff; /* Fondo blanco */
+    border-bottom: 1px solid var(--b-border);
+    border-radius: 16px 16px 0 0; /* Redondeado arriba */
 }
 
 .barraOpciones div {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
 }
 
-.barraOpciones button {
-    background: transparent;
+/* Botón "Grabar Registro" (Azul) */
+#grabarItem {
+    background: var(--b-primary); /* Tu azul principal */
+    color: white;
     border: none;
+    padding: 8px 16px;
+    border-radius: 8px; /* Bordes redondeados */
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
-    padding: 8px 12px;
-    border-radius: var(--b-radius);
-    font-weight: 500;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 6px;
-}
-
-#grabarItem {
-    background: var(--b-primary);
-    color: white;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 #grabarItem:hover {
     background: var(--b-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
 }
 
+/* Botón "X" (Cerrar) */
 #cerrarVentana {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-#cerrarVentana:hover {
-    background: #fecaca;
-}
-
-/* Formulario Grid */
-.dataProceso {
-    padding: 25px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.seccion_izquierda {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    grid-column: 1 / -1; /* Ocupa todo el ancho */
-}
-
-.column2 {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.column2 label, .column4_7_1 label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--b-text-muted);
-}
-
-.column2 input, .column2 select, .column4_7_1 input {
-    padding: 10px 12px;
-    border: 1px solid var(--b-border);
-    border-radius: var(--b-radius);
-    font-size: 0.95rem;
-    font-family: var(--b-font);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    background: #fff;
-}
-
-.column2 input:focus, .column2 select:focus, .column4_7_1 input:focus {
-    outline: none;
-    border-color: var(--b-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.column4_7_1 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-/* Checkboxes */
-.column4_1 {
-    margin-top: 5px;
-    display: flex;
-    gap: 20px;
-}
-
-.column4_1 div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.column4_1 input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: var(--b-primary);
-}
-
-.column4_1 label {
-    font-size: 0.9rem;
-    cursor: pointer;
-    color: var(--b-text);
-}
-
-/* =========================================
-   CARRITO DE CÓDIGOS
-   ========================================= */
-.seccion_carrito {
-    background: #f8fafc;
-    padding: 20px;
-    border-top: 2px solid #e2e8f0;
-    margin: 0 25px 25px 25px;
-    border-radius: var(--b-radius);
-    border: 1px solid var(--b-border);
-}
-
-.seccion_carrito h4 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--b-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-}
-
-.tabla-carrito {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    background: #fff;
-}
-
-.tabla-carrito th {
-    background: transparent;
-    color: var(--b-text-muted);
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    padding: 10px;
-    text-align: left;
-    border-bottom: 2px solid var(--b-border);
-}
-
-.tabla-carrito td {
-    padding: 12px 10px;
-    border-bottom: 1px solid var(--b-border);
-    vertical-align: middle;
-}
-
-.btn-eliminar-carrito {
-    background: #fee2e2;
-    color: #ef4444;
+    background: #f1f5f9; /* Fondo gris suave */
+    color: #64748b;
     border: none;
-    border-radius: 4px;
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px; /* Bordes redondeados cuadrados */
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    transition: all 0.2s ease;
 }
 
-.btn-eliminar-carrito:hover {
-    background: #ef4444;
-    color: white;
+#cerrarVentana:hover {
+    background: #fee2e2; /* Rojo suave al pasar el mouse */
+    color: #ef4444;
 }
 
+/* =========================================
+   ESTILOS PARA EL CÓDIGO Y EL CARRITO
+   ========================================= */
+
+/* Hacemos que el Código resalte como un ticket */
+#codigo {
+    background-color: #eff6ff !important; /* Azul muy clarito */
+    color: #1d4ed8 !important; /* Azul oscuro */
+    font-size: 1.1rem !important; /* Letra más grande */
+    font-weight: 800 !important; /* Súper negrita */
+    font-family: 'Courier New', Courier, monospace !important; /* Fuente tipo consola */
+    border: 2px solid #bfdbfe !important; /* Borde azul suave */
+    letter-spacing: 1px; /* Espacio entre letras */
+    text-align: center;
+    padding: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Mejoramos el botón de enviar correo */
 #btnEnviarCorreo {
     background: #10b981;
     color: white;
-    padding: 10px 20px;
     border: none;
-    border-radius: var(--b-radius);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-weight: 600;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
 }
 
 #btnEnviarCorreo:hover {
     background: #059669;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px -1px rgba(16, 185, 129, 0.5);
+}
+
+/* Hacemos que los códigos dentro del carrito resalten */
+.col-carrito .tabla-carrito td:first-child {
+    font-weight: 700;
+    color: var(--b-primary);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Arreglamos un poco el input de correo para que no se vea apretado */
+.input-group-correo input {
+    border: 1.5px solid #cbd5e1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-group-correo input:focus {
+    border-color: var(--b-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 /* =========================================
-   INTEGRACIÓN CON LA LIBRERÍA SELECTBUSCADOR
+   CHECKBOXES CENTRADOS Y MODERNOS
    ========================================= */
-.select-buscador-wrapper {
-    width: 100%;
+
+.col-formulario .checkboxes-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* CENTRA LOS ELEMENTOS */
+    align-items: center;
+    gap: 30px; /* Espacio entre cada opción */
+    background: #f8fafc;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--b-border);
+    margin-top: 10px;
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    box-sizing: border-box;
 }
 
-.select-buscador-display {
-    padding: 10px 12px; /* Mismo padding que los inputs */
-    border: 1px solid var(--b-border);
-    border-radius: var(--b-radius);
-    font-size: 0.95rem;
-    min-height: 42px; /* Para que coincida con la altura del select nativo */
+/* Cada opción (checkbox + label) */
+.col-formulario .checkboxes-group div {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    background: #fff;
+    gap: 8px;
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.select-buscador-display:hover {
-    border-color: #9ca3af;
+/* Checkbox personalizado (Mantenemos el diseño anterior) */
+.col-formulario .checkboxes-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    outline: none;
+    margin: 0;
 }
 
-.select-buscador-panel {
-    border-radius: var(--b-radius);
-    border: 1px solid var(--b-border);
-    box-shadow: var(--b-shadow);
-    margin-top: 4px;
+.col-formulario .checkboxes-group input[type="checkbox"]:hover {
+    border-color: var(--b-primary);
+}
+
+.col-formulario .checkboxes-group input[type="checkbox"]:checked {
+    background-color: var(--b-primary);
+    border-color: var(--b-primary);
+}
+
+.col-formulario .checkboxes-group input[type="checkbox"]:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Texto de la etiqueta */
+.col-formulario .checkboxes-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    text-transform: none;
+    margin: 0;
+    transition: color 0.2s;
+    user-select: none;
+}
+
+.col-formulario .checkboxes-group input[type="checkbox"]:checked + label {
+    color: var(--b-primary);
 }

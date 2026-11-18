@@ -6,12 +6,12 @@
         }
 
         function render(){
-            $this->view->listaItems = $this->model->listarItems();
-            $this->view->listaTipos = $this->model->listarParametros("07");
+            //$this->view->listaItems = $this->model->listarItems();
+            //$this->view->listaTipos = $this->model->listarParametros("07");
             $this->view->render('bienes/index');
         }
 
-        function grupos(){
+        /*function grupos(){
             echo $this->model->mostrarGrupos($_POST['id']);
         }
 
@@ -27,9 +27,7 @@
             echo $this->model->obtenerUnidades();
         }
 
-        function codigo(){
-            echo $this->model->generarCodigo($_POST['codigo']);
-        }
+        
 
         function nuevoItem(){
             echo json_encode($this->model->insertar($_POST['datos']));
@@ -64,7 +62,28 @@
 
         function buscaPalabra(){
             echo $this->model->buscarItemsPalabra($_POST['criterio']);
-        } 
+        } */
+
+        function listaPaginada() {
+            $criterio = $_POST['criterio'] ?? "";
+            $page = $_POST['page'] ?? 1;
+            $porPagina = $_POST['porPagina'] ?? 15;
+
+            $resultado = $this->model->listarItemsPaginado($criterio, $page, $porPagina);
+            
+            // Devolvemos JSON puro
+            header('Content-Type: application/json');
+            echo json_encode($resultado);
+        }
+
+        function jerarquia() {
+            header('Content-Type: application/json');
+            echo json_encode($this->model->obtenerJerarquiaCompleta());
+        }
+
+        function codigo(){
+            echo $this->model->generarCodigo($_POST['codigo']);
+        }
         
     }
 ?>
