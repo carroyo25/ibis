@@ -72,7 +72,7 @@ $(function () {
     // Función auxiliar para guardar el valor en el hidden correspondiente
     function guardarHidden(selectId, hiddenId) {
         const valor = document.getElementById(selectId).value;
-        document.getElementById(hiddenId).value = valor;
+        //document.getElementById(hiddenId).value = valor;
     }
 
     // TIPO
@@ -91,8 +91,8 @@ $(function () {
         
         selectClase.innerHTML = '<option value="">Seleccione...</option>';
         selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
-        document.getElementById("codigo_clase").value = "";
-        document.getElementById("codigo_familia").value = "";
+        //document.getElementById("codigo_clase").value = "";
+        //document.getElementById("codigo_familia").value = "";
 
         if (bClase) { bClase.destruir(); bClase = null; }
         if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
@@ -115,7 +115,7 @@ $(function () {
         const selectFamilia = document.getElementById("familia");
         
         selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
-        document.getElementById("codigo_familia").value = "";
+        //document.getElementById("codigo_familia").value = "";
         if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
 
         if (!claseId || !grupoId) return;
@@ -136,7 +136,8 @@ $(function () {
 
     // UNIDAD (Aquí disparamos la generación del código)
     document.getElementById("unidad").addEventListener("change", function () {
-        guardarHidden("unidad", "codigo_unidad");
+        // Si estamos editando, NO generamos un código nuevo
+        if (accion === "u") return;
 
         const unidadId = this.value;
         const familiaId = document.getElementById("familia").value;
@@ -146,7 +147,6 @@ $(function () {
             return; 
         }
 
-        // Obtenemos el código de catálogo de la familia
         const codigoFamilia = $("#familia option:selected").data("codigo");
         if (!codigoFamilia) return;
 
@@ -230,22 +230,42 @@ $(function () {
     });
 
     function limpiarFormulario() {
+        // 1. Limpiar el formulario
         $("#formProceso")[0].reset();
-        $("input[type='hidden']").val("");
         $("#codigo, #descripcion, #nro_parte, #cod_pat").val("");
         
-        if(bTipo) bTipo.setValor("");
-        if(bGrupo) bGrupo.setValor("");
-        if(bUnidad) bUnidad.setValor("");
+        // 2. Limpiar los selects y los buscadores
+        if (bTipo) bTipo.setValor("");
+        if (bGrupo) bGrupo.setValor("");
+        if (bUnidad) bUnidad.setValor("");
         if (bClase) { bClase.destruir(); bClase = null; }
         if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
         
         $("#clase, #familia").html('<option value="">Seleccione...</option>');
 
-        // Desbloquear campos
-        $("#codigo").prop("readonly", true).css("background", "");
-        $("#tipo_item, #grupo, #clase, #familia").prop("disabled", false);
-        $(".select-buscador-display").css({ "pointer-events": "auto", "background": "#fff", "opacity": "1" });
+        // 3. Habilitar los selects (por si veníamos de una edición)
+        $("#tipo_item, #grupo, #clase, #familia, #unidad").prop("disabled", false).css({
+            "background": "#fff",
+            "color": "#333",
+            "border-color": "#cbd5e1"
+        });
+
+        // 4. Recrear los buscadores si fueron destruidos
+        if (!bTipo) bTipo = new SelectBuscador("#tipo_item", { placeholder: "Buscar tipo..." });
+        if (!bGrupo) bGrupo = new SelectBuscador("#grupo", { placeholder: "Buscar grupo..." });
+        if (!bUnidad) bUnidad = new SelectBuscador("#unidad", { placeholder: "Buscar unidad..." });
+        
+        // Si Clase y Familia tienen opciones (porque se cargaron antes), les devolvemos su buscador
+        if (document.getElementById("clase").options.length > 1 && !bClase) {
+            bClase = new SelectBuscador("#clase", { placeholder: "Buscar clase..." });
+        }
+        if (document.getElementById("familia").options.length > 1 && !bFamilia) {
+            bFamilia = new SelectBuscador("#familia", { placeholder: "Buscar familia..." });
+        }
+        
+        // 5. Estado del código y variables
+        $("#codigo").prop("readonly", true).css("background", "#eff6ff");
+        registroEdit = null; 
     }
 
     // =============================================
@@ -373,23 +393,55 @@ $(function () {
         renderizarCarrito();
     });
 
-    $("#btnEnviarCorreo").click(function (e) {
+        $("#btnEnviarCorreo").click(function (e) {
         e.preventDefault();
-        if (carritoCodigos.length === 0) return mostrarMensaje("No hay códigos para enviar", "mensaje_error");
-        if (!confirm("¿Desea enviar esta lista por correo?")) return;
 
+        // 1. Validar que haya códigos en el carrito
+        if (carritoCodigos.length === 0) {
+            return mostrarMensaje("No hay códigos en la lista para enviar", "mensaje_error");
+        }
+
+        // 2. Validar que el correo no esté vacío y tenga formato correcto
+        const correo = $("#correoDestino").val().trim();
+        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (correo === "") {
+            return mostrarMensaje("Ingrese un correo de destino", "mensaje_error");
+        }
+        if (!regexCorreo.test(correo)) {
+            return mostrarMensaje("El formato del correo no es válido", "mensaje_error");
+        }
+
+        // 3. Confirmar envío
+        if (!confirm("¿Desea enviar la lista de códigos a " + correo + "?")) return;
+
+        // 4. Preparar los datos y enviar al backend
         const formData = new FormData();
         formData.append("codigos", JSON.stringify(carritoCodigos));
+        formData.append("correo", correo);
 
         $("#esperar").fadeIn();
+
         fetch(RUTA + "bienes/enviarCorreo", { method: "POST", body: formData })
             .then(r => r.json())
             .then(data => {
                 $("#esperar").fadeOut();
-                mostrarMensaje(data.mensaje, data.clase);
-                if (data.respuesta) { carritoCodigos = []; renderizarCarrito(); }
+                
+                if (data.respuesta) {
+                    mostrarMensaje(data.mensaje, "mensaje_correcto");
+                    // Limpiar el carrito y el input de correo tras el envío exitoso
+                    carritoCodigos = [];
+                    renderizarCarrito();
+                    $("#correoDestino").val("");
+                } else {
+                    mostrarMensaje(data.mensaje, "mensaje_error");
+                }
             })
-            .catch(err => { $("#esperar").fadeOut(); mostrarMensaje("Error al enviar el correo", "mensaje_error"); });
+            .catch(err => {
+                $("#esperar").fadeOut();
+                mostrarMensaje("Error de conexión al enviar el correo", "mensaje_error");
+                console.error(err);
+            });
     });
 
     // =============================================
@@ -435,7 +487,7 @@ $(function () {
     // 7. EDITAR ITEM
     // =============================================
     window.editarItem = function (id) {
-        accion = "u";
+        accion = "u"; // Modo actualizar
         limpiarFormulario();
         $("#proceso").fadeIn();
         $("#esperar").fadeIn();
@@ -447,46 +499,258 @@ $(function () {
             .then(r => r.json())
             .then(data => {
                 $("#esperar").fadeOut();
+                
                 if (!data.item || data.item.length === 0) {
                     mostrarMensaje("No se encontró el registro", "mensaje_error");
                     return;
                 }
 
                 const item = data.item[0];
+                registroEdit = { id: item.id_cprod };
 
-                $("#codigo_item").val(item.id_cprod);
+                // 1. Llenar inputs de texto
                 $("#codigo").val(item.ccodprod);
-                $("#descripcion").val(item.cdesprod);
+                $("#descripcion").val(item.cdesprod.trim());
                 $("#nro_parte").val(item.cnparte || "");
-                $("#cod_pat").val(item.cCodPat || "");
+                $("#cod_pat").val(item.cod_pat || "");
 
+                // 2. Marcar checkboxes
                 $("#serie").prop("checked", item.flgSerie == 1);
                 $("#detraccion").prop("checked", item.flgDetrac == 1);
                 $("#actfij").prop("checked", item.flgActFij == 1);
 
-                if(bTipo) bTipo.setValor(item.ntipo);
-                if(bGrupo) bGrupo.setValor(item.ngrupo);
-                if(bUnidad) bUnidad.setValor(item.nund);
+                // 3. Seleccionar valores en los buscadores
+                if (bTipo) bTipo.setValor(item.ntipo);
+                if (bGrupo) bGrupo.setValor(item.ngrupo);
+                if (bUnidad) bUnidad.setValor(item.nund);
 
+                // 4. Cargar Clase y Familia en memoria (disparando eventos)
                 document.getElementById("grupo").dispatchEvent(new Event("change"));
                 
                 setTimeout(() => {
-                    if(bClase) bClase.setValor(item.nclase);
+                    if (bClase) bClase.setValor(item.nclase);
                     document.getElementById("clase").dispatchEvent(new Event("change"));
                     
                     setTimeout(() => {
-                        if(bFamilia) bFamilia.setValor(item.nfam);
+                        if (bFamilia) bFamilia.setValor(item.nfam);
                     }, 100);
                 }, 100);
 
-                // Bloquear campos en edición
-                $("#codigo").prop("readonly", true).css("background", "#f3f4f6");
-                $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true);
-                $(".select-buscador-display").css({ "pointer-events": "none", "background": "#f3f4f6", "opacity": "0.7" });
+                // 5. BLOQUEAR CAMPOS (FORMA DEFINITIVA)
+                $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+
+                // 1. Destruir las instancias de la librería para Tipo, Grupo, Clase y Familia
+                if (bTipo) { bTipo.destruir(); bTipo = null; }
+                if (bGrupo) { bGrupo.destruir(); bGrupo = null; }
+                if (bClase) { bClase.destruir(); bClase = null; }
+                if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
+                
+                // 2. Asegurarnos de que el select nativo esté deshabilitado y con estilo gris
+                $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true).css({
+                    "background-color": "#f1f5f9",
+                    "color": "#94a3b8",
+                    "border-color": "#e2e8f0",
+                    "display": "block" // Nos aseguramos de que se vea
+                });
+
+                // 3. Ocultar cualquier residuo del div del buscador que haya quedado
+                // (Esto evita que se sigan desplegando)
+                $("#tipo_item, #grupo, #clase, #familia").each(function() {
+                    $(this).siblings('.select-buscador-display').remove();
+                    $(this).siblings('.select-buscador-panel').remove();
+                    $(this).unwrap(); // Quitamos el wrapper que inyecta la librería
+                });
+
+                // 4. La unidad se queda como estaba (con su buscador activo)
+                if (bUnidad) {
+                    bUnidad.refrescar();
+                }
             })
             .catch(err => {
                 $("#esperar").fadeOut();
                 mostrarMensaje("Error al cargar el registro", "mensaje_error");
+                console.error(err);
             });
     };
+
+    function agregarAlCarrito(codigo, descripcion) {
+        // Evitar duplicados visuales (aunque el backend ya controla esto)
+        if (carritoCodigos.some(item => item.codigo === codigo)) return;
+
+        carritoCodigos.push({ codigo: codigo, descripcion: descripcion });
+        renderizarCarrito();
+    }
+
+    function renderizarCarrito() {
+        const tbody = $("#tbodyCarrito");
+        
+        if (carritoCodigos.length === 0) {
+            tbody.html(`<tr><td colspan="3" style="text-align: center; padding: 20px; color: #94a3b8;">Aún no has creado códigos.</td></tr>`);
+            return;
+        }
+
+        let html = "";
+        carritoCodigos.forEach((item, index) => {
+            html += `<tr>
+                <td style="font-weight: 700; color: #2563eb; font-family: 'Courier New', Courier, monospace;">${item.codigo}</td>
+                <td>${item.descripcion}</td>
+                <td style="text-align: center;">
+                    <button type="button" class="btn-eliminar-carrito" data-index="${index}" title="Quitar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>`;
+        });
+        tbody.html(html);
+    }
+
+    // Evento para eliminar un ítem del carrito
+    $("#tbodyCarrito").on("click", ".btn-eliminar-carrito", function () {
+        const index = $(this).data("index");
+        carritoCodigos.splice(index, 1);
+        renderizarCarrito();
+    });
+
+    // =============================================
+    // 7. EDITAR ITEM
+    // =============================================
+    window.editarItem = function (id) {
+        accion = "u"; // Modo actualizar
+        limpiarFormulario();
+        $("#proceso").fadeIn();
+        $("#esperar").fadeIn();
+
+        const formData = new FormData();
+        formData.append("id", id);
+
+        fetch(RUTA + "bienes/itemsId", { method: "POST", body: formData })
+            .then(r => r.json())
+            .then(data => {
+                $("#esperar").fadeOut();
+                
+                if (!data.item || data.item.length === 0) {
+                    mostrarMensaje("No se encontró el registro", "mensaje_error");
+                    return;
+                }
+
+                const item = data.item[0]; // Extraemos el primer (y único) resultado
+                registroEdit = { id: item.id_cprod }; // Guardamos el ID para el update
+
+                // 1. Llenar los inputs de texto directos
+                $("#codigo").val(item.ccodprod);
+                $("#descripcion").val(item.cdesprod.trim());
+                $("#nro_parte").val(item.cnparte || "");
+                $("#cod_pat").val(item.cod_pat || ""); // Asegúrate de que tu PHP devuelva esto
+
+                // 2. Marcar los checkboxes
+                $("#serie").prop("checked", item.flgSerie == 1);
+                $("#detraccion").prop("checked", item.flgDetrac == 1);
+                $("#actfij").prop("checked", item.flgActFij == 1);
+
+                // 3. Seleccionar los valores en los buscadores usando los IDs numéricos
+                if (bTipo) bTipo.setValor(item.ntipo);
+                if (bGrupo) bGrupo.setValor(item.ngrupo);
+                if (bUnidad) bUnidad.setValor(item.nund);
+
+                // 4. Disparar el cambio del grupo para que cargue las clases en memoria
+                document.getElementById("grupo").dispatchEvent(new Event("change"));
+                
+                setTimeout(() => {
+                    if (bClase) bClase.setValor(item.nclase);
+                    document.getElementById("clase").dispatchEvent(new Event("change"));
+
+                    setTimeout(() => {
+                        if (bFamilia) bFamilia.setValor(item.nfam);
+
+                        // Bloquear al final, usando la API de la librería
+                        [bTipo, bGrupo, bClase, bFamilia].forEach(b => b && b.setDeshabilitado(true));
+                        bUnidad && bUnidad.setDeshabilitado(false);
+                        $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+                    }, 100);
+                }, 100);
+
+                                // 5. BLOQUEAR CAMPOS EN MODO EDICIÓN
+                
+                // El código siempre bloqueado
+                $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+
+                // Deshabilitar los selects reales (menos la unidad)
+                $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true);
+
+                // PINTAR DE GRIS LOS BUSCADORES VISUALES (menos el de unidad)
+                // Buscamos todos los divs de los buscadores
+                $(".select-buscador-display").each(function() {
+                    // Obtenemos el ID del select al que pertenece este div
+                    const selectId = $(this).prev('select').attr('id');
+                    
+                    // Si NO es la unidad, lo bloqueamos visualmente
+                    if (selectId !== "unidad") {
+                        $(this).css({
+                            "background-color": "#f1f5f9",
+                            "color": "#94a3b8",
+                            "pointer-events": "none", // Esto evita que se abra el panel
+                            "border-color": "#e2e8f0"
+                        });
+                    }
+                });
+                
+                // Asegurarnos de que la unidad quede ACTIVA
+                $("#unidad").prop("disabled", false);
+                $("#unidad").next(".select-buscador-display").css({
+                    "background-color": "#ffffff",
+                    "color": "#333",
+                    "pointer-events": "auto",
+                    "border-color": "#cbd5e1"
+                });
+            })
+            .catch(err => {
+                $("#esperar").fadeOut();
+                mostrarMensaje("Error al cargar el registro", "mensaje_error");
+                console.error(err);
+            });
+    };
+
+    function limpiarFormulario() {
+    // 1. Desbloquear PRIMERO (si quedó en modo edición)
+    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach(b => {
+        if (b) b.setDeshabilitado(false);
+    });
+    $("#tipo_item, #grupo, #clase, #familia, #unidad").prop("disabled", false);
+
+    // Por si quedó algo de la versión anterior con estilos inline
+    $(".select-buscador-wrapper").css("display", "");
+    $(".select-buscador-display").css({
+        "background-color": "",
+        "color": "",
+        "pointer-events": "",
+        "border-color": ""
+    });
+
+    // 2. Inputs de texto
+    $("#codigo").val("").prop("readonly", true).css("background", "");
+    $("#descripcion, #nro_parte, #cod_pat").val("");
+
+    // 3. Checkboxes
+    $("#serie, #detraccion, #actfij").prop("checked", false);
+
+    // 4. Selects: limpiar valor y refrescar el texto visual
+    //    Se limpia de hijo a padre para que el change de un padre
+    //    no repueble algo que ya vaciamos
+    ["familia", "clase", "grupo", "tipo_item", "unidad"].forEach(id => {
+        $("#" + id).val("");
+    });
+
+    // Vaciar opciones de los dependientes (dejar solo el placeholder)
+    $("#clase").html('<option value="">Seleccione...</option>');
+    $("#familia").html('<option value="">Seleccione...</option>');
+
+    // Actualizar el texto visible de cada buscador
+    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach(b => {
+        if (b) b.refrescar();
+    });
+
+    // 5. Estado de edición
+    registroEdit = null;
+    // accion NO se toca aquí: la define quien llama ("n" o "u")
+}
 });

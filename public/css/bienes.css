@@ -628,3 +628,97 @@
 .col-formulario .checkboxes-group input[type="checkbox"]:checked + label {
     color: var(--b-primary);
 }
+
+/* =========================================
+   COLUMNA DERECHA: 2 SECCIONES + CORREO
+   ========================================= */
+.col-carrito {
+    gap: 12px;
+    min-height: 0;
+}
+
+.seccion-carrito,
+.seccion-similares {
+    background: #ffffff;
+    border: 1px solid var(--b-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.seccion-carrito { flex: 0 0 auto; max-height: 28vh; }
+.seccion-similares { flex: 1 1 auto; min-height: 150px; }
+
+.seccion-carrito h4,
+.seccion-similares h4 { margin-bottom: 8px; }
+
+.seccion-similares h4 { color: #d97706; }          /* naranja para distinguir */
+#contadorSimilares {
+    margin-left: auto;
+    font-size: 0.7rem;
+    background: #fef3c7;
+    color: #b45309;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+#contadorSimilares:empty { display: none; }
+
+.scroll-seccion {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.col-carrito .tabla-carrito { margin-bottom: 0; }
+.vacio-msg {
+    text-align: center;
+    padding: 16px 8px !important;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    list-style: none;
+}
+
+/* Buscador de similares */
+#buscaSimilar {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    outline: none;
+}
+#buscaSimilar:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+
+/* Lista de resultados */
+.lista-similares { list-style: none; margin: 0; padding: 0; }
+.lista-similares li:not(.vacio-msg) {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.lista-similares li:last-child { border-bottom: none; }
+.lista-similares .sim-cod {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--b-primary);
+}
+.lista-similares .sim-desc { color: var(--b-text); }
+.lista-similares .sim-und { color: var(--b-text-muted); font-size: 0.7rem; }
+.lista-similares mark {
+    background: #fde68a;
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+.envio-correo-box { margin-top: 0; flex: 0 0 auto; }

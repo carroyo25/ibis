@@ -128,26 +128,39 @@
 
                         <!-- COLUMNA DERECHA: CARRITO Y CORREO -->
                         <div class="col-carrito">
-                            <h4><i class="fas fa-list-ul"></i> Códigos en esta sesión</h4>
-                            
-                            <table class="tabla-carrito">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 25%;">CÓDIGO</th>
-                                        <th style="width: 60%;">DESCRIPCIÓN</th>
-                                        <th style="width: 15%; text-align: center;">X</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbodyCarrito">
-                                    <tr>
-                                        <td colspan="3" style="text-align: center; padding: 20px; color: #94a3b8;">
-                                            Aún no has creado códigos.
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
 
-                            <!-- Cajita para enviar el correo -->
+                            <!-- SECCIÓN 1: CÓDIGOS CREADOS -->
+                            <div class="seccion-carrito">
+                                <h4><i class="fas fa-list-ul"></i> Códigos en esta sesión</h4>
+                                <div class="scroll-seccion">
+                                    <table class="tabla-carrito">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 25%;">CÓDIGO</th>
+                                                <th style="width: 60%;">DESCRIPCIÓN</th>
+                                                <th style="width: 15%; text-align: center;">X</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyCarrito">
+                                            <tr>
+                                                <td colspan="3" class="vacio-msg">Aún no has creado códigos.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- SECCIÓN 2: CÓDIGOS SIMILARES -->
+                            <div class="seccion-similares">
+                                <h4><i class="fas fa-search"></i> Códigos similares <span id="contadorSimilares"></span></h4>
+                                <div class="scroll-seccion">
+                                    <ul id="listaSimilares" class="lista-similares">
+                                        <li class="vacio-msg">Items similares </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- CORREO -->
                             <div class="envio-correo-box">
                                 <label for="correoDestino">CORREO DE ENVÍO:</label>
                                 <div class="input-group-correo">
@@ -158,7 +171,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>

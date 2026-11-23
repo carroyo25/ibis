@@ -7,6 +7,14 @@
 (function (global) {
   "use strict";
 
+  function escaparHTML(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function SelectBuscador(selector, opciones) {
     const defaults = {
       placeholder: "Seleccione...",
@@ -76,6 +84,7 @@
     this.$fakeInput.on("click" + ns, function (e) {
       e.preventDefault();
       e.stopPropagation();
+      if (self.$select.prop("disabled")) return; // respeta disabled
       self._abrir();
     });
 
@@ -84,7 +93,7 @@
     });
 
     this.$ul.on("click" + ns, "li[data-val]", function () {
-      const val = $(this).data("val");
+      const val = $(this).attr("data-val");
       self._seleccionar(val);
     });
 
@@ -107,6 +116,7 @@
   };
 
   SelectBuscador.prototype._abrir = function () {
+    if (this.$select.prop("disabled")) return;
     $(".select-buscador-panel").not(this.$panel).removeClass("abierto");
     this.$panel.addClass("abierto");
     this.$input.val("");
@@ -137,7 +147,7 @@
 
       if (txt.toLowerCase().indexOf(texto) !== -1) {
         const seleccionado = val === valorActual ? "seleccionado" : "";
-        html += `<li data-val="${val}" class="${seleccionado}">${txt}</li>`;
+        html += `<li data-val="${escaparHTML(val)}" class="${seleccionado}">${escaparHTML(txt)}</li>`;
         encontrados++;
       }
     });
@@ -163,6 +173,10 @@
 
   SelectBuscador.prototype._actualizarTexto = function () {
     if (!this.$texto) return;
+
+    // Sincroniza el estado visual con el disabled del select real
+    this.$fakeInput.toggleClass("bloqueado", !!this.$select.prop("disabled"));
+
     const val = this.$select.val();
     if (val) {
       const txt = this.$select.find("option:selected").text();
@@ -180,6 +194,14 @@
     this.$select.val(val);
     this.$select.trigger("change");
     this._actualizarTexto();
+  };
+
+  SelectBuscador.prototype.setDeshabilitado = function (estado) {
+    if (!this.inicializado) return;
+    estado = !!estado;
+    this.$select.prop("disabled", estado);
+    this.$fakeInput.toggleClass("bloqueado", estado);
+    if (estado) this._cerrar();
   };
 
   SelectBuscador.prototype.refrescar = function () {

@@ -11,51 +11,7 @@
             $this->view->render('bienes/index');
         }
 
-        /*function grupos(){
-            echo $this->model->mostrarGrupos($_POST['id']);
-        }
-
-        function clases(){
-            echo $this->model->obtenerClases($_POST['id']);
-        }
-
-        function familias(){
-            echo $this->model->obtenerFamilias($_POST['grupo'],$_POST['clase']);
-        }
-
-        function unidades(){
-            echo $this->model->obtenerUnidades();
-        }
-
-        
-
-        function nuevoItem(){
-            echo json_encode($this->model->insertar($_POST['datos']));
-        }
-
-        function modificaItem(){
-           echo json_encode($this->model->modificar($_POST['datos']));
-        }
-
-        function foto(){
-            $archivo	= $_FILES['image_product'];
-            $codigo     = $_POST['codigo'];
-
-            $this->model->subirFoto($archivo,$codigo);
-        }
-
-        function itemsId(){
-            echo json_encode($this->model->consultarId($_POST['id']));
-        }
-
-        function desactivaItem(){
-            echo $this->model->eliminaItem($_POST['id']);
-        }
-
-        function activaItem(){
-            echo $this->model->activarItem($_POST['id']);
-        }
-
+        /*
         function actualizaTabla(){
             echo  $this->model->listarItems();
         }
@@ -83,6 +39,59 @@
 
         function codigo(){
             echo $this->model->generarCodigo($_POST['codigo']);
+        }
+
+        function nuevoItem(){
+            // Recibimos el string JSON que viene del JS
+            $json = $_POST['datos'];
+            
+            // Lo decodificamos a un array asociativo de PHP
+            $datos = json_decode($json, true);
+
+            // Verificamos que la decodificación fue exitosa
+            if ($datos === null) {
+                echo json_encode(["respuesta" => false, "mensaje" => "Datos inválidos", "clase" => "mensaje_error"]);
+                return;
+            }
+
+            // Pasamos el array al modelo
+            echo json_encode($this->model->insertar($datos));
+        }
+
+        function enviarCorreo() {
+            // Recibimos los datos
+            $codigosJson = $_POST['codigos'];
+            $correoDestino = $_POST['correo'];
+
+            // Decodificamos el JSON de los códigos
+            $codigos = json_decode($codigosJson, true);
+
+            if (empty($codigos) || empty($correoDestino)) {
+                echo json_encode(["respuesta" => false, "mensaje" => "Datos incompletos", "clase" => "mensaje_error"]);
+                return;
+            }
+
+            // Aquí llamamos al modelo para que arme y envíe el correo
+            $resultado = $this->model->enviarCorreoCodigos($codigos, $correoDestino);
+            
+            echo json_encode($resultado);
+        }
+
+        function modificaItem(){
+           echo json_encode($this->model->modificar($_POST['datos']));
+        }
+
+        
+        function itemsId(){
+            echo json_encode($this->model->consultarId($_POST['id']));
+        }
+
+        function desactivaItem(){
+            echo $this->model->eliminaItem($_POST['id']);
+        }
+
+        function activaItem(){
+            echo $this->model->activarItem($_POST['id']);
         }
         
     }
