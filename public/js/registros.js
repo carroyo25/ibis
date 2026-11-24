@@ -1,25 +1,13 @@
 $(function(){
 
-    $("#esperar").fadeIn()
+    $("#esperar").fadeOut()
 
     let accion = "";
     let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
     let str = $("#formConsulta").serialize();
 
-    $.post(RUTA+"registros/actualizarRegistros",
-        function (data, text, requestXHR) {
-            $("#tablaPrincipal tbody")
-                .empty()
-                .append(data);
-
-                $("#esperar").fadeOut().promise().done(function(){
-                    iniciarPaginador();
-                });
-
-        "text"
-    });
-
+    consultarRegistros();
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -533,6 +521,29 @@ $(function(){
 
         return false;
     });
+
+    function consultarRegistros(){
+        try {
+            const formData = new FormData();
+            formData.append('guia',$("#guiaSearch").val());
+            formData.append('costos',$("#costosSearch").val());
+            formData.append('mes',$("#mesSearch").val());
+            formData.append('anio',$("#anioSearch").val());
+            formData.append('nota',$("#notaSearch").val());
+            formData.append('usr',$("#id_user").val());
+
+            fetch(RUTA+"registros/actualizarRegistros",{
+                method:'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
     
 
 })

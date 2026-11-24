@@ -6,8 +6,77 @@
             parent::__construct();
         }
 
+        public function listarIngresos($parametros) {
+            try {
+                $datos = [];
+                $item = 1;
+
+
+
+                $guia   = $parametros['guia'] == "" ? "%" : "%".$parametros['guia']."%";
+                $cc     = $parametros['costos'] == -1 ? "%" : "%".$parametros['costos']."%";
+                $mes    = $parametros['mes'] == -1 ? date("n") : "%".$parametros['mes']."%";
+                $anio   = $parametros['anio'] == ''  ? date("Y") : $parametros['anio'];
+                $nota   = $parametros['nota'] == "" ? "%" : "%".$parametros['nota']."%";
+                $usr    = $parametros['usr'];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_cabexist.idreg,
+                                                        alm_cabexist.idcostos,
+                                                        alm_cabexist.iddespacho,
+                                                        DATE_FORMAT(alm_cabexist.ffechadoc,'%d/%m/%Y') AS ffechadoc,
+                                                        alm_cabexist.idautoriza,
+                                                        alm_cabexist.idrecepciona,
+                                                        alm_cabexist.numguia,
+                                                        alm_cabexist.nreferido,
+                                                        alm_cabexist.ncodalm1,
+                                                        alm_cabexist.ncodalm2,
+                                                        UPPER( origen.cdesalm ) AS origen,
+                                                        UPPER( destino.cdesalm ) AS destino,
+                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos
+                                                    FROM
+                                                        tb_costusu
+                                                        LEFT JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
+                                                        LEFT JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
+                                                        LEFT JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
+                                                        LEFT JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr 
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND alm_cabexist.numguia LIKE :guia
+                                                        AND alm_cabexist.idcostos LIKE :proyecto
+                                                        AND YEAR(alm_cabexist.ffechadoc) = :anio
+                                                        AND MONTH(alm_cabexist.ffechadoc) = :mes
+                                                        AND alm_cabexist.idreg LIKE :nota
+                                                        AND ISNULL(alm_cabexist.flgActivo) 
+                                                    ORDER BY  alm_cabexist.idreg DESC");
+
+                
+                $sql->execute(["usr"=>$usr,
+                                "guia"=>$guia,
+                                "proyecto"=>$cc,
+                                "anio"=>$anio,
+                                "mes"=>$mes,
+                                "nota"=>$nota]);
+                $rowCount = $sql->rowCount();
+
+                $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+                
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
+            } catch (PDOException $th) {
+                return [
+                    'success' => false,
+                    'message' => 'Error en el listado: ' . $th->getMessage()
+                ];
+            }
+        }
+
         public function listarDespachos($guia){
             $salida = "";
+            $datos = [];
 
             $nguia = $guia == "" ? "%":$guia;
             
@@ -25,9 +94,7 @@
                                                         tb_parametros.cabrevia,
                                                         alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
-                                                        tb_costusu.id_cuser/*,
-                                                        d.despachos,
-                                                        i.ingresos*/ 
+                                                        tb_costusu.id_cuser
                                                     FROM
                                                         alm_despachocab
                                                         INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
@@ -35,8 +102,6 @@
                                                         INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
                                                         INNER JOIN tb_costusu ON alm_despachocab.ncodpry = tb_costusu.ncodproy
-                                                        /*LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.id_regalm FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS d ON alm_despachocab.id_regalm = d.id_regalm
-                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingresos, alm_existencia.iddespacho FROM alm_existencia GROUP BY alm_existencia.iddespacho ) AS i ON alm_despachocab.id_regalm = i.iddespacho */
                                                     WHERE
                                                         alm_despachocab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1 
@@ -44,36 +109,21 @@
                                                         AND alm_despachocab.nEstadoDoc = 62 
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
-                                                        alm_despachocab.ffecdoc DESC
-                                                    LIMIT 20");
+                                                        alm_despachocab.ffecdoc DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        //$resto  = $rs['despachos'] - $rs['ingresos'];
-                        
-                        //if ( $resto != 0 ) {
-                            $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer" data-guia="'.$rs['cnumguia'].'" data-salida="'.$rs['id_regalm'].'" data-madre="null">                                        
-                                    <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
-                                    <td class="pl20px">'.$rs['ffecdoc'].'</td>
-                                    <td class="pl20px">'.$rs['origen'].'</td>
-                                    <td class="pl20px">'.$rs['destino'].'</td>
-                                    <td class="pl20px">'.$rs['costos'].'</td>
-                                    <td class="textoCentro">'.$rs['anio'].'</td>
-                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                    <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                    <td></td>
-                                </tr>';
-                        //}
-                       
-                    }
-                }
-
-                return $salida;
+                $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+                
+                return [
+                    'success' => true,
+                    'datos' => $result
+                ];
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
+                return [
+                    'success' => false,
+                    'message' => 'Error en el listado: ' . $th->getMessage()
+                ];
             }
         }
 
@@ -426,72 +476,7 @@
             }
         }
 
-        public function listarIngresos($parametros) {
-            try {
-                $salida = "";
-                $item = 1;
-
-                $guia = "%";
-                $cc   = "%";
-                $mes  = "%";
-
-                if ($parametros != "" ) {
-                    $guia = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
-                    $cc = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                }
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_cabexist.idreg,
-                                                        alm_cabexist.idcostos,
-                                                        alm_cabexist.iddespacho,
-                                                        DATE_FORMAT(alm_cabexist.ffechadoc,'%d/%m/%Y') AS ffechadoc,
-                                                        alm_cabexist.idautoriza,
-                                                        alm_cabexist.idrecepciona,
-                                                        alm_cabexist.numguia,
-                                                        alm_cabexist.nreferido,
-                                                        alm_cabexist.ncodalm1,
-                                                        alm_cabexist.ncodalm2,
-                                                        UPPER( origen.cdesalm ) AS origen,
-                                                        UPPER( destino.cdesalm ) AS destino,
-                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
-                                                        INNER JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND alm_cabexist.numguia LIKE :guia
-                                                        AND alm_cabexist.idcostos LIKE :cc
-                                                        AND ISNULL(alm_cabexist.flgActivo) 
-                                                    ORDER BY  alm_cabexist.idreg DESC");
-                $sql->execute(["usr"=>$_SESSION["iduser"],
-                                "guia"=>$guia,
-                                "cc"=>$cc]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
-                                    <td class="textoCentro">'.str_pad($rs['idreg'],6,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                    <td class="pl20px">'.$rs['origen'].'</td>
-                                    <td class="pl20px">'.$rs['destino'].'</td>
-                                    <td class="pl20px">'.$rs['costos'].'</td>
-                                    <td class="textoCentro">'.$rs['numguia'].'</td>
-                                    <td class="textoCentro">'.$rs['nreferido'].'</td>
-                                </tr>';
-                    }
-
-                    return $salida;
-                }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
+        
 
         /*consulta de la tabla principal */
 

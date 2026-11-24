@@ -89,16 +89,20 @@
     gap: 10px;
 
     label {
-        font-weight: 600; color: var(--b-text-muted); white-space: nowrap;
+        font-weight: 600; 
+        color: var(--b-text-muted); 
+        white-space: nowrap;
+        display: block;
     }
 
-    input {
+    input,select {
         width: 100%;
         max-width: 500px;
         padding: 10px 15px;
         border: 1px solid var(--b-border);
         border-radius: 8px;
         font-size: 0.95rem;
+        height: 3rem;
     }
 }
 

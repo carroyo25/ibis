@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingreso Almacen</title>
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/bienes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
     <div class="modal" id="proceso">
@@ -269,7 +272,7 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
-            <div class="variasConsultas">
+            <div class="consultas">
                     <div>
                         <label for="tipo">Guia N°. </label>
                         <input type="text" id="guiaSearch" name="guiaSearch">
@@ -301,6 +304,10 @@
                     <div>
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                    </div>
+                    <div>
+                        <label for="nota">Nro. Nota :</label>
+                        <input type="number" name="notaSearch" id="notaSearch" value="">
                     </div>
                     <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
             </div>
