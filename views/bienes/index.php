@@ -48,6 +48,9 @@
                             <button type="button" id="grabarItem" title="Grabar Datos">
                                 <i class="far fa-save"></i> Grabar Registro
                             </button>
+                            <button type="button" id="anularItem" title="Anular Item">
+                                <i class="fas fa-trash"></i> Anular Item
+                            </button>
                             <button type="button" id="cerrarVentana" title="Cerrar">
                                 <i class="fas fa-times"></i>
                             </button>

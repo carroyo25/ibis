@@ -5,6 +5,8 @@
 :root {
     --b-primary: #2563eb;
     --b-primary-hover: #1d4ed8;
+    --b-danger:red;
+    --b-danger-hover:darkred;
     --b-bg: #f8fafc;
     --b-surface: #ffffff;
     --b-text: #1e293b;
@@ -60,8 +62,8 @@
     transition: all 0.2s ease;
 }
 
-#nuevoRegistro { background: #ecfdf5; color: #059669; border: 1px solid #d1fae5; }
-#nuevoRegistro:hover { background: #059669; color: white; transform: translateY(-1px); }
+#nuevoRegistro,#repoExcel  { background: #ecfdf5; color: #059669; border: 1px solid #d1fae5; }
+#nuevoRegistro:hover, #repoExcel:hover { background: #059669; color: white; transform: translateY(-1px); }
 
 #irInicio { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
 #irInicio:hover { background: #2563eb; color: white; transform: translateY(-1px); }
@@ -80,6 +82,24 @@
     display: flex;
     align-items: center;
     margin: 0 30px 15px 30px;
+}
+
+.consultas{
+    display: flex;
+    gap: 10px;
+
+    label {
+        font-weight: 600; color: var(--b-text-muted); white-space: nowrap;
+    }
+
+    input {
+        width: 100%;
+        max-width: 500px;
+        padding: 10px 15px;
+        border: 1px solid var(--b-border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
 }
 
 .unaConsulta { display: flex; align-items: center; gap: 15px; width: 100%; }
@@ -466,6 +486,28 @@
     box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
 }
 
+#anularItem {
+    background: var(--b-danger); /* Tu azul principal */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px; /* Bordes redondeados */
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+#anularItem:hover {
+    background: var(--b-danger-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+}
+
 /* Botón "X" (Cerrar) */
 #cerrarVentana {
     background: #f1f5f9; /* Fondo gris suave */
@@ -697,7 +739,7 @@
 }
 
 /* Lista de resultados */
-.lista-similares { list-style: none; margin: 0; padding: 0; }
+.lista-similares { list-style: none; margin: 0; padding: 0; max-height: 10vh;}
 .lista-similares li:not(.vacio-msg) {
     padding: 8px 10px;
     border-bottom: 1px solid #f1f5f9;
@@ -722,3 +764,98 @@
 }
 
 .envio-correo-box { margin-top: 0; flex: 0 0 auto; }
+
+#listaSimilares strong {
+    font-weight: bold;
+    color: #000; /* O el color principal de tu marca */
+    /* background-color: #fff3cd;  <-- Descomenta si quieres fondo tipo resaltador */
+}
+
+#repoExcel * {
+    pointer-events: none; /* Hace que el texto ignore los clics y el clic pase directo al <a> */
+}
+
+#repoExcel {
+    display: inline-flex; /* O flex, para que el ícono y el texto se alineen bien */
+    align-items: center;
+    padding: 10px; /* Ajusta esto para que el área clickeable sea cómoda */
+    cursor: pointer;
+}
+
+/* Contenedor principal de los filtros */
+.filtros-container {
+    display: flex;
+    align-items: flex-end; /* Alinea todo hacia abajo (para que los inputs y el botón queden a la misma altura) */
+    gap: 20px; /* Separación entre cada campo */
+    background-color: #ffffff;
+    padding: 20px 24px;
+    border-radius: 12px; /* Bordes redondeados como tu tarjeta superior */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Sombra muy sutil */
+    margin-top: 15px;
+    flex-wrap: wrap; /* Permite que baje a la siguiente línea si la pantalla es pequeña */
+}
+
+/* Cada bloque de label + input */
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Hace que los inputs ocupen el espacio disponible equitativamente */
+    min-width: 150px; /* Evita que se aplasten demasiado */
+}
+
+/* Estilo de las etiquetas (labels) */
+.filtro-grupo label {
+    font-size: 12px;
+    color: #64748b; /* Gris azulado */
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Estilo de los inputs */
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    background-color: #f8fafc;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Efecto al hacer clic en el input */
+.form-control:focus {
+    border-color: #3b82f6; /* Azul del botón Inicio */
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Bloque del botón */
+.filtro-accion {
+    display: flex;
+    height: 41px; /* Misma altura que los inputs */
+}
+
+/* Estilo del botón Consultar */
+.btn-consultar {
+    background-color: #e2e8f0; /* Color gris claro inicial */
+    color: #334155;
+    border: none;
+    border-radius: 8px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+/* Hover del botón */
+.btn-consultar:hover {
+    background-color: #cbd5e1;
+    color: #0f172a;
+}

@@ -1,208 +1,232 @@
 $(function () {
+  $("#esperar").fadeOut();
 
-    $("#esperar").fadeOut();
+  // =============================================
+  // VARIABLES GLOBALES
+  // =============================================
+  const POR_PAGINA = 15;
+  let paginaActual = 1;
+  let totalRegistros = 0;
+  let timerBusqueda = null;
 
-    // =============================================
-    // VARIABLES GLOBALES
-    // =============================================
-    const POR_PAGINA = 15;
-    let paginaActual = 1;
-    let totalRegistros = 0;
-    let timerBusqueda = null;
-    
-    let accion = "n";
-    let jerarquiaDatos = {};
-    let carritoCodigos = [];
-    let bTipo = null, bGrupo = null, bClase = null, bFamilia = null, bUnidad = null;
+  let accion = "n";
+  let jerarquiaDatos = {};
+  let carritoCodigos = [];
+  let bTipo = null,
+    bGrupo = null,
+    bClase = null,
+    bFamilia = null,
+    bUnidad = null;
 
-    // =============================================
-    // ARRANQUE
-    // =============================================
-    consultarTabla(1);
-    cargarJerarquia();
+  // =============================================
+  // ARRANQUE
+  // =============================================
+  consultarTabla(1);
+  cargarJerarquia();
 
-    $("#consulta").on("input", function () {
-        clearTimeout(timerBusqueda);
-        timerBusqueda = setTimeout(() => consultarTabla(1), 350);
-    });
+  $("#consulta").on("input", function () {
+    clearTimeout(timerBusqueda);
+    timerBusqueda = setTimeout(() => consultarTabla(1), 350);
+  });
 
-    // =============================================
-    // 1. CARGAR JERARQUÍA
-    // =============================================
-    function cargarJerarquia() {
-        fetch(RUTA + "bienes/jerarquia", { method: "POST" })
-            .then(r => r.json())
-            .then(data => {
-                jerarquiaDatos = data;
-                llenarSelect("tipo_item", data.tipos, "Buscar tipo...");
-                llenarSelect("grupo", data.grupos, "Buscar grupo...");
-                llenarSelect("unidad", data.unidades, "Buscar unidad...");
+  // =============================================
+  // 1. CARGAR JERARQUÍA
+  // =============================================
+  function cargarJerarquia() {
+    fetch(RUTA + "bienes/jerarquia", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => {
+        jerarquiaDatos = data;
+        llenarSelect("tipo_item", data.tipos, "Buscar tipo...");
+        llenarSelect("grupo", data.grupos, "Buscar grupo...");
+        llenarSelect("unidad", data.unidades, "Buscar unidad...");
 
-                bTipo = new SelectBuscador("#tipo_item", { placeholder: "Buscar tipo..." });
-                bGrupo = new SelectBuscador("#grupo", { placeholder: "Buscar grupo..." });
-                bUnidad = new SelectBuscador("#unidad", { placeholder: "Buscar unidad..." });
-            })
-            .catch(err => console.error("Error jerarquía:", err));
-    }
+        bTipo = new SelectBuscador("#tipo_item", {
+          placeholder: "Buscar tipo...",
+        });
+        bGrupo = new SelectBuscador("#grupo", {
+          placeholder: "Buscar grupo...",
+        });
+        bUnidad = new SelectBuscador("#unidad", {
+          placeholder: "Buscar unidad...",
+        });
+      })
+      .catch((err) => console.error("Error jerarquía:", err));
+  }
 
-    function llenarSelect(id, lista, placeholder) {
-        const select = document.getElementById(id);
-        let html = `<option value="">${placeholder}</option>`;
-        
-        if (lista) {
-            lista.forEach(item => {
-                // Si el código es igual al nombre (o uno de los dos está vacío), mostramos solo uno
-                let textoMostrar = "";
-                if (item.codigo && item.nombre && item.codigo !== item.nombre) {
-                    textoMostrar = `${item.codigo} - ${item.nombre}`;
-                } else {
-                    textoMostrar = item.nombre || item.codigo || "";
-                }
+  function llenarSelect(id, lista, placeholder) {
+    const select = document.getElementById(id);
+    let html = `<option value="">${placeholder}</option>`;
 
-                html += `<option value="${item.id}" data-codigo="${item.codigo}">${textoMostrar}</option>`;
-            });
-        }
-        select.innerHTML = html;
-    }
-
-    // =============================================
-    // 2. EVENTOS EN CASCADA Y ACTUALIZACIÓN DE HIDDEN
-    // =============================================
-
-    // Función auxiliar para guardar el valor en el hidden correspondiente
-    function guardarHidden(selectId, hiddenId) {
-        const valor = document.getElementById(selectId).value;
-        //document.getElementById(hiddenId).value = valor;
-    }
-
-    // TIPO
-    document.getElementById("tipo_item").addEventListener("change", function () {
-        guardarHidden("tipo_item", "codigo_tipo");
-    });
-
-    // GRUPO
-    document.getElementById("grupo").addEventListener("change", function () {
-        guardarHidden("grupo", "codigo_grupo");
-        
-        // ... (aquí va el código que ya tienes para cargar las clases) ...
-        const grupoId = this.value;
-        const selectClase = document.getElementById("clase");
-        const selectFamilia = document.getElementById("familia");
-        
-        selectClase.innerHTML = '<option value="">Seleccione...</option>';
-        selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
-        //document.getElementById("codigo_clase").value = "";
-        //document.getElementById("codigo_familia").value = "";
-
-        if (bClase) { bClase.destruir(); bClase = null; }
-        if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
-
-        if (!grupoId) return;
-
-        const grupo = jerarquiaDatos.grupos.find(g => String(g.id) === String(grupoId));
-        if (grupo && grupo.clases) {
-            llenarSelect("clase", grupo.clases, "Seleccione...");
-            bClase = new SelectBuscador("#clase", { placeholder: "Buscar clase..." });
-        }
-    });
-
-    // CLASE
-    document.getElementById("clase").addEventListener("change", function () {
-        guardarHidden("clase", "codigo_clase");
-
-        const claseId = this.value;
-        const grupoId = document.getElementById("grupo").value;
-        const selectFamilia = document.getElementById("familia");
-        
-        selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
-        //document.getElementById("codigo_familia").value = "";
-        if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
-
-        if (!claseId || !grupoId) return;
-
-        const grupo = jerarquiaDatos.grupos.find(g => String(g.id) === String(grupoId));
-        const clase = grupo.clases.find(c => String(c.id) === String(claseId));
-        
-        if (clase && clase.familias) {
-            llenarSelect("familia", clase.familias, "Seleccione...");
-            bFamilia = new SelectBuscador("#familia", { placeholder: "Buscar familia..." });
-        }
-    });
-
-    // FAMILIA
-    document.getElementById("familia").addEventListener("change", function () {
-        guardarHidden("familia", "codigo_familia");
-    });
-
-    // UNIDAD (Aquí disparamos la generación del código)
-    document.getElementById("unidad").addEventListener("change", function () {
-        // Si estamos editando, NO generamos un código nuevo
-        if (accion === "u") return;
-
-        const unidadId = this.value;
-        const familiaId = document.getElementById("familia").value;
-        
-        if (!unidadId || !familiaId) { 
-            $("#codigo").val(""); 
-            return; 
+    if (lista) {
+      lista.forEach((item) => {
+        // Si el código es igual al nombre (o uno de los dos está vacío), mostramos solo uno
+        let textoMostrar = "";
+        if (item.codigo && item.nombre && item.codigo !== item.nombre) {
+          textoMostrar = `${item.codigo} - ${item.nombre}`;
+        } else {
+          textoMostrar = item.nombre || item.codigo || "";
         }
 
-        const codigoFamilia = $("#familia option:selected").data("codigo");
-        if (!codigoFamilia) return;
+        html += `<option value="${item.id}" data-codigo="${item.codigo}">${textoMostrar}</option>`;
+      });
+    }
+    select.innerHTML = html;
+  }
 
-        const formData = new FormData();
-        formData.append("codigo", codigoFamilia);
+  // =============================================
+  // 2. EVENTOS EN CASCADA Y ACTUALIZACIÓN DE HIDDEN
+  // =============================================
 
-        fetch(RUTA + "bienes/codigo", { method: "POST", body: formData })
-            .then(r => r.text())
-            .then(nuevoCodigo => {
-                $("#codigo").val(nuevoCodigo);
-            });
-    });
+  // Función auxiliar para guardar el valor en el hidden correspondiente
+  function guardarHidden(selectId, hiddenId) {
+    const valor = document.getElementById(selectId).value;
+    //document.getElementById(hiddenId).value = valor;
+  }
 
-    // =============================================
-    // 3. LISTAR Y PAGINAR
-    // =============================================
-    function consultarTabla(page = 1) {
-        const tbody = document.getElementById("tbodyBienes");
-        const criterio = document.getElementById("consulta").value;
+  // TIPO
+  document.getElementById("tipo_item").addEventListener("change", function () {
+    guardarHidden("tipo_item", "codigo_tipo");
+  });
 
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px;"><i class="fas fa-spinner fa-spin" style="font-size: 30px; color: #2563eb;"></i></td></tr>`;
+  // GRUPO
+  document.getElementById("grupo").addEventListener("change", function () {
+    guardarHidden("grupo", "codigo_grupo");
 
+    // ... (aquí va el código que ya tienes para cargar las clases) ...
+    const grupoId = this.value;
+    const selectClase = document.getElementById("clase");
+    const selectFamilia = document.getElementById("familia");
 
-        const formData = new FormData();
-        formData.append("criterio", criterio);
-        formData.append("page", page);
-        formData.append("porPagina", POR_PAGINA);
+    selectClase.innerHTML = '<option value="">Seleccione...</option>';
+    selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
+    //document.getElementById("codigo_clase").value = "";
+    //document.getElementById("codigo_familia").value = "";
 
-        fetch(RUTA + "bienes/listaPaginada", { method: "POST", body: formData })
-            .then(r => r.json())
-            .then(data => {
-                if (data.items && data.items.length > 0) {
-                    totalRegistros = parseInt(data.total);
-                    renderizarTabla(data.items, page);
-                    actualizarPaginador(page);
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #999;">No se encontraron resultados</td></tr>`;
-                    actualizarPaginador(1);
-                }
-            })
-            .catch(err => {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #ef4444;">Error al cargar datos</td></tr>`;
-            });
+    if (bClase) {
+      bClase.destruir();
+      bClase = null;
+    }
+    if (bFamilia) {
+      bFamilia.destruir();
+      bFamilia = null;
     }
 
-    function renderizarTabla(items, page) {
-        const tbody = document.getElementById("tbodyBienes");
-        let html = "";
+    if (!grupoId) return;
 
-        items.forEach((item, index) => {
-            const itemNum = ((page - 1) * POR_PAGINA) + index + 1;
-            const itemNumStr = String(itemNum).padStart(5, '0');
-            const tipoTexto = item.tipo.toUpperCase();
-            let badgeClass = tipoTexto === "BIENES" ? "badge-bienes" : "badge-servicios";
+    const grupo = jerarquiaDatos.grupos.find(
+      (g) => String(g.id) === String(grupoId),
+    );
+    if (grupo && grupo.clases) {
+      llenarSelect("clase", grupo.clases, "Seleccione...");
+      bClase = new SelectBuscador("#clase", { placeholder: "Buscar clase..." });
+    }
+  });
 
-            html += `<tr data-id="${item.id_cprod}" class="pointer">
+  // CLASE
+  document.getElementById("clase").addEventListener("change", function () {
+    guardarHidden("clase", "codigo_clase");
+
+    const claseId = this.value;
+    const grupoId = document.getElementById("grupo").value;
+    const selectFamilia = document.getElementById("familia");
+
+    selectFamilia.innerHTML = '<option value="">Seleccione...</option>';
+    //document.getElementById("codigo_familia").value = "";
+    if (bFamilia) {
+      bFamilia.destruir();
+      bFamilia = null;
+    }
+
+    if (!claseId || !grupoId) return;
+
+    const grupo = jerarquiaDatos.grupos.find(
+      (g) => String(g.id) === String(grupoId),
+    );
+    const clase = grupo.clases.find((c) => String(c.id) === String(claseId));
+
+    if (clase && clase.familias) {
+      llenarSelect("familia", clase.familias, "Seleccione...");
+      bFamilia = new SelectBuscador("#familia", {
+        placeholder: "Buscar familia...",
+      });
+    }
+  });
+
+  // FAMILIA
+  document.getElementById("familia").addEventListener("change", function () {
+    guardarHidden("familia", "codigo_familia");
+  });
+
+  // UNIDAD (Aquí disparamos la generación del código)
+  document.getElementById("unidad").addEventListener("change", function () {
+    // Si estamos editando, NO generamos un código nuevo
+    if (accion === "u") return;
+
+    const unidadId = this.value;
+    const familiaId = document.getElementById("familia").value;
+
+    if (!unidadId || !familiaId) {
+      $("#codigo").val("");
+      return;
+    }
+
+    const codigoFamilia = $("#familia option:selected").data("codigo");
+    if (!codigoFamilia) return;
+
+    const formData = new FormData();
+    formData.append("codigo", codigoFamilia);
+
+    fetch(RUTA + "bienes/codigo", { method: "POST", body: formData })
+      .then((r) => r.text())
+      .then((nuevoCodigo) => {
+        $("#codigo").val(nuevoCodigo);
+      });
+  });
+
+  // =============================================
+  // 3. LISTAR Y PAGINAR
+  // =============================================
+  function consultarTabla(page = 1) {
+    const tbody = document.getElementById("tbodyBienes");
+    const criterio = document.getElementById("consulta").value;
+
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px;"><i class="fas fa-spinner fa-spin" style="font-size: 30px; color: #2563eb;"></i></td></tr>`;
+
+    const formData = new FormData();
+    formData.append("criterio", criterio);
+    formData.append("page", page);
+    formData.append("porPagina", POR_PAGINA);
+
+    fetch(RUTA + "bienes/listaPaginada", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.items && data.items.length > 0) {
+          totalRegistros = parseInt(data.total);
+          renderizarTabla(data.items, page);
+          actualizarPaginador(page);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #999;">No se encontraron resultados</td></tr>`;
+          actualizarPaginador(1);
+        }
+      })
+      .catch((err) => {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #ef4444;">Error al cargar datos</td></tr>`;
+      });
+  }
+
+  function renderizarTabla(items, page) {
+    const tbody = document.getElementById("tbodyBienes");
+    let html = "";
+
+    items.forEach((item, index) => {
+      const itemNum = (page - 1) * POR_PAGINA + index + 1;
+      const itemNumStr = String(itemNum).padStart(5, "0");
+      const tipoTexto = item.tipo.toUpperCase();
+      let badgeClass =
+        tipoTexto === "BIENES" ? "badge-bienes" : "badge-servicios";
+
+      html += `<tr data-id="${item.id_cprod}" class="pointer">
                 <td class="textoCentro">${itemNumStr}</td>
                 <td class="textoCentro" style="font-weight:600; color:#2563eb;">${item.ccodprod}</td>
                 <td class="textoCentro"><span class="badge-tipo ${badgeClass}">${tipoTexto}</span></td>
@@ -210,388 +234,442 @@ $(function () {
                 <td class="textoCentro">${item.cabrevia}</td>
                 <td class="textoCentro"><button class="btn-icon" onclick="editarItem(${item.id_cprod})"><i class="fas fa-ellipsis-v"></i></button></td>
             </tr>`;
-        });
-        tbody.innerHTML = html;
-    }
-
-    // =============================================
-    // 4. MODAL
-    // =============================================
-    $("#nuevoRegistro").click(function (e) {
-        e.preventDefault();
-        accion = "n";
-        limpiarFormulario();
-        $("#proceso").fadeIn();
     });
+    tbody.innerHTML = html;
+  }
 
-    $("#cerrarVentana").click(function (e) {
-        e.preventDefault();
-        $("#proceso").fadeOut();
-    });
+  // =============================================
+  // 4. MODAL
+  // =============================================
+  $("#nuevoRegistro").click(function (e) {
+    e.preventDefault();
+    accion = "n";
+    limpiarFormulario();
+    $("#proceso").fadeIn();
+  });
 
-    function limpiarFormulario() {
-        // 1. Limpiar el formulario
-        $("#formProceso")[0].reset();
-        $("#codigo, #descripcion, #nro_parte, #cod_pat").val("");
-        
-        // 2. Limpiar los selects y los buscadores
-        if (bTipo) bTipo.setValor("");
-        if (bGrupo) bGrupo.setValor("");
-        if (bUnidad) bUnidad.setValor("");
-        if (bClase) { bClase.destruir(); bClase = null; }
-        if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
-        
-        $("#clase, #familia").html('<option value="">Seleccione...</option>');
+  $("#cerrarVentana").click(function (e) {
+    e.preventDefault();
+    $("#proceso").fadeOut();
+  });
 
-        // 3. Habilitar los selects (por si veníamos de una edición)
-        $("#tipo_item, #grupo, #clase, #familia, #unidad").prop("disabled", false).css({
-            "background": "#fff",
-            "color": "#333",
-            "border-color": "#cbd5e1"
-        });
+  function limpiarFormulario() {
+    // 1. Limpiar el formulario
+    $("#formProceso")[0].reset();
+    $("#codigo, #descripcion, #nro_parte, #cod_pat").val("");
 
-        // 4. Recrear los buscadores si fueron destruidos
-        if (!bTipo) bTipo = new SelectBuscador("#tipo_item", { placeholder: "Buscar tipo..." });
-        if (!bGrupo) bGrupo = new SelectBuscador("#grupo", { placeholder: "Buscar grupo..." });
-        if (!bUnidad) bUnidad = new SelectBuscador("#unidad", { placeholder: "Buscar unidad..." });
-        
-        // Si Clase y Familia tienen opciones (porque se cargaron antes), les devolvemos su buscador
-        if (document.getElementById("clase").options.length > 1 && !bClase) {
-            bClase = new SelectBuscador("#clase", { placeholder: "Buscar clase..." });
-        }
-        if (document.getElementById("familia").options.length > 1 && !bFamilia) {
-            bFamilia = new SelectBuscador("#familia", { placeholder: "Buscar familia..." });
-        }
-        
-        // 5. Estado del código y variables
-        $("#codigo").prop("readonly", true).css("background", "#eff6ff");
-        registroEdit = null; 
+    // 2. Limpiar los selects y los buscadores
+    if (bTipo) bTipo.setValor("");
+    if (bGrupo) bGrupo.setValor("");
+    if (bUnidad) bUnidad.setValor("");
+    if (bClase) {
+      bClase.destruir();
+      bClase = null;
+    }
+    if (bFamilia) {
+      bFamilia.destruir();
+      bFamilia = null;
     }
 
-    // =============================================
-    // LÓGICA PARA GUARDAR Y PASAR AL CARRITO
-    // =============================================
-    function procesarItem() {
-        // 1. Recopilar datos DIRECTAMENTE de los inputs y selects visibles
-        let result = {
-            codigo:         $("#codigo").val(), // El código autogenerado
-            codigo_tipo:    $("#tipo_item").val(),
-            codigo_grupo:   $("#grupo").val(),
-            codigo_clase:   $("#clase").val(),
-            codigo_familia: $("#familia").val(),
-            codigo_unidad:  $("#unidad").val(),
-            descripcion:    $("#descripcion").val().trim(),
-            nro_parte:      $("#nro_parte").val(),
-            cod_pat:        $("#cod_pat").val(),
-            // Checkboxes (true si están marcados, false si no)
-            serie:          $("#serie").is(":checked") ? 1 : 0,
-            detraccion:     $("#detraccion").is(":checked") ? 1 : 0,
-            actfij:         $("#actfij").is(":checked") ? 1 : 0
-        };
+    $("#clase, #familia").html('<option value="">Seleccione...</option>');
 
-        // 2. Validaciones básicas
-        if (!result.codigo_tipo) return mostrarMensaje("Seleccione el tipo", "mensaje_error");
-        if (!result.codigo_grupo) return mostrarMensaje("Seleccione el grupo", "mensaje_error");
-        if (!result.codigo_clase) return mostrarMensaje("Seleccione la clase", "mensaje_error");
-        if (!result.codigo_familia) return mostrarMensaje("Seleccione la familia", "mensaje_error");
-        if (!result.codigo_unidad) return mostrarMensaje("Seleccione la unidad", "mensaje_error");
-        if (!result.descripcion) return mostrarMensaje("Ingrese un nombre", "mensaje_error");
-        if (!result.codigo) return mostrarMensaje("El código no se ha generado", "mensaje_error");
+    // 3. Habilitar los selects (por si veníamos de una edición)
+    $("#tipo_item, #grupo, #clase, #familia, #unidad")
+      .prop("disabled", false)
+      .css({
+        background: "#fff",
+        color: "#333",
+        "border-color": "#cbd5e1",
+      });
 
-        // 3. Determinar si es edición o nuevo
-        const esEdicion = (accion === "u");
-        const url = esEdicion ? RUTA + "bienes/modificaItem" : RUTA + "bienes/nuevoItem";
-        
-        // Si es edición, necesitamos el ID del item
-        if (esEdicion && registroEdit) {
-            result.codigo_item = registroEdit.id;
-        }
+    // 4. Recrear los buscadores si fueron destruidos
+    if (!bTipo)
+      bTipo = new SelectBuscador("#tipo_item", {
+        placeholder: "Buscar tipo...",
+      });
+    if (!bGrupo)
+      bGrupo = new SelectBuscador("#grupo", { placeholder: "Buscar grupo..." });
+    if (!bUnidad)
+      bUnidad = new SelectBuscador("#unidad", {
+        placeholder: "Buscar unidad...",
+      });
 
-        // 4. Enviar al servidor
-        const formData = new FormData();
-        // Tu backend espera un string JSON en la llave 'datos'
-        formData.append("datos", JSON.stringify(result));
-
-        $("#esperar").fadeIn();
-
-        fetch(url, { method: "POST", body: formData })
-            .then(r => r.json())
-            .then(data => {
-                $("#esperar").fadeOut();
-                
-                if (data.respuesta) {
-                    mostrarMensaje(data.mensaje, data.clase);
-
-                    if (!esEdicion) {
-                        // A) AGREGAR AL CARRITO VISUAL
-                        agregarAlCarrito(result.codigo, result.descripcion);
-                        
-                        // B) LIMPIAR SOLO EL NOMBRE Y FOCO
-                        $("#descripcion").val("").focus();
-                        
-                        // C) GENERAR EL NUEVO CÓDIGO AUTOMÁTICAMENTE
-                        const codigoFamilia = $("#familia option:selected").data("codigo");
-                        if (codigoFamilia) {
-                            const formCode = new FormData();
-                            formCode.append("codigo", codigoFamilia);
-                            
-                            fetch(RUTA + "bienes/codigo", { method: "POST", body: formCode })
-                                .then(res => res.text())
-                                .then(nuevoCodigo => {
-                                    $("#codigo").val(nuevoCodigo);
-                                });
-                        }
-
-                        // D) RECARGAR LA TABLA DE FONDO
-                        consultarTabla(1); 
-                    } else {
-                        $("#proceso").fadeOut();
-                        consultarTabla(paginaActual);
-                    }
-                } else {
-                    mostrarMensaje(data.mensaje, data.clase);
-                }
-            })
-            .catch(err => {
-                $("#esperar").fadeOut();
-                mostrarMensaje("Error de conexión al guardar", "mensaje_error");
-                console.error(err);
-            });
+    // Si Clase y Familia tienen opciones (porque se cargaron antes), les devolvemos su buscador
+    if (document.getElementById("clase").options.length > 1 && !bClase) {
+      bClase = new SelectBuscador("#clase", { placeholder: "Buscar clase..." });
+    }
+    if (document.getElementById("familia").options.length > 1 && !bFamilia) {
+      bFamilia = new SelectBuscador("#familia", {
+        placeholder: "Buscar familia...",
+      });
     }
 
-    // Evento Click del botón "Grabar Registro"
-    $("#grabarItem").click(function (e) {
-        e.preventDefault();
-        procesarItem();
-    });
+    // 5. Estado del código y variables
+    $("#codigo").prop("readonly", true).css("background", "#eff6ff");
+    registroEdit = null;
+  }
 
-    function agregarAlCarrito(codigo, descripcion) {
-        if (carritoCodigos.some(item => item.codigo === codigo)) return;
-        carritoCodigos.push({ codigo, descripcion });
-        renderizarCarrito();
+  // =============================================
+  // LÓGICA PARA GUARDAR Y PASAR AL CARRITO
+  // =============================================
+  function procesarItem() {
+    // 1. Recopilar datos DIRECTAMENTE de los inputs y selects visibles
+    let result = {
+      codigo: $("#codigo").val(), // El código autogenerado
+      codigo_tipo: $("#tipo_item").val(),
+      codigo_grupo: $("#grupo").val(),
+      codigo_clase: $("#clase").val(),
+      codigo_familia: $("#familia").val(),
+      codigo_unidad: $("#unidad").val(),
+      descripcion: $("#descripcion").val().trim(),
+      nro_parte: $("#nro_parte").val(),
+      cod_pat: $("#cod_pat").val(),
+      // Checkboxes (true si están marcados, false si no)
+      serie: $("#serie").is(":checked") ? 1 : 0,
+      detraccion: $("#detraccion").is(":checked") ? 1 : 0,
+      actfij: $("#actfij").is(":checked") ? 1 : 0,
+    };
+
+    // 2. Validaciones básicas
+    if (!result.codigo_tipo)
+      return mostrarMensaje("Seleccione el tipo", "mensaje_error");
+    if (!result.codigo_grupo)
+      return mostrarMensaje("Seleccione el grupo", "mensaje_error");
+    if (!result.codigo_clase)
+      return mostrarMensaje("Seleccione la clase", "mensaje_error");
+    if (!result.codigo_familia)
+      return mostrarMensaje("Seleccione la familia", "mensaje_error");
+    if (!result.codigo_unidad)
+      return mostrarMensaje("Seleccione la unidad", "mensaje_error");
+    if (!result.descripcion)
+      return mostrarMensaje("Ingrese un nombre", "mensaje_error");
+    if (!result.codigo)
+      return mostrarMensaje("El código no se ha generado", "mensaje_error");
+
+    // 3. Determinar si es edición o nuevo
+    const esEdicion = accion === "u";
+    const url = esEdicion
+      ? RUTA + "bienes/modificaItem"
+      : RUTA + "bienes/nuevoItem";
+
+    // Si es edición, necesitamos el ID del item
+    if (esEdicion && registroEdit) {
+      result.codigo_item = registroEdit.id;
     }
 
-    function renderizarCarrito() {
-        const tbody = $("#tbodyCarrito");
-        if (carritoCodigos.length === 0) {
-            tbody.html(`<tr><td colspan="3" style="text-align: center; padding: 15px; color: #999;">Aún no has creado códigos en esta sesión.</td></tr>`);
-            return;
+    // 4. Enviar al servidor
+    const formData = new FormData();
+    // Tu backend espera un string JSON en la llave 'datos'
+    formData.append("datos", JSON.stringify(result));
+
+    $("#esperar").fadeIn();
+
+    fetch(url, { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        $("#esperar").fadeOut();
+
+        if (data.respuesta) {
+          mostrarMensaje(data.mensaje, data.clase);
+
+          if (!esEdicion) {
+            // A) AGREGAR AL CARRITO VISUAL
+            agregarAlCarrito(result.codigo, result.descripcion);
+
+            // B) LIMPIAR SOLO EL NOMBRE Y FOCO
+            $("#descripcion").val("").focus();
+
+            // C) GENERAR EL NUEVO CÓDIGO AUTOMÁTICAMENTE
+            const codigoFamilia = $("#familia option:selected").data("codigo");
+            if (codigoFamilia) {
+              const formCode = new FormData();
+              formCode.append("codigo", codigoFamilia);
+
+              fetch(RUTA + "bienes/codigo", { method: "POST", body: formCode })
+                .then((res) => res.text())
+                .then((nuevoCodigo) => {
+                  $("#codigo").val(nuevoCodigo);
+                });
+            }
+
+            // D) RECARGAR LA TABLA DE FONDO
+            consultarTabla(1);
+          } else {
+            $("#proceso").fadeOut();
+            consultarTabla(paginaActual);
+          }
+        } else {
+          mostrarMensaje(data.mensaje, data.clase);
         }
-        let html = "";
-        carritoCodigos.forEach((item, index) => {
-            html += `<tr>
+      })
+      .catch((err) => {
+        $("#esperar").fadeOut();
+        mostrarMensaje("Error de conexión al guardar", "mensaje_error");
+        console.error(err);
+      });
+  }
+
+  // Evento Click del botón "Grabar Registro"
+  $("#grabarItem").click(function (e) {
+    e.preventDefault();
+    procesarItem();
+  });
+
+  function agregarAlCarrito(codigo, descripcion) {
+    if (carritoCodigos.some((item) => item.codigo === codigo)) return;
+    carritoCodigos.push({ codigo, descripcion });
+    renderizarCarrito();
+  }
+
+  function renderizarCarrito() {
+    const tbody = $("#tbodyCarrito");
+    if (carritoCodigos.length === 0) {
+      tbody.html(
+        `<tr><td colspan="3" style="text-align: center; padding: 15px; color: #999;">Aún no has creado códigos en esta sesión.</td></tr>`,
+      );
+      return;
+    }
+    let html = "";
+    carritoCodigos.forEach((item, index) => {
+      html += `<tr>
                 <td style="font-weight: 600; color: #2563eb;">${item.codigo}</td>
                 <td>${item.descripcion}</td>
                 <td style="text-align: center;"><button type="button" class="btn-eliminar-carrito" data-index="${index}"><i class="fas fa-times"></i></button></td>
             </tr>`;
-        });
-        tbody.html(html);
-    }
-
-    $("#tbodyCarrito").on("click", ".btn-eliminar-carrito", function () {
-        carritoCodigos.splice($(this).data("index"), 1);
-        renderizarCarrito();
     });
+    tbody.html(html);
+  }
 
-        $("#btnEnviarCorreo").click(function (e) {
-        e.preventDefault();
+  $("#tbodyCarrito").on("click", ".btn-eliminar-carrito", function () {
+    carritoCodigos.splice($(this).data("index"), 1);
+    renderizarCarrito();
+  });
 
-        // 1. Validar que haya códigos en el carrito
-        if (carritoCodigos.length === 0) {
-            return mostrarMensaje("No hay códigos en la lista para enviar", "mensaje_error");
+  $("#btnEnviarCorreo").click(function (e) {
+    e.preventDefault();
+
+    // 1. Validar que haya códigos en el carrito
+    if (carritoCodigos.length === 0) {
+      return mostrarMensaje(
+        "No hay códigos en la lista para enviar",
+        "mensaje_error",
+      );
+    }
+
+    // 2. Validar que el correo no esté vacío y tenga formato correcto
+    const correo = $("#correoDestino").val().trim();
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (correo === "") {
+      return mostrarMensaje("Ingrese un correo de destino", "mensaje_error");
+    }
+    if (!regexCorreo.test(correo)) {
+      return mostrarMensaje(
+        "El formato del correo no es válido",
+        "mensaje_error",
+      );
+    }
+
+    // 3. Confirmar envío
+    if (!confirm("¿Desea enviar la lista de códigos a " + correo + "?")) return;
+
+    // 4. Preparar los datos y enviar al backend
+    const formData = new FormData();
+    formData.append("codigos", JSON.stringify(carritoCodigos));
+    formData.append("correo", correo);
+
+    $("#esperar").fadeIn();
+
+    fetch(RUTA + "bienes/enviarCorreo", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        $("#esperar").fadeOut();
+
+        if (data.respuesta) {
+          mostrarMensaje(data.mensaje, "mensaje_correcto");
+          // Limpiar el carrito y el input de correo tras el envío exitoso
+          carritoCodigos = [];
+          renderizarCarrito();
+          $("#correoDestino").val("");
+        } else {
+          mostrarMensaje(data.mensaje, "mensaje_error");
         }
+      })
+      .catch((err) => {
+        $("#esperar").fadeOut();
+        mostrarMensaje(
+          "Error de conexión al enviar el correo",
+          "mensaje_error",
+        );
+        console.error(err);
+      });
+  });
 
-        // 2. Validar que el correo no esté vacío y tenga formato correcto
-        const correo = $("#correoDestino").val().trim();
-        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (correo === "") {
-            return mostrarMensaje("Ingrese un correo de destino", "mensaje_error");
-        }
-        if (!regexCorreo.test(correo)) {
-            return mostrarMensaje("El formato del correo no es válido", "mensaje_error");
-        }
+  // =============================================
+  // 6. PAGINADOR
+  // =============================================
+  function actualizarPaginador(pagina) {
+    paginaActual = pagina;
+    const totalPaginas = Math.ceil(totalRegistros / POR_PAGINA) || 1;
+    const inicio = totalRegistros > 0 ? (pagina - 1) * POR_PAGINA + 1 : 0;
+    const fin = Math.min(pagina * POR_PAGINA, totalRegistros);
 
-        // 3. Confirmar envío
-        if (!confirm("¿Desea enviar la lista de códigos a " + correo + "?")) return;
+    document.getElementById("infoPaginador").innerHTML =
+      `Mostrando <strong>${inicio}</strong> - <strong>${fin}</strong> de <strong>${totalRegistros}</strong>`;
 
-        // 4. Preparar los datos y enviar al backend
-        const formData = new FormData();
-        formData.append("codigos", JSON.stringify(carritoCodigos));
-        formData.append("correo", correo);
+    let botones = `<button class="page-btn" data-page="${pagina - 1}" ${pagina <= 1 ? "disabled" : ""}><i class="fas fa-chevron-left"></i></button>`;
+    let inicioPag = Math.max(1, pagina - 2);
+    let finPag = Math.min(totalPaginas, pagina + 2);
 
-        $("#esperar").fadeIn();
+    if (inicioPag > 1) {
+      botones += `<button class="page-btn" data-page="1">1</button>`;
+      if (inicioPag > 2)
+        botones += `<button class="page-btn" disabled>...</button>`;
+    }
+    for (let i = inicioPag; i <= finPag; i++) {
+      botones += `<button class="page-btn ${i === pagina ? "active" : ""}" data-page="${i}">${i}</button>`;
+    }
+    if (finPag < totalPaginas) {
+      if (finPag < totalPaginas - 1)
+        botones += `<button class="page-btn" disabled>...</button>`;
+      botones += `<button class="page-btn" data-page="${totalPaginas}">${totalPaginas}</button>`;
+    }
+    botones += `<button class="page-btn" data-page="${pagina + 1}" ${pagina >= totalPaginas ? "disabled" : ""}><i class="fas fa-chevron-right"></i></button>`;
 
-        fetch(RUTA + "bienes/enviarCorreo", { method: "POST", body: formData })
-            .then(r => r.json())
-            .then(data => {
-                $("#esperar").fadeOut();
-                
-                if (data.respuesta) {
-                    mostrarMensaje(data.mensaje, "mensaje_correcto");
-                    // Limpiar el carrito y el input de correo tras el envío exitoso
-                    carritoCodigos = [];
-                    renderizarCarrito();
-                    $("#correoDestino").val("");
-                } else {
-                    mostrarMensaje(data.mensaje, "mensaje_error");
-                }
-            })
-            .catch(err => {
-                $("#esperar").fadeOut();
-                mostrarMensaje("Error de conexión al enviar el correo", "mensaje_error");
-                console.error(err);
-            });
+    document.getElementById("botonesPaginador").innerHTML = botones;
+
+    document.querySelectorAll(".page-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        if (this.disabled) return;
+        const page = parseInt(this.dataset.page);
+        if (page >= 1 && page <= totalPaginas) consultarTabla(page);
+      });
     });
+  }
 
-    // =============================================
-    // 6. PAGINADOR
-    // =============================================
-    function actualizarPaginador(pagina) {
-        paginaActual = pagina;
-        const totalPaginas = Math.ceil(totalRegistros / POR_PAGINA) || 1;
-        const inicio = totalRegistros > 0 ? (pagina - 1) * POR_PAGINA + 1 : 0;
-        const fin = Math.min(pagina * POR_PAGINA, totalRegistros);
+  // =============================================
+  // 7. EDITAR ITEM
+  // =============================================
+  window.editarItem = function (id) {
+    accion = "u"; // Modo actualizar
+    limpiarFormulario();
+    $("#proceso").fadeIn();
+    $("#esperar").fadeIn();
 
-        document.getElementById("infoPaginador").innerHTML = `Mostrando <strong>${inicio}</strong> - <strong>${fin}</strong> de <strong>${totalRegistros}</strong>`;
+    const formData = new FormData();
+    formData.append("id", id);
 
-        let botones = `<button class="page-btn" data-page="${pagina - 1}" ${pagina <= 1 ? "disabled" : ""}><i class="fas fa-chevron-left"></i></button>`;
-        let inicioPag = Math.max(1, pagina - 2);
-        let finPag = Math.min(totalPaginas, pagina + 2);
+    fetch(RUTA + "bienes/itemsId", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        $("#esperar").fadeOut();
 
-        if (inicioPag > 1) {
-            botones += `<button class="page-btn" data-page="1">1</button>`;
-            if (inicioPag > 2) botones += `<button class="page-btn" disabled>...</button>`;
+        if (!data.item || data.item.length === 0) {
+          mostrarMensaje("No se encontró el registro", "mensaje_error");
+          return;
         }
-        for (let i = inicioPag; i <= finPag; i++) {
-            botones += `<button class="page-btn ${i === pagina ? "active" : ""}" data-page="${i}">${i}</button>`;
-        }
-        if (finPag < totalPaginas) {
-            if (finPag < totalPaginas - 1) botones += `<button class="page-btn" disabled>...</button>`;
-            botones += `<button class="page-btn" data-page="${totalPaginas}">${totalPaginas}</button>`;
-        }
-        botones += `<button class="page-btn" data-page="${pagina + 1}" ${pagina >= totalPaginas ? "disabled" : ""}><i class="fas fa-chevron-right"></i></button>`;
 
-        document.getElementById("botonesPaginador").innerHTML = botones;
+        const item = data.item[0];
+        registroEdit = { id: item.id_cprod };
 
-        document.querySelectorAll(".page-btn").forEach(btn => {
-            btn.addEventListener("click", function () {
-                if (this.disabled) return;
-                const page = parseInt(this.dataset.page);
-                if (page >= 1 && page <= totalPaginas) consultarTabla(page);
-            });
+        // 1. Llenar inputs de texto
+        $("#codigo").val(item.ccodprod);
+        $("#descripcion").val(item.cdesprod.trim());
+        $("#nro_parte").val(item.cnparte || "");
+        $("#cod_pat").val(item.cod_pat || "");
+
+        // 2. Marcar checkboxes
+        $("#serie").prop("checked", item.flgSerie == 1);
+        $("#detraccion").prop("checked", item.flgDetrac == 1);
+        $("#actfij").prop("checked", item.flgActFij == 1);
+
+        // 3. Seleccionar valores en los buscadores
+        if (bTipo) bTipo.setValor(item.ntipo);
+        if (bGrupo) bGrupo.setValor(item.ngrupo);
+        if (bUnidad) bUnidad.setValor(item.nund);
+
+        // 4. Cargar Clase y Familia en memoria (disparando eventos)
+        document.getElementById("grupo").dispatchEvent(new Event("change"));
+
+        setTimeout(() => {
+          if (bClase) bClase.setValor(item.nclase);
+          document.getElementById("clase").dispatchEvent(new Event("change"));
+
+          setTimeout(() => {
+            if (bFamilia) bFamilia.setValor(item.nfam);
+          }, 100);
+        }, 100);
+
+        // 5. BLOQUEAR CAMPOS (FORMA DEFINITIVA)
+        $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+
+        // 1. Destruir las instancias de la librería para Tipo, Grupo, Clase y Familia
+        if (bTipo) {
+          bTipo.destruir();
+          bTipo = null;
+        }
+        if (bGrupo) {
+          bGrupo.destruir();
+          bGrupo = null;
+        }
+        if (bClase) {
+          bClase.destruir();
+          bClase = null;
+        }
+        if (bFamilia) {
+          bFamilia.destruir();
+          bFamilia = null;
+        }
+
+        // 2. Asegurarnos de que el select nativo esté deshabilitado y con estilo gris
+        $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true).css({
+          "background-color": "#f1f5f9",
+          color: "#94a3b8",
+          "border-color": "#e2e8f0",
+          display: "block", // Nos aseguramos de que se vea
         });
-    }
 
-    // =============================================
-    // 7. EDITAR ITEM
-    // =============================================
-    window.editarItem = function (id) {
-        accion = "u"; // Modo actualizar
-        limpiarFormulario();
-        $("#proceso").fadeIn();
-        $("#esperar").fadeIn();
+        // 3. Ocultar cualquier residuo del div del buscador que haya quedado
+        // (Esto evita que se sigan desplegando)
+        $("#tipo_item, #grupo, #clase, #familia").each(function () {
+          $(this).siblings(".select-buscador-display").remove();
+          $(this).siblings(".select-buscador-panel").remove();
+          $(this).unwrap(); // Quitamos el wrapper que inyecta la librería
+        });
 
-        const formData = new FormData();
-        formData.append("id", id);
-
-        fetch(RUTA + "bienes/itemsId", { method: "POST", body: formData })
-            .then(r => r.json())
-            .then(data => {
-                $("#esperar").fadeOut();
-                
-                if (!data.item || data.item.length === 0) {
-                    mostrarMensaje("No se encontró el registro", "mensaje_error");
-                    return;
-                }
-
-                const item = data.item[0];
-                registroEdit = { id: item.id_cprod };
-
-                // 1. Llenar inputs de texto
-                $("#codigo").val(item.ccodprod);
-                $("#descripcion").val(item.cdesprod.trim());
-                $("#nro_parte").val(item.cnparte || "");
-                $("#cod_pat").val(item.cod_pat || "");
-
-                // 2. Marcar checkboxes
-                $("#serie").prop("checked", item.flgSerie == 1);
-                $("#detraccion").prop("checked", item.flgDetrac == 1);
-                $("#actfij").prop("checked", item.flgActFij == 1);
-
-                // 3. Seleccionar valores en los buscadores
-                if (bTipo) bTipo.setValor(item.ntipo);
-                if (bGrupo) bGrupo.setValor(item.ngrupo);
-                if (bUnidad) bUnidad.setValor(item.nund);
-
-                // 4. Cargar Clase y Familia en memoria (disparando eventos)
-                document.getElementById("grupo").dispatchEvent(new Event("change"));
-                
-                setTimeout(() => {
-                    if (bClase) bClase.setValor(item.nclase);
-                    document.getElementById("clase").dispatchEvent(new Event("change"));
-                    
-                    setTimeout(() => {
-                        if (bFamilia) bFamilia.setValor(item.nfam);
-                    }, 100);
-                }, 100);
-
-                // 5. BLOQUEAR CAMPOS (FORMA DEFINITIVA)
-                $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
-
-                // 1. Destruir las instancias de la librería para Tipo, Grupo, Clase y Familia
-                if (bTipo) { bTipo.destruir(); bTipo = null; }
-                if (bGrupo) { bGrupo.destruir(); bGrupo = null; }
-                if (bClase) { bClase.destruir(); bClase = null; }
-                if (bFamilia) { bFamilia.destruir(); bFamilia = null; }
-                
-                // 2. Asegurarnos de que el select nativo esté deshabilitado y con estilo gris
-                $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true).css({
-                    "background-color": "#f1f5f9",
-                    "color": "#94a3b8",
-                    "border-color": "#e2e8f0",
-                    "display": "block" // Nos aseguramos de que se vea
-                });
-
-                // 3. Ocultar cualquier residuo del div del buscador que haya quedado
-                // (Esto evita que se sigan desplegando)
-                $("#tipo_item, #grupo, #clase, #familia").each(function() {
-                    $(this).siblings('.select-buscador-display').remove();
-                    $(this).siblings('.select-buscador-panel').remove();
-                    $(this).unwrap(); // Quitamos el wrapper que inyecta la librería
-                });
-
-                // 4. La unidad se queda como estaba (con su buscador activo)
-                if (bUnidad) {
-                    bUnidad.refrescar();
-                }
-            })
-            .catch(err => {
-                $("#esperar").fadeOut();
-                mostrarMensaje("Error al cargar el registro", "mensaje_error");
-                console.error(err);
-            });
-    };
-
-    function agregarAlCarrito(codigo, descripcion) {
-        // Evitar duplicados visuales (aunque el backend ya controla esto)
-        if (carritoCodigos.some(item => item.codigo === codigo)) return;
-
-        carritoCodigos.push({ codigo: codigo, descripcion: descripcion });
-        renderizarCarrito();
-    }
-
-    function renderizarCarrito() {
-        const tbody = $("#tbodyCarrito");
-        
-        if (carritoCodigos.length === 0) {
-            tbody.html(`<tr><td colspan="3" style="text-align: center; padding: 20px; color: #94a3b8;">Aún no has creado códigos.</td></tr>`);
-            return;
+        // 4. La unidad se queda como estaba (con su buscador activo)
+        if (bUnidad) {
+          bUnidad.refrescar();
         }
+      })
+      .catch((err) => {
+        $("#esperar").fadeOut();
+        mostrarMensaje("Error al cargar el registro", "mensaje_error");
+        console.error(err);
+      });
+  };
 
-        let html = "";
-        carritoCodigos.forEach((item, index) => {
-            html += `<tr>
+  function agregarAlCarrito(codigo, descripcion) {
+    // Evitar duplicados visuales (aunque el backend ya controla esto)
+    if (carritoCodigos.some((item) => item.codigo === codigo)) return;
+
+    carritoCodigos.push({ codigo: codigo, descripcion: descripcion });
+    renderizarCarrito();
+  }
+
+  function renderizarCarrito() {
+    const tbody = $("#tbodyCarrito");
+
+    if (carritoCodigos.length === 0) {
+      tbody.html(
+        `<tr><td colspan="3" style="text-align: center; padding: 20px; color: #94a3b8;">Aún no has creado códigos.</td></tr>`,
+      );
+      return;
+    }
+
+    let html = "";
+    carritoCodigos.forEach((item, index) => {
+      html += `<tr>
                 <td style="font-weight: 700; color: #2563eb; font-family: 'Courier New', Courier, monospace;">${item.codigo}</td>
                 <td>${item.descripcion}</td>
                 <td style="text-align: center;">
@@ -600,130 +678,133 @@ $(function () {
                     </button>
                 </td>
             </tr>`;
-        });
-        tbody.html(html);
-    }
-
-    // Evento para eliminar un ítem del carrito
-    $("#tbodyCarrito").on("click", ".btn-eliminar-carrito", function () {
-        const index = $(this).data("index");
-        carritoCodigos.splice(index, 1);
-        renderizarCarrito();
     });
+    tbody.html(html);
+  }
 
-    // =============================================
-    // 7. EDITAR ITEM
-    // =============================================
-    window.editarItem = function (id) {
-        accion = "u"; // Modo actualizar
-        limpiarFormulario();
-        $("#proceso").fadeIn();
-        $("#esperar").fadeIn();
+  // Evento para eliminar un ítem del carrito
+  $("#tbodyCarrito").on("click", ".btn-eliminar-carrito", function () {
+    const index = $(this).data("index");
+    carritoCodigos.splice(index, 1);
+    renderizarCarrito();
+  });
 
-        const formData = new FormData();
-        formData.append("id", id);
+  // =============================================
+  // 7. EDITAR ITEM
+  // =============================================
+  window.editarItem = function (id) {
+    accion = "u"; // Modo actualizar
+    limpiarFormulario();
 
-        fetch(RUTA + "bienes/itemsId", { method: "POST", body: formData })
-            .then(r => r.json())
-            .then(data => {
-                $("#esperar").fadeOut();
-                
-                if (!data.item || data.item.length === 0) {
-                    mostrarMensaje("No se encontró el registro", "mensaje_error");
-                    return;
-                }
+    $("#proceso").fadeIn();
+    $("#esperar").fadeIn();
 
-                const item = data.item[0]; // Extraemos el primer (y único) resultado
-                registroEdit = { id: item.id_cprod }; // Guardamos el ID para el update
+    const formData = new FormData();
+    formData.append("id", id);
 
-                // 1. Llenar los inputs de texto directos
-                $("#codigo").val(item.ccodprod);
-                $("#descripcion").val(item.cdesprod.trim());
-                $("#nro_parte").val(item.cnparte || "");
-                $("#cod_pat").val(item.cod_pat || ""); // Asegúrate de que tu PHP devuelva esto
+    fetch(RUTA + "bienes/itemsId", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        $("#esperar").fadeOut();
 
-                // 2. Marcar los checkboxes
-                $("#serie").prop("checked", item.flgSerie == 1);
-                $("#detraccion").prop("checked", item.flgDetrac == 1);
-                $("#actfij").prop("checked", item.flgActFij == 1);
+        if (!data.item || data.item.length === 0) {
+          mostrarMensaje("No se encontró el registro", "mensaje_error");
+          return;
+        }
 
-                // 3. Seleccionar los valores en los buscadores usando los IDs numéricos
-                if (bTipo) bTipo.setValor(item.ntipo);
-                if (bGrupo) bGrupo.setValor(item.ngrupo);
-                if (bUnidad) bUnidad.setValor(item.nund);
+        const item = data.item[0]; // Extraemos el primer (y único) resultado
+        registroEdit = { id: item.id_cprod }; // Guardamos el ID para el update
 
-                // 4. Disparar el cambio del grupo para que cargue las clases en memoria
-                document.getElementById("grupo").dispatchEvent(new Event("change"));
-                
-                setTimeout(() => {
-                    if (bClase) bClase.setValor(item.nclase);
-                    document.getElementById("clase").dispatchEvent(new Event("change"));
+        // 1. Llenar los inputs de texto directos
+        $("#codigo").val(item.ccodprod);
+        $("#descripcion").val(item.cdesprod.trim());
+        $("#nro_parte").val(item.cnparte || "");
+        $("#cod_pat").val(item.cod_pat || ""); // Asegúrate de que tu PHP devuelva esto
 
-                    setTimeout(() => {
-                        if (bFamilia) bFamilia.setValor(item.nfam);
+        // 2. Marcar los checkboxes
+        $("#serie").prop("checked", item.flgSerie == 1);
+        $("#detraccion").prop("checked", item.flgDetrac == 1);
+        $("#actfij").prop("checked", item.flgActFij == 1);
 
-                        // Bloquear al final, usando la API de la librería
-                        [bTipo, bGrupo, bClase, bFamilia].forEach(b => b && b.setDeshabilitado(true));
-                        bUnidad && bUnidad.setDeshabilitado(false);
-                        $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
-                    }, 100);
-                }, 100);
+        // 3. Seleccionar los valores en los buscadores usando los IDs numéricos
+        if (bTipo) bTipo.setValor(item.ntipo);
+        if (bGrupo) bGrupo.setValor(item.ngrupo);
+        if (bUnidad) bUnidad.setValor(item.nund);
 
-                                // 5. BLOQUEAR CAMPOS EN MODO EDICIÓN
-                
-                // El código siempre bloqueado
-                $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+        // 4. Disparar el cambio del grupo para que cargue las clases en memoria
+        document.getElementById("grupo").dispatchEvent(new Event("change"));
 
-                // Deshabilitar los selects reales (menos la unidad)
-                $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true);
+        setTimeout(() => {
+          if (bClase) bClase.setValor(item.nclase);
+          document.getElementById("clase").dispatchEvent(new Event("change"));
 
-                // PINTAR DE GRIS LOS BUSCADORES VISUALES (menos el de unidad)
-                // Buscamos todos los divs de los buscadores
-                $(".select-buscador-display").each(function() {
-                    // Obtenemos el ID del select al que pertenece este div
-                    const selectId = $(this).prev('select').attr('id');
-                    
-                    // Si NO es la unidad, lo bloqueamos visualmente
-                    if (selectId !== "unidad") {
-                        $(this).css({
-                            "background-color": "#f1f5f9",
-                            "color": "#94a3b8",
-                            "pointer-events": "none", // Esto evita que se abra el panel
-                            "border-color": "#e2e8f0"
-                        });
-                    }
-                });
-                
-                // Asegurarnos de que la unidad quede ACTIVA
-                $("#unidad").prop("disabled", false);
-                $("#unidad").next(".select-buscador-display").css({
-                    "background-color": "#ffffff",
-                    "color": "#333",
-                    "pointer-events": "auto",
-                    "border-color": "#cbd5e1"
-                });
-            })
-            .catch(err => {
-                $("#esperar").fadeOut();
-                mostrarMensaje("Error al cargar el registro", "mensaje_error");
-                console.error(err);
+          setTimeout(() => {
+            if (bFamilia) bFamilia.setValor(item.nfam);
+
+            // Bloquear al final, usando la API de la librería
+            [bTipo, bGrupo, bClase, bFamilia].forEach(
+              (b) => b && b.setDeshabilitado(true),
+            );
+            bUnidad && bUnidad.setDeshabilitado(false);
+            $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+          }, 100);
+        }, 100);
+
+        // 5. BLOQUEAR CAMPOS EN MODO EDICIÓN
+
+        // El código siempre bloqueado
+        $("#codigo").prop("readonly", true).css("background", "#f1f5f9");
+
+        // Deshabilitar los selects reales (menos la unidad)
+        $("#tipo_item, #grupo, #clase, #familia").prop("disabled", true);
+
+        // PINTAR DE GRIS LOS BUSCADORES VISUALES (menos el de unidad)
+        // Buscamos todos los divs de los buscadores
+        $(".select-buscador-display").each(function () {
+          // Obtenemos el ID del select al que pertenece este div
+          const selectId = $(this).prev("select").attr("id");
+
+          // Si NO es la unidad, lo bloqueamos visualmente
+          if (selectId !== "unidad") {
+            $(this).css({
+              "background-color": "#f1f5f9",
+              color: "#94a3b8",
+              "pointer-events": "none", // Esto evita que se abra el panel
+              "border-color": "#e2e8f0",
             });
-    };
+          }
+        });
 
-    function limpiarFormulario() {
+        // Asegurarnos de que la unidad quede ACTIVA
+        $("#unidad").prop("disabled", false);
+        $("#unidad").next(".select-buscador-display").css({
+          "background-color": "#ffffff",
+          color: "#333",
+          "pointer-events": "auto",
+          "border-color": "#cbd5e1",
+        });
+      })
+      .catch((err) => {
+        $("#esperar").fadeOut();
+        mostrarMensaje("Error al cargar el registro", "mensaje_error");
+        console.error(err);
+      });
+  };
+
+  function limpiarFormulario() {
     // 1. Desbloquear PRIMERO (si quedó en modo edición)
-    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach(b => {
-        if (b) b.setDeshabilitado(false);
+    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach((b) => {
+      if (b) b.setDeshabilitado(false);
     });
     $("#tipo_item, #grupo, #clase, #familia, #unidad").prop("disabled", false);
 
     // Por si quedó algo de la versión anterior con estilos inline
     $(".select-buscador-wrapper").css("display", "");
     $(".select-buscador-display").css({
-        "background-color": "",
-        "color": "",
-        "pointer-events": "",
-        "border-color": ""
+      "background-color": "",
+      color: "",
+      "pointer-events": "",
+      "border-color": "",
     });
 
     // 2. Inputs de texto
@@ -736,8 +817,8 @@ $(function () {
     // 4. Selects: limpiar valor y refrescar el texto visual
     //    Se limpia de hijo a padre para que el change de un padre
     //    no repueble algo que ya vaciamos
-    ["familia", "clase", "grupo", "tipo_item", "unidad"].forEach(id => {
-        $("#" + id).val("");
+    ["familia", "clase", "grupo", "tipo_item", "unidad"].forEach((id) => {
+      $("#" + id).val("");
     });
 
     // Vaciar opciones de los dependientes (dejar solo el placeholder)
@@ -745,12 +826,115 @@ $(function () {
     $("#familia").html('<option value="">Seleccione...</option>');
 
     // Actualizar el texto visible de cada buscador
-    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach(b => {
-        if (b) b.refrescar();
+    [bTipo, bGrupo, bClase, bFamilia, bUnidad].forEach((b) => {
+      if (b) b.refrescar();
     });
 
     // 5. Estado de edición
     registroEdit = null;
     // accion NO se toca aquí: la define quien llama ("n" o "u")
-}
+  }
+
+  // Al escribir el nombre, se copia al buscador y se filtra
+  let timeoutBusqueda = null; // Variable global o fuera del evento
+
+  // Al escribir el nombre, se copia al buscador y se filtra
+  $("#descripcion").on("input", function () {
+    const valor = $(this).val().trim();
+
+    // Limpiamos el temporizador anterior si el usuario sigue escribiendo
+    clearTimeout(timeoutBusqueda);
+
+    // Si borró el texto o tiene 3 letras o menos, limpiamos la lista y salimos
+    if (valor.length <= 3 || accion !== "n") {
+      $("#listaSimilares").empty();
+      return;
+    }
+
+    // Esperamos 300 milisegundos antes de hacer la petición (Debounce)
+    timeoutBusqueda = setTimeout(() => {
+      const formData = new FormData();
+      formData.append("criterio", valor);
+
+      // Mostramos un indicador de carga (opcional, buena práctica)
+      $("#listaSimilares").html('<li class="textoCentro">Buscando...</li>');
+
+      fetch(RUTA + "bienes/buscaPalabra", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la petición");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          $("#listaSimilares").empty(); // Limpiamos el "Buscando..."
+
+          // Validamos que data y data.datos existan
+          if (data && data.datos && data.datos.length > 0) {
+            // Escapamos caracteres especiales para que no rompan el RegExp (ej. si buscan "(" o "?")
+            const escaparRegExp = (texto) =>
+              texto.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+            // Creamos una expresión regular global (g) e insensible a mayúsculas/minúsculas (i)
+            const regex = new RegExp(`(${escaparRegExp(valor)})`, "gi");
+
+            data.datos.forEach((element) => {
+              const li = document.createElement("li");
+
+              // Reemplazamos la coincidencia en el código y en la descripción
+              const codigoResaltado = element.ccodprod.replace(
+                regex,
+                "<strong>$1</strong>",
+              );
+              const descripcionResaltada = element.cdesprod.replace(
+                regex,
+                "<strong>$1</strong>",
+              );
+
+              // Insertamos los textos con las negritas
+              li.innerHTML = `<p title="${element.cdesprod}">${codigoResaltado} - ${descripcionResaltada}</p>`;
+
+              $("#listaSimilares").append(li);
+            });
+          } else {
+            // Si no hay resultados, mostramos un mensaje
+            $("#listaSimilares").append(
+              '<li class="textoCentro">No se encontraron resultados</li>',
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error al buscar:", error);
+          $("#listaSimilares")
+            .empty()
+            .append('<li class="textoCentro">Error al buscar</li>');
+        });
+    }, 300); // 300ms de espera
+  });
+
+  $("#anularItem").click(function(e){
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append ('codigo',registroEdit.id);
+
+    fetch(RUTA+'bienes/desactivaItem',{
+        method:'POST',
+        body:formData
+    })
+    .then(response=>response.json())
+    .then(data=>{
+        mostrarMensaje(data.mensaje,data.clase);
+        $("#proceso").fadeOut(function(){
+          limpiarFormulario();
+          consultarTabla(1);
+        })
+        
+    })
+
+    return false;
+  })
 });

@@ -1,520 +1,175 @@
-(async () => {
-  $("#esperar").css({ display: "none" });
+$(function () {
+  llenarListado();
+});
 
-  const itemsPorPagina = 15;
-  let campoFiltroActual = null; // Variable global para guardar el campo del filtro
-  let contenedorActual = null;
-
-  function obtenerFiltros() {
-    return {
-      anio: $("#anioSearch").val(),
-      guia: $("#guiaSearch").val(),
-      sunat: $("#guiaSunat").val(),
-    };
+document.addEventListener("keydown", function (e) {
+  if (
+    e.key === "Escape" &&
+    document.getElementById("vistaprevia").style.display === "block"
+  ) {
+    fadeOut(document.getElementById("vistaprevia"));
   }
+});
 
-  async function contarItemsConFiltros(filtros) {
-    try {
-      let datosEnvio = {};
+document.addEventListener("click", (e) => {
+  if (e.target.id == "btnConsulta") {
+    e.preventDefault();
 
-      // Verificar si anio existe y es string antes de usar includes
-      if (filtros.anio) {
-        if (typeof filtros.anio === "string" && filtros.anio.includes(",")) {
-          datosEnvio.anio = filtros.anio.split(",");
-        } else if (typeof filtros.anio === "string") {
-          datosEnvio.anio = [filtros.anio];
-        } else if (Array.isArray(filtros.anio)) {
-          datosEnvio.anio = filtros.anio; // Ya es array
-        }
-      }
+    llenarListado();
 
-      if (filtros.guia && filtros.guia.trim() !== "") {
-        datosEnvio.guia = filtros.guia.split(",");
-      }
+    return false;
+  } else if (e.target.id == "repoExcel") {
+    e.preventDefault();
 
-      if (filtros.sunat && filtros.sunat.trim() !== "") {
-        datosEnvio.sunat = filtros.sunat.split(",");
-      }
+    exportarExcel();
 
-      const response = await fetch(RUTA + "reporteguias/itemsConsulta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datosEnvio),
-      });
-      const data = await response.json();
-      return data.total || 0;
-    } catch (error) {
-      console.log(error.message);
-      return 0;
-    }
-  }
+    return false;
+  } else if (e.target.matches(".pointer *")) {
+    e.preventDefault();
 
-  async function listarGuias(inicio, items, filtros) {
-    try {
-      let datosEnvio = {
-        anio: filtros.anio,
-        inicio: inicio,
-        items: items,
-      };
+    const parentPointer = e.target.closest(".pointer").dataset.guiaid;
+    const parentSunat = e.target.closest(".pointer").dataset.guiasunatnro;
 
-      if (filtros.guia && filtros.guia.trim() !== "") {
-        datosEnvio.guia = filtros.guia.split(",");
-      }
-
-      if (filtros.sunat && filtros.sunat.trim() !== "") {
-        datosEnvio.sunat = filtros.sunat.split(",");
-      }
-
-      const response = await fetch(RUTA + "reporteguias/listaGuias", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datosEnvio),
-      });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log(error.message);
-      return null;
-    }
-  }
-
-  // Cargar datos iniciales
-  let filtros = obtenerFiltros();
-  let totalItems = await contarItemsConFiltros(filtros);
-  let totalPaginas = Math.ceil(totalItems / itemsPorPagina);
-
-  let estado = {
-    indexBtn: 0,
-    rangoInicio: 1,
-    rangoFin: Math.min(20, totalPaginas),
-    paginaActual: 1,
-  };
-
-  const dom = {
-    paginador: document.getElementById("paginador"),
-    actualizarBtns: () => document.getElementsByClassName("page-btn"),
-    cleanActives: () =>
+    if (parentSunat === "null" || parentSunat === null) {
       document
-        .querySelectorAll(".page-btn")
-        .forEach((btn) => btn.classList.remove("active")),
-  };
-
-  const renderizarPaginador = (numeroActivo = null) => {
-    const { rangoInicio, rangoFin, indexBtn } = estado;
-    const container = dom.paginador;
-    if (!container) return;
-    container.innerHTML = "";
-
-    const inicioValido = Math.max(1, rangoInicio);
-    const finValido = Math.min(totalPaginas, rangoFin);
-
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "◀ Anterior";
-    prevBtn.className = "first-page";
-    container.appendChild(prevBtn);
-
-    for (let i = inicioValido; i <= finValido; i++) {
-      const pageBtn = document.createElement("button");
-      pageBtn.textContent = i;
-      pageBtn.className = "page-btn";
-      if (
-        (numeroActivo !== null && i === numeroActivo) ||
-        (numeroActivo === null && i === indexBtn + 1)
-      ) {
-        pageBtn.classList.add("active");
-      }
-      container.appendChild(pageBtn);
-    }
-
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Siguiente ▶";
-    nextBtn.className = "next-page";
-    if (finValido === totalPaginas) nextBtn.disabled = true;
-    container.appendChild(nextBtn);
-  };
-
-  async function cargarPagina(pagina) {
-    const inicio = (pagina - 1) * itemsPorPagina;
-    const filtrosActuales = obtenerFiltros();
-    const resultado = await listarGuias(
-      inicio,
-      itemsPorPagina,
-      filtrosActuales,
-    );
-    if (resultado && resultado.success) {
-      renderizarTabla(resultado.datos);
-    } else if (resultado && !resultado.success) {
-      $("#tablaPrincipalCuerpo").html(
-        `<tr><td colspan="6">${resultado.message}</td></tr>`,
-      );
-    }
-  }
-
-  function renderizarTabla(datos) {
-    const tbody = $("#tablaPrincipalCuerpo");
-    tbody.empty();
-
-    if (!datos || datos.length === 0) {
-      tbody.html(`<tr><td colspan="6">No se encontraron registros</td></tr>`);
-      return;
-    }
-
-    datos.forEach((row) => {
-      tbody.append(`
-        <tr data-interna="${row.cnumguia}" data-sunat="${row.guiasunat}" class="fila-pdf">
-          <td>${row.cnumguia || ""}</td>
-          <td>${row.emision || ""}</td>
-          <td>${row.anio || ""}</td>
-          <td>${row.guiasunat || ""}</td>
-          <td>${row.cenvio || " "}</td>
-          <td>${row.cobserva || ""}</td>
-        </tr>
-      `);
-    });
-  }
-
-  function obtenerTodosLosFiltros() {
-    const filtros = {};
-    
-    document.querySelectorAll('th[data-campo]').forEach(th => {
-        const campo = th.dataset.campo;
-        const lista = th.querySelector('.lista-filtro');
-        
-        if (lista) {
-            const checkboxes = lista.querySelectorAll('input[type="checkbox"]:checked');
-            const valores = Array.from(checkboxes).map(cb => cb.value);
-            
-            if (valores.length > 0) {
-                filtros[campo] = valores;
-            }
-        }
-    });
-    
-    return filtros; // Retorna objeto, no array
-}
-
-  async function aplicarFiltroCheckboxes(campo) {
-    // Mapeo de campos
-    const MAPA_CAMPOS = {
-        "cnumguia": { input: "#guiaSearch", filtro: "guia" },
-        "guiasunat": { input: "#guiaSunat", filtro: "sunat" },
-        "freg": { input: "#anioSearch", filtro: "anio" }
-    };
-    
-    const config = MAPA_CAMPOS[campo];
-    if (!config) {
-        console.error(`Campo desconocido: ${campo}`);
-        return;
-    }
-    
-    const todosLosFiltros = obtenerTodosLosFiltros();
-    const valoresDelCampo = todosLosFiltros[campo] || [];
-    
-    if (valoresDelCampo.length === 0) {
-        console.log(`No hay valores seleccionados para ${campo}`);
-        return;
-    }
-
-    $("#esperar").css({ display: "flex" });
-
-    // Construir filtros
-    const filtrosActuales = {
-        anio: $("#anioSearch").val(),
-        guia: $("#guiaSearch").val(),
-        sunat: $("#guiaSunat").val(),
-        [config.filtro]: valoresDelCampo.join(",")  // Asignar dinámicamente
-    };
-    
-    $(config.input).val(filtrosActuales[config.filtro]);
-
-    // Ejecutar consulta
-    totalItems = await contarItemsConFiltros(filtrosActuales);
-    totalPaginas = Math.ceil(totalItems / itemsPorPagina);
-
-    if (totalPaginas > 0) {
-        estado = {
-            indexBtn: 0,
-            rangoInicio: 1,
-            rangoFin: Math.min(20, totalPaginas),
-            paginaActual: 1,
-        };
-        
-        renderizarPaginador(1);
-        const resultado = await listarGuias(0, itemsPorPagina, filtrosActuales);
-        
-        if (resultado?.success) {
-            renderizarTabla(resultado.datos);
-        } else {
-            $("#tablaPrincipalCuerpo").html(
-                `<tr><td colspan="6">${resultado?.message || "Error al cargar datos"}</td></tr>`
-            );
-        }
+        .getElementById("pdfPreview")
+        .setAttribute(
+          "src",
+          "https://sicalsepcon.net/ibis/public/documentos/guias_remision/" +
+            parentPointer +
+            ".pdf",
+        );
     } else {
-        $("#paginador").html("");
-        $("#tablaPrincipalCuerpo").html(
-            `<tr><td colspan="6">No se encontraron registros</td></tr>`
+      document
+        .getElementById("pdfPreview")
+        .setAttribute(
+          "src",
+          "https://sicalsepcon.net/ibis/public/documentos/guias_remision/20504898173-09-T001-" +
+            parentSunat +
+            ".pdf",
         );
     }
 
-    $(".filtro-container").slideUp();
-    $("#esperar").css({ display: "none" });
-}
+    fadeIn(document.getElementById("vistaprevia"));
 
-  //esta es la funcion para llenar los filtros
-  function llenarFiltros(
-    campo,
-    limite,
-    string,
-    visible,
-    filtro,
-    lista,
-    contenedor,
-  ) {
-    const formData = new FormData();
-    const lista_filtro = contenedor;
+    return false;
+  } else if (e.target.matches(".cerrar_vista")) {
+    e.preventDefault();
 
-    formData.append("campo", campo);
-    formData.append("items", limite);
-    formData.append("string", string);
-    formData.append("lista", lista);
+    fadeOut(document.getElementById("vistaprevia"));
 
-    fetch(RUTA + "reporteguias/filtros", {
+    return false;
+  }
+});
+
+llenarListado = async () => {
+  try {
+    let formData = new FormData();
+    formData.append("anio", document.getElementById("anioSearch").value);
+    formData.append("guia", document.getElementById("guiaSearch").value);
+    formData.append("sunat", document.getElementById("guiaSunat").value);
+
+    $("#esperar").css({ display: "block" });
+
+    const response = await fetch(RUTA + "reporteguias/listaGuias", {
       method: "POST",
       body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        lista_filtro.innerHTML = "";
+    });
 
-        data.datos.forEach((item) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<input type="checkbox" name="filtro_check" class="filtro_check" value="${item.valor}"><label>${item.valor}</label>`;
-          lista_filtro.appendChild(li);
-        });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-        if (visible) {
-          filtro.slideDown();
-        }
+    const data = await response.json();
+
+    const tablaCuerpo = document.getElementById("tablaPrincipalCuerpo");
+
+    if (!tablaCuerpo) {
+      throw new Error("Element with ID 'tablaPrincipalCuerpo' not found");
+    }
+
+    tablaCuerpo.innerHTML = "";
+
+    const fragment = document.createDocumentFragment();
+
+    data.datos.forEach((element) => {
+      const tr = document.createElement("tr");
+
+      tr.classList.add("pointer");
+      tr.dataset.guiaid = element.cnumguia;
+      tr.dataset.guiasunatnro = element.guiasunat;
+      tr.innerHTML = `<td class="textoCentro">${element.cnumguia}</td>
+                            <td class="textoCentro">${element.freg || ""}</td>
+                            <td class="textoCentro">${element.anio || ""}</td>
+                            <td class="pl20px">${element.cobserva || ""}</td>
+                            <td class="textoCentro">${element.guiasunat || ""}</td>
+                            <td class="textoCentro">${element.cenvio || ""}</td>`;
+
+      fragment.appendChild(tr);
+    });
+
+    tablaCuerpo.appendChild(fragment);
+
+    $("#esperar")
+      .css("opacity", "0")
+      .fadeOut()
+      .promise()
+      .done(function () {
+        iniciarPaginador();
       });
+  } catch (error) {
+    console.error("Error in llenarListado:", error);
+    // You might want to show an error message to the user here
+  }
+};
 
-    return false;
+// Función para fade in
+function fadeIn(element) {
+  element.style.display = "block";
+  // Timeout para permitir el cambio de display antes de la transición
+  setTimeout(() => {
+    element.style.opacity = "1";
+  }, 10);
+}
+
+// Función para fade out
+function fadeOut(element) {
+  element.style.opacity = "0";
+  // Esperar a que termine la transición antes de ocultar
+  setTimeout(() => {
+    element.style.display = "none";
+  }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
+}
+
+function exportarExcel() {
+  var array = [];
+  /* Obtenemos todos los tr del Body*/
+  var rowsBody = $("#tablaPrincipal").find("tbody > tr");
+  /* Obtenemos todos los th del Thead */
+  var rowsHead = $("#tablaPrincipal").find("thead > tr > th");
+
+  /* Iteramos sobre as filas del tbody*/
+  for (var i = 0; i < rowsBody.length; i++) {
+    var obj = {}; /* auxiliar*/
+    for (
+      var j = 0;
+      j < rowsHead.length;
+      j++ /*  Iteramos sobre los th de THead*/
+    )
+      /*Asignamos como clave el text del th del thead*/
+      /*Asignamos como Valor el text del tr del tbody*/
+      obj[rowsHead[j].dataset.titulo] =
+        rowsBody[i].getElementsByTagName("td")[j].innerText;
+
+    array.push(obj); /* Añadimos al Array Principal*/
   }
 
-  // Evento para las filas
-  $("#tablaPrincipalCuerpo").on("click", "tr", function (e) {
-    const ruta =
-      "https://sicalsepcon.net/ibis/public/documentos/guias_remision/";
-    const pdfPreview = document.getElementById("pdfPreview");
-
-    const guiaInterna = $(this).data("interna");
-    const guiaSunat = $(this).data("sunat");
-
-    if (guiaSunat === "null" || guiaSunat === null) {
-      pdfPreview.setAttribute("src", ruta + guiaInterna + ".pdf");
-    } else {
-      pdfPreview.setAttribute(
-        "src",
-        ruta + "20504898173-09-T001-" + guiaSunat + ".pdf",
-      );
-    }
-
-    if (!$(".filtro-container").is(":visible")) {
-      fadeIn(document.getElementById("vistaprevia"));
-      $(".filtro-container").slideUp();
-    }
-
-    return false;
-  });
-
-  $("#closePreview").click(function (e) {
-    document.getElementById("pdfPreview").innerHTML = "";
-    fadeOut(document.getElementById("vistaprevia"));
-  });
-
-  async function recargarTodo() {
-    filtros = obtenerFiltros();
-    totalItems = await contarItemsConFiltros(filtros);
-    totalPaginas = Math.ceil(totalItems / itemsPorPagina);
-
-    estado = {
-      indexBtn: 0,
-      rangoInicio: 1,
-      rangoFin: Math.min(20, totalPaginas),
-      paginaActual: 1,
-    };
-
-    if (totalPaginas > 0) {
-      renderizarPaginador(1);
-      await cargarPagina(1);
-    } else {
-      $("#paginador").html("");
-      $("#tablaPrincipalCuerpo").html(
-        `<tr><td colspan="6">No se encontraron registros</td></tr>`,
-      );
-    }
-  }
-
-  $("#btnConsulta").on("click", async () => {
-    $("#esperar").css({ display: "flex" });
-    $("#guiaSearch").val("");
-    $("#guiaSunat").val("");
-    await recargarTodo();
-    $("#esperar").css({ display: "none" });
-  });
-
-  // Cargar datos iniciales
-  if (totalPaginas > 0) {
-    renderizarPaginador(1);
-    await cargarPagina(1);
-  } else {
-    $("#tablaPrincipalCuerpo").html(
-      `<tr><td colspan="6">No se encontraron registros</td></tr>`,
-    );
-  }
-
-  document.addEventListener("click", async (e) => {
-    const btns = dom.actualizarBtns();
-
-    if (e.target.matches(".page-btn")) {
-      e.preventDefault();
-      const nuevoIndex = Array.from(btns).indexOf(e.target);
-      const pagina = parseInt(e.target.textContent);
-      estado.indexBtn = nuevoIndex;
-      estado.paginaActual = pagina;
-      dom.cleanActives();
-      btns[nuevoIndex].classList.add("active");
-      await cargarPagina(pagina);
-      return false;
-    }
-
-    if (e.target.matches(".next-page")) {
-      e.preventDefault();
-      const { indexBtn, rangoInicio, rangoFin } = estado;
-
-      if (indexBtn + 1 === btns.length) {
-        if (rangoFin < totalPaginas) {
-          estado.rangoInicio = rangoFin + 1;
-          estado.rangoFin = Math.min(rangoFin + 20, totalPaginas);
-          estado.indexBtn = 0;
-          estado.paginaActual = rangoFin + 1;
-          renderizarPaginador();
-          await cargarPagina(estado.paginaActual);
-        }
-      } else {
-        dom.cleanActives();
-        estado.indexBtn++;
-        estado.paginaActual++;
-        btns[estado.indexBtn].classList.add("active");
-        await cargarPagina(estado.paginaActual);
-      }
-      return false;
-    }
-
-    if (e.target.matches(".first-page")) {
-      e.preventDefault();
-      const { indexBtn, rangoInicio } = estado;
-
-      if (indexBtn > 0) {
-        dom.cleanActives();
-        estado.indexBtn--;
-        estado.paginaActual--;
-        btns[estado.indexBtn].classList.add("active");
-        await cargarPagina(estado.paginaActual);
-      } else if (indexBtn === 0 && rangoInicio > 1) {
-        estado.rangoFin = rangoInicio - 1;
-        estado.rangoInicio = Math.max(estado.rangoFin - 19, 1);
-        estado.indexBtn = btns.length - 1;
-        estado.paginaActual = estado.rangoFin;
-        renderizarPaginador();
-        await cargarPagina(estado.paginaActual);
-      }
-      return false;
-    }
-
-    if (e.target.matches(".filtro")) {
-      e.preventDefault();
-      campoFiltroActual = $(e.target).parent().data("campo");
-      const contenedorActual = document.querySelector(
-        `.lista-filtro[data-campo="${campoFiltroActual}"]`,
-      );
-
-      const filtro = $(e.target).parent().find(".filtro-container");
-
-      if (!$(".filtro-container").is(":visible")) {
-        llenarFiltros(
-          campoFiltroActual,
-          0,
-          "",
-          true,
-          filtro,
-          null,
-          contenedorActual,
-        );
-      } else {
-        $(".filtro-container").slideUp();
-      }
-
-      return false;
-    }
-
-    if (e.target.matches(".botones_filtro")) {
-      e.preventDefault();
-      if (e.target.id == "aplicar-filtro") {
-        console.log(campoFiltroActual);
-
-        await aplicarFiltroCheckboxes(campoFiltroActual);
-      } else {
-        limpiarFiltros();
-      }
-      return false;
-    }
-
-    if (
-      $(".filtro-container").is(":visible") &&
-      !$(e.target).closest(".filtro-container").length &&
-      !$(e.target).closest(".filtro").length
-    ) {
-      $(".filtro-container").slideUp();
-    }
-  });
-
-  document.addEventListener("keydown", async (e) => {
-    if (e.target.matches(".filtro-Search")) {
-      if (e.key == "Enter") {
-        let campo = e.target.closest("th").dataset.campo;
-        let string = e.target.value;
-        const contenedorActual = document.querySelector(
-          `.lista-filtro[data-campo="${campo}"]`,
-        );
-
-        llenarFiltros(campo, 0, string, false, null, null, contenedorActual);
-      }
-    }
-  });
-
-  function fadeIn(element) {
-    element.style.display = "block";
-    setTimeout(() => {
-      element.style.opacity = "1";
-    }, 10);
-  }
-
-  function fadeOut(element) {
-    element.style.opacity = "0";
-    setTimeout(() => {
-      element.style.display = "none";
-    }, 300);
-  }
-
-  // Ejemplo de botón limpiar
-  function limpiarFiltros() {
-    document
-      .querySelectorAll('#lista-filtro input[type="checkbox"]')
-      .forEach((cb) => {
-        cb.checked = false;
-      });
-    $("#guiaSearch").val("");
-    $("#guiaSunat").val("");
-    recargarTodo();
-  }
-})();
+  $.post(
+    RUTA + "reporteguias/exportar",
+    { detalles: JSON.stringify(array) },
+    function (data, textStatus, jqXHR) {
+      window.location.href = data.documento;
+    },
+    "json",
+  );
+}

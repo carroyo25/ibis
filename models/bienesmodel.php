@@ -119,10 +119,10 @@
             if(!$this->verificar($datos['codigo'])){
                 try {
 
-                    $serie = array_key_exists('serie', $datos)? 1 : 0;
-                    $detraccion = array_key_exists("detraccion",$datos)? 1 : 0;
+                    $serie = array_key_exists('serie', $datos) ? 1 : 0;
+                    $detraccion = array_key_exists("detraccion",$datos) ? 1 : 0;
                     // Por esto:
-                    $actfij = array_key_exists("actfij",$datos)? 1 : 0; 
+                    $actfij = array_key_exists("actfij",$datos) ? 1 : 0; 
 
                     $sql = $this->db->connect()->prepare("INSERT INTO cm_producto 
                                                             SET ccodprod=:cod,cdesprod=:descripcion,ntipo=:tipo,ngrupo=:grupo,
@@ -322,6 +322,145 @@
                 echo $th->getMessage();
                 return false;
             } 
+        }
+
+        public function buscarItemsPalabra($criterio){
+            try {
+                $palabra = $criterio == "" ? "%" : "%".$criterio."%";
+                $success = true;
+
+                $datos = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    cm_producto.flgActivo,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia 
+                                                FROM
+                                                    cm_producto
+                                                    LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE
+                                                    cm_producto.cdesprod LIKE :criterio
+                                                    AND cm_producto.flgVisible = 1
+                                                    LIMIT 1000");
+                $sql->execute(["criterio"=>$palabra]);
+
+                $datos = $sql->fetchAll(PDO::FETCH_ASSOC);
+                
+                return ["datos" => $datos, "success" => $success];
+
+            } catch (PDOException $th) {
+                return ["Error" => $th->getMessage(), "success" => $false];
+            }
+        }
+
+        public function modificar($datos){
+            // === FIX 1: si llega como JSON string, decodificarlo ===
+            if (is_string($datos)) {
+                $datos = json_decode($datos, true);
+            }
+            // Si después de decodificar no es array, devolvemos error controlado
+            if (!is_array($datos)) {
+                return [
+                    "respuesta" => false,
+                    "mensaje"   => "Datos inválidos recibidos",
+                    "clase"     => "mensaje_error"
+                ];
+            }
+
+            $salida    = false;
+            $respuesta = false;
+            $mensaje   = "Error en el registro";
+            $clase     = "mensaje_error";
+
+            try {
+
+                // === FIX 2: usar !empty() en lugar de array_key_exists ===
+                // (más seguro y evita warnings si la clave no existe)
+                $serie      = !empty($datos['serie'])      ? 1 : 0;
+                $detraccion = !empty($datos['detraccion']) ? 1 : 0;
+                $actfij     = !empty($datos['activo'])     ? 1 : 0;
+
+                $sql = $this->db->connect()->prepare("UPDATE cm_producto 
+                                                        SET cdesprod   = :descripcion,
+                                                            nund       = :unidad,
+                                                            cnparte    = :parte,
+                                                            flgSerie   = :serie,
+                                                            flgDetrac  = :detrac,
+                                                            iduser     = :usr,
+                                                            flgActFij  = :actfij,
+                                                            cCodPat    = :codpat
+                                                        WHERE id_cprod = :id");
+
+                $sql->execute([
+                    "descripcion" => $datos['descripcion'],
+                    "unidad"      => $datos['codigo_unidad'],
+                    "parte"       => $datos['nro_parte'],
+                    "serie"       => $serie,        // FIX: usar la variable, no $datos['serie']
+                    "detrac"      => $detraccion,   // FIX: usar la variable, no $datos['detraccion']
+                    "usr"         => $_SESSION['iduser'],
+                    "id"          => $datos['codigo_item'],
+                    "actfij"      => $actfij,
+                    "codpat"      => $datos['cod_pat']
+                ]);
+
+                // === FIX 3: considerar éxito si el execute no falló ===
+                // rowCount puede ser 0 si el usuario guardó sin cambiar nada.
+                $respuesta = true;
+                $mensaje   = "Item modificado...";
+                $clase     = "mensaje_correcto";
+
+                $salida = [
+                    "respuesta" => $respuesta,
+                    "mensaje"   => $mensaje,
+                    "clase"     => $clase
+                ];
+
+            } catch (PDOException $th) {
+                return [
+                    "respuesta" => false,
+                    "mensaje"   => $th->getMessage(),
+                    "clase"     => "mensaje_error",
+                    "success"   => false   // FIX: $false → false
+                ];
+            }
+
+            return $salida;
+        }
+
+        public function eliminaItem($id){
+            $salida    = false;
+            $respuesta = false;
+            $mensaje   = "Error en el registro";
+            $clase     = "mensaje_error";
+
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE cm_producto SET flgVisible = 0 WHERE id_cprod=:id");
+                $sql->execute([$id]);
+
+                $respuesta = true;
+                $mensaje   = "Item anulado...";
+                $clase     = "mensaje_correcto";
+
+                $salida = [
+                    "respuesta" => $respuesta,
+                    "mensaje"   => $mensaje,
+                    "clase"     => $clase
+                ];
+
+            } catch (PDOException $th) {
+                return [
+                    "respuesta" => false,
+                    "mensaje"   => $th->getMessage(),
+                    "clase"     => "mensaje_error",
+                    "success"   => false   // FIX: $false → false
+                ];
+            }
+
+            return $salida;
         }
     }
 ?>

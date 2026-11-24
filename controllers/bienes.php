@@ -6,19 +6,8 @@
         }
 
         function render(){
-            //$this->view->listaItems = $this->model->listarItems();
-            //$this->view->listaTipos = $this->model->listarParametros("07");
             $this->view->render('bienes/index');
         }
-
-        /*
-        function actualizaTabla(){
-            echo  $this->model->listarItems();
-        }
-
-        function buscaPalabra(){
-            echo $this->model->buscarItemsPalabra($_POST['criterio']);
-        } */
 
         function listaPaginada() {
             $criterio = $_POST['criterio'] ?? "";
@@ -87,11 +76,15 @@
         }
 
         function desactivaItem(){
-            echo $this->model->eliminaItem($_POST['id']);
+            echo json_encode($this->model->eliminaItem($_POST['codigo']));
         }
 
         function activaItem(){
             echo $this->model->activarItem($_POST['id']);
+        }
+
+        function buscaPalabra(){
+            echo json_encode($this->model->buscarItemsPalabra($_POST['criterio']));
         }
         
     }
