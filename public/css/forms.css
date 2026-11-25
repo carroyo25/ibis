@@ -1,0 +1,288 @@
+/* =========================================
+   MODAL PRINCIPAL: #proceso
+   ========================================= */
+
+#proceso .ventanaProceso {
+    background-color: #ffffff;
+    width: 95%;
+    max-width: 1500px;
+    height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+#proceso .cabezaProceso, 
+#proceso #formProceso {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Barras de opciones (Cabeceras azules) */
+#proceso .barraOpciones {
+    background-color: #0056b3;
+    color: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    margin: 0;
+    border: none;
+}
+
+#proceso .barraOpciones.primeraBarra {
+    background-color: #004494;
+    font-size: 15px;
+}
+
+/* Botones dentro del modal */
+#proceso .boton3, 
+#proceso .boton4, 
+#transferencias .boton3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333333;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#proceso .boton3:hover { 
+    background-color: #f8fafc; 
+    border-color: #0056b3; 
+    color: #0056b3; 
+}
+
+#proceso .boton4 { 
+    background-color: #ef4444; 
+    color: #ffffff; 
+    border-color: #ef4444; 
+}
+
+#proceso .boton4:hover { 
+    background-color: #dc2626; 
+}
+
+/* Formulario Grid */
+#proceso .dataProceso_2 {
+    padding: 20px;
+    background-color: #f8fafc;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-y: auto;
+}
+
+#proceso .seccion_izquierda, 
+#proceso .seccion_medio, 
+#proceso .seccion_derecha {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#proceso .column4_55, 
+#proceso .column2, 
+#proceso .column2_3957, 
+#proceso .column2_46 {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+/* Inputs y Labels */
+#proceso label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+#proceso input {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #1e293b;
+    background-color: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    height: auto;
+    margin: 0;
+}
+
+#proceso input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+#proceso input[readonly] {
+    background-color: #e2e8f0;
+    color: #475569;
+    cursor: not-allowed;
+}
+
+/* Tabla de Detalles (Principal) */
+#proceso .tablaInterna {
+    flex-grow: 1;
+    overflow: auto;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+#proceso .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 0;
+}
+
+#proceso .tabla th {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 12px 10px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+    white-space: nowrap;
+    border: none;
+}
+
+#proceso .tabla td {
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #fff9c4;
+    border-right: 1px solid #f1f5f9;
+}
+
+#proceso .tabla tr:hover td {
+    background-color: #ffecb3;
+}
+
+
+/* =========================================
+   MODAL DE BÚSQUEDA: #transferencias
+   ========================================= */
+
+#transferencias.modal {
+    z-index: 999999; /* Por encima del modal principal */
+}
+
+#transferencias .ventanaBusqueda {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    width: 80%;
+    max-width: 1200px;
+    overflow: hidden;
+}
+
+#transferencias .tituloVentana {
+    background-color: #c96b7d;
+    color: #ffffff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#transferencias .tituloVentana a { 
+    color: #ffffff; 
+    text-decoration: none; 
+    font-size: 20px; 
+}
+
+#transferencias .textoBusqueda {
+    padding: 15px 20px;
+    background-color: #f8fafc;
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+#transferencias .textoBusqueda input {
+    padding: 10px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    flex-grow: 1;
+}
+
+#transferencias .textoBusqueda input:focus { 
+    border-color: #c96b7d; 
+    box-shadow: 0 0 0 3px rgba(201, 107, 125, 0.2); 
+}
+
+#transferencias .tablaBusqueda {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+#transferencias .tablaWrap {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+#transferencias .tablaWrap th {
+    background-color: #0f172a;
+    color: #ffffff;
+    padding: 12px 10px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+#transferencias .tablaWrap td {
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    cursor: pointer;
+    color: #334155;
+    white-space: nowrap;
+}
+
+#transferencias .tablaWrap tbody tr:hover td {
+    background-color: #f1f5f9;
+}
+
+#transferencias .tablaWrap tbody tr.seleccionada td {
+    background-color: #fef08a;
+    font-weight: bold;
+    color: #000000;
+}
+
+.oculto { 
+    display: none; 
+}

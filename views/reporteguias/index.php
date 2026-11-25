@@ -49,7 +49,7 @@
                 </div>
                 
                 <div class="filtro-accion">
-                    <button type="button" class="btn-consultar">Consultar</button>
+                    <button type="button" class="btn-consultar" id="btnConsulta">Consultar</button>
                 </div>
             </div>
         </form>

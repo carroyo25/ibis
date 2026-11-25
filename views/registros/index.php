@@ -7,6 +7,7 @@
     <title>Ingreso Almacen</title>
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/bienes.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/forms.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
@@ -272,20 +273,20 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
-            <div class="consultas">
-                    <div>
+            <div class="filtros-container">
+                    <div class="filtro-grupo">
                         <label for="tipo">Guia N°. </label>
-                        <input type="text" id="guiaSearch" name="guiaSearch">
+                        <input type="text" id="guiaSearch" name="guiaSearch" class="form-control">
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="costosSearch">Centro de Costos: </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
+                        <select name="costosSearch" id="costosSearch" class="form-control">
                             <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="mes">Mes</label>
-                        <select name="mesSearch" id="mesSearch">
+                        <select name="mesSearch" id="mesSearch" class="form-control">
                             <option value="-1">Mes</option>
                             <option value="1">Enero</option>
                             <option value="2">Febrero</option>
@@ -301,15 +302,18 @@
                             <option value="12">Diciembre</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="form-control">
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="nota">Nro. Nota :</label>
-                        <input type="number" name="notaSearch" id="notaSearch" value="">
+                        <input type="number" name="notaSearch" id="notaSearch" class="form-control">
                     </div>
-                    <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
+
+                    <div class="filtro-accion">
+                        <button type="button" class="btn-consultar" id="btnConsulta">Consultar</button>
+                    </div>
             </div>
         </form>
     </div>
@@ -317,13 +321,13 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Item</th>
-                    <th>F.Emisión</th>
+                    <th>N°. Nota</th>
+                    <th width="10%">F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
-                    <th>Centro de Costos</th>
-                    <th>Guia</br>Remision</th>
-                    <th>R.S.</th>
+                    <th width="30%">Centro de Costos</th>
+                    <th width="10%">Guia Remision</th>
+                    <th width="5%">R.S.</th>
                 </tr>
             </thead>
             <tbody>

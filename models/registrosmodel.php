@@ -11,8 +11,6 @@
                 $datos = [];
                 $item = 1;
 
-
-
                 $guia   = $parametros['guia'] == "" ? "%" : "%".$parametros['guia']."%";
                 $cc     = $parametros['costos'] == -1 ? "%" : "%".$parametros['costos']."%";
                 $mes    = $parametros['mes'] == -1 ? date("n") : "%".$parametros['mes']."%";

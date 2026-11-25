@@ -235,22 +235,7 @@ $(function(){
     $("#btnConsulta").click(function(e){
         e.preventDefault();
 
-        $("#esperar").css({"display":"block","opacity":"1"});
-
-        let str = $("#formConsulta").serialize();
-
-        $.post(RUTA+"registros/filtro", str,
-            function (data, text, requestXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
-
-                $("#esperar").fadeOut().promise().done(function(){
-                    iniciarPaginador();
-                });
-            },
-            "text"
-        );
+        consultarRegistros();
 
         return false;
     });
@@ -532,13 +517,29 @@ $(function(){
             formData.append('nota',$("#notaSearch").val());
             formData.append('usr',$("#id_user").val());
 
+            $("#tablaPrincipal tbody").empty();
+
+            let indice = 1;
+
             fetch(RUTA+"registros/actualizarRegistros",{
                 method:'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                data.datos.forEach(element => {
+                    const tr = document.createElement('tr');
+                    tr.classList.add('pointer');
+                    tr.dataset.indice = element.idreg
+                    tr.innerHTML = `<td class="textoCentro"><strong>${element.idreg}</strong></td>
+                                    <td class="textoCentro">${element.ffechadoc}</td>
+                                    <td class="pl20px">${element.origen}</td>
+                                    <td class="pl20px">${element.destino}</td>
+                                    <td class="pl20px">${element.costos}</td>
+                                    <td class="textoCentro"><strong>${element.numguia || ''}</strong></td>
+                                    <td class="textoCentro">${element.nreferido || ''}</td>`;
+                    $("#tablaPrincipal tbody").append(tr);
+                });
             })
         } catch (error) {
             console.log(error.message);

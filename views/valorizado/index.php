@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/bienes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="mensaje">
@@ -18,17 +21,6 @@
                     <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
-            <div class="container">
-                <h5>🔔 Seleccionar Carpeta</h5>
-                <p class="msj_importante">** Primero, selecciona una carpeta con la que quieras trabajar:</p>
-                <button onclick="seleccionarCarpeta()" class="secondary">📂 Seleccionar Carpeta</button>
-                <div id="ruta-carpeta" class="status">Ninguna carpeta seleccionada</div>
-                
-                <button onclick="crearCarpeta()">📁 Descargar Archivos</button>
-                <h3>ℹ️ Información</h3>
-                <div id="estadoProceso" class="status">...</div>
-            </div>
-
             <div class="listaCarpetas">
                 <div class="searchContainer">
                     <input type="search" name="ordenSearch" id="ordenSearch" placeholder="Buscar...">
@@ -63,23 +55,23 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
-            <div class="variasConsultas">
-                    <div>
+            <div class="filtros-container">
+                    <div class="filtro-grupo">
                         <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
+                        <select name="tipoSearch" id="tipoSearch" class="form-control">
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="costosSearch">Centro de Costos: </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
+                        <select name="costosSearch" id="costosSearch" class="form-control" >
                             <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="mes">Mes</label>
-                        <select name="mesSearch" id="mesSearch">
+                        <select name="mesSearch" id="mesSearch" class="form-control">
                             <option value="-1">Mes</option>
                             <option value="1">Enero</option>
                             <option value="2">Febrero</option>
@@ -95,61 +87,68 @@
                             <option value="12">Diciembre</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="filtro-grupo">
                         <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="form-control">
                     </div>
-                    <div>
-                        <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
-                        <button type="button" id="btnExporta" class="boton3">Exportar</button> 
+                    <div class="filtro-accion">
+                        <button type="button" id="btnConsulta" class="btn-consultar">Consultar</button> 
+                        <button type="button" id="btnExporta" class="btn-consultar">Exportar</button> 
                     </div>
             </div>
         </form>
     </div>
     <div class="itemsValorizado">
-        <table id="tableValorizado">
+        <table id="tableValorizado" class="itemsCargoPlanner">
             <thead>
                 <tr class="stickytop">
-                    <th width="30px" data-titulo="item">Item</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="codigoproyecto">Codigo</br>Proyecto</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" width="3%">Descripcion Proyecto/Obra</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="area">Area</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro">Fecha</br>Registro</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="anioorden">Año</br>Orden</th>
+                    <th data-titulo="item" width="80ch">Item</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="codigoproyecto" width="100ch">Codigo Proyecto</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" width="200ch">Centro Costos</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="area" width="200ch">Area</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro" width="3%">Fecha Registro</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="anioorden" width="2%">Año Orden</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="tipo">Tipo</th>
-                    <th style="background:#FBD341; color:#000" data-titulo="aniopedido">Año</br> Pedido</th>
-                    <th style="background:#FBD341; color:#000" data-titulo="nroorden">N°</br>Pedido</th>
-                    <th style="background:#FBD341; color:#000" data-titulo="nropedido">N°</br>Orden</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto">Codigo del</br>Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" width="350px">Descripcion del Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</br>Medida</th>
-                    <th style="background:#AAFFAA; color:#000" data-titulo="proveedor">Proveedor</th>
-                    <th style="background:#AAFFAA; color:#000" data-titulo="cantidad">Cantidad</th>
-                    <th style="background:#AAFFAA; color:#000" data-titulo="precio">Precio</th>
-                    <th style="background:#AAFFAA; color:#000" data-titulo="moneda">Tipo<br>Moneda</th>
-                    <th style="background:#AAFFAA; color:#000" data-titulo="total">Importe Total</th>
-                    <th style="background:#AB7FAB; color:#fff" data-titulo="cambio">Tipo<br>Cambio</th>
-                    <th data-titulo="dolares">Contable ME<br> Total Dólares</th>
-                    <th data-titulo="soles">Contable MN<br>Total Soles</th>
-                    <th data-titulo="aprobacion">Fecha de <br> Aprobación</th>
-                    <th data-titulo="grupo" >Clasificación<br>Grupo</th>
-                    <th data-titulo="clase">Clasificación</br>Clase</th>
-                    <th data-titulo="direccion">Direccion de Proveedor</th>
-                    <th data-titulo="pago" style="background:#3E5555; color:#000">Forma de Pago</th>
-                    <th data-titulo="entrega" style="background:#3E5555; color:#000">Fecha de </br>Entrega</th>
-                    <th data-titulo="dias" style="background:#3E5555; color:#000">N°<br>Dias</th>
-                    <th data-titulo="ruc" style="background:#25AFF3; color:#000">N°</br>R.U.C</th>
-                    <th data-titulo="cotizacion" style="background:#25AFF3; color:#000">N° de</br>Cotización Adjudicado</th>
-                    <th data-titulo="parte" style="background:#25AFF3; color:#000">N° de Parte<br>Maq. Edquipo</th>
-                    <th data-titulo="equipo" style="background:#DA500B; color:#000">Código<br>Maq. Equipo</th>
-                    <th data-titulo="estado" style="background:#DA500B; color:#000">Estado</th>
-                    <th data-titulo="concepto" style="background:#DA500B; color:#000">Descripcion</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="aniopedido" width="80ch">Año Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nroorden" width="80ch">N°. Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nropedido" width="80ch">N°. Orden</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto" width="5%">Código Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" width="450ch">Descripción Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="proveedor" width="250ch">Proveedor</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="cantidad" width="150ch">Cantidad</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="precio" width="100ch">Precio</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="moneda" width="100ch">Moneda</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="total" width="100ch">Total</th>
+                    <th style="background:#AB7FAB; color:#fff" data-titulo="cambio" width="100ch">Tipo Cambio</th>
+                    <th data-titulo="dolares" width="150ch">Total Dólares</th>
+                    <th data-titulo="soles" width="150ch">Total Soles</th>
+                    <th data-titulo="aprobacion" width="80ch">Fecha Aprobación</th>
+                    <th data-titulo="grupo" width="150ch">Grupo</th>
+                    <th data-titulo="clase" width="150ch">Clase</th>
+                    <th data-titulo="direccion" width="200ch">Direccion  Proveedor</th>
+                    <th data-titulo="pago" style="background:#3E5555; color:#000" width="150ch">Forma Pago</th>
+                    <th data-titulo="entrega" style="background:#3E5555; color:#000" width="100ch">Fecha Entrega</th>
+                    <th data-titulo="dias" style="background:#3E5555; color:#000" width="80ch">N° Dias</th>
+                    <th data-titulo="ruc" style="background:#25AFF3; color:#000" width="90ch">N° R.U.C</th>
+                    <th data-titulo="cotizacion" style="background:#25AFF3; color:#000" width="100ch">N° Cotización</th>
+                    <th data-titulo="parte" style="background:#25AFF3; color:#000" width="80ch">N° de Parte</th>
+                    <th data-titulo="equipo" style="background:#DA500B; color:#000" width="80ch">Código<br>Maq. Equipo</th>
+                    <th data-titulo="estado" style="background:#DA500B; color:#000" width="150ch">Estado</th>
+                    <th data-titulo="concepto" style="background:#DA500B; color:#000" width="200ch">Descripcion</th>
+                    <th data-titulo="sunat" style="background:#1476B8; color:#000" width="100ch">Guia<br>Sunat</th>
+                    <th data-titulo="interna" style="background:#1476B8; color:#000" width="100ch">Guia<br>Interna</th>
                 </tr>
             </thead>
             <tbody>
                 
             </tbody>
         </table>
+    </div>
+    <div class="paginador_cp">
+        <div class="pagination">
+        
+        </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>

@@ -40,40 +40,14 @@
                     while ($rs = $sql->fetch()) {
                         $salida .= $this->detallesOrden($rs['id_regmov']);
                         $salida .='<tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="14"></td>
                                         <td><b>Total Orden '.$rs['cnumero'].'</b></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="2"></td>
                                         <td class="textoDerecha">'.$rs['ntotal'].'</td>
                                         <td></td>
                                         <td class="textoDerecha">'.$rs['total_dolares'].'</td>
                                         <td class="textoDerecha">'.$rs['total_soles'].'</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="13"></td>
                                     </tr>';
                     }
                 }
@@ -90,64 +64,116 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    lg_ordendet.id_cprod,
-                                                    lg_ordendet.ncanti,
-                                                    lg_ordendet.nunitario,
-                                                    LPAD(lg_ordendet.id_orden,6,0) AS orden,
-                                                    UPPER(
-                                                    CONCAT_WS( '', cm_producto.cdesprod, lg_ordendet.cobserva )) AS descripcion,
-                                                    tb_unimed.cabrevia AS unidad,
-                                                    cm_producto.ccodprod,
-                                                    tb_proyectos.ccodproy,
-                                                    UPPER( tb_proyectos.cdesproy ) AS proyecto,
-                                                    UPPER( tb_area.cdesarea ) AS area,
-                                                    lg_ordencab.ntcambio,
-                                                    UPPER(lg_ordencab.cobservacion) AS observacion,
-                                                    lg_ordencab.cper,
-                                                    lg_ordencab.ntipmov,
-                                                    DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha_registro,
-                                                    cm_entidad.crazonsoc,
-                                                    LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                    lg_ordencab.ncodmon,
-                                                    DATE_FORMAT(lg_ordencab.FechaFin,'%d/%m/%Y') AS FechaFin,
-                                                    lg_ordencab.nplazo,
-                                                    lg_ordencab.cnumcot,
-                                                    tb_pedidodet.nroparte,
-                                                    tb_pedidodet.nregistro,
-                                                    fpagos.cdescripcion AS tipo_pago,
-                                                    cm_entidad.cnumdoc,
-                                                    UPPER(tb_grupo.cdescrip) AS grupo,
-                                                    UPPER(cm_entidad.cviadireccion) as cviadireccion,
-                                                    lg_ordencab.nfirmaOpe,
-                                                    lg_ordencab.nfirmaFin,
-                                                    LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
-                                                    lg_ordencab.nfirmaLog,
-                                                    alm_recepdet.ncantidad,
-                                                    UPPER(tb_clase.cdescrip) AS clase,
-                                                    lg_ordencab.id_regmov,
-                                                    tb_pedidocab.anio,
-                                                    lg_ordendet.ntotal,
-                                                    DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
-                                                    FORMAT( IF ( lg_ordencab.ncodmon = 21, lg_ordendet.ntotal, lg_ordendet.ntotal / lg_ordencab.ntcambio ), 2 ) AS dolares,
-	                                                FORMAT( IF ( lg_ordencab.ncodmon = 20, lg_ordendet.ntotal, lg_ordendet.ntotal * lg_ordencab.ntcambio ), 2 ) AS soles,
-                                                    tb_equipmtto.cdescripcion,
-	                                                tb_equipmtto.cregistro
-                                                FROM
-                                                    lg_ordendet
-                                                    INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
-                                                    INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                    INNER JOIN tb_proyectos ON lg_ordendet.ncodcos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    INNER JOIN tb_parametros AS fpagos ON lg_ordencab.ncodpago = fpagos.nidreg
-                                                    INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
-                                                    LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
-                                                    INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-                                                AND lg_ordendet.nestado = 1");
+                                                        lg_ordendet.id_cprod,
+                                                        lg_ordendet.ncanti,
+                                                        lg_ordendet.nunitario,
+                                                        LPAD(lg_ordendet.id_orden, 6, 0) AS orden,
+                                                        UPPER(CONCAT_WS('', cm_producto.cdesprod, lg_ordendet.cobserva)) AS descripcion,
+                                                        tb_unimed.cabrevia AS unidad,
+                                                        cm_producto.ccodprod,
+                                                        tb_proyectos.ccodproy,
+                                                        UPPER(tb_proyectos.cdesproy) AS proyecto,
+                                                        UPPER(tb_area.cdesarea) AS area,
+                                                        lg_ordencab.ntcambio,
+                                                        UPPER(lg_ordencab.cobservacion) AS observacion,
+                                                        lg_ordencab.cper,
+                                                        lg_ordencab.ntipmov,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc, '%d/%m/%Y') AS fecha_registro,
+                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc,
+                                                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
+                                                        lg_ordencab.ncodmon,
+                                                        DATE_FORMAT(lg_ordencab.FechaFin, '%d/%m/%Y') AS FechaFin,
+                                                        CAST(lg_ordencab.nplazo AS SIGNED INTEGER) AS nplazo,
+                                                        lg_ordencab.cnumcot,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.nregistro,
+                                                        fpagos.cdescripcion AS tipo_pago,
+                                                        cm_entidad.cnumdoc,
+                                                        UPPER(tb_grupo.cdescrip) AS grupo,
+                                                        UPPER(cm_entidad.cviadireccion) AS cviadireccion,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        lg_ordencab.nfirmaFin,
+                                                        LPAD(lg_ordencab.cnumero, 6, 0) AS cnumero,
+                                                        lg_ordencab.nfirmaLog,
+                                                        alm_recepdet.ncantidad,
+                                                        UPPER(tb_clase.cdescrip) AS clase,
+                                                        lg_ordencab.id_regmov,
+                                                        tb_pedidocab.anio,
+                                                        lg_ordendet.ntotal,
+                                                        DATE_FORMAT(lg_ordencab.ffechaent, '%d/%m/%Y') AS fecha_entrega,
+                                                        FORMAT(IF(lg_ordencab.ncodmon = 21, lg_ordendet.ntotal, lg_ordendet.ntotal / lg_ordencab.ntcambio), 2) AS dolares,
+                                                        FORMAT(IF(lg_ordencab.ncodmon = 20, lg_ordendet.ntotal, lg_ordendet.ntotal * lg_ordencab.ntcambio), 2) AS soles,
+                                                        tb_equipmtto.cdescripcion,
+                                                        tb_equipmtto.cregistro,
+                                                        tb_pedidodet.iditem,
+                                                        -- Consolidación de guías y despachos:
+                                                        GROUP_CONCAT(DISTINCT alm_despachodet.ndespacho ORDER BY alm_despachodet.ndespacho SEPARATOR ', ') AS ndespacho,
+                                                        GROUP_CONCAT(DISTINCT lg_guias.cnumguia ORDER BY lg_guias.cnumguia SEPARATOR ', ') AS cnumguia,
+                                                        GROUP_CONCAT(DISTINCT lg_guias.guiasunat ORDER BY lg_guias.guiasunat SEPARATOR ', ') AS guiasunat
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        INNER JOIN tb_proyectos ON lg_ordendet.ncodcos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        INNER JOIN tb_parametros AS fpagos ON lg_ordencab.ncodpago = fpagos.nidreg
+                                                        INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                        LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
+                                                        INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                        LEFT JOIN alm_despachodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                        LEFT JOIN alm_despachocab ON alm_despachocab.id_regalm = alm_despachodet.id_regalm
+                                                        LEFT JOIN lg_guias ON lg_guias.id_regalm = alm_despachocab.id_regalm
+                                                    WHERE
+                                                        lg_ordendet.id_orden = :id
+                                                        AND lg_ordendet.nestado = 1
+                                                    GROUP BY
+                                                        lg_ordendet.id_cprod,
+                                                        lg_ordendet.ncanti,
+                                                        lg_ordendet.nunitario,
+                                                        lg_ordendet.id_orden,
+                                                        cm_producto.cdesprod,
+                                                        lg_ordendet.cobserva,
+                                                        tb_unimed.cabrevia,
+                                                        cm_producto.ccodprod,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.cdesproy,
+                                                        tb_area.cdesarea,
+                                                        lg_ordencab.ntcambio,
+                                                        lg_ordencab.cobservacion,
+                                                        lg_ordencab.cper,
+                                                        lg_ordencab.ntipmov,
+                                                        lg_ordencab.ffechadoc,
+                                                        cm_entidad.crazonsoc,
+                                                        tb_pedidocab.nrodoc,
+                                                        lg_ordencab.ncodmon,
+                                                        lg_ordencab.FechaFin,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.cnumcot,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.nregistro,
+                                                        fpagos.cdescripcion,
+                                                        cm_entidad.cnumdoc,
+                                                        tb_grupo.cdescrip,
+                                                        cm_entidad.cviadireccion,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.nfirmaLog,
+                                                        alm_recepdet.ncantidad,
+                                                        tb_clase.cdescrip,
+                                                        lg_ordencab.id_regmov,
+                                                        tb_pedidocab.anio,
+                                                        lg_ordendet.ntotal,
+                                                        lg_ordencab.ffechaent,
+                                                        lg_ordencab.ncodmon,
+                                                        tb_equipmtto.cdescripcion,
+                                                        tb_equipmtto.cregistro,
+                                                        tb_pedidodet.iditem");
 
                 $sql->execute(["id" => $id]);
 
@@ -172,8 +198,8 @@
                         $salida .='<tr class="pointer">
                                         <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
-                                        <td class="pl20px">'.$rs['area'].'</td>
+                                        <td class="pl20px" title="'.$rs['proyecto'].'">'.$rs['proyecto'].'</td>
+                                        <td class="pl20px" title="'.$rs['area'].'">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_registro'].'</td>
                                         <td class="textoCentro">'.$rs['cper'].'</td>
                                         <td class="textoCentro">'.$tipo.'</td>
@@ -181,9 +207,9 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="pl20px" title="'.$rs['descripcion'].'">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
-                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                        <td class="pl20px" title="'.$rs['crazonsoc'].'">'.$rs['crazonsoc'].'</td>
                                         <td class="textoDerecha">'.$rs['ncanti'].'</td>
                                         <td class="textoDerecha">'.$rs['nunitario'].'</td>
                                         <td class="textoDerecha">'.$moneda.'</td>
@@ -192,18 +218,20 @@
                                         <td class="textoDerecha">'.$rs['dolares'].'</td>
                                         <td class="textoDerecha">'.$rs['soles'].'</td>
                                         <td class="textoDerecha">'.$rs['FechaFin'].'</td>
-                                        <td class="pl20px">'.$rs['grupo'].'</td>
-                                        <td class="pl20px">'.$rs['clase'].'</td>
-                                        <td class="pl20px">'.$rs['cviadireccion'].'</td>
+                                        <td class="pl20px" title="'.$rs['grupo'].'">'.$rs['grupo'].'</td>
+                                        <td class="pl20px" title="'.$rs['clase'].'">'.$rs['clase'].'</td>
+                                        <td class="pl20px" title="'.$rs['cviadireccion'].'">'.$rs['cviadireccion'].'</td>
                                         <td class="pl20px">'.$rs['tipo_pago'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                         <td class="textoCentro">'.$rs['nplazo'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumdoc'].'</td>
-                                        <td class="pl20px">'.$rs['cnumcot'].'</td>
+                                        <td class="textoCentro" >'.$rs['cnumdoc'].'</td>
+                                        <td class="pl20px" title="'.$rs['cnumcot'].'">'.$rs['cnumcot'].'</td>
                                         <td class="pl20px">'.$rs['nroparte'].'</td>
                                         <td class="pl20px">'.$rs['cregistro'].'</td>
                                         <td class="textoCentro">'.$estado.'</td>
-                                        <td class="pl20px">'.$rs['observacion'].'</td>
+                                        <td class="pl20px" title="'.$rs['observacion'].'">'.$rs['observacion'].'</td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>';
                     }
                 }
@@ -389,7 +417,7 @@
         }
 
         private function adjuntosOrden($orden) {
-            $docData = [];
+            $docData = array();
 
             try{
                 $sql = $this->db->connect()->prepare("SELECT
@@ -432,7 +460,7 @@
         }
 
         private function adjuntosIngreso($ingreso) {
-            $docData = [];
+            $docData = array();
 
             try{
 
