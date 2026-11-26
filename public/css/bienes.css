@@ -68,6 +68,9 @@
 #irInicio { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
 #irInicio:hover { background: #2563eb; color: white; transform: translateY(-1px); }
 
+#downFiles,#repoExcel  { background: #ecfdf5; color: #059669; border: 1px solid #d1fae5; }
+#downFiles:hover, #repoExcel:hover { background: #059669; color: white; transform: translateY(-1px); }
+
 .cabezaModulo a i { font-size: 1.1rem; margin: 0; }
 .cabezaModulo a p { margin: 0; }
 

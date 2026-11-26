@@ -46,7 +46,7 @@
         <h1>Reporte Valorizado</h1>
         <div>
             <a href="#" id="downFiles"><i class="fas fa-inbox" class="boton3"></i>
-                <p>Descargar<br>Adjuntos</p>
+                <p>Descargar Adjuntos</p>
             </a>
             <a href="#" id="irInicio"><i class="fas fa-home" class="boton3"></i>
                 <p>Inicio</p>
@@ -106,15 +106,15 @@
                     <th style="background:#40D1FB; color:#000" data-titulo="codigoproyecto" width="100ch">Codigo Proyecto</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" width="200ch">Centro Costos</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="area" width="200ch">Area</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro" width="3%">Fecha Registro</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="anioorden" width="2%">Año Orden</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="tipo">Tipo</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro" width="80ch">Fecha Registro</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="anioorden" width="80ch">Año Orden</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="tipo" width="80ch">Tipo</th>
                     <th style="background:#FBD341; color:#000" data-titulo="aniopedido" width="80ch">Año Pedido</th>
                     <th style="background:#FBD341; color:#000" data-titulo="nroorden" width="80ch">N°. Pedido</th>
                     <th style="background:#FBD341; color:#000" data-titulo="nropedido" width="80ch">N°. Orden</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto" width="5%">Código Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto" width="120ch">Código Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" width="450ch">Descripción Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="unidad" width="80ch">Unidad</th>
                     <th style="background:#AAFFAA; color:#000" data-titulo="proveedor" width="250ch">Proveedor</th>
                     <th style="background:#AAFFAA; color:#000" data-titulo="cantidad" width="150ch">Cantidad</th>
                     <th style="background:#AAFFAA; color:#000" data-titulo="precio" width="100ch">Precio</th>
@@ -132,12 +132,12 @@
                     <th data-titulo="dias" style="background:#3E5555; color:#000" width="80ch">N° Dias</th>
                     <th data-titulo="ruc" style="background:#25AFF3; color:#000" width="90ch">N° R.U.C</th>
                     <th data-titulo="cotizacion" style="background:#25AFF3; color:#000" width="100ch">N° Cotización</th>
-                    <th data-titulo="parte" style="background:#25AFF3; color:#000" width="80ch">N° de Parte</th>
+                    <th data-titulo="parte" style="background:#25AFF3; color:#000" width="80ch">N° Parte</th>
                     <th data-titulo="equipo" style="background:#DA500B; color:#000" width="80ch">Código<br>Maq. Equipo</th>
                     <th data-titulo="estado" style="background:#DA500B; color:#000" width="150ch">Estado</th>
                     <th data-titulo="concepto" style="background:#DA500B; color:#000" width="200ch">Descripcion</th>
-                    <th data-titulo="sunat" style="background:#1476B8; color:#000" width="100ch">Guia<br>Sunat</th>
-                    <th data-titulo="interna" style="background:#1476B8; color:#000" width="100ch">Guia<br>Interna</th>
+                    <th data-titulo="sunat" style="background:#1476B8; color:#000" width="102ch">Guia Sunat</th>
+                    <th data-titulo="interna" style="background:#1476B8; color:#000" width="120ch">Guia Interna</th>
                 </tr>
             </thead>
             <tbody>

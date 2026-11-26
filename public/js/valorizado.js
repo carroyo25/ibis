@@ -5,6 +5,11 @@ $(function () {
   $("#btnConsulta").on("click", function (e) {
     e.preventDefault();
 
+    if ($("#costosSearch").val() == -1){
+      mostrarMensaje("Seleccione un Centro de Costos","mensaje_error");
+      return;
+    }
+
     $("#esperar").css("opacity", "1").fadeIn();
 
     let str = $("#formConsulta").serialize();
@@ -13,6 +18,7 @@ $(function () {
       function (data, text, requestXHR) {
         
         $("#tableValorizado tbody").empty().append(data);
+
         $("#esperar").css("opacity","0").fadeOut().promise().done(function(){
             iniciarPaginadorCargoPlan();
         });
@@ -27,38 +33,130 @@ $(function () {
     e.preventDefault();
 
     var array = [];
-    /* Obtenemos todos los tr del Body*/
+
+    /* Obtenemos todos los tr del Body */
     var rowsBody = $("#tableValorizado").find("tbody > tr");
     /* Obtenemos todos los th del Thead */
     var rowsHead = $("#tableValorizado").find("thead > tr > th");
 
-    /* Iteramos sobre as filas del tbody*/
-    for (var i = 0; i < rowsBody.length; i++) {
-      var obj = {}; /* auxiliar*/
-      for (
-        var j = 0;
-        j < rowsHead.length;
-        j++ /*  Iteramos sobre los th de THead*/
-      )
-        /*Asignamos como clave el text del th del thead*/
-        /*Asignamos como Valor el text del tr del tbody*/
-        obj[rowsHead[j].dataset.titulo] =
-          rowsBody[i].getElementsByTagName("td")[j].innerText;
-
-      array.push(obj); /* Añadimos al Array Principal*/
+    // Validación 1: que existan filas y cabeceras
+    if (rowsHead.length === 0) {
+        console.error("No se encontraron cabeceras (thead > tr > th) en #tableValorizado");
+        alert("No se encontraron columnas para exportar.");
+        return false;
     }
 
+    if (rowsBody.length === 0) {
+        //console.warn("No hay filas en el tbody para exportar.");
+        alert("No hay datos para exportar.");
+        return false;
+    }
+
+    // Validación 2: RUTA definida
+    if (typeof RUTA === "undefined" || RUTA === null) {
+        console.error("La variable RUTA no está definida.");
+        alert("Error de configuración: RUTA no definida.");
+        return false;
+    }
+
+    var filasOmitidas = 0;
+
+    /* Iteramos sobre las filas del tbody */
+    for (var i = 0; i < rowsBody.length; i++) {
+        var obj = {};
+        var celdas = rowsBody[i].getElementsByTagName("td");
+
+        // Validación 3: fila con cantidad de celdas distinta al thead
+        // (filas de totales, "sin registros", con colspan, etc.)
+        if (celdas.length !== rowsHead.length) {
+            filasOmitidas++;
+            continue;
+        }
+
+        // Validación 4: fila vacía (todos los td sin texto)
+        var filaVacia = true;
+        for (var k = 0; k < celdas.length; k++) {
+            if (celdas[k] && celdas[k].innerText.trim() !== "") {
+                filaVacia = false;
+                break;
+            }
+        }
+        if (filaVacia) {
+            //console.warn("Fila vacía omitida (índice " + i + ").", rowsBody[i]);
+            filasOmitidas++;
+            continue;
+        }
+
+        /* Iteramos sobre los th del thead */
+        for (var j = 0; j < rowsHead.length; j++) {
+            var clave = rowsHead[j].dataset.titulo;
+            var celda = celdas[j];
+
+            // Validación 5: data-titulo faltante en el th
+            if (!clave) {
+                /*console.warn(
+                    "El th en posición " + j + " no tiene data-titulo. Se omite.",
+                    rowsHead[j]
+                );*/
+                continue;
+            }
+
+            // Validación 6: celda existente
+            // Normalizamos el texto: reemplaza <br>, saltos de línea y espacios múltiples
+            var valor = "";
+            if (celda) {
+                valor = (celda.innerText || celda.textContent || "")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            }
+
+            obj[clave] = valor;
+        }
+
+        array.push(obj);
+    }
+
+    // Validación 7: si no quedó nada por exportar
+    if (array.length === 0) {
+        console.warn("Todas las filas fueron omitidas. Nada que exportar.");
+        alert("No se encontraron datos válidos para exportar.");
+        return false;
+    }
+
+    if (filasOmitidas > 0) {
+        console.warn("Se omitieron " + filasOmitidas + " fila(s) inválida(s).");
+    }
+
+    // Petición al backend
     $.post(
-      RUTA + "valorizado/exportar",
-      { detalles: JSON.stringify(array) },
-      function (data, textStatus, jqXHR) {
-        window.location.href = data.documento;
-      },
-      "json",
-    );
+        RUTA + "valorizado/exportar",
+        { detalles: JSON.stringify(array) },
+        function (data, textStatus, jqXHR) {
+            // Validación 8: respuesta del servidor
+            if (!data) {
+                console.error("Respuesta vacía del servidor.");
+                alert("El servidor no devolvió datos.");
+                return;
+            }
+
+            if (!data.documento) {
+                console.error("La respuesta no contiene 'documento':", data);
+                alert("No se pudo generar el documento. Revisa la respuesta del servidor.");
+                return;
+            }
+
+            // Redirección al documento generado
+            window.location.href = data.documento;
+        },
+        "json"
+    ).fail(function (jqXHR, textStatus, errorThrown) {
+        // Validación 9: error en la petición AJAX
+        console.error("Error en la petición AJAX:", textStatus, errorThrown, jqXHR.responseText);
+        alert("Ocurrió un error al exportar. Revisa la consola para más detalles.");
+    });
 
     return false;
-  });
+});
 
   $("#downFiles").click(function (e) {
     e.preventDefault();

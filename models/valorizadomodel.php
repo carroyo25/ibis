@@ -230,8 +230,8 @@
                                         <td class="pl20px">'.$rs['cregistro'].'</td>
                                         <td class="textoCentro">'.$estado.'</td>
                                         <td class="pl20px" title="'.$rs['observacion'].'">'.$rs['observacion'].'</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>'.$rs['guiasunat'].'</td>
+                                        <td>'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
                 }
@@ -244,163 +244,161 @@
         }
 
         public function exportarValorizado($detalles){
-            require_once('public/PHPExcel/PHPExcel.php');
+            require_once 'public/phpSpreadSheet/vendor/autoload.php'; 
+
             try {
-                $objPHPExcel = new PHPExcel();
-                $objPHPExcel->getProperties()
+                // Namespace completo para evitar el "Class not found"
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                
+                $spreadsheet->getProperties()
                     ->setCreator("Sical")
                     ->setLastModifiedBy("Sical")
-                    ->setTitle("Cargo Plan")
+                    ->setTitle("Reporte Valorizado")
                     ->setSubject("Template excel")
                     ->setDescription("Reporte Valorizado")
                     ->setKeywords("Template excel");
 
-                $cuerpo = array(
-                    'font'  => array(
-                    'bold'  => false,
-                    'size'  => 7,
-                ));
+                $spreadsheet->createSheet(1);
+                $spreadsheet->setActiveSheetIndex(0);
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle("Reporte Valorizado");
 
-                $objWorkSheet = $objPHPExcel->createSheet(1);
+                // ========== Título ==========
+                $sheet->mergeCells('A1:AJ1');
+                $sheet->setCellValue('A1', 'REPORTE VALORIZADO');
+                $sheet->getStyle('A1:AJ1')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14, 'color' => ['rgb' => 'FFFFFF']],
+                    'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '1F4E78']],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+                $sheet->getRowDimension('1')->setRowHeight(25);
 
-                $objPHPExcel->setActiveSheetIndex(0);
-                $objPHPExcel->getActiveSheet()->setTitle("Reporte Valorizado");
+                // ========== Área de encabezados ==========
+                $sheet->getStyle('A1:AJ2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A1:AJ2')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+                $sheet->getRowDimension('2')->setRowHeight(60);
 
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AQ1');
-                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE VALORIZADO');
-
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
-
-                $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
-                //$objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("L")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("M")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("O")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("T")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("U")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("V")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AG")->setAutoSize(true);
-                
-
-                $objPHPExcel->getActiveSheet()
-                            ->getStyle('A2:P2')
-                            ->getFill()
-                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                            ->getStartColor()
-                            ->setRGB('BFCDDB');
-
-                $objPHPExcel->getActiveSheet()
-                            ->getStyle('Q2:V2')
-                            ->getFill()
-                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                            ->getStartColor()
-                            ->setRGB('00FFFF');
-
-                $objPHPExcel->getActiveSheet()
-                            ->getStyle('AE2:AH2')
-                            ->getFill()
-                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                            ->getStartColor()
-                            ->setRGB('FFFF00');
-
-
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
-
-                $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('B2','Codigo Proyecto'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('C2','Descripción/Proyecto Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('D2','Area'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('E2','Fecha Registro'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('F2','Año Orden'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('G2','Tipo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('H2','Año Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J2','N° Orden'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('K2','Codigo del Bien/Servicio'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('L2','Descripcion del Bien/Servicio'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('M2','Unidad Medida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('N2','Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('O2','Cantidad'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('P2','Precio'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Tipo Moneda'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('R2','Importe Total'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('S2','Tipo Cambio'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('T2','Contable ME Total Dólares'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('U2','Contable MN Total Soles'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('V2','Fecha Aprobación'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('W2','Clasificacion Grupo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('X2','Clasificacion Clase'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Dirección Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Forma Pago'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Fecha Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AB2','N° Días'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AC2','N° R.U.C.'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','N° de Cotizacion'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Código Maq.Equipo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Estado'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Observacion'); // esto cambia
-               
-                $fila = 3;
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg ; $i++) {
-                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
-                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->codigoproyecto);
-                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcionproyecto);
-                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
-                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->fecharegistro);
-                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->anioorden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->tipo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->aniopedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->nroorden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->nropedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->codigo_producto);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->descripcion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->unidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->proveedor);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->precio);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->moneda);
-                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->total);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->cambio);
-                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->dolares);
-                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->soles);
-                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->aprobacion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->grupo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->clase);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->direccion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->pago);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->entrega);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$datos[$i]->dias);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$datos[$i]->ruc);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$datos[$i]->cotizacion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->parte);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->equipo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->estado);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->concepto);
-                   
-
-                    $fila++;
+                foreach (['D','E','L','M','O','T','U','V','AG','AI','AJ'] as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
 
+                $sheet->getStyle('A2:P2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('BFCDDB');
+                $sheet->getStyle('Q2:V2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('00FFFF');
+                $sheet->getStyle('W2:AD2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('BFCDDB');
+                $sheet->getStyle('AE2:AJ2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('FFFF00');
 
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/valorizado.xlsx');
+                $sheet->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
 
-                return array("documento"=>'public/documentos/reportes/valorizado.xlsx');
+                $sheet->getStyle('A2:AJ2')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 9],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'wrap'       => true,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['rgb' => '808080'],
+                        ],
+                    ],
+                ]);
 
-                exit();
+                $encabezados = [
+                    'A2'=>'Items','B2'=>'Codigo Proyecto','C2'=>'Descripción/Proyecto Obra','D2'=>'Area',
+                    'E2'=>'Fecha Registro','F2'=>'Año Orden','G2'=>'Tipo','H2'=>'Año Pedido',
+                    'I2'=>'N° Pedido','J2'=>'N° Orden','K2'=>'Codigo del Bien/Servicio',
+                    'L2'=>'Descripcion del Bien/Servicio','M2'=>'Unidad Medida','N2'=>'Proveedor',
+                    'O2'=>'Cantidad','P2'=>'Precio','Q2'=>'Tipo Moneda','R2'=>'Importe Total',
+                    'S2'=>'Tipo Cambio','T2'=>'Contable ME Total Dólares','U2'=>'Contable MN Total Soles',
+                    'V2'=>'Fecha Aprobación','W2'=>'Clasificacion Grupo','X2'=>'Clasificacion Clase',
+                    'Y2'=>'Dirección Proveedor','Z2'=>'Forma Pago','AA2'=>'Fecha Entrega','AB2'=>'N° Días',
+                    'AC2'=>'N° R.U.C.','AD2'=>'N° de Cotizacion','AE2'=>'N° Parte','AF2'=>'Código Maq.Equipo',
+                    'AG2'=>'Estado','AH2'=>'Observacion','AI2'=>'Guia Sunat','AJ2'=>'Guia Interna',
+                ];
+                foreach ($encabezados as $cell => $texto) {
+                    $sheet->setCellValue($cell, $texto);
+                }
 
-            }  catch (PDOException $th) {
-                echo $th->getMessage();
+                // ========== Datos del cuerpo ==========
+                $datos = json_decode($detalles, true);
+                if (!is_array($datos)) $datos = [];
+
+                $columnas = [
+                    'A'=>'item','B'=>'codigoproyecto','C'=>'descripcionproyecto','D'=>'area','E'=>'fecharegistro',
+                    'F'=>'anioorden','G'=>'tipo','H'=>'aniopedido','I'=>'nroorden','J'=>'nropedido',
+                    'K'=>'codigo_producto','L'=>'descripcion','M'=>'unidad','N'=>'proveedor','O'=>'cantidad',
+                    'P'=>'precio','Q'=>'moneda','R'=>'total','S'=>'cambio','T'=>'dolares','U'=>'soles',
+                    'V'=>'aprobacion','W'=>'grupo','X'=>'clase','Y'=>'direccion','Z'=>'pago','AA'=>'entrega',
+                    'AB'=>'dias','AC'=>'ruc','AD'=>'cotizacion','AE'=>'parte','AF'=>'equipo','AG'=>'estado',
+                    'AH'=>'concepto','AI'=>'sunat','AJ'=>'interna',
+                ];
+
+                foreach (['A'=>6,'B'=>16,'C'=>30,'H'=>11,'I'=>11,'J'=>11,'K'=>16,'N'=>28,
+                          'W'=>18,'X'=>18,'Y'=>28,'Z'=>16,'AA'=>14,'AB'=>10,'AC'=>14,
+                          'AD'=>14,'AE'=>12,'AF'=>14,'AG'=>18,'AH'=>28,'AI'=>14,'AJ'=>16] as $col => $w) {
+                    $sheet->getColumnDimension($col)->setWidth($w);
+                }
+
+                $fila = 3;
+                foreach ($datos as $item) {
+                    foreach ($columnas as $letra => $clave) {
+                        $sheet->setCellValue($letra . $fila, $item[$clave] ?? '');
+                    }
+                    $fila++;
+                }
+                $ultimaFila = $fila - 1;
+
+                // ========== Estilo del cuerpo ==========
+                if ($ultimaFila >= 3) {
+                    $rango = 'A3:AJ' . $ultimaFila;
+
+                    $sheet->getStyle($rango)->getFont()->setSize(8);
+                    $sheet->getStyle($rango)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                                'color' => ['rgb' => 'BFBFBF'],
+                            ],
+                        ],
+                    ]);
+                    $sheet->getStyle($rango)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+                    foreach (['O','P','R','S','T','U'] as $col) {
+                        $sheet->getStyle($col . '3:' . $col . $ultimaFila)
+                              ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    }
+                    $sheet->getStyle('P3:U' . $ultimaFila)->getNumberFormat()->setFormatCode('#,##0.00');
+
+                    foreach (['A','F','G','H','I','J','M','Q','S','V','AB'] as $col) {
+                        $sheet->getStyle($col . '3:' . $col . $ultimaFila)
+                              ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    }
+
+                    for ($f = 3; $f <= $ultimaFila; $f++) {
+                        if ($f % 2 == 0) {
+                            $sheet->getStyle('A' . $f . ':AJ' . $f)->getFill()
+                                  ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F2F2F2');
+                        }
+                    }
+
+                    $sheet->setAutoFilter('A2:AJ' . $ultimaFila);
+                }
+
+                $sheet->freezePane('B3');
+
+                // ========== Guardar ==========
+                $rutaArchivo = 'public/documentos/reportes/valorizado.xlsx';
+                $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+                $writer->save($rutaArchivo);
+
+                return ["documento" => $rutaArchivo];
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
                 return false;
             }
         }
