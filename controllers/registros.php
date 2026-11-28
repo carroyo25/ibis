@@ -39,10 +39,6 @@
             echo json_encode($this->model->consultarID($_POST['id']));
         }
 
-        /*function filtro(){
-            echo $this->model->listarIngresos($_POST);
-        }*/
-
         function transferencias() {
             echo $this->model->listarTransferencias($_POST['nt']);
         }
@@ -51,9 +47,9 @@
             echo json_encode($this->model->consultarTransferenciaID($_POST['id']));
         }
 
-        function adjuntos(){
+        /*function adjuntos(){
             echo json_encode($this->model->subirAdjuntos($_POST['codigo'],$_FILES));
-        }
+        }*/
 
         function buscaGuia(){
             echo json_encode($this->model->buscarGuiaTotal($_POST['guia']));
@@ -65,6 +61,10 @@
 
         function anula(){
             echo json_encode($this->model->anularIngreso($_POST['id']));
+        }
+
+        function listaAdjuntos(){
+            echo json_encode($this->model->verDocumentosAdjuntos($_POST['codigo'],$_POST['modulo']));
         }
     }
 ?>

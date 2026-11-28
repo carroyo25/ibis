@@ -1,7 +1,4 @@
 $(function(){
-
-    $("#esperar").fadeOut()
-
     let accion = "";
     let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
@@ -64,13 +61,13 @@ $(function(){
 
                 $(".primeraBarra").css("background","#0078D4");
                 $(".primeraBarra span").text("Datos Generales");
+
+                accion = "u";
+                grabado = true;
+                $("#proceso").fadeIn();
             },
             "json"
         );
-
-        accion = "u";
-        grabado = true;
-        $("#proceso").fadeIn();
 
         return false;
     });
@@ -86,7 +83,8 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        $(this).next().slideDown();
+        if (accion == "n")
+            $(this).next().slideDown();
 
         return false;
     });
@@ -291,7 +289,7 @@ $(function(){
         return false;
     });
 
-    $("#atachDocs").click(function(e){
+    /*$("#atachDocs").click(function(e){
         e.preventDefault();
 
         try {
@@ -431,7 +429,8 @@ $(function(){
         $("#inicio_consulta").val(valorInicial+1);
 
         return false;
-    });
+    });*/
+
 
     $("#cancelDocument").click(function(e){
         e.preventDefault();
@@ -507,6 +506,138 @@ $(function(){
         return false;
     });
 
+    $("#uploadDocs").click(function (e) {
+        e.preventDefault();
+
+        verAdjuntos($("#codigo_ingreso").val(),'GA',"https://sicalsepcon.net/ibis/public/documentos/almacen/adjuntos/");
+
+        return false;
+    });
+
+    $('#cerrarModal, #cancelarModal').on('click', cerrarModal);
+
+    function cerrarModal() {
+        $("#archivos").fadeOut();
+    }
+
+    // ============ DRAG & DROP ============
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        procesarArchivos(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', function () {
+        procesarArchivos(this.files);
+        this.value = '';
+    });
+
+    // ============ SUBIR ARCHIVOS ============
+    $('#subirArchivos').on('click', function () {
+        // Buscar archivos con clase 'completado'
+        const archivosItems = document.querySelectorAll('#listaArchivos .archivo-item.completado');
+
+        // Ver cada item
+        archivosItems.forEach((item, i) => {
+            const idx = parseInt(item.dataset.index);
+            console.log(`  archivosSeleccionados[${idx}]:`, archivosSeleccionados[idx]);
+        });
+
+        if (archivosItems.length === 0) {
+            alert('No hay archivos listos para subir');
+            return;
+        }
+
+        // Crear FormData
+        const formData = new FormData();
+
+        // Agregar los archivos al FormData
+        let agregados = 0;
+        archivosItems.forEach((item) => {
+            const fileIndex = parseInt(item.dataset.index);
+            const file = archivosSeleccionados[fileIndex];
+            if (file) {
+                formData.append('file[]', file);
+                agregados++;
+                console.log('✅ Archivo agregado al FormData:', file.name);
+            } else {
+                console.log('❌ No se encontró archivo para índice:', fileIndex);
+                console.log('   archivosSeleccionados en ese índice:', archivosSeleccionados[fileIndex]);
+            }
+        });
+
+        if (agregados === 0) {
+            mostrarMensaje('No se pudo agregar ningún archivo al FormData', 'mensaje_error');
+            btn.html('<i class="fas fa-upload"></i> Subir Archivos');
+            btn.prop('disabled', false);
+            return;
+        }
+
+        // Agregar el código de la orden
+        formData.append('codigo', $('#codigo_orden').val());
+
+        // Verificar FormData
+        for (let pair of formData.entries()) {
+            if (pair[1] instanceof File) {
+                console.log('File:', pair[0], pair[1].name, pair[1].size);
+            } else {
+                console.log('Otro:', pair[0], pair[1]);
+            }
+        }
+
+        const btn = $(this);
+        btn.html('<i class="fas fa-spinner fa-spin"></i> Subiendo...');
+        btn.prop('disabled', true);
+
+        // ============ ENVÍO AL SERVIDOR ============
+        fetch(RUTA + 'cerraros/subeArchivos', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.subidos > 0) {
+                    mostrarMensaje(data.mensaje || 'Archivos subidos correctamente', 'mensaje_correcto');
+
+                    if (data.adjuntos !== undefined) {
+                        $('#contadorAdjuntos').text(data.adjuntos);
+                    }
+
+                    setTimeout(() => {
+                        document.getElementById('listaArchivos').innerHTML = '';
+                        archivosSeleccionados = [];
+                        totalArchivos = 0;
+                        actualizarContador();
+                        cerrarModal();
+                    }, 1500);
+
+                } else {
+                    mostrarMensaje(data.mensaje || 'Error al subir archivos', 'mensaje_error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('Error de conexión: ' + error.message, 'mensaje_error');
+            })
+            .finally(() => {
+                btn.html('<i class="fas fa-upload"></i> Subir Archivos');
+                btn.prop('disabled', false);
+            });
+    });
+
     function consultarRegistros(){
         try {
             const formData = new FormData();
@@ -518,6 +649,8 @@ $(function(){
             formData.append('usr',$("#id_user").val());
 
             $("#tablaPrincipal tbody").empty();
+
+            $("#esperar").fadeIn();
 
             let indice = 1;
 
@@ -538,13 +671,19 @@ $(function(){
                                     <td class="pl20px">${element.costos}</td>
                                     <td class="textoCentro"><strong>${element.numguia || ''}</strong></td>
                                     <td class="textoCentro">${element.nreferido || ''}</td>`;
+
                     $("#tablaPrincipal tbody").append(tr);
+                });
+
+                $("#esperar").fadeOut().promise().done(function(e){
+                    iniciarPaginador();
                 });
             })
         } catch (error) {
             console.log(error.message);
         }
     }
+
     
 
 })

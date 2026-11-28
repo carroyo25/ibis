@@ -267,7 +267,7 @@
 
                             LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
 
-                            LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                            LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem AND alm_transferdet.ncanti > 0
                             LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
 
                             LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
@@ -905,7 +905,7 @@
                                                     LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
                                                     LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
                                                     LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
-                                                    LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                    LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem AND alm_transferdet.ncanti > 0
                                                     LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                     LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                     LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
@@ -1826,7 +1826,7 @@
                                                         LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
                                                         LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
-                                                        LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                        LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem AND alm_transferdet.ncanti > 0
                                                         LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                         LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                         LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
@@ -2970,7 +2970,7 @@
                                                         LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON d.niddetaPed = tb_pedidodet.iditem
                                                         LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
                                                         LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
-                                                        LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                        LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem AND alm_transferdet.ncanti > 0
                                                         LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo 

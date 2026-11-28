@@ -5901,5 +5901,149 @@
                 return false;
             }
         }
+
+        public function verDocumentosAdjuntos($id,$modulo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                    id_regmov,
+                    creferencia,
+                    cdocumento
+                FROM lg_regdocumento 
+                WHERE nidrefer = :id
+                AND nflgactivo = 1
+                AND cmodulo = :modulo
+                ORDER BY id_regmov DESC");
+                
+                $sql->execute(['id' => $id,'modulo'=>$modulo]);
+                $rowCount = $sql->rowCount();
+
+                $adjuntos = [];
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $extension = strtolower(pathinfo($rs['cdocumento'], PATHINFO_EXTENSION));
+                        
+                        $adjuntos[] = [
+                            'idreg' => $rs['id_regmov'],
+                            'creferencia' => $rs['creferencia'],
+                            'cdocumento' => $rs['cdocumento'],
+                            'icono' => $this->tipoArchivoNuevo($extension)
+                        ];
+                    }
+                }
+                
+                return [
+                    'success' => true,
+                    'lista' => $adjuntos,
+                    'total' => $rowCount
+                ];
+
+            } catch (PDOException $th) {
+                error_log("Error en verAdjuntosOrden: " . $th->getMessage());
+                return [
+                    'success' => false,
+                    'lista' => [],
+                    'total' => 0,
+                    'mensaje' => $th->getMessage()
+                ];
+            }
+        }
+
+        // ============ CONTAR ADJUNTOS ============
+        private function contarAdjuntosOS($codigo, $modulo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(*) as total 
+                    FROM lg_regdocumento 
+                    WHERE nidrefer = :cod 
+                    AND cmodulo = :mod 
+                    AND nflgactivo = 1");
+                
+                $sql->execute(["cod" => $codigo, "mod" => $modulo]);
+                $result = $sql->fetch(PDO::FETCH_ASSOC);
+                
+                return $result['total'] ?? 0;
+                
+            } catch (PDOException $th) {
+                error_log("Error al contar adjuntos: " . $th->getMessage());
+                return 0;
+            }
+        }
+
+        public function anularAdjunto($parametros){
+            try {
+                // Eliminar registro (soft delete)
+                $sql = $this->db->connect()->prepare("UPDATE lg_regdocumento SET nflgactivo = 0 WHERE id_regmov = :id");
+                $sql->execute(['id' => $parametros['id']]);
+                    
+                return ['success' => true];
+            } catch (PDOException $th) {
+                error_log("Error en eliminarAdjunto: " . $th->getMessage());
+                return ['success' => false, 'mensaje' => $th->getMessage()];
+            }
+        }
+
+        public function verAdjuntosOs($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                    id_regmov,
+                    creferencia,
+                    cdocumento
+                FROM lg_regdocumento 
+                WHERE nidrefer = :id
+                AND nflgactivo = 1
+                AND cmodulo = 'OSC'
+                ORDER BY id_regmov DESC");
+                
+                $sql->execute(['id' => $id]);
+                $rowCount = $sql->rowCount();
+
+                $adjuntos = [];
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $extension = strtolower(pathinfo($rs['cdocumento'], PATHINFO_EXTENSION));
+                        
+                        $adjuntos[] = [
+                            'idreg' => $rs['id_regmov'],
+                            'creferencia' => $rs['creferencia'],
+                            'cdocumento' => $rs['cdocumento'],
+                            'icono' => $this->tipoArchivoNuevo($extension)
+                        ];
+                    }
+                }
+                
+                return [
+                    'success' => true,
+                    'lista' => $adjuntos,
+                    'total' => $rowCount
+                ];
+
+            } catch (PDOException $th) {
+                error_log("Error en verAdjuntosOrden: " . $th->getMessage());
+                return [
+                    'success' => false,
+                    'lista' => [],
+                    'total' => 0,
+                    'mensaje' => $th->getMessage()
+                ];
+            }
+        }
+
+        private function tipoArchivoNuevo($archivo){
+            $extension = strtolower(pathinfo($archivo, PATHINFO_EXTENSION));
+            
+            $iconos = [
+                'pdf' => '<i class="fas fa-file-pdf" style="color:#ea4335;"></i>',
+                'jpg' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'jpeg' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'png' => '<i class="fas fa-file-image" style="color:#fbbc04;"></i>',
+                'doc' => '<i class="fas fa-file-word" style="color:#1a73e8;"></i>',
+                'docx' => '<i class="fas fa-file-word" style="color:#1a73e8;"></i>',
+                'xls' => '<i class="fas fa-file-excel" style="color:#0f9d58;"></i>',
+                'xlsx' => '<i class="fas fa-file-excel" style="color:#0f9d58;"></i>',
+                'zip' => '<i class="fas fa-file-archive" style="color:#5f6368;"></i>',
+                'rar' => '<i class="fas fa-file-archive" style="color:#5f6368;"></i>'
+            ];
+            
+            return $iconos[$extension] ?? '<i class="fas fa-file" style="color:#5f6368;"></i>';
+        }
     }
 ?>

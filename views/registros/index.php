@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/cargoplan.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/bienes.css">
     <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/forms.css">
+    <link rel="stylesheet" href="<?php echo constant('URL'); ?>public/css/dialogos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
@@ -25,126 +26,133 @@
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
+                    
+                    <!-- BARRA 1 -->
                     <div class="barraOpciones primeraBarra">
-                        <span>Datos Generales</span>
+                        <span><i class="fas fa-file-invoice"></i> Datos Generales</span>
                         <div>
-                            <button type="button" id="atachDocs" title="Adjuntar documentos" class="boton3">
-                                <i class="fas fa-paperclip"></i> Adjuntar Documentos
+                            <!--<button type="button" id="atachDocs" title="Adjuntar documentos" class="btn-moderno btn-glass">
+                                <i class="fas fa-paperclip"></i> Adjuntar
+                            </button>-->
+                            <button type="button" id="updateDocument" title="Grabar Ingreso" class="btn-moderno btn-primary">
+                                <i class="fas fa-save"></i> Grabar
                             </button>
-                            <button type="button" id="printLabels" title="Imprimir etiquetas" class="boton3 oculto">
-                                <i class="fas fa-tags"></i> Imprimir etiquetas
+                            <button type="button" id="cancelDocument" title="Anular Ingreso" class="btn-moderno btn-danger">
+                                <i class="fas fa-ban"></i> Anular
                             </button>
-                            <button type="button" id="updateDocument" title="Grabar Ingreso" class="boton3">
-                                <i class="far fa-save"></i> Grabar Ingreso
-                            </button>
-                            <button type="button" id="cancelDocument" title="Anular Ingreso" class="boton4">
-                                <i class="fas fa-ban"></i> Anular Ingreso
-                            </button>
-                            <button type="button" id="closeProcess" title="Cerrar" class="boton3">
-                                <i class="fas fa-window-close"></i>
+                            <button type="button" id="closeProcess" title="Cerrar" class="btn-cerrar">
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
+
+                    <!-- FORMULARIO -->
                     <div class="dataProceso_2">
-                        <div class="seccion_izquierda">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="Fecha Emite">Fecha :</label>
-                                    <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
+                        
+                        <div class="seccion_izquierda borde-secciones">
+                            <div class="col-doble">
+                                <div class="col">
+                                    <label for="fecha">Fecha :</label>
+                                    <input type="date" name="fecha" id="fecha" value="<?php echo date("Y-m-d");?>" readonly>
                                 </div>
-                                <div class="column2_46">
-                                    <label for="numero">Numero Registro:</label>
-                                    <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
+                                <div class="col">
+                                    <label for="numero">Número Registro:</label>
+                                    <input type="text" name="numero" id="numero" readonly>
                                 </div>
-                            </div>
-                            <div class="column2">
-                                <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="seccion_medio">
-                            <div class="column2">
-                                <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_ingreso" id="almacen_origen_ingreso" class="busqueda" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destino_ingreso" id="almacen_destino_ingreso" class="mostrarLista busqueda" readonly>
                             </div>
                             
-                        </div>
-                        <div class="seccion_derecha">
-                            <div class="column2">
-                                <label for="recepciona">Autoriza:</label>
-                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
-                                <div class="lista uno rowFive" id="listaRecepciona">
-                                    <ul>
-                                        <?php echo $this->listaRecepciona?>
-                                    </ul> 
+                            <div class="col">
+                                <label for="costos">CCostos:</label>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opción">
+                                <div class="lista" id="listaCostos">
+                                <ul><?php echo $this->listaCostos?></ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
+                        </div>
+
+                        <div class="seccion_medio borde-secciones">
+                            <div class="col">
+                                <label for="almacen_origen_ingreso">Almacén Origen:</label>
+                                <input type="text" name="almacen_origen_ingreso" id="almacen_origen_ingreso" class="busqueda" readonly>
+                            </div>
+                            <div class="col">
+                                <label for="almacen_destino_ingreso">Almacén Destino:</label>
+                                <input type="text" name="almacen_destino_ingreso" id="almacen_destino_ingreso" class="mostrarLista busqueda" readonly>
+                            </div>
+                        </div>
+
+                        <div class="seccion_derecha borde-secciones">
+                            <div class="col">
+                                <label for="autoriza">Autoriza:</label>
+                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista uno rowFive" id="listaRecepciona">
+                                    <ul><?php echo $this->listaRecepciona?></ul> 
+                                </div>
+                            </div>
+                            <div class="col-doble">
+                                <div class="col">
                                     <label for="guia">Guia/Trans/Comp.:</label>
                                     <input type="text" name="cnumguia" id="guia">
                                 </div>
-                                <div class="column2_46">
-                                    <label for="RS :">R.S.:</label>
+                                <div class="col">
+                                    <label for="RS">R.S.:</label>
                                     <input type="text" name="referido" id="referido">
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- BARRA 2 -->
                     <div class="barraOpciones">
-                        <span>Detalles</span>
+                        <span><i class="fas fa-list"></i> Detalles</span>
                         <div>
-                            <button type="button" id="previewDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Ver Adjuntos
+                            <button type="button" id="uploadDocs" title="Documentos Adjuntos" class="btn-moderno btn-glass">
+                                <i class="fas fa-eye"></i> Ver / Adjuntar Arhivos
                                 <span class="button__atach cookie_info" id="atach_counter"></span>
                             </button>
-                            <button type="button" id="itemsImport" title="Importar Guias de Remision" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Guias de Remisión
+                            <button type="button" id="itemsImport" title="Importar Guias de Remision" class="btn-moderno btn-glass">
+                                <i class="fas fa-truck"></i> Guías Remisión
                             </button>
-                            <button type="button" id="itemsTransfer" title="Importar Transferencias" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Notas de Transferencia
+                            <button type="button" id="itemsTransfer" title="Importar Transferencias" class="btn-moderno btn-glass">
+                                <i class="fas fa-exchange-alt"></i> Notas Transf.
                             </button>
-                            <button type="button" id="itemsLocals" title="Importar compras Locales" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Compras Locales
+                            <button type="button" id="itemsLocals" title="Importar compras Locales" class="btn-moderno btn-glass">
+                                <i class="fas fa-shopping-cart"></i> Compras Locales
                             </button>
                         </div>
                     </div>
-                    <div class="tablaInterna mininoTablaInterna">
-                        <table class="tabla" id="tablaDetalles">
-                            <thead>
-                                <tr class="stickytop">
-                                        <th class="">Item</th>
-                                        <th class="">Codigo</th>
-                                        <th class="">Descripcion</th>
-                                        <th class="">Unidad</th>
-                                        <th width="7%">Cantidad <br/> Enviada</th>
-                                        <th width="7%">Cantidad <br/> Recep.</th>
-                                        <th class="">Observaciones</th>
-                                        <th class="">Area</th>
-                                        <th class="">Fecha </br> Vencimiento</th>
-                                        <th class="">Condicion</th>
-                                        <th class="">Ubicación</th>
-                                        <th class="">Pedido</th>
-                                        <th class="">Orden</th>
-                                        <th class="">G. Remision<br/>Nr.Trans.</th>
-                                        <th class="">Serie</th>
-                                        <th class="">Fecha<br/>Calibracion</th>
-                                        <th class="">Certificado<br/>Calibracion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
 
-                            </tbody>
-                        </table>
+                    <!-- TABLA -->
+                    <div class="tablaInterna">
+                        <div class="table-container">
+                            <table class="tablaNewDesing" id="tablaDetalles">
+                                <thead>
+                                    <tr class="stickytop">
+                                        <th width="50ch">Item</th>
+                                        <th width="110ch">Codigo</th>
+                                        <th width="350ch">Descripcion</th>
+                                        <th width="50ch">UND</th>
+                                        <th width="100ch">Cant. Env.</th>
+                                        <th width="100ch">Cant. Rec.</th>
+                                        <th idth="400ch">Observaciones</th>
+                                        <th idth="150ch">Area</th>
+                                        <th width="100ch">F. Venc.</th>
+                                        <th width="100ch">Condicion</th>
+                                        <th width="100ch">Ubicación</th>
+                                        <th width="100ch">Pedido</th>
+                                        <th width="100ch">Orden</th>
+                                        <th width="100ch">G. Rem.</th>
+                                        <th width="100ch">Serie</th>
+                                        <th width="100ch">F. Calib.</th>
+                                        <th width="100ch">Cert. Calib.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Aquí tu PHP hace el foreach de los items -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
                     </div>
                 </form>
             </div>
@@ -217,21 +225,78 @@
         </div>
     </div>
     <div class="modal" id="archivos">
-        <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
-                <input type="hidden" name="certificadoAtach" id="certificadoAtach">
-                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
-                <div class="tituloArchivos">
-                    <h3>Adjuntar Archivos</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
-                </div>            
-                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-                </ul>
-                <div class="opcionesArchivos">
-                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
-                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+        <div class="wrap_modal">
+            <div class="upload-adjuntos-remitos">
+            <!-- Header -->
+                <div class="upload-header">
+                    <h3><i class="fas fa-paperclip"></i> Adjuntar Archivos</h3>
+                    <button class="modal-close" id="cerrarModal">&times;</button>
                 </div>
-            </form>
+            <!-- Body con dos columnas -->
+                <div class="upload-body modal-split-layout" id="modalSplitLayout">
+                
+                    <!-- ===== COLUMNA IZQUIERDA (TU CONTENIDO ACTUAL) ===== -->
+                    <div class="columna-izquierda">
+                        <!-- ===== ARCHIVOS YA SUBIDOS ===== -->
+                        <div class="archivos-subidos">
+                            <div class="subtitulo">
+                                <i class="fas fa-check-circle" style="color:#34a853;"></i>
+                                Archivos Adjuntos (<span id="contadorAdjuntos">0</span>)
+                            </div>
+                            <div class="lista-subidos" id="listaSubidos">
+                                <div class="mensaje-vacio">No hay archivos adjuntos</div>
+                            </div>
+                        </div>
+
+                        <!-- ===== SEPARADOR ===== -->
+                        <div class="separador">
+                            <span>Agregar nuevos archivos</span>
+                        </div>
+
+                        <!-- Drop Zone -->
+                        <div class="drop-zone" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Arrastra tus archivos aquí o haz clic para seleccionar</p>
+                            <span class="drop-zone-text">PDF, JPG, PNG, DOC (max 4MB)</span>
+                            <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                        </div>
+
+                        <!-- Lista de archivos temporales -->
+                        <div class="lista-archivos" id="listaArchivos"></div>
+                    </div>
+
+                    <!-- ===== COLUMNA DERECHA (EL VISOR) ===== -->
+                    <div class="columna-derecha" id="panelVisor">
+                        <div class="visor-header">
+                            <span id="nombreVisor" class="texto-truncado">Visualizando archivo...</span>
+                            <button type="button" id="cerrarVisor" class="btn-cerrar-visor">&times;</button>
+                        </div>
+                        <div class="visor-body">
+                            <!-- Iframe para PDFs -->
+                            <iframe id="iframeVisor" src="" style="width:100%; height:100%; border:none; display:none;"></iframe>
+                            <!-- Imagen para JPG/PNG -->
+                            <img id="imgVisor" src="" style="max-width:100%; max-height:100%; object-fit:contain; display:none;">
+                            <!-- Mensaje para otros formatos -->
+                            <div id="mensajeNoSoportado" style="display:none; text-align:center; padding:20px; color:#666;">
+                                    <i class="fas fa-file-alt" style="font-size:3rem; color:#ccc; margin-bottom:10px;"></i>
+                                    <p>Este tipo de archivo no se puede previsualizar.</p>
+                                    <button class="btn btn-primary" id="btnDescargarVisor" style="margin-top:10px;">
+                                        <i class="fas fa-download"></i> Descargar archivo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="upload-footer">
+                    <button class="btn btn-secondary" id="cancelarModal">Cancelar</button>
+                    <button class="btn btn-primary" id="subirArchivos">
+                        <i class="fas fa-upload"></i> Subir Archivos
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal" id="vistaCertificado">

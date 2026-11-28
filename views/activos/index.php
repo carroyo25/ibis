@@ -350,7 +350,7 @@
         </form>
     </div>
     <div class="itemsTabla">
-        <div class="table-container">
+        <div class="table-container-activos">
             <table>
                 <thead>
                     <tr>

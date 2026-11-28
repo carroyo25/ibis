@@ -33,6 +33,9 @@ var directorioRaiz = null;
 var archivosHandle = new Map();
 var permisoSolicitado = false;
 
+var totalArchivos = 0;
+var archivosSeleccionados = [];
+
 $.strPad = function (i, l, s) {
   var o = i.toString();
   if (!s) {
@@ -983,3 +986,235 @@ async function permisosUsuario() {
     createPageButtons();
     showPage(currentPage); // Mostrar la primera página
   }
+
+  function procesarArchivos(files) {
+    const lista = document.getElementById('listaArchivos');
+    console.log('Procesando archivos:', files.length);
+
+    Array.from(files).forEach((file) => {
+        // Validar tamaño (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert(`El archivo "${file.name}" excede los 10MB`);
+            return;
+        }
+
+        // Validar extensiones
+        const ext = file.name.split('.').pop().toLowerCase();
+        const permitidas = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+        if (!permitidas.includes(ext)) {
+            alert(`El archivo "${file.name}" no tiene una extensión permitida`);
+            return;
+        }
+
+        const iconos = {
+            pdf: 'fa-file-pdf',
+            jpg: 'fa-file-image',
+            jpeg: 'fa-file-image',
+            png: 'fa-file-image',
+            doc: 'fa-file-word',
+            docx: 'fa-file-word'
+        };
+        const colores = {
+            pdf: '#ea4335',
+            jpg: '#fbbc04',
+            jpeg: '#fbbc04',
+            png: '#fbbc04',
+            doc: '#1a73e8',
+            docx: '#1a73e8'
+        };
+
+        const tamaño = file.size < 1024 * 1024 ?
+            (file.size / 1024).toFixed(1) + ' KB' :
+            (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+
+        const item = document.createElement('div');
+        item.className = 'archivo-item completado';
+
+        // ===== GUARDAR EL ARCHIVO DIRECTAMENTE EN EL ELEMENTO =====
+        item._file = file;  // <--- CLAVE: guardar el archivo en el elemento
+        item.dataset.index = archivosSeleccionados.length;
+
+        // También guardar el archivo en el array global (como fallback)
+        archivosSeleccionados.push(file);
+
+        item.innerHTML = `
+            <i class="fas ${iconos[ext] || 'fa-file'}" style="color:${colores[ext] || '#5f6368'};"></i>
+            <span class="archivo-nombre">${file.name}</span>
+            <span class="archivo-tamaño">${tamaño}</span>
+            <button class="btn-eliminar"><i class="fas fa-trash"></i></button>
+        `;
+
+        // Eliminar archivo
+        item.querySelector('.btn-eliminar').addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (confirm(`¿Eliminar "${file.name}"?`)) {
+                // Eliminar del array global
+                const idx = archivosSeleccionados.indexOf(file);
+                if (idx !== -1) {
+                    archivosSeleccionados.splice(idx, 1);
+                }
+                // Reindexar elementos
+                document.querySelectorAll('#listaArchivos .archivo-item').forEach((el, i) => {
+                    el.dataset.index = i;
+                });
+                item.remove();
+                totalArchivos--;
+                actualizarContador();
+            }
+        });
+
+        lista.appendChild(item);
+        totalArchivos++;
+        actualizarContador();
+        console.log('Archivo agregado con data-index:', item.dataset.index, file.name);
+    });
+}
+
+// ============ ACTUALIZAR CONTADOR ============
+function actualizarContador() {
+    $('#contadorArchivos').text(totalArchivos);
+}
+
+function verAdjuntos(codigo,modulo,ruta){
+        try {
+            //const codigo = $("#codigo_ingreso").val();
+
+            if (codigo.length == 0) {
+                throw new Error("No se selecciono ningun documento");
+            }
+
+            // Mostrar loading
+            const lista = document.getElementById('listaSubidos');
+            lista.innerHTML = '<div class="mensaje-vacio"><i class="fas fa-spinner fa-spin"></i> Cargando archivos...</div>';
+
+            // Referencias a los elementos del visor
+            const wrapModal = document.querySelector('.wrap_modal');
+            const panelVisor = document.getElementById('panelVisor');
+            const iframeVisor = document.getElementById('iframeVisor');
+            const imgVisor = document.getElementById('imgVisor');
+            const mensajeNoSoportado = document.getElementById('mensajeNoSoportado');
+            const nombreVisor = document.getElementById('nombreVisor');
+            const btnDescargarVisor = document.getElementById('btnDescargarVisor');
+            let urlActualVisor = '';
+
+            iframeVisor.src = '';
+
+            // Ocultar visor al recargar
+            // cerrarVisor();
+
+            // Enviar petición POST al servidor
+            $.post(RUTA + "registros/listaAdjuntos",
+                {
+                    codigo: codigo,
+                    modulo: modulo
+                },
+                function (data) {
+                    // Limpiar lista
+                    lista.innerHTML = '';
+
+                    if (data.success && data.lista && data.lista.length > 0) {
+                        // Mostrar archivos
+                        data.lista.forEach(function (archivo) {
+                            const item = document.createElement('div');
+                            item.className = 'archivo-subido';
+                            item.innerHTML = `
+                            ${archivo.icono}
+                            <span class="nombre" title="${archivo.cdocumento}" data-referencia="${archivo.creferencia}">${archivo.cdocumento}</span>
+                            <span class="fecha">${archivo.dfechareg || ''}</span>
+                            <button class="btn-eliminar-subido" data-id="${archivo.idreg}" title="Eliminar archivo">
+                                <i class="fas fa-trash"></i>
+                            </button>`;
+
+                            // 👇 EVENTO CLIC PARA VISUALIZAR EN EL PANEL DERECHO
+                            item.addEventListener('click', function (e) {
+                                // Ignorar si se hace clic en el botón de eliminar
+                                if (e.target.closest('.btn-eliminar-subido')) return;
+
+                                // Marcar selección visual
+                                document.querySelectorAll('.archivo-subido').forEach(el => el.classList.remove('seleccionado'));
+                                item.classList.add('seleccionado');
+
+                                // Mostrar el visor y expandir modal
+                                panelVisor.style.display = 'flex';
+                                wrapModal.classList.add('visor-activo');
+                                nombreVisor.textContent = archivo.cdocumento;
+
+                                // Limpiar vistas previas
+                                iframeVisor.style.display = 'none';
+                                imgVisor.style.display = 'none';
+                                mensajeNoSoportado.style.display = 'none';
+                                iframeVisor.src = '';
+                                imgVisor.src = '';
+
+                                // Asumiendo que el backend envía archivo.ruta. Si no, ajusta esta línea.
+                                const url = ruta+archivo.creferencia; 
+                                urlActualVisor = url;
+                                const ext = archivo.creferencia.split('.').pop().toLowerCase();
+
+                                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                                    imgVisor.style.display = 'block';
+                                    imgVisor.src = url;
+                                } else if (ext === 'pdf') {
+                                    iframeVisor.style.display = 'block';
+                                    iframeVisor.src = url;
+                                } else {
+                                    mensajeNoSoportado.style.display = 'block';
+                                }
+                            });
+
+                            // Evento para eliminar
+                            item.querySelector('.btn-eliminar-subido').addEventListener('click', function (e) {
+                                e.stopPropagation();
+                                if (confirm('¿Eliminar "' + archivo.cdocumento + '"?')) {
+                                    // Si el archivo a eliminar es el que estamos viendo, cerramos el visor
+                                    if (item.classList.contains('seleccionado')) {
+                                        //cerrarVisor();
+                                    }
+                                    eliminarArchivoSubido(archivo.idreg, item);
+                                }
+                            });
+
+                            lista.appendChild(item);
+                        });
+
+                        // Actualizar contador
+                        $('#contadorAdjuntos').text(data.total);
+                    } else {
+                        lista.innerHTML = '<div class="mensaje-vacio">No hay archivos adjuntos</div>';
+                        $('#contadorAdjuntos').text(0);
+                    }
+
+                    // Mostrar el contenedor
+                    $("#archivos").fadeIn();
+
+                    // Funciones auxiliares del visor
+                    function cerrarVisor() {
+                        panelVisor.style.display = 'none';
+                        wrapModal.classList.remove('visor-activo');
+                        iframeVisor.src = '';
+                        imgVisor.src = '';
+                        document.querySelectorAll('.archivo-subido').forEach(el => el.classList.remove('seleccionado'));
+                    }
+
+                    // Botón para descargar desde el visor
+                    btnDescargarVisor.onclick = function() {
+                        if(urlActualVisor) window.open(urlActualVisor, '_blank');
+                    };
+                },
+                "json"
+            ).fail(function (xhr, status, error) {
+                console.error('Error:', error);
+                lista.innerHTML = '<div class="mensaje-vacio">Error al cargar archivos</div>';
+                mostrarMensaje('Error al cargar archivos', 'mensaje_error');
+            });
+
+        } catch (error) {
+            mostrarMensaje(error.message, "mensaje_error");
+        }
+
+        if($("#codigo_orden").val() == ''){
+            mostrarMensaje("Debe grabar el Remito","mensaje_error");
+        }
+
+        $("#archivos").fadeIn();
+    }

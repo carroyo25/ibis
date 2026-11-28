@@ -4143,8 +4143,8 @@ thead .sticky-column {
 }
 
 .tablaInterna {
-  overflow: auto;
-  max-height: 25vh;
+  /*overflow: auto;*/
+  max-height: 35vh;
 }
 
 .tablainterna3columnas th:nth-child(1),

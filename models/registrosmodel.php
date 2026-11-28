@@ -539,24 +539,20 @@
                                                         alm_existencia.observaciones,
                                                         alm_existencia.ubicacion,
                                                         alm_existencia.condicion,
-                                                        alm_existencia.vence,
+                                                        COALESCE(DATE_FORMAT(NULLIF(alm_existencia.vence, '0000-00-00'), '%d/%m/%Y'), '-') AS vence,
                                                         alm_existencia.idreg,
                                                         alm_existencia.serie,
                                                         alm_existencia.ncertcal,
-                                                        alm_existencia.ffeccalibra,
-                                                        tb_pedidodet.docEspec/*,
-	                                                    lg_ordencab.cnumero */
+                                                        COALESCE(DATE_FORMAT(NULLIF(alm_existencia.ffeccalibra, '0000-00-00'), '%d/%m/%Y'), '-') AS ffeccalibra,
+                                                        tb_pedidodet.docEspec
                                                     FROM
                                                         alm_existencia
                                                         LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
                                                         LEFT JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         LEFT JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea
-                                                        /*LEFT JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
-                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov */  
                                                     WHERE
-                                                        alm_existencia.idregistro = :id
-                                                        /*AND (ISNULL(lg_ordendet.nEstadoReg) OR lg_ordendet.nEstadoReg != 105)*/");
+                                                        alm_existencia.idregistro = :id");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -570,12 +566,12 @@
                         $salida .= '<tr data-idreg="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="pl20px" title="'.$rs['descripcion'].'">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr5px">'.$rs['cant_ord'].'</td>
                                         <td class="textoDerecha pr5px">'.$rs['cant_ingr'].'</td>
-                                        <td class="pl20px">'.$rs['observaciones'].'</td>
-                                        <td class="pl20px">'.$rs['area_solicita'].'</td>
+                                        <td class="pl20px" title="'.$rs['observaciones'].'">'.$rs['observaciones'].'</td>
+                                        <td class="pl20px" title="'.$rs['area_solicita'].'">'.$rs['area_solicita'].'</td>
                                         <td class="textoCentro">'.$rs['vence'].'</td>
                                         <td class="textoCentro">'.$rs['condicion'].'</td>
                                         <td class="pl20px">'.$rs['ubicacion'].'</td>
